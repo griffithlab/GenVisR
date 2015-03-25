@@ -5,7 +5,7 @@
 #' @param x numeric vector of position coordinates on x axis
 #' @return numeric vector of dodged position coordinates on x axis
 
-dodge_coord_x <- function(x)
+dodge_coord_x <- function(x, spread_degree)
 {
   # Sort the vector, Then group coordinates meeting pre-defined threshold
   x <- sort(x)
@@ -47,15 +47,22 @@ dodge_coord_x <- function(x)
   coord_data <- merge(coord_data, freq_data, by="group")
   
   # Obtain artificially spread coordinate data and add it to original coordinate data
-  spread_coord_data <- apply(coord_data, 1, spread_coord_points)
+  spread_coord_data <- apply(coord_data, 1, spread_coord_points, spread_degree)
   spread_coord_data <- unique(spread_coord_data)
   spread_coord_data <- rle(unlist(spread_coord_data))$values
   coord_data <- cbind(coord_data, spread_coord_data)
   
+  # correct the skewing for single points introduced by the seq function in spread_coord_points
+  spread_coord_data <- apply(coord_data, 1, correct_spread_coord_points)
+  coord_data$spread_coord_data <- spread_coord_data
+  
   # Re-classify duplicate coordinates as the same coordinate (for stacking)
   coord_dup <- duplicated(coord_data$coord) | duplicated(coord_data$coord, fromLast=TRUE)
   coord_data <- cbind(coord_data, coord_dup)
+  # problem below, need to resolve
   coord_data$spread_coord_data[coord_data$coord_dup == TRUE] <- coord_data$coord[coord_data$coord_dup == TRUE]
+  
+  
   
   # Return the now artificially spread coordinate data
   return(as.vector(coord_data$spread_coord_data))	

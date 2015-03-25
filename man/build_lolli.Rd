@@ -4,7 +4,8 @@
 \alias{build_lolli}
 \title{Construct Lolliplot}
 \usage{
-build_lolli(gene_data, length, mutation_observed, mutation_cosmic)
+build_lolli(gene_data, length, mutation_observed, mutation_cosmic, fill_value,
+  label_column, plot_text_angle, plot_text_size, point_size, gene_colour)
 }
 \arguments{
 \item{gene_data}{object of class dataframe giving protien domain and gene information}

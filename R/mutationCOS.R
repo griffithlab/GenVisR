@@ -5,7 +5,7 @@
 #' @param transcriptID character string specifying ensembl transcript ID to retrieve mutations for
 #' @return object of class data frame giving comsic mutation observations
 
-mutationCOS <- function(transcriptID)
+mutationCOS <- function(transcriptID, spread_degree)
 {
   #################################################################################
   ################## function to return cosmic variants given transcript id #######
@@ -32,7 +32,15 @@ mutationCOS <- function(transcriptID)
   
   # re-label columns and add another column for y axis
   colnames(cosmic) <- c("cosmic_id", "mutation_coord")
-  cosmic$height_min <- -1.5
+  cosmic$height_min <- -1
+  
+  # Dodge mutation coordinates on the x axis
+  cosmic <- cosmic[order(cosmic$mutation_coord),] 
+  cosmic$coord_x_dodge <- dodge_coord_x(as.vector(cosmic$mutation_coord), spread_degree)
+  
+  # Redefine and return grouping information and then dodge y coordinates
+  cosmic$group <- group_mutation_coord(as.vector(cosmic$mutation_coord))
+  cosmic$coord_y_dodge <- dodge_coord_y(cosmic, track='bottom')
   
   return(cosmic)
 }

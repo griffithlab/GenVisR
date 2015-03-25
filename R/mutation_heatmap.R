@@ -13,7 +13,7 @@
 #' @return a grob for plotting
 #' @export
 
-mutation_heatmap <- function(data_frame, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=30000000, file_type='TGI')
+mutation_heatmap <- function(data_frame, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI')
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######

@@ -6,7 +6,7 @@
 \usage{
 mutation_heatmap(data_frame, recurrence_cutoff = 0, grid = TRUE,
   label_x = FALSE, title = "NULL", gene_label_size = 8,
-  coverage_space = 3e+07, file_type = "TGI")
+  coverage_space = 63564965, file_type = "TGI")
 }
 \arguments{
 \item{data_frame}{a data frame in annotation format}

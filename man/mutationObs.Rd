@@ -4,7 +4,7 @@
 \alias{mutationObs}
 \title{format mutation observations}
 \usage{
-mutationObs(data)
+mutationObs(data, fill_value, label_column, spread_degree)
 }
 \arguments{
 \item{data}{object of class data frame with columns trv_type and amino acid change}
