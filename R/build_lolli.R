@@ -48,7 +48,7 @@ build_lolli <- function(gene_data, length, mutation_observed, mutation_cosmic, f
   
   if(!is.null(label_column)) 
   {
-    p1 <- p1 + geom_text(data=mutation_observed, mapping=aes(x=coord_x_dodge, y=coord_y_dodge, label=labels), angle=plot_text_angle, size=plot_text_size, vjust=0, hjust=0)
+    p1 <- p1 + geom_text(data=mutation_observed, mapping=aes(x=coord_x_dodge, y=coord_y_dodge + .02, label=labels), angle=plot_text_angle, size=plot_text_size, vjust=0, hjust=0)
   }
   
   return(p1)

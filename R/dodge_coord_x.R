@@ -60,6 +60,7 @@ dodge_coord_x <- function(x, spread_degree)
   coord_dup <- duplicated(coord_data$coord) | duplicated(coord_data$coord, fromLast=TRUE)
   coord_data <- cbind(coord_data, coord_dup)
   # problem below, need to resolve
+  print(coord_data)
   coord_data$spread_coord_data[coord_data$coord_dup == TRUE] <- coord_data$coord[coord_data$coord_dup == TRUE]
   
   

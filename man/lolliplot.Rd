@@ -9,14 +9,28 @@ lolliplot(data, cosmic = TRUE, fill_value = "trv_type",
   point_size = 1, gene_colour = "#999999", spread_degree = 15)
 }
 \arguments{
-\item{data}{object of class data frame containing columns transcript_name, gene, and amino_acid_change for specific transcript}
+\item{data}{object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations}
 
 \item{cosmic}{boolean value specifying if cosmic mutations should be retrieved and plotted}
+
+\item{fill_value}{character string giving the name of the column to shade variants on "required"}
+
+\item{label_column}{character string specifying column containing text information to be plotted, defaults to NULL}
+
+\item{plot_text_angle}{integer specifying angle of text to be plotted if label_column is specified}
+
+\item{plot_text_size}{integer specifying the size of the text plotted if label_column is specified}
+
+\item{point_size}{integer specifying the size of points plotted}
+
+\item{gene_colour}{color specifying the background fill of the plotted gene}
+
+\item{spread_degree}{integer specifying the amount of distance to dodge points on the x axis}
 }
 \value{
 object of class ggplot2
 }
 \description{
-Construct a Lolliplot from object of class data frame giving observed mutations and transcript
+Construct a Lolliplot from object of class data frame giving observed mutations and an ensembl transcript id
 }
 

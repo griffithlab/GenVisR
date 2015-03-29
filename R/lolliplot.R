@@ -1,9 +1,16 @@
 #' Construct Lolliplot from data
 #' 
-#' Construct a Lolliplot from object of class data frame giving observed mutations and transcript
+#' Construct a Lolliplot from object of class data frame giving observed mutations and an ensembl transcript id
 #' @name lolliplot
-#' @param data object of class data frame containing columns transcript_name, gene, and amino_acid_change for specific transcript
+#' @param data object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations
 #' @param cosmic boolean value specifying if cosmic mutations should be retrieved and plotted
+#' @param fill_value character string giving the name of the column to shade variants on "required"
+#' @param label_column character string specifying column containing text information to be plotted, defaults to NULL
+#' @param plot_text_angle integer specifying angle of text to be plotted if label_column is specified
+#' @param plot_text_size integer specifying the size of the text plotted if label_column is specified
+#' @param point_size integer specifying the size of points plotted
+#' @param gene_colour color specifying the background fill of the plotted gene
+#' @param spread_degree integer specifying the amount of distance to dodge points on the x axis
 #' @return object of class ggplot2
 #' @export
 
