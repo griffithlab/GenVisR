@@ -27,7 +27,7 @@ build_CN_plot <- function(x, chr)
   
   if(chr == 'all')
   {
-    facet <- facet_wrap(~Chr, scales='free_x')
+    facet <- facet_wrap(~Chr, scales='free')
     p1 <- p1 + facet
   }
   
