@@ -10,6 +10,8 @@ CN_plot(x, genome = "hg19", chr = "chr1", chr_txt_angle = 45,
 \arguments{
 \item{x}{a data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value}
 
+\item{genome}{character string specifying UCSC genome to use}
+
 \item{chr}{character string specifying UCSC chromosome to plot one of chr... or all}
 
 \item{chr_txt_angle}{integer specifying angle of text when plotting band text}

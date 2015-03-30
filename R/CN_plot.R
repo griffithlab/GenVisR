@@ -3,6 +3,7 @@
 #' given data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value plot CN
 #' @name CN_plot
 #' @param x a data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value
+#' @param genome character string specifying UCSC genome to use
 #' @param chr character string specifying UCSC chromosome to plot one of chr... or all
 #' @param chr_txt_angle integer specifying angle of text when plotting band text
 #' @param chr_txt_size integer specifying size of text when plotting band text
