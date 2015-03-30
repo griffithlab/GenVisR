@@ -9,7 +9,9 @@
 build_CN_plot <- function(x, chr)
 {
   require('ggplot2')
-  print(head(x))
+  
+  # Define a THEME
+  theme <- theme(axis.text.x=element_text(angle=30, hjust=1))
   
   # Define points to plot for the main plot and apply shading function
   cnpoints <- ggplot(data=x, mapping=aes(x=Coord, y=Diff)) + geom_point(data=x, mapping=aes(colour=Diff, alpha=1-p_value))
@@ -23,7 +25,7 @@ build_CN_plot <- function(x, chr)
   smooth_cn <- geom_smooth(fill='green', alpha=1, level=.999)
   
   # build the plot
-  p1 <- cnpoints + shade_cn + smooth_cn + ylabel + xlabel
+  p1 <- cnpoints + shade_cn + smooth_cn + ylabel + xlabel + theme
   
   if(chr == 'all')
   {
