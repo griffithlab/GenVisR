@@ -36,20 +36,19 @@ plot_heatmap <- function(data_frame, grid, label_x, gene_label_size, file_type)
   {
     
     # Declare a color palette
-    palette <- c('#A80100', '#CF5A59', '#A80079', '#CF59AE', '#4f00A8', '#9159CF', '#000000', '#006666', '#00A8A8', '#79F2F2', '#59CF74', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
+    palette <- c('#4f00A8', '#A80100', '#CF5A59', '#A80079', '#BC2D94', '#CF59AE', '#000000', '#006666', '#00A8A8', '#009933', '#59CF74', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
+    
+    #A80100 => red
     
     # Create Legend labels
-    breaks <- c("nonsense", "in_frame_del_stop_gain", "frame_shift_del", "frame_shift_ins", "in_frame_del", "in_frame_ins", "nonstop", "splice_site_del", "splice_site_ins", "splice_site", "missense", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent")
-    labels <- c("Nonsense", "In Frame Deletion, Stop Gain", "Frame Shift Deletion", "Frame Shift Insertion", "In Frame Deletion", "In Frame Insertion", "Nonstop", "Splice Site Deletion", "Splice Site Insertion", "Splice Site", "Missense", "5' Flank", "3' Flank", "3' UTR", "5' UTR", "RNA", "Intronic", "Silent")
+    breaks <- c("nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent")
+    labels <- c("Nonsense", "Frame Shift Deletion", "Frame Shift Insertion", "Splice Site Deletion", "Splice Site Insertion", "Splice Site", "Stop Loss", "In Frame Deletion", "In Frame Insertion", "Missense", "Splice Region", "5' Flank", "3' Flank", "3' UTR", "5' UTR", "RNA", "Intronic", "Silent")
     
   } else if(toupper(file_type) == toupper('MAF'))
   {
     
     # Declare a color palette
     palette <- c('#A80100', '#CF5A59', '#A80079', '#CF59AE', '#4f00A8', '#9159CF', '#000000', '#59CF74', '#00A8A8', '#79F2F2', '#006666', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C')
-    
-    '#006666'
-    '#59CF74'	
     
     # Create Legend Labels
     breaks <- c("Nonsense_Mutation", "Frame_Shift_Ins", "Frame_Shift_Del", "In_Frame_Ins", "In_Frame_Del", "Nonstop_Mutation", "Splice_Site", "Missense_Mutation", "5\'Flank", "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron", "IGR", "Silent", "Targeted_Region")
