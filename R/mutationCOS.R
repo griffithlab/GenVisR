@@ -5,7 +5,7 @@
 #' @param transcriptID character string specifying ensembl transcript ID to retrieve mutations for
 #' @return object of class data frame giving comsic mutation observations
 
-mutationCOS <- function(transcriptID, spread_degree)
+mutationCOS <- function(transcriptID, rep.fact, rep.dist.lmt, attr.fact, adj.max, adj.lmt, iter.max)
 {
   #################################################################################
   ################## function to return cosmic variants given transcript id #######
@@ -25,7 +25,12 @@ mutationCOS <- function(transcriptID, spread_degree)
   values <- list(transcriptID, "COSMIC", TRUE)
   
   # Retrieve data
+  message("Retrieving cosmic mutations")
   cosmic <- getBM(attributes=attributes, filters=filters, values=values, mart=ensembl_mart)
+  if(nrow(cosmic) == 0)
+  {
+    stop("No Cosmic Mutations retrieved, check biomart query in mutationCos.R")
+  }
   
   # omit values with NA at position (need to look at why this is ocurring)
   cosmic <- na.omit(cosmic)
@@ -35,12 +40,15 @@ mutationCOS <- function(transcriptID, spread_degree)
   cosmic$height_min <- -1
   
   # Dodge mutation coordinates on the x axis
+  message("applying force field to cosmic mutations")
   cosmic <- cosmic[order(cosmic$mutation_coord),] 
-  cosmic$coord_x_dodge <- dodge_coord_x(as.vector(cosmic$mutation_coord), spread_degree)
+  cosmic$coord_x_dodge <- dodge_coord_x(as.vector(cosmic$mutation_coord), rep.fact=rep.fact, rep.dist.lmt=rep.dist.lmt, attr.fact=attr.fact, adj.max=adj.max, adj.lmt=adj.lmt, iter.max=iter.max)
   
   # Redefine and return grouping information and then dodge y coordinates
   cosmic$group <- group_mutation_coord(as.vector(cosmic$mutation_coord))
   cosmic$coord_y_dodge <- dodge_coord_y(cosmic, track='bottom')
+  
+  print(cosmic)
   
   return(cosmic)
 }

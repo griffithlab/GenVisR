@@ -5,7 +5,8 @@
 \title{Construct Lolliplot}
 \usage{
 build_lolli(gene_data, length, mutation_observed, mutation_cosmic, fill_value,
-  label_column, plot_text_angle, plot_text_size, point_size, gene_colour)
+  label_column, plot_text_angle, plot_text_size, point_size, gene_colour,
+  sequence_data, plot_sidechain = FALSE)
 }
 \arguments{
 \item{gene_data}{object of class dataframe giving protien domain and gene information}
@@ -15,6 +16,22 @@ build_lolli(gene_data, length, mutation_observed, mutation_cosmic, fill_value,
 \item{mutation_observed}{object of class data frame specifying mutations observed in input file}
 
 \item{mutation_cosmic}{optional object of class data frame specifying mutations observed in cosmic}
+
+\item{fill_value}{character string specifying the column on which to colour mutation points}
+
+\item{label_column}{character string specifying the column containing the labels to attach to mutation points}
+
+\item{plot_text_angle}{numeric value specifying the angle of text to be plotted}
+
+\item{plot_text_size}{numeric value specifying the size of text to be plotted}
+
+\item{point_size}{numeric value specigying the size of mutation points}
+
+\item{gene_colour}{color to shade plotted gene}
+
+\item{sequence_data}{object of class dataframe giving AA sequence, sidechain, and coord required if plot_sidechain is true}
+
+\item{plot_sidechain}{boolean specifying whether to plot the AA sidechain instead of domain information}
 }
 \value{
 a ggplot2 object

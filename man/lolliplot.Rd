@@ -6,7 +6,11 @@
 \usage{
 lolliplot(data, cosmic = TRUE, fill_value = "trv_type",
   label_column = NULL, plot_text_angle = 45, plot_text_size = 5,
-  point_size = 1, gene_colour = "#999999", spread_degree = 15)
+  point_size = 1, gene_colour = "#999999", obs.rep.fact = 5000,
+  obs.rep.dist.lmt = 500, obs.attr.fact = 0.1, obs.adj.max = 0.1,
+  obs.adj.lmt = 0.5, obs.iter.max = 50000, cos.rep.fact = 5000,
+  cos.rep.dist.lmt = 500, cos.attr.fact = 0.1, cos.adj.max = 0.1,
+  cos.adj.lmt = 0.5, cos.iter.max = 50000, plot_sidechain = FALSE)
 }
 \arguments{
 \item{data}{object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations}
@@ -25,7 +29,31 @@ lolliplot(data, cosmic = TRUE, fill_value = "trv_type",
 
 \item{gene_colour}{color specifying the background fill of the plotted gene}
 
-\item{spread_degree}{integer specifying the amount of distance to dodge points on the x axis}
+\item{obs.rep.fact}{repulsive factor for plotted mutations observed track}
+
+\item{obs.rep.dist.lmt}{repulsive distance limit for plotted mutations observed track}
+
+\item{obs.attr.fact}{attraction factor for plotted mutations observed track}
+
+\item{obs.adj.max}{maximum position change for each iteration observed track}
+
+\item{obs.adj.lmt}{position adjustment limit which simulation stops observed track}
+
+\item{obs.iter.max}{maximum iterations beyond which to stop the simulation observed track}
+
+\item{cos.rep.fact}{repulsive factor for plotted mutations cosmic track}
+
+\item{cos.rep.dist.lmt}{repulsive distance limit for plotted mutations cosmic track}
+
+\item{cos.attr.fact}{attraction factor for plotted mutations cosmic track}
+
+\item{cos.adj.max}{maximum position change for each iteration cosmic track}
+
+\item{cos.adj.lmt}{position adjustment limit which simulation stops cosmic track}
+
+\item{cos.iter.max}{maximum iterations beyond which to stop the simulation cosmic track}
+
+\item{plot_sidechain}{boolean value whether to plot the amino acid sidechains instead of protein domains}
 }
 \value{
 object of class ggplot2

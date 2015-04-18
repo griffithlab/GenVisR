@@ -5,7 +5,7 @@
 #' @param data object of class data frame with columns trv_type and amino acid change
 #' @return object of class data frame giving mutation observations
 
-mutationObs <- function(data, fill_value, label_column, spread_degree)
+mutationObs <- function(data, fill_value, label_column, rep.fact, rep.dist.lmt, attr.fact, adj.max, adj.lmt, iter.max)
 {
   ###################################################################
   ####### Function to extract mutations and their coordinates #######
@@ -24,7 +24,7 @@ mutationObs <- function(data, fill_value, label_column, spread_degree)
   colnames(mutation_data) <- c('mutation_coord', eval(fill_value))
   
   # add extra column giving height of Y axis for points to be plotted
-  mutation_data$height_max <- 1
+  mutation_data$height_max <- 2
   
   # extract optional labels for points to be plotted
   if(!is.null(label_column))
@@ -33,8 +33,9 @@ mutationObs <- function(data, fill_value, label_column, spread_degree)
   }
   
   # Dodge mutation coordinates on the x axis
+  message("applying force field to observed mutations")
   mutation_data <- mutation_data[order(mutation_coord),] 
-  mutation_data$coord_x_dodge <- dodge_coord_x(as.vector(mutation_data$mutation_coord), spread_degree)
+  mutation_data$coord_x_dodge <- dodge_coord_x(as.vector(mutation_data$mutation_coord), rep.fact=rep.fact, rep.dist.lmt=rep.dist.lmt, attr.fact=attr.fact, adj.max=adj.max, adj.lmt=adj.lmt, iter.max=iter.max)
   
   # Redefine and return grouping information and then dodge y coordinates
   mutation_data$group <- group_mutation_coord(as.vector(mutation_data$mutation_coord))

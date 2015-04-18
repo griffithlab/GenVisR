@@ -4,7 +4,8 @@
 \alias{dodge_coord_x}
 \title{dodge coordinates}
 \usage{
-dodge_coord_x(x, spread_degree)
+dodge_coord_x(x, rep.fact = 5000, rep.dist.lmt = 500, attr.fact = 0.1,
+  adj.max = 0.1, adj.lmt = 0.5, iter.max = 50000)
 }
 \arguments{
 \item{x}{numeric vector of position coordinates on x axis}

@@ -4,7 +4,8 @@
 \alias{mutationCOS}
 \title{retrieve cosmic mutation observations}
 \usage{
-mutationCOS(transcriptID, spread_degree)
+mutationCOS(transcriptID, rep.fact, rep.dist.lmt, attr.fact, adj.max, adj.lmt,
+  iter.max)
 }
 \arguments{
 \item{transcriptID}{character string specifying ensembl transcript ID to retrieve mutations for}

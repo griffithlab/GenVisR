@@ -20,8 +20,8 @@ construct_gene <- function(gene, domain_data, length)
   gene <- rbind(gene, domain_data)
   
   # add in heights for gene display and convert positions to numeric class
-  gene$height_min <- -.5
-  gene$height_max <- .5
+  gene$height_min <- -1
+  gene$height_max <- 1
   gene$pos_from <- as.numeric(gene$pos_from)
   gene$pos_to <- as.numeric(gene$pos_to)
   
