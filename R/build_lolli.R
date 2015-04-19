@@ -29,9 +29,10 @@ build_lolli <- function(gene_data, length, mutation_observed, mutation_cosmic, f
   if(plot_sidechain == TRUE)
   {
     gene_plot <- geom_rect(data=sequence_data, mapping=aes(xmin=as.numeric(as.character(coord))-1, xmax=as.numeric(as.character(coord)), ymin=-1, ymax=1, fill=sidechain))
+    domain_plot <- NULL
   } else {
     gene_plot <- geom_rect(data=gene_data[1,], mapping=aes(xmin=pos_from, xmax=pos_to, ymin=height_min, ymax=height_max), fill='#999999', colour='#000000')
-    gene_plot <- gene_plot + geom_rect(data=gene_data[-1,], mapping=aes(xmin=pos_from, xmax=pos_to, ymin=height_min, ymax=height_max, fill=Domain), alpha=0.75, colour='black')
+    domain_plot <- geom_rect(data=gene_data[-1,], mapping=aes(xmin=pos_from, xmax=pos_to, ymin=height_min, ymax=height_max, fill=Domain), alpha=0.75, colour='black')
   }
 
   
@@ -54,7 +55,7 @@ build_lolli <- function(gene_data, length, mutation_observed, mutation_cosmic, f
   {	
     y_limits <- ylim(c(-1, max(mutation_observed$coord_y_dodge) + 1))
     y_label <- ylab('Observed')
-    p1 <- ggplot() + gene_plot + observed_line_2 + observed_line + observed_plot + x_label + y_label + title + y_limits + theme + guide
+    p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 + observed_line + observed_plot + x_label + y_label + title + y_limits + theme + guide
     
   } else {
     
@@ -64,7 +65,7 @@ build_lolli <- function(gene_data, length, mutation_observed, mutation_cosmic, f
     cosmic_line <- geom_segment(data=mutation_cosmic, mapping=aes(x=mutation_coord, y=-1, xend=coord_x_dodge, yend=-1.5))
     cosmic_line_2 <- geom_segment(data=mutation_cosmic, mapping=aes(x=coord_x_dodge, y=-1.5, xend=coord_x_dodge, yend=coord_y_dodge))
       
-    p1 <- ggplot() + gene_plot + observed_line + observed_line_2 + observed_plot + cosmic_line + cosmic_line_2 + cosmic_plot + x_label + y_label + title + y_limits + theme + guide
+    p1 <- ggplot() + gene_plot + domain_plot + observed_line + observed_line_2 + observed_plot + cosmic_line + cosmic_line_2 + cosmic_plot + x_label + y_label + title + y_limits + theme + guide
   }
   
   # If a label column is specified plot labels

@@ -7,7 +7,7 @@
 
 dodge_coord_y <- function(x, track='top')
 {
-  print(x$coord_x_dodge)
+  
   for(i in 1:length(x$coord_x_dodge))
   {
     if(track == 'top' & i == 1)
