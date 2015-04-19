@@ -23,8 +23,6 @@ build_lolli <- function(gene_data, length, mutation_observed, mutation_cosmic, f
   ###################################################################################
   library('ggplot2')
   
-  print(head(sequence_data))
-  
   # build the various features of the plot
   
   # Build gene base either using domain information or AA sidechain information
@@ -46,34 +44,34 @@ build_lolli <- function(gene_data, length, mutation_observed, mutation_cosmic, f
   title <- ggtitle(gene_data[1,1])
   x_label <- xlab('Amino Acid Position')
   
-  # add a theme to the plot
+  # add a theme and guide to the plot
   theme <- theme(legend.position='bottom', legend.direction='vertical', legend.box='horizontal', axis.text.y=element_blank(), axis.ticks.y=element_blank())
-  
+  guide <- guides(colour=guide_legend(ncol=2))
   
   
   # construct the plot with or without cosmic track
   if(is.null(mutation_cosmic))
   {	
-    y_limits <- ylim(c(-1, max(mutation_observed$coord_y_dodge) + 2))
+    y_limits <- ylim(c(-1, max(mutation_observed$coord_y_dodge) + 1))
     y_label <- ylab('Observed')
-    p1 <- ggplot() + gene_plot + observed_line_2 + observed_line + observed_plot + x_label + y_label + title + y_limits + theme
+    p1 <- ggplot() + gene_plot + observed_line_2 + observed_line + observed_plot + x_label + y_label + title + y_limits + theme + guide
     
   } else {
     
-    y_limits <- ylim(c(min(mutation_cosmic$coord_y_dodge) - 2, max(mutation_observed$coord_y_dodge) + 2))
+    y_limits <- ylim(c(min(mutation_cosmic$coord_y_dodge) - 1, max(mutation_observed$coord_y_dodge) + 1))
     y_label <- ylab('Cosmic v Observed')
     cosmic_plot <- geom_point(data=mutation_cosmic, mapping=aes(x=coord_x_dodge, y=coord_y_dodge), size=point_size)
     cosmic_line <- geom_segment(data=mutation_cosmic, mapping=aes(x=mutation_coord, y=-1, xend=coord_x_dodge, yend=-1.5))
     cosmic_line_2 <- geom_segment(data=mutation_cosmic, mapping=aes(x=coord_x_dodge, y=-1.5, xend=coord_x_dodge, yend=coord_y_dodge))
       
-    p1 <- ggplot() + gene_plot + observed_line + observed_line_2 + observed_plot + cosmic_line + cosmic_line_2 + cosmic_plot + x_label + y_label + title + y_limits + theme
+    p1 <- ggplot() + gene_plot + observed_line + observed_line_2 + observed_plot + cosmic_line + cosmic_line_2 + cosmic_plot + x_label + y_label + title + y_limits + theme + guide
   }
   
   # If a label column is specified plot labels
   
   if(!is.null(label_column)) 
   {
-    p1 <- p1 + geom_text(data=mutation_observed, mapping=aes(x=coord_x_dodge, y=coord_y_dodge + .02, label=labels), angle=plot_text_angle, size=plot_text_size, vjust=0, hjust=0)
+    p1 <- p1 + geom_text(data=mutation_observed, mapping=aes(x=coord_x_dodge, y=coord_y_dodge + .06, label=labels), angle=plot_text_angle, size=plot_text_size, vjust=1, hjust=0)
   }
   
   return(p1)

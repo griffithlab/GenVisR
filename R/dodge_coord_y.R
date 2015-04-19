@@ -7,15 +7,15 @@
 
 dodge_coord_y <- function(x, track='top')
 {
-  
+  print(x$coord_x_dodge)
   for(i in 1:length(x$coord_x_dodge))
   {
-    if(track == 'top')
+    if(track == 'top' & i == 1)
     {
       pos <- 2
       orig_pos <- 2
       pos_change <- .5
-    } else if(track == 'bottom') {
+    } else if(track == 'bottom' & i == 1) {
       pos <- -2
       orig_pos <- -2
       pos_change <- -.5
