@@ -53,7 +53,7 @@ build_lolli <- function(gene_data, length, mutation_observed, mutation_cosmic, f
   # construct the plot with or without cosmic track
   if(is.null(mutation_cosmic))
   {	
-    y_limits <- ylim(c(-1, max(mutation_observed$coord_y_dodge) + 1))
+    y_limits <- ylim(c(-1, max(mutation_observed$coord_y_dodge) + 5))
     y_label <- ylab('Observed')
     p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 + observed_line + observed_plot + x_label + y_label + title + y_limits + theme + guide
     

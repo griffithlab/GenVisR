@@ -48,7 +48,5 @@ mutationCOS <- function(transcriptID, rep.fact, rep.dist.lmt, attr.fact, adj.max
   cosmic$group <- group_mutation_coord(as.vector(cosmic$mutation_coord))
   cosmic$coord_y_dodge <- dodge_coord_y(cosmic, track='bottom')
   
-  print(cosmic)
-  
   return(cosmic)
 }
