@@ -7,6 +7,7 @@
 #' @param genome Object of class BSgenome specifying the genome
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
 #' @param transformIntronic Boolean specifying whether to perform a log transform on intronic space
+#' @import GenomicRanges
 #' @return ggplot object
 #' @export
 
@@ -25,8 +26,9 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE)
   #!!!!!!!!!! Test to  grab intronic regions and transform intronic space
   if(transformIntronic == TRUE)
   {
-    introns <- formatIntronic(txdb, gr)
-    gene_features <- format_intronic_space(introns, gene_features, gr)
+#     introns <- formatIntronic(txdb, gr)
+#     gene_features <- format_intronic_space(introns, gene_features, gr)
+    master <- mergeRegions(gene_features, gr)
   }
   
   return(gene_features)

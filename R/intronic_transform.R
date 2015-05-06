@@ -7,8 +7,7 @@
 
 intronic_transform <- function(x)
 {
-  x$diff <- x$end - x$start + 1
-  x$diff <- ifelse(x$Type == 'Intron', log(x$diff), x$diff)
+  x$width <- ifelse(x$Type == 'Intron', log(x$width), x$width)
   x <- x[order(x$start),]
   return(x)
 }

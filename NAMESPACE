@@ -2,6 +2,8 @@
 
 export(CN_cohort_plot)
 export(CN_plot)
+export(gene_plot)
 export(lolliplot)
 export(mutation_heatmap)
 export(plot_coverage)
+import(GenomicRanges)
