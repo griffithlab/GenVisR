@@ -6,6 +6,7 @@
 #' @param gr A Granges object specifying the region of interest
 #' @param reduce Boolean specifying whether to collapse isoforms
 #' @param gaps Boolean specifying whether to report space between CDS instead of CDS
+#' @import GenomicRanges
 #' @return Object of class Granges list
 
 extrcds <- function(txdb, gr, reduce=FALSE, gaps=FALSE)

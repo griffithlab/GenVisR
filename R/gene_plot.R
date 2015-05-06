@@ -17,7 +17,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE)
   fiveUTR <- formatfiveUTR(txdb, gr, genome=genome, reduce=reduce)
   
   # bind together a data frame of gene features as a list and remove erroneous NA values
-  # There be dragons here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  # Here be dragons !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   gene_features <- mapply(rbind, cds, threeUTR, fiveUTR, SIMPLIFY=FALSE)
   gene_features <- lapply(gene_features, na.omit)
   
