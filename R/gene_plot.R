@@ -8,6 +8,7 @@
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
 #' @param transformIntronic Boolean specifying whether to perform a log transform on intronic space
 #' @return ggplot object
+#' @export
 
 gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE)
 {

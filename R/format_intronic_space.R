@@ -16,9 +16,9 @@ format_intronic_space <- function(introns, exons, gr)
   gene <- lapply(exons, rbind, introns)
   
   # Calculate any pseudo_exons present (i.e. a genomic coordinate present as an exon/UTR in one isoform but not another)
-  gene <- lapply(test, Calculate_Pseudoexons, chr)
+  gene <- lapply(gene, Calculate_Pseudoexons, chr)
   
-  # compute the power of the transform necessary and transform the coordinate system
+  # compute the transform
   gene <- lapply(gene, intronic_transform)
   
   return(gene)
