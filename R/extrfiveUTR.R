@@ -10,6 +10,8 @@
 
 extrfiveUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
 {
+  message("Obtaining 5' UTR Coordinates")
+  
   # get a list of transcript id's overlapping the GRanges object
   transcripts <- transcriptsByOverlaps(txdb, gr)
   map <- relist(unlist(transcripts, use.names=FALSE)$tx_id, transcripts)
@@ -32,6 +34,8 @@ extrfiveUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   # If gaps is set to true report report gaps between cds in lieu of cds
   if(gaps == TRUE)
   {
+    message("Calculating 5' UTR Gaps")
+    
     # Calcluate gaps between cds regions for each isoform
     fiveUTR <- lapply(fiveUTR, gaps)
     
