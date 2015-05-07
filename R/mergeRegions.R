@@ -60,5 +60,27 @@ mergeRegions <- function(gene_features, gr, base=exp(1)){
   
   master <- master[order(master$start, master$end),]
   
+  # Transform original coordinates into new space and bind to master data frame
+  for(i in 1:nrow(master))
+  {
+    if(i == 1)
+    {
+      trans_start <- 1
+      trans_end <- master[1,c('width')]
+      
+      trans_start_vec <- trans_start
+      trans_end_vec <- trans_end
+    } else {
+      trans_start <- trans_end_vec[i-1]
+      trans_end <- master[i,c('width')] + trans_end_vec[i-1]
+      
+      trans_start_vec <- c(trans_start_vec, trans_start)
+      trans_end_vec <- c(trans_end_vec, trans_end)
+    }
+  }
+  
+  master$trans_start <- trans_start_vec
+  master$trans_end <- trans_end_vec
+  
   return(master)
 }
