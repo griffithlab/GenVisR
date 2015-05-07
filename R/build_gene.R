@@ -12,7 +12,7 @@ build_gene <- function(data_frame)
   
   # Define various parameters of plot
   gene_features <- geom_rect(data=data_frame, mapping=aes(xmin=start, xmax=end, ymin=Upper, ymax=Lower, fill=GC))
-  gene_track <- geom_segment(data=data_frame, mapping=aes(x=segStart, xend=segEnd, y=Mid, yend=Mid), arrow = arrow(length=unit(0.1,"cm")))
+  gene_track <- geom_segment(data=data_frame, mapping=aes(x=segStart, xend=segEnd, y=Mid, yend=Mid))
   
   # Define the theme of the plot
   theme <- theme(axis.title.x=element_blank(), axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(), legend.position='top')
