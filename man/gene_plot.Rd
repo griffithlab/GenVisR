@@ -4,7 +4,8 @@
 \alias{gene_plot}
 \title{plot gene}
 \usage{
-gene_plot(txdb, gr, genome, reduce = FALSE, transformIntronic = FALSE)
+gene_plot(txdb, gr, genome, reduce = FALSE, transformIntronic = FALSE,
+  output_transInt_table = FALSE)
 }
 \arguments{
 \item{txdb}{A TxDb object for a genome}
@@ -16,6 +17,8 @@ gene_plot(txdb, gr, genome, reduce = FALSE, transformIntronic = FALSE)
 \item{reduce}{Boolean specifying whether to collapse isoforms in the ROI}
 
 \item{transformIntronic}{Boolean specifying whether to perform a log transform on intronic space}
+
+\item{output_transInt_table}{Boolean specifying whether to output a master gene features table instead of a plot when transformIntronic is TRUE}
 }
 \value{
 ggplot object

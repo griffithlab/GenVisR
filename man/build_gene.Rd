@@ -4,10 +4,12 @@
 \alias{build_gene}
 \title{build gene plot}
 \usage{
-build_gene(data_frame)
+build_gene(data_frame, display_x_axis = T)
 }
 \arguments{
 \item{data_frame}{an object of class data frame specifying gene feature information}
+
+\item{display_axis}{Boolean specifying whether to display X axis coordinate values}
 }
 \value{
 ggplot object

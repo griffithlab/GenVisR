@@ -18,12 +18,33 @@
 #' @return ggplot object
 #' @export
 
-plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='test', bg_fill="black", text_fill="white", border="black", size=10, width_ratio=c(1, 10), colour="blue", plot_type="line")
+plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='test', bg_fill="black", text_fill="white", border="black", size=10, width_ratio=c(1, 10), colour="blue", plot_type="line", transformIntronic=F)
 {
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
-  gene <- gene_plot(txdb, gr, genome, reduce=reduce)
+  gene <- gene_plot(txdb, gr, genome, reduce=reduce, transformIntronic=transformIntronic)
   gene_list <- list()
   gene_list[[gene_name]] <- gene
+  
+  if(transformIntronic == TRUE)
+  {
+    # Obtain a copy of the master gene file
+    message("Obtaining master gene table for mapping")
+    master <- gene_plot(txdb, gr, genome, reduce=reduce, transformIntronic=TRUE, output_transInt_table=TRUE)
+    
+    # Format coverage file so that there is a start column, then map coord into transformed intronic space
+    test <- function(x)
+    {
+      x$start <- x$end
+      return(x)
+    }
+    coverage_data <- lapply(coverage_data, test)
+    message("Mapping coverage file into transformed intronic space")
+    coverage_data <- lapply(coverage_data, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
+    
+    # Replace original coordinates with transformed coordinates
+    coverage_data <- coverage_data[,c('trans_start', 'trans_end', 'cov')]
+    colnames(coverage_data) <- c('start', 'end', 'cov') 
+  }
   
   # Obtain coverage plots for the data input as a list
   coverage_plot <- lapply(coverage_data, build_coverage, colour=colour, plot_type=plot_type)

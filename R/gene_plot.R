@@ -7,31 +7,40 @@
 #' @param genome Object of class BSgenome specifying the genome
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
 #' @param transformIntronic Boolean specifying whether to perform a log transform on intronic space
+#' @param output_transInt_table Boolean specifying whether to output a master gene features table instead of a plot when transformIntronic is TRUE
 #' @import GenomicRanges
 #' @return ggplot object
 #' @export
 
-gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE)
+gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, output_transInt_table=FALSE)
 {
+  require(plyr)
+  
   # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
   cds <- formatcds(txdb, gr, genome=genome, reduce=reduce)
   threeUTR <- formatthreeUTR(txdb, gr, genome=genome, reduce=reduce)
   fiveUTR <- formatfiveUTR(txdb, gr, genome=genome, reduce=reduce)
   
   # bind together a data frame of gene features as a list and remove erroneous NA values
-  # Here be dragons !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   gene_features <- mapply(rbind, cds, threeUTR, fiveUTR, SIMPLIFY=FALSE)
   gene_features <- lapply(gene_features, na.omit)
   
   # Create a master table based on an intronic log transform then use the master table as a map for mapping coordinates to transformed space
   if(transformIntronic == TRUE)
   {
+    # status message
     message("transforming intronic space")
+    
+    # Create Master table and return it instead of plot if requested
     master <- mergeRegions(gene_features, gr)
-    gene_features <- lapply(gene_features, map_coord_space, master=master)
+    if(output_transInt_table == TRUE)
+    {
+      return(master)
+    }
+    
+    # Map the original coordinates into transformed space
+    gene_features <- lapply(gene_features, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
   }
-  
-  #!!!!!!!!!!!!! End of the dragons
   
   # Adjust the Y axis gene locations based on the presense of isoforms
   increment <- 0
@@ -42,24 +51,29 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE)
     gene_features[[i]]$Mid <- gene_features[[i]]$Mid + increment
     if(transformIntronic == TRUE)
     {
-      gene_features[[i]]$trans_segStart <- min(gene_features[[i]]$trans_start_vec)
-      gene_features[[i]]$trans_segEnd <- max(gene_features[[i]]$trans_end_vec)
+      gene_features[[i]]$trans_segStart <- min(gene_features[[i]]$trans_start)
+      gene_features[[i]]$trans_segEnd <- max(gene_features[[i]]$trans_end)
     }
     increment <- increment + 2.2
   }	
   
-  # Convert the list object of gene_features into a data frame
+  # Convert the list object of gene_features into a single data frame and set flag to display x axis in plot (this flag is overwritten if transformIntronic == T)
   gene_features <- as.data.frame(do.call("rbind", gene_features))
+  display_x_axis <- TRUE
   
-  # If it is requested to transform intronic, dump the original values in the data frame and rename the transform data
+  # Replace the original coordinates with the transformed coordinates
   if(transformIntronic==T)
-  {
-    gene_features <- gene_features[,c('trans_start_vec', 'trans_end_vec', 'GC', 'width', 'Type', 'Upper', 'Lower', 'Mid', 'trans_segStart', 'trans_segEnd')]
+  { 
+    # replace original coordinates with transformed coordinates
+    gene_features <- gene_features[,c('trans_start', 'trans_end', 'GC', 'width', 'Type', 'Upper', 'Lower', 'Mid', 'trans_segStart', 'trans_segEnd')]
     colnames(gene_features) <- c('start', 'end', 'GC', 'width', 'Type', 'Upper', 'Lower', 'Mid', 'segStart', 'segEnd')
+    
+    # set flag to not display x axis values if plot is transformed
+    display_x_axis <- FALSE
   }
   
   # construct the gene in gplot
-  gene_plot <- build_gene(gene_features)
+  gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis)
   
   return(gene_plot)
 }

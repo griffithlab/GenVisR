@@ -19,7 +19,7 @@ build_coverage <- function(data_frame, colour="blue", plot_type="line")
   theme <- theme(axis.title.x=element_blank(), axis.title.y=element_blank())
   
   # Define the main plot
-  cov_plot <- ggplot(data_frame, aes(x=stop, y=cov)) + theme
+  cov_plot <- ggplot(data_frame, aes(x=end, y=cov)) + theme
   
   # Define Control structure for plot type
   if(plot_type == "line")

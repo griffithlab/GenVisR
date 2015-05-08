@@ -7,7 +7,7 @@
 plot_coverage(coverage_data, txdb, gr, genome, reduce = F,
   gene_name = "test", bg_fill = "black", text_fill = "white",
   border = "black", size = 10, width_ratio = c(1, 10), colour = "blue",
-  plot_type = "line")
+  plot_type = "line", transformIntronic = F)
 }
 \arguments{
 \item{coverage_data}{named list containing data frames with columns stop and cov}
