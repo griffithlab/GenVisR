@@ -15,6 +15,8 @@
 gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, output_transInt_table=FALSE)
 {
   require(plyr)
+  library(doMC)
+  doMC::registerDoMC(cores=8)
   
   # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
   cds <- formatcds(txdb, gr, genome=genome, reduce=reduce)
@@ -39,7 +41,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, o
     }
     
     # Map the original coordinates into transformed space
-    gene_features <- lapply(gene_features, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
+    gene_features <- lapply(gene_features, function(x, master) adply(x, 1, map_coord_space, master=master, .parallel=TRUE), master=master)
   }
   
   # Adjust the Y axis gene locations based on the presense of isoforms

@@ -20,6 +20,9 @@
 
 plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='test', bg_fill="black", text_fill="white", border="black", size=10, width_ratio=c(1, 10), colour="blue", plot_type="line", transformIntronic=F)
 {
+  library(doMC)
+  doMC::registerDoMC(cores=8)
+  
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
   gene <- gene_plot(txdb, gr, genome, reduce=reduce, transformIntronic=transformIntronic)
   gene_list <- list()
@@ -39,16 +42,19 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='
     }
     coverage_data <- lapply(coverage_data, test)
     message("Mapping coverage file into transformed intronic space")
-    coverage_data <- lapply(coverage_data, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
-    
+    coverage_data <- lapply(coverage_data, function(x, master) adply(x, 1, map_coord_space, master=master, .parallel=TRUE), master=master)
+
     # Replace original coordinates with transformed coordinates
-    coverage_data <- coverage_data[,c('trans_start', 'trans_end', 'cov')]
-    colnames(coverage_data) <- c('start', 'end', 'cov') 
+    for(i in 1:length(coverage_data))
+    {
+      coverage_data[[i]] <- coverage_data[[i]][,c('trans_start', 'trans_end', 'cov')]
+      colnames(coverage_data[[i]]) <- c('start', 'end', 'cov') 
+      return(coverage_data)
+    }
   }
   
   # Obtain coverage plots for the data input as a list
   coverage_plot <- lapply(coverage_data, build_coverage, colour=colour, plot_type=plot_type)
-  
   # Combine both gene and coverage plot lists
   merged_data <- c(gene_list, coverage_plot)
   
