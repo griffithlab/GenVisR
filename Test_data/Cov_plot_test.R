@@ -1,5 +1,5 @@
 require("GenomicRanges")
-setwd("/Users/zskidmor/GGgenome/Test_data")
+setwd("/Users/awagner/Workspace/R/GGgenome/Test_data")
 
 # need a biostrings object for reference
 require(BSgenome.Hsapiens.UCSC.hg19)
@@ -24,7 +24,22 @@ colnames(cov) <- c('end', 'cov')
 #cov2 <- cov[,c(3,5)]
 #colnames(cov2) <- c("end", "cov")
 data <- list("RNA" = cov)
+cov2 <- cov[7480:7500,]
+data2 <- list("RNA" = cov2)
+
 
 #test <- gene_plot(txdb, gr, genome, reduce=F, transformIntronic=T)
 #plot_coverage(data, txdb, gr, genome, reduce=T)
 #plot_track('CBFB'=gene, 'Cov'=test_plot, 'Cov'=test_plot, border='green', axis_align='width', width_ratio=c(1,10))
+
+# test <- function(x)
+# {
+#   x$start <- x$end
+#   return(x)
+# }
+# cov2 <- test(cov2)
+# 
+# master <- gene_plot(txdb, gr, genome, reduce=FALSE, transformIntronic=TRUE, output_transInt_table=TRUE)
+# test <- adply(cov2, 1, map_coord_space, master=master, .parallel=FALSE)
+
+test <- plot_coverage(data2, txdb, gr, genome, reduce=F, transformIntronic=T)

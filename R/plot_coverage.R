@@ -18,7 +18,9 @@
 #' @return ggplot object
 #' @export
 
-plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='test', bg_fill="black", text_fill="white", border="black", size=10, width_ratio=c(1, 10), colour="blue", plot_type="line", transformIntronic=F)
+plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='test', bg_fill="black", 
+                          text_fill="white", border="black", size=10, width_ratio=c(1, 10), colour="blue",
+                          plot_type="line", transformIntronic=F)
 {
   library(doMC)
   doMC::registerDoMC(cores=8)
@@ -59,7 +61,8 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='
   merged_data <- c(gene_list, coverage_plot)
   
   # Plot the data on a track
-  track_coverage_plot <- plot_track(merged_data, gene_name=gene_name, bg_fill=bg_fill, text_fill=text_fill, border=border, size=size, axis_align='width', width_ratio=width_ratio, nested_list=T)
+  track_coverage_plot <- plot_track(merged_data, gene_name=gene_name, bg_fill=bg_fill, text_fill=text_fill,
+                                    border=border, size=size, axis_align='width', width_ratio=width_ratio, nested_list=T)
   
   return(track_coverage_plot)
 }

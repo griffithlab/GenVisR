@@ -5,7 +5,7 @@
 \alias{mergeRegions}
 \title{Map regions to transformed space}
 \usage{
-map_coord_space(master, coord)
+map_coord_space(master, coord, base = exp(1))
 
 mergeRegions(gene_features, gr, base = exp(1))
 }
