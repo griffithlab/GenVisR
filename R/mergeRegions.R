@@ -66,7 +66,7 @@ mergeRegions <- function(gene_features, gr, base=exp(1)){
     if(i == 1)
     {
       trans_start <- 1
-      trans_end <- master[1,c('width')] + 1
+      trans_end <- master[1,c('width')] + trans_start
       
       trans_start_vec <- trans_start
       trans_end_vec <- trans_end

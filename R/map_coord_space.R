@@ -6,7 +6,7 @@
 #' @param coord an object of class data frame containing columns start and end to map to transformed space
 #' @return an object of class data frame identical to coord but with extra columns for transformed coord
 
-map_coord_space <- function(master, coord)
+map_coord_space <- function(master, coord, base=exp(1))
 {
   #Convert master table into GRanges object to find overlaps in coord
   master_gr <- GRanges(seqnames=c("chr1"), ranges=IRanges(start=master$start, end=master$end))
@@ -33,8 +33,13 @@ map_coord_space <- function(master, coord)
   }
     
   # Map the original coordinates to the transformed space
-  trans_start <- (coord_range$start - master_overlap$start) + master_overlap$trans_start
-  trans_end <- trans_start + coord_range$width
+  if( master_overlap$Type != 'Intron' ){
+    trans_start <- (coord_range$start - master_overlap$start) + master_overlap$trans_start
+    trans_end <- trans_start + coord_range$width
+  }else{
+    trans_start <- log(coord_range$start - master_overlap$start, base=base) + master_overlap$trans_start
+    trans_end <- log(coord_range$start - master_overlap$start + coord_range$width, base=base) + master_overlap$trans_start
+  }
   
   # Add in the new transformed coordinates to the coord object
   coord$trans_start <- trans_start

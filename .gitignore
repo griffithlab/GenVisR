@@ -11,3 +11,7 @@
 # RStudio files
 .Rproj.user/
 .Rproj.user
+
+# Don't include large files
+*.bed
+*.bam
