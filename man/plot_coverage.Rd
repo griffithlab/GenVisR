@@ -7,7 +7,7 @@
 plot_coverage(coverage_data, txdb, gr, genome, reduce = F,
   gene_name = "test", bg_fill = "black", text_fill = "white",
   border = "black", size = 10, width_ratio = c(1, 10), colour = "blue",
-  plot_type = "line", transformIntronic = F)
+  plot_type = "line", transformIntronic = F, cores = 1)
 }
 \arguments{
 \item{coverage_data}{named list containing data frames with columns stop and cov}
@@ -35,6 +35,8 @@ plot_coverage(coverage_data, txdb, gr, genome, reduce = F,
 \item{colour}{character string specifying the color of the data in the plot}
 
 \item{plot_type}{character string specifying one of line, area for data display}
+
+\item{cores}{Integer specifying the number of cores to use for processing}
 }
 \value{
 ggplot object

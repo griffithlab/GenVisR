@@ -8,15 +8,15 @@
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
 #' @param transformIntronic Boolean specifying whether to perform a log transform on intronic space
 #' @param output_transInt_table Boolean specifying whether to output a master gene features table instead of a plot when transformIntronic is TRUE
+#' @param cores Integer specifying the number of cores to use for processing
 #' @import GenomicRanges
 #' @return ggplot object
 #' @export
 
-gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, output_transInt_table=FALSE)
+gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, output_transInt_table=FALSE, cores=1)
 {
-  require(plyr)
-  library(doMC)
-  doMC::registerDoMC(cores=8)
+  # Set up backend for parallel processing
+  doMC::registerDoMC(cores=cores)
   
   # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
   cds <- formatcds(txdb, gr, genome=genome, reduce=reduce)

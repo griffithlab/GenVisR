@@ -10,9 +10,7 @@
 #' @return ggplot object
 
 build_coverage <- function(data_frame, x_limits=NULL, display_x_axis=TRUE, colour="blue", plot_type="line")
-{
-  require(ggplot2)
-  
+{ 
   # Specify various parameters of the plot
   line <- geom_line(colour=colour)
   area <- geom_area(colour=colour)
