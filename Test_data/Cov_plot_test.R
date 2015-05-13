@@ -1,5 +1,5 @@
 require("GenomicRanges")
-setwd("/Users/awagner/Workspace/R/GGgenome/Test_data")
+setwd("/Users/zskidmor/GGgenome/Test_data")
 
 # need a biostrings object for reference
 require(BSgenome.Hsapiens.UCSC.hg19)
@@ -10,8 +10,8 @@ require(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 
 # need Granges object 
-gr <- GRanges(seqnames=c("chr16"), ranges=IRanges(start=c(67063050), end=c(67134958)), strand=strand(c("+")))
-#gr <- GRanges(seqnames=c("chr16"), ranges=IRanges(start=c(67020842), end=c(67136898)), strand=strand(c("+")))
+#gr <- GRanges(seqnames=c("chr16"), ranges=IRanges(start=c(67063051), end=c(67134782)), strand=strand(c("+")))
+gr <- GRanges(seqnames=c("chr16"), ranges=IRanges(start=c(67063051), end=c(67064191)), strand=strand(c("+")))
 
 # need coverage data and extra stuff to make plot work
 cov <- read.delim('CBFB_TCGA_Cov.bed')
@@ -42,4 +42,4 @@ data2 <- list("RNA" = cov2)
 # master <- gene_plot(txdb, gr, genome, reduce=FALSE, transformIntronic=TRUE, output_transInt_table=TRUE)
 # test <- adply(cov2, 1, map_coord_space, master=master, .parallel=FALSE)
 
-test <- plot_coverage(data2, txdb, gr, genome, reduce=F, transformIntronic=T)
+test <- plot_coverage(data, txdb, gr, genome, reduce=F, transformIntronic=T)
