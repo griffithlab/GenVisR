@@ -5,7 +5,7 @@
 \title{plot gene}
 \usage{
 gene_plot(txdb, gr, genome, reduce = FALSE, transformIntronic = FALSE,
-  output_transInt_table = FALSE, cores = 1)
+  output_transInt_table = FALSE, gene_colour = NULL, cores = 1)
 }
 \arguments{
 \item{txdb}{A TxDb object for a genome}

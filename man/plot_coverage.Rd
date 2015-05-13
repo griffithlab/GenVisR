@@ -5,9 +5,10 @@
 \title{produce a coverage plot}
 \usage{
 plot_coverage(coverage_data, txdb, gr, genome, reduce = F,
-  gene_name = "test", bg_fill = "black", text_fill = "white",
-  border = "black", size = 10, width_ratio = c(1, 10), colour = "blue",
-  plot_type = "line", transformIntronic = F, cores = 1)
+  gene_colour = NULL, gene_name = "test", bg_fill = "black",
+  text_fill = "white", border = "black", size = 10, width_ratio = c(1,
+  10), colour = "blue", plot_type = "line", transformIntronic = F,
+  cores = 1)
 }
 \arguments{
 \item{coverage_data}{named list containing data frames with columns stop and cov}
@@ -19,6 +20,8 @@ plot_coverage(coverage_data, txdb, gr, genome, reduce = F,
 \item{genome}{Object of class BSgenome specifying the genome}
 
 \item{reduce}{Boolean specifying whether to collapse isoforms in the ROI}
+
+\item{gene_colour}{character string specifying the colour of the gene to be plotted}
 
 \item{gene_name}{character string specifying the name of the gene or ROI}
 

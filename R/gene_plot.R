@@ -13,7 +13,7 @@
 #' @return ggplot object
 #' @export
 
-gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, output_transInt_table=FALSE, cores=1)
+gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, output_transInt_table=FALSE, gene_colour=NULL, cores=1)
 {
   # Set up backend for parallel processing
   doMC::registerDoMC(cores=cores)
@@ -86,7 +86,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, o
   }
   
   # construct the gene in gplot
-  gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits)
+  gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour)
   
   return(gene_plot)
 }

@@ -7,6 +7,7 @@
 #' @param gr A Granges object specifying a region of interest
 #' @param genome Object of class BSgenome specifying the genome
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
+#' @param gene_colour character string specifying the colour of the gene to be plotted
 #' @param gene_name character string specifying the name of the gene or ROI
 #' @param bg_fill character string giving the colour to fill the label
 #' @param text_fill character string giving the colour to fill the text
@@ -19,7 +20,7 @@
 #' @return ggplot object
 #' @export
 
-plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='test', bg_fill="black", 
+plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_colour=NULL, gene_name='test', bg_fill="black", 
                           text_fill="white", border="black", size=10, width_ratio=c(1, 10), colour="blue",
                           plot_type="line", transformIntronic=F, cores=1)
 {
@@ -27,7 +28,7 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='
   doMC::registerDoMC(cores=cores)
   
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
-  gene <- gene_plot(txdb, gr, genome, reduce=reduce, transformIntronic=transformIntronic)
+  gene <- gene_plot(txdb, gr, genome, reduce=reduce, gene_colour=gene_colour, transformIntronic=transformIntronic)
   gene_list <- list()
   gene_list[[gene_name]] <- gene
   
