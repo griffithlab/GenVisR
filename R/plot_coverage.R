@@ -38,8 +38,11 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='
   }
   coverage_data <- lapply(coverage_data, test2, min(ranges(gr)), max(ranges(gr)))
   
-  # obtain xlimits for gene plot, this is overwritten of transformIntronic == TRUE
+  # obtain xlimits for gene plot, this is overwritten if transformIntronic == TRUE
   xlimits <- c(start(gr), end(gr))
+  
+  # set flag to display x axis labels, overwritten if transformIntronic == TRUE
+  display_x_axis <- TRUE
   
   # perform the intronic transform on the coverage data
   if(transformIntronic == TRUE)
@@ -72,10 +75,13 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='
     colnames(temp) <- c('start', 'end')
     temp <- adply(temp, 1, map_coord_space, master=master)
     xlimits <- c(min(temp$trans_start), max(temp$trans_end))
+    
+    # set flag to not display x axis labels
+    display_x_axis <- FALSE
   }
   
   # obtain coverage plots for the data input as a list
-  coverage_plot <- lapply(coverage_data, build_coverage, colour=colour, plot_type=plot_type, x_limits=xlimits)
+  coverage_plot <- lapply(coverage_data, build_coverage, colour=colour, plot_type=plot_type, x_limits=xlimits, display_x_axis=display_x_axis)
   # Combine both gene and coverage plot lists
   merged_data <- c(gene_list, coverage_plot)
   

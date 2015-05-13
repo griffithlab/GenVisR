@@ -4,11 +4,13 @@
 \alias{build_coverage}
 \title{build coverage plot}
 \usage{
-build_coverage(data_frame, x_limits = NULL, colour = "blue",
-  plot_type = "line")
+build_coverage(data_frame, x_limits = NULL, display_x_axis = TRUE,
+  colour = "blue", plot_type = "line")
 }
 \arguments{
 \item{data_frame}{an object of class data frame containing columns stop and cov}
+
+\item{display_x_axis}{boolean specifying whether to plot x-axis labels}
 
 \item{colour}{character string specifying the color of the data in the plot}
 
