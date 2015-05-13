@@ -4,7 +4,7 @@
 \alias{build_gene}
 \title{build gene plot}
 \usage{
-build_gene(data_frame, display_x_axis = T)
+build_gene(data_frame, display_x_axis = T, x_limits = NULL)
 }
 \arguments{
 \item{data_frame}{an object of class data frame specifying gene feature information}

@@ -30,6 +30,18 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='
   gene_list <- list()
   gene_list[[gene_name]] <- gene
   
+  # Remove entries in coverage data file that are not within the GRanges object specified
+  test2 <- function(x, min, max)
+  {
+    x <- x[-which(x$end <= min | x$end >= max),]
+    return(x)
+  }
+  coverage_data <- lapply(coverage_data, test2, min(ranges(gr)), max(ranges(gr)))
+  
+  # obtain xlimits for gene plot, this is overwritten of transformIntronic == TRUE
+  xlimits <- c(start(gr), end(gr))
+  
+  # perform the intronic transform on the coverage data
   if(transformIntronic == TRUE)
   {
     # Obtain a copy of the master gene file
@@ -51,12 +63,19 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_name='
     {
       coverage_data[[i]] <- coverage_data[[i]][,c('trans_start', 'trans_end', 'cov')]
       colnames(coverage_data[[i]]) <- c('start', 'end', 'cov') 
-      return(coverage_data)
     }
+    
+    # Obtain x limits for gene plot based on granges object
+    start <- cbind(start(gr), start(gr))
+    end <- cbind(end(gr), end(gr))
+    temp <- as.data.frame(rbind(start, end))
+    colnames(temp) <- c('start', 'end')
+    temp <- adply(temp, 1, map_coord_space, master=master)
+    xlimits <- c(min(temp$trans_start), max(temp$trans_end))
   }
   
-  # Obtain coverage plots for the data input as a list
-  coverage_plot <- lapply(coverage_data, build_coverage, colour=colour, plot_type=plot_type)
+  # obtain coverage plots for the data input as a list
+  coverage_plot <- lapply(coverage_data, build_coverage, colour=colour, plot_type=plot_type, x_limits=xlimits)
   # Combine both gene and coverage plot lists
   merged_data <- c(gene_list, coverage_plot)
   

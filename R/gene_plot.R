@@ -27,6 +27,9 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, o
   gene_features <- mapply(rbind, cds, threeUTR, fiveUTR, SIMPLIFY=FALSE)
   gene_features <- lapply(gene_features, na.omit)
   
+  # obtain xlimits for gene plot, this is overwritten of transformIntronic == TRUE
+  xlimits <- c(start(gr), end(gr))
+  
   # Create a master table based on an intronic log transform then use the master table as a map for mapping coordinates to transformed space
   if(transformIntronic == TRUE)
   {
@@ -72,10 +75,18 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, o
     
     # set flag to not display x axis values if plot is transformed
     display_x_axis <- FALSE
+    
+    # Obtain x limits for gene plot based on granges object
+    start <- cbind(start(gr), start(gr))
+    end <- cbind(end(gr), end(gr))
+    temp <- as.data.frame(rbind(start, end))
+    colnames(temp) <- c('start', 'end')
+    temp <- adply(temp, 1, map_coord_space, master=master)
+    xlimits <- c(min(temp$trans_start), max(temp$trans_end))
   }
   
   # construct the gene in gplot
-  gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis)
+  gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits)
   
   return(gene_plot)
 }

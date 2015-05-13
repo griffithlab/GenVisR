@@ -4,7 +4,8 @@
 \alias{build_coverage}
 \title{build coverage plot}
 \usage{
-build_coverage(data_frame, colour = "blue", plot_type = "line")
+build_coverage(data_frame, x_limits = NULL, colour = "blue",
+  plot_type = "line")
 }
 \arguments{
 \item{data_frame}{an object of class data frame containing columns stop and cov}
@@ -12,6 +13,8 @@ build_coverage(data_frame, colour = "blue", plot_type = "line")
 \item{colour}{character string specifying the color of the data in the plot}
 
 \item{plot_type}{character string specifying one of line, area for data display}
+
+\item{xlimits}{vector giving x-axis limits for plot, inferred from data if not specified}
 }
 \value{
 ggplot object
