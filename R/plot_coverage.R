@@ -17,18 +17,21 @@
 #' @param colour character string specifying the color of the data in the plot
 #' @param plot_type character string specifying one of line, area for data display
 #' @param cores Integer specifying the number of cores to use for processing
+#' @param base The log base to transform the data
+#' @param transform A vector of strings designating what objects to log transform
 #' @return ggplot object
 #' @export
 
 plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_colour=NULL, gene_name='test', bg_fill="black", 
                           text_fill="white", border="black", size=10, width_ratio=c(1, 10), colour="blue",
-                          plot_type="line", transformIntronic=F, cores=1)
+                          plot_type="line", cores=1, base=exp(1), transform=c('Intron','CDS','UTR'))
 {
   # Set up backend for parallel processing
   doMC::registerDoMC(cores=cores)
   
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
-  gene <- gene_plot(txdb, gr, genome, reduce=reduce, gene_colour=gene_colour, transformIntronic=transformIntronic)
+  gene <- gene_plot(txdb, gr, genome, reduce=reduce, gene_colour=gene_colour,
+                    base=base, transform=transform)
   gene_list <- list()
   gene_list[[gene_name]] <- gene
   
@@ -40,18 +43,18 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_colour
   }
   coverage_data <- lapply(coverage_data, test2, min(ranges(gr)), max(ranges(gr)))
   
-  # obtain xlimits for gene plot, this is overwritten if transformIntronic == TRUE
+  # obtain xlimits for gene plot, this is overwritten if transforms
   xlimits <- c(start(gr), end(gr))
   
-  # set flag to display x axis labels, overwritten if transformIntronic == TRUE
+  # set flag to display x axis labels, overwritten if transforms
   display_x_axis <- TRUE
   
   # perform the intronic transform on the coverage data
-  if(transformIntronic == TRUE)
+  if(length(transform) > 0)
   {
     # Obtain a copy of the master gene file
     message("Obtaining master gene table for mapping")
-    master <- gene_plot(txdb, gr, genome, reduce=reduce, transformIntronic=TRUE, output_transInt_table=TRUE)
+    master <- gene_plot(txdb, gr, genome, reduce=reduce, transform=transform, output_transInt_table=TRUE)
     
     # Format coverage file so that there is a start column, then map coord into transformed intronic space
     test <- function(x)

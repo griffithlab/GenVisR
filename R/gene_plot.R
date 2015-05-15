@@ -6,14 +6,16 @@
 #' @param gr A Granges object specifying a region of interest
 #' @param genome Object of class BSgenome specifying the genome
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
-#' @param transformIntronic Boolean specifying whether to perform a log transform on intronic space
 #' @param output_transInt_table Boolean specifying whether to output a master gene features table instead of a plot when transformIntronic is TRUE
 #' @param cores Integer specifying the number of cores to use for processing
+#' @param base The log base to transform the data
+#' @param transform A vector of strings designating what objects to log transform
 #' @import GenomicRanges
 #' @return ggplot object
 #' @export
 
-gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, output_transInt_table=FALSE, gene_colour=NULL, cores=1)
+gene_plot <- function(txdb, gr, genome, reduce=FALSE, output_transInt_table=FALSE, 
+                      gene_colour=NULL, cores=1, base=exp(1), transform=c('Intron','CDS','UTR'))
 {
   # Set up backend for parallel processing
   doMC::registerDoMC(cores=cores)
@@ -26,18 +28,31 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, o
   # bind together a data frame of gene features as a list and remove erroneous NA values
   gene_features <- mapply(rbind, cds, threeUTR, fiveUTR, SIMPLIFY=FALSE)
   gene_features <- lapply(gene_features, na.omit)
+  if(reduce){
+    gene_features <- lapply(gene_features, mergeTypes)
+    chr <- as.character(seqnames(gr))
+    x <- gene_features[[1]][,c('start','end')]
+    x$chr <- chr
+    gc <- function(chr, s, e){
+      gr.temp <- GRanges(seqnames=c(chr), ranges=IRanges(start=c(as.integer(s)), end=c(as.integer(e))), strand=strand(c("+")))
+      return(calcGC(gr=gr.temp, genome=genome))
+    }
+    l <- apply(x,1,function(x) gc(chr=x[3], s=x[1], e=x[2]))
+    l <- lapply(l, Granges2dataframe)
+    gene_features[[1]]$GC <- rbind.fill(l)$GC
+  }
   
   # obtain xlimits for gene plot, this is overwritten of transformIntronic == TRUE
   xlimits <- c(start(gr), end(gr))
   
   # Create a master table based on an intronic log transform then use the master table as a map for mapping coordinates to transformed space
-  if(transformIntronic == TRUE)
+  if(length(transform) > 0)
   {
     # status message
-    message("transforming intronic space")
+    message("transforming space")
     
     # Create Master table and return it instead of plot if requested
-    master <- mergeRegions(gene_features, gr)
+    master <- mergeRegions(gene_features, gr, transform=transform, base=base)
     if(output_transInt_table == TRUE)
     {
       return(master)
@@ -54,7 +69,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, o
     gene_features[[i]]$Upper <- gene_features[[i]]$Upper + increment
     gene_features[[i]]$Lower <- gene_features[[i]]$Lower + increment
     gene_features[[i]]$Mid <- gene_features[[i]]$Mid + increment
-    if(transformIntronic == TRUE)
+    if(length(transform) > 0)
     {
       gene_features[[i]]$trans_segStart <- min(gene_features[[i]]$trans_start)
       gene_features[[i]]$trans_segEnd <- max(gene_features[[i]]$trans_end)
@@ -62,12 +77,12 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, transformIntronic=FALSE, o
     increment <- increment + 2.2
   }	
   
-  # Convert the list object of gene_features into a single data frame and set flag to display x axis in plot (this flag is overwritten if transformIntronic == T)
+  # Convert the list object of gene_features into a single data frame and set flag to display x axis in plot (this flag is overwritten if space is transformed)
   gene_features <- as.data.frame(do.call("rbind", gene_features))
   display_x_axis <- TRUE
   
   # Replace the original coordinates with the transformed coordinates
-  if(transformIntronic==T)
+  if(length(transform) > 0)
   { 
     # replace original coordinates with transformed coordinates
     gene_features <- gene_features[,c('trans_start', 'trans_end', 'GC', 'width', 'Type', 'Upper', 'Lower', 'Mid', 'trans_segStart', 'trans_segEnd')]
