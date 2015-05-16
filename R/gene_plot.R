@@ -7,19 +7,16 @@
 #' @param genome Object of class BSgenome specifying the genome
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
 #' @param output_transInt_table Boolean specifying whether to output a master gene features table instead of a plot when transformIntronic is TRUE
-#' @param cores Integer specifying the number of cores to use for processing
 #' @param base The log base to transform the data
 #' @param transform A vector of strings designating what objects to log transform
-#' @import GenomicRanges
 #' @return ggplot object
 #' @export
+#' @import GenomicRanges
+#' @import plyr
 
 gene_plot <- function(txdb, gr, genome, reduce=FALSE, output_transInt_table=FALSE, 
-                      gene_colour=NULL, cores=1, base=exp(1), transform=c('Intron','CDS','UTR'))
-{
-  # Set up backend for parallel processing
-  doMC::registerDoMC(cores=cores)
-  
+                      gene_colour=NULL, base=exp(1), transform=c('Intron','CDS','UTR'))
+{  
   # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
   cds <- formatcds(txdb, gr, genome=genome, reduce=reduce)
   threeUTR <- formatthreeUTR(txdb, gr, genome=genome, reduce=reduce)
@@ -59,7 +56,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, output_transInt_table=FALS
     }
     
     # Map the original coordinates into transformed space
-    gene_features <- lapply(gene_features, function(x, master) adply(x, 1, map_coord_space, master=master, .parallel=TRUE), master=master)
+    gene_features <- lapply(gene_features, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
   }
   
   # Adjust the Y axis gene locations based on the presense of isoforms

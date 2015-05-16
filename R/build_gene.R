@@ -7,6 +7,7 @@
 #' @param x_limits vector specifying x-axis limits of plot
 #' @param gene_colour character specifying colour of gene to be plotted
 #' @return ggplot object
+#' @import ggplot2
 
 build_gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=NULL)
 { 

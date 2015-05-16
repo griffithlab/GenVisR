@@ -5,6 +5,6 @@ Authors@R: person("Zachary", "Skidmore", , "zskidmor@genome.wustl.edu", role = c
 Maintainer: Zachary Skidmore <zskidmor@genome.wustl.edu>
 Description: Produce publication quality graphics from standard genomic data files
 Depends: R (>= 3.2.0)
-Imports: ggplot2, grid, plyr, gridExtra, doMC, GenomicRanges, gtable
+Imports: ggplot2, plyr, gridExtra, GenomicRanges, gtable
 License: GPL-2
 LazyData: true

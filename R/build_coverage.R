@@ -8,6 +8,7 @@
 #' @param plot_type character string specifying one of line, area for data display
 #' @param display_x_axis boolean specifying whether to plot x-axis labels
 #' @return ggplot object
+#' @import ggplot2
 
 build_coverage <- function(data_frame, x_limits=NULL, display_x_axis=TRUE, colour="blue", plot_type="line")
 { 

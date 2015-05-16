@@ -11,11 +11,10 @@
 #' @param width_ratio vector of length 2 giving the ratio of track labels to plot
 #' @param nested_list boolean specifying whether plots are in a named list nested in another list
 #' @return ggplotGrob object
+#' @import gridExtra
 
 plot_track <- function(..., bg_fill="black", text_fill="white", border="black", size=10, axis_align='none', width_ratio=c(1, 10), nested_list=F)
 {
-  require(gridExtra)
-  
   # Grab all the tracks/data to be plotted as a named list, check and correct if list is within a list
   if(nested_list==T)
   {

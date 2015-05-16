@@ -16,19 +16,17 @@
 #' @param width_ratio vector of length 2 giving the ratio of track labels to plot
 #' @param colour character string specifying the color of the data in the plot
 #' @param plot_type character string specifying one of line, area for data display
-#' @param cores Integer specifying the number of cores to use for processing
 #' @param base The log base to transform the data
 #' @param transform A vector of strings designating what objects to log transform
 #' @return ggplot object
 #' @export
+#' @import GenomicRanges
+#' @import plyr
 
 plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_colour=NULL, gene_name='test', bg_fill="black", 
                           text_fill="white", border="black", size=10, width_ratio=c(1, 10), colour="blue",
-                          plot_type="line", cores=1, base=exp(1), transform=c('Intron','CDS','UTR'))
+                          plot_type="line", base=exp(1), transform=c('Intron','CDS','UTR'))
 {
-  # Set up backend for parallel processing
-  doMC::registerDoMC(cores=cores)
-  
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
   gene <- gene_plot(txdb, gr, genome, reduce=reduce, gene_colour=gene_colour,
                     base=base, transform=transform)
@@ -64,7 +62,7 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_colour
     }
     coverage_data <- lapply(coverage_data, test)
     message("Mapping coverage file into transformed intronic space")
-    coverage_data <- lapply(coverage_data, function(x, master) adply(x, 1, map_coord_space, master=master, .parallel=TRUE), master=master)
+    coverage_data <- lapply(coverage_data, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
 
     # Replace original coordinates with transformed coordinates
     for(i in 1:length(coverage_data))
