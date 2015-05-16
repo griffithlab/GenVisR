@@ -5,12 +5,11 @@
 #' @param plot_list list of ggplot objects
 #' @param axis character string to specify the axis to align plotting space on, one of both, width, height
 #' @return ggplotGrob object
+#' @import gridExtra
+#' @import gtable
 
 align_plot <- function(plot_list, axis='both')
 {
-  require(gridExtra)
-  require(gtable)
-  
   # convert all ggplot objects to grob obects
   plots <- lapply(plot_list, ggplotGrob)
   
@@ -28,7 +27,7 @@ align_plot <- function(plot_list, axis='both')
   if(axis == 'height' | axis == 'both')
   {
     # Obtain the max height in all plots in the list
-    maxheight <- do.call(grid::unit.pmax, lapply(plots, extr_ggplotGrob_width))
+    maxheight <- do.call(grid::unit.pmax, lapply(plots, extr_ggplotGrob_height))
     
     # set the max height for all plots in the list
     plots <- lapply(plots, assign_ggplotGrob_width, maxheight)		
