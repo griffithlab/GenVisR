@@ -6,7 +6,6 @@
 #' @param gr A Granges object specifying a region of interest
 #' @param genome Object of class BSgenome specifying the genome
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
-#' @param output_transInt_table Boolean specifying whether to output a master gene features table instead of a plot when transformIntronic is TRUE
 #' @param base The log base to transform the data
 #' @param transform A vector of strings designating what objects to log transform
 #' @return ggplot object
@@ -14,8 +13,8 @@
 #' @import GenomicRanges
 #' @import plyr
 
-gene_plot <- function(txdb, gr, genome, reduce=FALSE, output_transInt_table=FALSE, 
-                      gene_colour=NULL, base=exp(1), transform=c('Intron','CDS','UTR'))
+gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, 
+                      base=exp(1), transform=c('Intron','CDS','UTR'))
 {  
   # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
   cds <- formatcds(txdb, gr, genome=genome, reduce=reduce)
@@ -39,10 +38,10 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, output_transInt_table=FALS
     gene_features[[1]]$GC <- rbind.fill(l)$GC
   }
   
-  # obtain xlimits for gene plot, this is overwritten of transformIntronic == TRUE
+  # obtain xlimits for gene plot, this is overwritten if transform.
   xlimits <- c(start(gr), end(gr))
   
-  # Create a master table based on an intronic log transform then use the master table as a map for mapping coordinates to transformed space
+  # Create a master table based on log transform(s) then use the master table as a map for mapping coordinates to transformed space
   if(length(transform) > 0)
   {
     # status message
@@ -50,10 +49,6 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, output_transInt_table=FALS
     
     # Create Master table and return it instead of plot if requested
     master <- mergeRegions(gene_features, gr, transform=transform, base=base)
-    if(output_transInt_table == TRUE)
-    {
-      return(master)
-    }
     
     # Map the original coordinates into transformed space
     gene_features <- lapply(gene_features, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
@@ -99,6 +94,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, output_transInt_table=FALS
   
   # construct the gene in gplot
   gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour)
-  
-  return(gene_plot)
+  out <- c(gene_plot, gene_features, master)
+  names(out) <- c('plot','features','master')
+  return(out)
 }

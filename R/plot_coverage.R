@@ -28,8 +28,9 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_colour
                           plot_type="line", base=exp(1), transform=c('Intron','CDS','UTR'))
 {
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
-  gene <- gene_plot(txdb, gr, genome, reduce=reduce, gene_colour=gene_colour,
+  gp_result <- gene_plot(txdb, gr, genome, reduce=reduce, gene_colour=gene_colour,
                     base=base, transform=transform)
+  gene <- gp_result['plot']
   gene_list <- list()
   gene_list[[gene_name]] <- gene
   
@@ -51,8 +52,7 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_colour
   if(length(transform) > 0)
   {
     # Obtain a copy of the master gene file
-    message("Obtaining master gene table for mapping")
-    master <- gene_plot(txdb, gr, genome, reduce=reduce, transform=transform, output_transInt_table=TRUE)
+    master <- gp_result['master']
     
     # Format coverage file so that there is a start column, then map coord into transformed intronic space
     test <- function(x)
