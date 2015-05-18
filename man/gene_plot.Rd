@@ -5,8 +5,8 @@
 \title{plot gene}
 \usage{
 gene_plot(txdb, gr, genome, reduce = FALSE, output_transInt_table = FALSE,
-  gene_colour = NULL, cores = 1, base = exp(1), transform = c("Intron",
-  "CDS", "UTR"))
+  gene_colour = NULL, cores = 1, base = c(10, 2, 2),
+  transform = c("Intron", "CDS", "UTR"))
 }
 \arguments{
 \item{txdb}{A TxDb object for a genome}
@@ -21,7 +21,7 @@ gene_plot(txdb, gr, genome, reduce = FALSE, output_transInt_table = FALSE,
 
 \item{cores}{Integer specifying the number of cores to use for processing}
 
-\item{base}{The log base to transform the data}
+\item{base}{base A vector of log bases to transform the data, corresponding to the elements of transform}
 
 \item{transform}{A vector of strings designating what objects to log transform}
 }

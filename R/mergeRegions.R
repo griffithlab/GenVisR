@@ -4,11 +4,14 @@
 #' @name mergeRegions
 #' @param txdb A TxDb object for a genome
 #' @param gr Granges object specifying the ROI
-#' @param base The log base to transform the data
+#' @param base A vector of log bases to transform the data, corresponding to the elements of transform 
 #' @param transform A vector of strings designating what objects to log transform
 #' @return Master region table data frame
 
 mergeRegions <- function(gene_features, gr, base, transform){
+  #base / transform check
+  if(length(base) < length(transform)){stop("Base vector shorter than transform vector.")}
+  
   #extract preserved intron ranges, exons, and intron buffer regions, and update Type
   master <- as.data.frame(do.call("rbind", gene_features))[,c('start','end','width','Type')]
   
@@ -74,13 +77,13 @@ mergeRegions <- function(gene_features, gr, base, transform){
   for(i in 1:nrow(master))
   {
     if(master[i,4] %in% transform){
-      master[i,3] <- log(master[i,5], base=base) * master[i,3]/master[i,5]
+      idx = match(master[i,4], transform)
+      master[i,3] <- log(master[i,5], base=base[idx]) * master[i,3]/master[i,5]
     }
     if(i == 1)
     {
       trans_start <- 1
       trans_end <- master[1,c('width')] + trans_start
-      
       trans_start_vec <- trans_start
       trans_end_vec <- trans_end
     } else {

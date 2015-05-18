@@ -8,14 +8,14 @@
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
 #' @param output_transInt_table Boolean specifying whether to output a master gene features table instead of a plot when transformIntronic is TRUE
 #' @param cores Integer specifying the number of cores to use for processing
-#' @param base The log base to transform the data
+#' @param base  base A vector of log bases to transform the data, corresponding to the elements of transform 
 #' @param transform A vector of strings designating what objects to log transform
 #' @import GenomicRanges
 #' @return ggplot object
 #' @export
 
 gene_plot <- function(txdb, gr, genome, reduce=FALSE, output_transInt_table=FALSE, 
-                      gene_colour=NULL, cores=1, base=exp(1), transform=c('Intron','CDS','UTR'))
+                      gene_colour=NULL, cores=1, base=c(10,2,2), transform=c('Intron','CDS','UTR'))
 {
   # Set up backend for parallel processing
   doMC::registerDoMC(cores=cores)
