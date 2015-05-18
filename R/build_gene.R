@@ -3,13 +3,14 @@
 #' given a data frame with gene feature information build the ggplot2 object
 #' @name build_gene
 #' @param data_frame an object of class data frame specifying gene feature information
+#' @param master_gene an object of class data frame specifying the master gene feature information resultant of compression
 #' @param display_axis Boolean specifying whether to display X axis coordinate values
 #' @param x_limits vector specifying x-axis limits of plot
 #' @param gene_colour character specifying colour of gene to be plotted
 #' @return ggplot object
 #' @import ggplot2
 
-build_gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=NULL)
+build_gene <- function(data_frame, master_gene, display_x_axis=T, x_limits=NULL, gene_colour=NULL)
 { 
   # Define various parameters of plot
   if(is.null(gene_colour))
@@ -36,7 +37,8 @@ build_gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=
   }
   
   # Define the main plot
-  gene_plot <- ggplot() + gene_track + gene_features + theme + xlimits
+  highlight <- geom_rect(data=master_gene, mapping=aes(xmin=trans_start, xmax=trans_end, ymin=-Inf, ymax=Inf, alpha=width.init))
+  gene_plot <- ggplot() + highlight + gene_track + gene_features + theme + xlimits
   
   return(gene_plot)
 }

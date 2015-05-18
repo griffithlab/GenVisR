@@ -1,9 +1,5 @@
-require("GenomicRanges")
-require('plyr')
-require('ggplot2')
-
-#setwd("/Users/zskidmor/GGgenome/Test_data")
-setwd("/Users/awagner/Workspace/R/GGgenome/Test_data")
+setwd("/Users/zskidmor/GGgenome/Test_data")
+#setwd("/Users/awagner/Workspace/R/GGgenome/Test_data")
 # need a biostrings object for reference
 require(BSgenome.Hsapiens.UCSC.hg19)
 genome <- BSgenome.Hsapiens.UCSC.hg19
@@ -24,6 +20,6 @@ cov <- as.data.frame(cbind(cov[,3], cov[,'cov']))
 colnames(cov) <- c('end', 'cov')
 data <- list("RNA" = cov)
 
-# test <- gene_plot(txdb, gr, genome, reduce=T, transform=c('Intron','UTR','CDS'))
-test <- plot_coverage(data, txdb, gr, genome, reduce=F, transform=c('Intron','UTR','CDS'), cores=8)
+test <- gene_plot(txdb, gr, genome, reduce=T, transform=c('Intron','UTR','CDS'))
+#test <- plot_coverage(data, txdb, gr, genome, reduce=F, transform=c('Intron','UTR','CDS'), cores=8)
 # test <- plot_track('CBFB'=gene, 'Cov'=test_plot, 'Cov'=test_plot, border='green', axis_align='width', width_ratio=c(1,10))
