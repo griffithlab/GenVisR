@@ -40,10 +40,10 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, cores=1,
     gene_features[[1]]$GC <- rbind.fill(l)$GC
   }
   
-  # obtain xlimits for gene plot, this is overwritten of transformIntronic == TRUE
+  # obtain xlimits for gene plot, this is overwritten if transform.
   xlimits <- c(start(gr), end(gr))
   
-  # Create a master table based on an intronic log transform then use the master table as a map for mapping coordinates to transformed space
+  # Create a master table based on log transform(s) then use the master table as a map for mapping coordinates to transformed space
   if(length(transform) > 0)
   {
     # status message
@@ -51,10 +51,6 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, cores=1,
     
     # Create Master table and return it instead of plot if requested
     master <- mergeRegions(gene_features, gr, transform=transform, base=base)
-    if(output_transInt_table == TRUE)
-    {
-      return(master)
-    }
     
     # Map the original coordinates into transformed space
     gene_features <- lapply(gene_features, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
@@ -100,6 +96,6 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, cores=1,
   
   # construct the gene in gplot
   gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour)
-  
-  return(gene_plot)
+  out <- list('plot' = gene_plot, 'features' = gene_features, 'master' = master)
+  return(out)
 }
