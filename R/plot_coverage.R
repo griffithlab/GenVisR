@@ -16,7 +16,8 @@
 #' @param width_ratio vector of length 2 giving the ratio of track labels to plot
 #' @param colour character string specifying the color of the data in the plot
 #' @param plot_type character string specifying one of line, area for data display
-#' @param base The log base to transform the data
+#' @param cores Integer specifying the number of cores to use for processing
+#' @param  base A vector of log bases to transform the data, corresponding to the elements of transform 
 #' @param transform A vector of strings designating what objects to log transform
 #' @return ggplot object
 #' @export
@@ -25,8 +26,8 @@
 
 plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_colour=NULL, gene_name='test', bg_fill="black", 
                           text_fill="white", border="black", size=10, width_ratio=c(1, 10), colour="blue",
-                          plot_type="line", base=exp(1), transform=c('Intron','CDS','UTR'))
-{
+                          plot_type="line", cores=1, base=c(10,2,2), transform=c('Intron','CDS','UTR')){
+  
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
   gene <- gene_plot(txdb, gr, genome, reduce=reduce, gene_colour=gene_colour,
                     base=base, transform=transform)
@@ -91,6 +92,8 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_colour
   # Plot the data on a track
   track_coverage_plot <- plot_track(merged_data, gene_name=gene_name, bg_fill=bg_fill, text_fill=text_fill,
                                     border=border, size=size, axis_align='width', width_ratio=width_ratio, nested_list=T)
+  
+  stopCluster(cl)
   
   return(track_coverage_plot)
 }
