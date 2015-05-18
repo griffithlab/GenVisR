@@ -96,6 +96,7 @@ mergeRegions <- function(gene_features, gr, base, transform){
   
   master$trans_start <- trans_start_vec
   master$trans_end <- trans_end_vec
-  
+  r <- master$width / master$width.init
+  master['c.ratio'] <- max(r) / r
   return(master)
 }
