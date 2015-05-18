@@ -6,4 +6,4 @@ data <- data[,c('reference', 'variant', 'Extraction_id')]
 
 colnames(data) <- c('reference', 'variant', 'sample')
 
-x <- transition_transversion_plot(data)
+transition_transversion_plot(data)
