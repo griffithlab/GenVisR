@@ -9,7 +9,7 @@ mergeRegions(gene_features, gr, base, transform)
 \arguments{
 \item{gr}{Granges object specifying the ROI}
 
-\item{base}{The log base to transform the data}
+\item{base}{A vector of log bases to transform the data, corresponding to the elements of transform}
 
 \item{transform}{A vector of strings designating what objects to log transform}
 

@@ -6,17 +6,18 @@
 #' @param gr A Granges object specifying a region of interest
 #' @param genome Object of class BSgenome specifying the genome
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
-#' @param output_transInt_table Boolean specifying whether to output a master gene features table instead of a plot when transformIntronic is TRUE
-#' @param base The log base to transform the data
+#' @param cores Integer specifying the number of cores to use for processing
+#' @param base  base A vector of log bases to transform the data, corresponding to the elements of transform 
 #' @param transform A vector of strings designating what objects to log transform
 #' @return ggplot object
 #' @export
 #' @import GenomicRanges
 #' @import plyr
 
-gene_plot <- function(txdb, gr, genome, reduce=FALSE, output_transInt_table=FALSE, 
-                      gene_colour=NULL, base=exp(1), transform=c('Intron','CDS','UTR'))
-{  
+gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, cores=1, base=c(10,2,2), transform=c('Intron','CDS','UTR')){
+  # Set up backend for parallel processing
+  doMC::registerDoMC(cores=cores)
+
   # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
   cds <- formatcds(txdb, gr, genome=genome, reduce=reduce)
   threeUTR <- formatthreeUTR(txdb, gr, genome=genome, reduce=reduce)
