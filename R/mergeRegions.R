@@ -10,7 +10,7 @@
 
 mergeRegions <- function(gene_features, gr, base, transform){
   #base / transform check
-  if(length(base) < length(transform)){stop("Base vector shorter than transform vector.")}
+  if(length(base) != length(transform)){stop("Base vector shorter than transform vector.")}
   
   #extract preserved intron ranges, exons, and intron buffer regions, and update Type
   master <- as.data.frame(do.call("rbind", gene_features))[,c('start','end','width','Type')]
