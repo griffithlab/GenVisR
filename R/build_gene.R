@@ -10,7 +10,7 @@
 #' @return ggplot object
 #' @import ggplot2
 
-build_gene <- function(data_frame, master_gene, display_x_axis=T, x_limits=NULL, gene_colour=NULL)
+build_gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=NULL)
 { 
   # Define various parameters of plot
   if(is.null(gene_colour))
@@ -37,7 +37,6 @@ build_gene <- function(data_frame, master_gene, display_x_axis=T, x_limits=NULL,
   }
   
   # Define the main plot
-  highlight <- geom_rect(data=master_gene, mapping=aes(xmin=trans_start, xmax=trans_end, ymin=-Inf, ymax=Inf, alpha=width.init))
   gene_plot <- ggplot() + highlight + gene_track + gene_features + theme + xlimits
   
   return(gene_plot)
