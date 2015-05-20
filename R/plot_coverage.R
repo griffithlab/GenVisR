@@ -93,7 +93,5 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_colour
   track_coverage_plot <- plot_track(merged_data, gene_name=gene_name, bg_fill=bg_fill, text_fill=text_fill,
                                     border=border, size=size, axis_align='width', width_ratio=width_ratio, nested_list=T)
   
-  stopCluster(cl)
-  
   return(track_coverage_plot)
 }
