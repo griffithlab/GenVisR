@@ -4,10 +4,12 @@
 \alias{transcriptID2sequence}
 \title{Convert trascript ID to protien length}
 \usage{
-transcriptID2sequence(transcriptID)
+transcriptID2sequence(transcriptID, up)
 }
 \arguments{
 \item{transcriptID}{String specifying ensembl transcript ID}
+
+\item{taxId}{integer specifying the uniprot taxonomy id for the species of interest}
 }
 \value{
 character vector giving protien sequence

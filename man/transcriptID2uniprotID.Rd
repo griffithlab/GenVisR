@@ -4,10 +4,12 @@
 \alias{transcriptID2uniprotID}
 \title{Convert trascript ID to uniprot ID}
 \usage{
-transcriptID2uniprotID(transcriptID)
+transcriptID2uniprotID(transcriptID, up)
 }
 \arguments{
 \item{transcriptID}{String specifying ensembl transcript ID}
+
+\item{taxId}{integer specifying the uniprot taxonomy id for the species of interest}
 }
 \value{
 String specifying uniprot ID

@@ -16,7 +16,7 @@ mutationObs <- function(data, fill_value, label_column, rep.fact, rep.dist.lmt, 
   
   # extract the mutation coordinates
   mutation_coord <- data$amino_acid_change
-  mutation_coord <- as.numeric(gsub("[\\D]+", "", mutation_coord, perl=TRUE))
+  mutation_coord <- as.numeric(gsub("c\\.(\\d+).*?$", "\\1", mutation_coord, perl=TRUE))
   
   # combine mutation type and mutation coord into a data frame
   mutation_data <- as.data.frame(cbind(mutation_coord, fill))

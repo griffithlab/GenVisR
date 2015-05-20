@@ -3,9 +3,10 @@
 #' Convert an ensembl transcript ID to the corresponding uniprot ID
 #' @name transcriptID2uniprotID
 #' @param transcriptID String specifying ensembl transcript ID
+#' @param taxId integer specifying the uniprot taxonomy id for the species of interest
 #' @return String specifying uniprot ID
 
-transcriptID2uniprotID <- function(transcriptID)
+transcriptID2uniprotID <- function(transcriptID, up)
 {
   ###############################################################################################
   ################### Function to retieve Uniprot ID for ensembl transcript #####################
@@ -23,7 +24,7 @@ transcriptID2uniprotID <- function(transcriptID)
   columns <- c("UNIPROTKB")
   
   # submit the query to return the uniprot ID
-  result <- select(UniProt.ws, keys, columns, kt)
+  result <- select(up, keys, columns, kt)
   uniprotID <- as.character(result[2])
   
   return(uniprotID)
