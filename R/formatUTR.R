@@ -1,41 +1,40 @@
-#' format cds
+#' format UTR
 #' 
 #' given a Granges object specifying a region of interest, format into a form recognizable by ggplot2
-#' @name formatCDS
+#' @name formatUTR
 #' @param txdb A TxDb object for a genome
 #' @param gr A Granges object to format
 #' @param genome Object of class BSgenome specifying the genome for GC content calculation
 #' @param reduce Boolean specifying whether to collapse isoforms in the Granges object ROI
 #' @return Object of class data frame
 
-formatCDS <- function(txdb, gr, genome, reduce=FALSE)
+formatUTR <- function(txdb, gr, genome, reduce=FALSE)
 {
   # Extract the CDS for each isoform overlapping GRanges object
-  cds <- extrCDS(txdb, gr, reduce=reduce)
+  UTR <- extrUTR(txdb, gr, reduce=reduce)
   
-  if(is.null(cds)){
+  if(is.null(UTR)){
     return(NA)
   }
   # Calculate GC content for retrieved data
-  cds <- sapply(cds, calcGC, genome=genome)
+  UTR <- sapply(UTR, calcGC, genome=genome)
   
   # Coerce the relevant data in the Granges object to a data frame
-  cds <- lapply(cds, Granges2dataframe)
+  UTR <- lapply(UTR, Granges2dataframe)
   
   # if the data frame has a size format, else return a list of NA dataframes
-  if(nrow(cds[[1]]) != 0)
+  if(nrow(UTR[[1]]) != 0)
   {
     # Format the CDS list
-    cds <- lapply(cds, function(x){cbind(x, Type = c("CDS"))})
-    cds <- lapply(cds, function(x){cbind(x, Upper = c(1))})
-    cds <- lapply(cds, function(x){cbind(x, Lower = c(-1))})
-    cds <- lapply(cds, function(x){cbind(x, Mid = c(0))})
-    cds <- lapply(cds, function(x){cbind(x, segStart = c(min(x$start)))})
-    cds <- lapply(cds, function(x){cbind(x, segEnd = c(max(x$end)))})
-    
+    UTR <- lapply(UTR, function(x){cbind(x, Type = c("UTR"))})
+    UTR <- lapply(UTR, function(x){cbind(x, Upper = c(.5))})
+    UTR <- lapply(UTR, function(x){cbind(x, Lower = c(-.5))})
+    UTR <- lapply(UTR, function(x){cbind(x, Mid = c(0))})
+    UTR <- lapply(UTR, function(x){cbind(x, segStart = c(min(x$start)))})
+    UTR <- lapply(UTR, function(x){cbind(x, segEnd = c(max(x$end)))})
   } else {
-    cds <- mapply(rbind, cds, NA)
+    UTR <- mapply(rbind, UTR, NA)
   }
   
-  return(cds)
+  return(UTR)
 }
