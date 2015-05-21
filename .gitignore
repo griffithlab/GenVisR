@@ -15,3 +15,6 @@
 # Don't include large files
 *.bed
 *.bam
+
+#Mac specific files
+.DS_STORE
