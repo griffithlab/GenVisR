@@ -4,10 +4,12 @@
 \alias{transcriptID2length}
 \title{Convert trascript ID to protien length}
 \usage{
-transcriptID2length(transcriptID)
+transcriptID2length(transcriptID, up)
 }
 \arguments{
 \item{transcriptID}{String specifying ensembl transcript ID}
+
+\item{taxId}{integer specifying the uniprot taxonomy id for the species of interest}
 }
 \value{
 numeric value specifying protien length

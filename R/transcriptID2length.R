@@ -3,9 +3,10 @@
 #' Retrieve the length of an ensembl transcript ID in amino acids
 #' @name transcriptID2length
 #' @param transcriptID String specifying ensembl transcript ID
+#' @param taxId integer specifying the uniprot taxonomy id for the species of interest
 #' @return numeric value specifying protien length
 
-transcriptID2length <- function(transcriptID)
+transcriptID2length <- function(transcriptID, up)
 {
   ##############################################################################################
   #################### Function to retrieve ensembl transcript amino acid length ###############
@@ -23,7 +24,7 @@ transcriptID2length <- function(transcriptID)
   columns <- c("LENGTH")
   
   # submit the query to return the length in amino acid residues
-  result <- select(UniProt.ws, keys, columns, kt)
+  result <- select(up, keys, columns, kt)
   AAlength <- as.numeric(result[2])
   
   return(AAlength)

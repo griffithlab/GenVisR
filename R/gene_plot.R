@@ -102,7 +102,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, cores=1,
   }
   
   # construct the gene in gplot
-  gene_plot <- build_gene(gene_features, master, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour)
+  gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour)
   out <- list('plot' = gene_plot, 'features' = gene_features, 'master' = master)
   return(out)
 }

@@ -4,6 +4,7 @@
 #' @name dodge_coord_x
 #' @param x numeric vector of position coordinates on x axis
 #' @return numeric vector of dodged position coordinates on x axis
+#' @import FField
 
 dodge_coord_x <- function(x, rep.fact=5000, rep.dist.lmt=500, attr.fact=.1, adj.max=.1, adj.lmt=.5, iter.max=50000)
 {

@@ -4,17 +4,17 @@
 \alias{build_gene}
 \title{build gene plot}
 \usage{
-build_gene(data_frame, master_gene, display_x_axis = T, x_limits = NULL,
+build_gene(data_frame, display_x_axis = T, x_limits = NULL,
   gene_colour = NULL)
 }
 \arguments{
 \item{data_frame}{an object of class data frame specifying gene feature information}
 
-\item{master_gene}{an object of class data frame specifying the master gene feature information resultant of compression}
-
 \item{x_limits}{vector specifying x-axis limits of plot}
 
 \item{gene_colour}{character specifying colour of gene to be plotted}
+
+\item{master_gene}{an object of class data frame specifying the master gene feature information resultant of compression}
 
 \item{display_axis}{Boolean specifying whether to display X axis coordinate values}
 }

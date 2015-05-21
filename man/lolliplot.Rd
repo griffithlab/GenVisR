@@ -10,7 +10,8 @@ lolliplot(data, cosmic = TRUE, fill_value = "trv_type",
   obs.rep.dist.lmt = 500, obs.attr.fact = 0.1, obs.adj.max = 0.1,
   obs.adj.lmt = 0.5, obs.iter.max = 50000, cos.rep.fact = 5000,
   cos.rep.dist.lmt = 500, cos.attr.fact = 0.1, cos.adj.max = 0.1,
-  cos.adj.lmt = 0.5, cos.iter.max = 50000, plot_sidechain = FALSE)
+  cos.adj.lmt = 0.5, cos.iter.max = 50000, plot_sidechain = FALSE,
+  taxId = 9606)
 }
 \arguments{
 \item{data}{object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations}
@@ -54,6 +55,8 @@ lolliplot(data, cosmic = TRUE, fill_value = "trv_type",
 \item{cos.iter.max}{maximum iterations beyond which to stop the simulation cosmic track}
 
 \item{plot_sidechain}{boolean value whether to plot the amino acid sidechains instead of protein domains}
+
+\item{taxId}{integer specifying the uniprot taxonomy id for the species of interest}
 }
 \value{
 object of class ggplot2

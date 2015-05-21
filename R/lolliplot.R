@@ -23,11 +23,16 @@
 #' @param cos.adj.lmt position adjustment limit which simulation stops cosmic track
 #' @param cos.iter.max maximum iterations beyond which to stop the simulation cosmic track
 #' @param plot_sidechain boolean value whether to plot the amino acid sidechains instead of protein domains
+#' @param taxId integer specifying the uniprot taxonomy id for the species of interest
 #' @return object of class ggplot2
 #' @export
+#' @import UniProt.ws
 
-lolliplot <- function(data, cosmic=TRUE, fill_value='trv_type', label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=1, gene_colour='#999999', obs.rep.fact=5000, obs.rep.dist.lmt=500, obs.attr.fact=.1, obs.adj.max=.1, obs.adj.lmt=.5, obs.iter.max=50000, cos.rep.fact=5000, cos.rep.dist.lmt=500, cos.attr.fact=.1, cos.adj.max=.1, cos.adj.lmt=.5, cos.iter.max=50000, plot_sidechain=FALSE)
+lolliplot <- function(data, cosmic=TRUE, fill_value='trv_type', label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=1, gene_colour='#999999', obs.rep.fact=5000, obs.rep.dist.lmt=500, obs.attr.fact=.1, obs.adj.max=.1, obs.adj.lmt=.5, obs.iter.max=50000, cos.rep.fact=5000, cos.rep.dist.lmt=500, cos.attr.fact=.1, cos.adj.max=.1, cos.adj.lmt=.5, cos.iter.max=50000, plot_sidechain=FALSE, taxId=9606)
 {
+  # Define a taxonomy ID for use in the "transcriptID2" function family for use with UniProt.ws
+  up <- UniProt.ws(taxId=taxId)
+  
   # extract transcript id
   transcriptID <- as.character(data$transcript_name[1])
   
@@ -35,15 +40,15 @@ lolliplot <- function(data, cosmic=TRUE, fill_value='trv_type', label_column=NUL
   gene <- as.character(data$gene[1])
   
   # obtain uniprot id
-  uniprot_id <- transcriptID2uniprotID(transcriptID)
+  uniprot_id <- transcriptID2uniprotID(transcriptID, up)
   
   # obtain transcript length
-  length <- transcriptID2length(transcriptID)
+  length <- transcriptID2length(transcriptID, up)
   
   # obtain amino acid sequence and format if it is requested to plot the sidechain
   if(plot_sidechain==T)
   {
-    AAsequence <- transcriptID2sequence(transcriptID)
+    AAsequence <- transcriptID2sequence(transcriptID, up)
     AAsequence$sidechain <- sapply(AAsequence[,1], AA2sidechain)
   } else {
     AAsequence <- NULL
