@@ -16,8 +16,11 @@ cdsFromTXID <- function(txdb, txid){
   }
   r <- split(r, r['TXID'])
   f <- function(r){
-    g <- GRanges(seqnames = unlist(r['CDSCHROM']), ranges = IRanges(start = as.numeric(unlist(r['CDSSTART'])), end = as.numeric(unlist(r['CDSEND']))),strand = unlist(r['CDSSTRAND']),
-                 txname=r['TXNAME'],exonrank=r['EXONRANK'])
+    g <- GRanges(seqnames = unlist(r['CDSCHROM']), 
+                 ranges = IRanges(start = as.numeric(unlist(r['CDSSTART'])), end = as.numeric(unlist(r['CDSEND']))),
+                 strand = unlist(r['CDSSTRAND']),
+                 txname=unlist(r['TXNAME']),
+                 exonrank=unlist(r['EXONRANK']))
     return(g)
   }
   cds <- GRangesList(unlist(lapply(r, f)))

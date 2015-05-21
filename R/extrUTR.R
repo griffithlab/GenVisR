@@ -39,10 +39,16 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
     }
     return(r)
   }
-  r <- as.data.frame(t(apply(r, 1, f)))
+  df <- as.data.frame(t(apply(r,1,f)))
+  r['UTRSTART'] <- as.numeric(as.character(df$UTRSTART))
+  r['UTREND'] <- as.numeric(as.character(df$UTREND))
   r <- split(r, r['TXID'])
   f <- function(r){
-    g <- GRanges(seqnames = unlist(r['TXCHROM']), ranges = IRanges(start = as.numeric(unlist(r['UTRSTART'])), end = as.numeric(unlist(r['UTREND']))),strand = unlist(r['TXSTRAND']))
+    g <- GRanges(seqnames = unlist(r['TXCHROM']), 
+                 ranges = IRanges(start = as.numeric(unlist(r['UTRSTART'])), end = as.numeric(unlist(r['UTREND']))),
+                 strand = unlist(r['TXSTRAND']),
+                 txname=unlist(r['TXNAME']),
+                 exonrank=unlist(r['EXONRANK']))
     return(g)
   }
   UTR <- GRangesList(unlist(lapply(r, f)))

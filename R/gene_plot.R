@@ -30,7 +30,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, cores=1,
   }else if(is.null(UTR)){
     gene_features <- cds          #AHW: I don't think this would ever happen. But, it's a jungle out there.
   }else{
-    gene_features <- rbind(cds,UTR)
+    gene_features <- mapply(rbind, cds, UTR, SIMPLIFY=FALSE)
   }
   gene_features <- lapply(gene_features, na.omit)
   if(reduce){
@@ -54,7 +54,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, cores=1,
   if(length(transform) > 0)
   {
     # status message
-    message("transforming space")
+    message("Calculating transform")
     
     # Create Master table and return it instead of plot if requested
     master <- mergeRegions(gene_features, gr, transform=transform, base=base)
