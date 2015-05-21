@@ -9,8 +9,8 @@ require(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 
 # need Granges object 
-#gr <- GRanges(seqnames=c("chr16"), ranges=IRanges(start=c(67063051), end=c(67134782)), strand=strand(c("+")))
-gr <- GRanges(seqnames=c("chr16"), ranges=IRanges(start=c(67063051), end=c(67065051)), strand=strand(c("+")))
+gr <- GRanges(seqnames=c("chr16"), ranges=IRanges(start=c(67063051), end=c(67134782)), strand=strand(c("+")))
+#gr <- GRanges(seqnames=c("chr16"), ranges=IRanges(start=c(67063051), end=c(67065051)), strand=strand(c("+")))
 
 # need coverage data and extra stuff to make plot work
 cov <- read.delim('CBFB_TCGA_Cov.bed')

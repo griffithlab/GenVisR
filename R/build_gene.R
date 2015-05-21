@@ -37,7 +37,7 @@ build_gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=
   }
   
   # Define the main plot
-  gene_plot <- ggplot() + highlight + gene_track + gene_features + theme + xlimits
+  gene_plot <- ggplot() + gene_track + gene_features + theme + xlimits
   
   return(gene_plot)
 }

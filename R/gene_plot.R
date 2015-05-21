@@ -15,16 +15,23 @@
 #' @import plyr
 
 gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, cores=1, base=c(10,2,2), transform=c('Intron','CDS','UTR')){
-  # Set up backend for parallel processing
-  doMC::registerDoMC(cores=cores)
 
   # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
-  cds <- formatcds(txdb, gr, genome=genome, reduce=reduce)
-  threeUTR <- formatthreeUTR(txdb, gr, genome=genome, reduce=reduce)
-  fiveUTR <- formatfiveUTR(txdb, gr, genome=genome, reduce=reduce)
+  cds <- formatCDS(txdb, gr, genome=genome, reduce=reduce)
+  UTR <- formatUTR(txdb, gr, genome=genome, reduce=reduce)
   
   # bind together a data frame of gene features as a list and remove erroneous NA values
-  gene_features <- mapply(rbind, cds, threeUTR, fiveUTR, SIMPLIFY=FALSE)
+  if(is.null(cds)){
+    if(is.null(UTR)){
+      stop('No exons! There should be at least one gene present, otherwise use coverage_plot()')
+    }else{
+      gene_features <- UTR
+    }
+  }else if(is.null(UTR)){
+    gene_features <- cds          #AHW: I don't think this would ever happen. But, it's a jungle out there.
+  }else{
+    gene_features <- mapply(rbind, cds, UTR, SIMPLIFY=FALSE)
+  }
   gene_features <- lapply(gene_features, na.omit)
   if(reduce){
     gene_features <- lapply(gene_features, mergeTypes)
@@ -47,7 +54,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, cores=1,
   if(length(transform) > 0)
   {
     # status message
-    message("transforming space")
+    message("Calculating transform")
     
     # Create Master table and return it instead of plot if requested
     master <- mergeRegions(gene_features, gr, transform=transform, base=base)

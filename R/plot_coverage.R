@@ -62,7 +62,7 @@ plot_coverage <- function(coverage_data, txdb, gr, genome, reduce=F, gene_colour
       return(x)
     }
     coverage_data <- lapply(coverage_data, test)
-    message("Mapping coverage file into transformed intronic space")
+    message("Mapping coverage data onto transformed gene-space")
     coverage_data <- lapply(coverage_data, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
 
     # Replace original coordinates with transformed coordinates

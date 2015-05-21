@@ -1,14 +1,14 @@
 #' Extract CDS
 #' 
 #' Extract CDS coordinates within a GRanges object given a transcription database
-#' @name extrcds
+#' @name extrCDS
 #' @param txdb A TxDb object for a genome
 #' @param gr A Granges object specifying the region of interest
 #' @param reduce Boolean specifying whether to collapse isoforms
 #' @param gaps Boolean specifying whether to report space between CDS instead of CDS
 #' @return Object of class Granges list
 
-extrcds <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
+extrCDS <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
 {
   message("Obtaining CDS Coordinates")
   
@@ -18,9 +18,11 @@ extrcds <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   txid <- unlist(map, use.names=FALSE)
   
   # extract CDS from transcript database given transcript ID
-  cds <- cdsBy(txdb, "tx")
-  cds <- cds[names(cds) %in% txid]
+  cds <- cdsFromTXID(txdb, txid)
   
+  if(typeof(cds) != 'S4'){
+    return(NA)
+  }
   # reduce isoforms into one if set to true and convert to GRanges list
   if(reduce==TRUE)
   {
@@ -30,6 +32,14 @@ extrcds <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   
   # If Granges object is not an entire gene zoom in to the region specified
   cds <- lapply(cds, intersect, gr)
+  f <- function(x){
+    return(length(x) > 0)
+  }
+  idx <- as.vector(unlist(lapply(cds, f)))
+  cds <- cds[idx]
+  if(length(cds) == 0){
+    return(NA)
+  }
   
   # If gaps is set to true report report gaps between cds in lieu of cds
   if(gaps == TRUE)
