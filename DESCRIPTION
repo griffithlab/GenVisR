@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: person("Zachary", "Skidmore", , "zskidmor@genome.wustl.edu", role = c("aut", "cre"))
 Maintainer: Zachary Skidmore <zskidmor@genome.wustl.edu>
 Description: Produce publication quality graphics from standard genomic data files
-Depends: R (>= 3.2.0)
+Depends: R (>= 3.0.0)
 Imports: ggplot2, plyr, gridExtra, GenomicRanges, gtable, UniProt.ws, FField, RMySQL, scales
 License: GPL-2
 LazyData: true
