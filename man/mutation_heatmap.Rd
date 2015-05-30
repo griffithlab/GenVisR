@@ -6,7 +6,7 @@
 \usage{
 mutation_heatmap(data_frame, recurrence_cutoff = 0, grid = TRUE,
   label_x = FALSE, title = "NULL", gene_label_size = 8,
-  coverage_space = 63564965, file_type = "TGI")
+  coverage_space = 63564965, file_type = "TGI", genes = NULL)
 }
 \arguments{
 \item{data_frame}{a data frame in annotation format}
@@ -24,6 +24,8 @@ mutation_heatmap(data_frame, recurrence_cutoff = 0, grid = TRUE,
 \item{coverage_space}{an integer specifying the size in bp of the genome covered from which mutations could be called}
 
 \item{file_type}{a character string specifying the file format of the data frame, one of "TGI", "MAF"}
+
+\item{genes}{a character vector specifying genes to plot}
 }
 \value{
 a grob for plotting

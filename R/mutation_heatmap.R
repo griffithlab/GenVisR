@@ -10,10 +10,11 @@
 #' @param gene_label_size an integer specifying the size of labels on Y axis
 #' @param coverage_space an integer specifying the size in bp of the genome covered from which mutations could be called
 #' @param file_type a character string specifying the file format of the data frame, one of "TGI", "MAF"
+#' @param genes a character vector specifying genes to plot
 #' @return a grob for plotting
 #' @export
 
-mutation_heatmap <- function(data_frame, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI')
+mutation_heatmap <- function(data_frame, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI', genes=NULL)
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
@@ -44,6 +45,12 @@ mutation_heatmap <- function(data_frame, recurrence_cutoff = 0, grid = TRUE, lab
   
   # Subset the data based on the recurrence of mutations at the gene level
   data_frame <- mutation_recurrence_subset(data_frame, recurrence_cutoff)
+  
+  # Subset the data based on a vector of genes if supplied
+  if(!is.null(genes))
+  {
+    data_frame <- mutation_sample_subset(data_frame, genes)
+  }
   
   # Reorder the sample levels in data_frame2 to match the main plot's levels, and then plot the top margin plt
   data_frame2$sample <- factor(data_frame2$sample, levels=sample_order)
