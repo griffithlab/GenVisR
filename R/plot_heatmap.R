@@ -7,9 +7,11 @@
 #' @param label_x boolean value whether to label the x axis
 #' @param gene_label_size numeric value indicating the size of the gene labels on the y-axis
 #' @param file_type character string specifying the file type, one of 'MAF' or 'TGI'
+#' @param drop_mutation Boolean specifying whether to drop unused "mutation type" levels from the legend
 #' @return a ggplot2 object
+#' @import ggplot2
 
-plot_heatmap <- function(data_frame, grid, label_x, gene_label_size, file_type)
+plot_heatmap <- function(data_frame, grid=FALSE, label_x=FALSE, gene_label_size=8, file_type='TGI', drop_mutation=FALSE)
 {
   
   #############################################################################################################
@@ -55,8 +57,16 @@ plot_heatmap <- function(data_frame, grid, label_x, gene_label_size, file_type)
     labels <- c("Nonsense", "Frame Shift Insertion", "Frame Shift Deletion", "In Frame Insertion", "In Frame Deletion", "Nonstop", "Splice Site", "Missense", "5' Flank", "3' Flank", "5' UTR", "3' UTR", "RNA", "Intron", "Intergenic Region", "Silent", "Targeted Region")
   }
   
-  # Create Legend
-  legend <- scale_fill_manual(name="Mutation Type", values=palette, breaks=breaks, labels=labels, drop=FALSE)
+  if(drop_mutation == TRUE)
+  {
+    # Create Legend
+    legend <- scale_fill_manual(name="Mutation Type", values=palette, breaks=breaks, labels=labels, drop=TRUE)
+  } else if (drop_mutation == FALSE)
+  {
+    # Create Legend
+    legend <- scale_fill_manual(name="Mutation Type", values=palette, breaks=breaks, labels=labels, drop=FALSE)
+  }
+
   
   # X Label
   x_label <- xlab(paste0('Sample (n=', nlevels(data_frame$sample), ')'))

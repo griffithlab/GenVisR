@@ -11,10 +11,11 @@
 #' @param coverage_space an integer specifying the size in bp of the genome covered from which mutations could be called
 #' @param file_type a character string specifying the file format of the data frame, one of "TGI", "MAF"
 #' @param genes a character vector specifying genes to plot
+#' @param drop_mutation Boolean specifying whether to drop unused "mutation type" levels from the legend
 #' @return a grob for plotting
 #' @export
 
-mutation_heatmap <- function(data_frame, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI', genes=NULL)
+mutation_heatmap <- function(data_frame, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI', genes=NULL, drop_mutation=FALSE)
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
@@ -63,7 +64,7 @@ mutation_heatmap <- function(data_frame, recurrence_cutoff = 0, grid = TRUE, lab
   data_frame <- add_gene_to_NA(data_frame)
   
   # Plot the Heatmap
-  p1 <- plot_heatmap(data_frame, grid = grid, label_x = label_x, gene_label_size = gene_label_size, file_type = file_type)	
+  p1 <- plot_heatmap(data_frame, grid = grid, label_x = label_x, gene_label_size = gene_label_size, file_type = file_type, drop_mutation = drop_mutation)	
   
   # Align the Plots and return as 1 plot
   pA <- align_y(p2, p1, p3, title)

@@ -6,7 +6,8 @@
 \usage{
 mutation_heatmap(data_frame, recurrence_cutoff = 0, grid = TRUE,
   label_x = FALSE, title = "NULL", gene_label_size = 8,
-  coverage_space = 63564965, file_type = "TGI", genes = NULL)
+  coverage_space = 63564965, file_type = "TGI", genes = NULL,
+  drop_mutation = FALSE)
 }
 \arguments{
 \item{data_frame}{a data frame in annotation format}
@@ -26,6 +27,8 @@ mutation_heatmap(data_frame, recurrence_cutoff = 0, grid = TRUE,
 \item{file_type}{a character string specifying the file format of the data frame, one of "TGI", "MAF"}
 
 \item{genes}{a character vector specifying genes to plot}
+
+\item{drop_mutation}{Boolean specifying whether to drop unused "mutation type" levels from the legend}
 }
 \value{
 a grob for plotting
