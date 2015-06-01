@@ -2,7 +2,7 @@
 #' 
 #' Plot a mutation landscape plot for a cohort in an annotation file
 #' @name mutation_heatmap
-#' @param data_frame a data frame in annotation format
+#' @param x a data frame in annotation format
 #' @param recurrence_cutoff an integer value to remove genes that do not have x number of mutations
 #' @param grid a boolean value to overlay a grid on the primary plot
 #' @param label_x a boolean value to plot samples on the x axis
@@ -15,7 +15,7 @@
 #' @return a grob for plotting
 #' @export
 
-mutation_heatmap <- function(data_frame, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI', genes=NULL, drop_mutation=FALSE)
+mutation_heatmap <- function(x, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI', genes=NULL, drop_mutation=FALSE)
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
@@ -24,7 +24,12 @@ mutation_heatmap <- function(data_frame, recurrence_cutoff = 0, grid = TRUE, lab
   
   if(toupper(file_type) == toupper('MAF'))
   {
-    data_frame <- MAF_to_anno(data_frame)
+    data_frame <- MAF_to_anno(x)
+  } else if(toupper(file_type) == toupper('TGI'))
+  {
+    data_frame <- TGI_to_anno(x)
+  } else {
+    stop("Unrecognized file_type: ", file_type)
   }
   
   # Extract columns from annotation format needed for a mutation heatmap

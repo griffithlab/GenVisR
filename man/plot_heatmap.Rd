@@ -4,7 +4,7 @@
 \alias{plot_heatmap}
 \title{Plot a mutation heatmap}
 \usage{
-plot_heatmap(data_frame, grid = FALSE, label_x = FALSE,
+plot_heatmap(data_frame, grid = TRUE, label_x = FALSE,
   gene_label_size = 8, file_type = "TGI", drop_mutation = FALSE)
 }
 \arguments{

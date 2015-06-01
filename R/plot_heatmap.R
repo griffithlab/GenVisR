@@ -11,7 +11,7 @@
 #' @return a ggplot2 object
 #' @import ggplot2
 
-plot_heatmap <- function(data_frame, grid=FALSE, label_x=FALSE, gene_label_size=8, file_type='TGI', drop_mutation=FALSE)
+plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='TGI', drop_mutation=FALSE)
 {
   
   #############################################################################################################
