@@ -4,12 +4,15 @@
 \alias{mutation_heatmap}
 \title{Plot a mutation landscape}
 \usage{
-mutation_heatmap(x, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE,
-  title = "NULL", gene_label_size = 8, coverage_space = 63564965,
-  file_type = "TGI", genes = NULL, drop_mutation = FALSE)
+mutation_heatmap(x, y, recurrence_cutoff = 0, grid = TRUE,
+  label_x = FALSE, title = "NULL", gene_label_size = 8,
+  coverage_space = 63564965, file_type = "TGI", genes = NULL,
+  drop_mutation = FALSE)
 }
 \arguments{
 \item{x}{a data frame in annotation format}
+
+\item{y}{a data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"}
 
 \item{recurrence_cutoff}{an integer value to remove genes that do not have x number of mutations}
 

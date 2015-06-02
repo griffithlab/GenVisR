@@ -3,6 +3,7 @@
 #' Plot a mutation landscape plot for a cohort in an annotation file
 #' @name mutation_heatmap
 #' @param x a data frame in annotation format
+#' @param y a data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"
 #' @param recurrence_cutoff an integer value to remove genes that do not have x number of mutations
 #' @param grid a boolean value to overlay a grid on the primary plot
 #' @param label_x a boolean value to plot samples on the x axis
@@ -15,7 +16,7 @@
 #' @return a grob for plotting
 #' @export
 
-mutation_heatmap <- function(x, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI', genes=NULL, drop_mutation=FALSE)
+mutation_heatmap <- function(x, y, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI', genes=NULL, drop_mutation=FALSE)
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
@@ -71,8 +72,21 @@ mutation_heatmap <- function(x, recurrence_cutoff = 0, grid = TRUE, label_x = FA
   # Plot the Heatmap
   p1 <- plot_heatmap(data_frame, grid = grid, label_x = label_x, gene_label_size = gene_label_size, file_type = file_type, drop_mutation = drop_mutation)	
   
+  # Plot any clinical data if it is specified
+  if(!missing(y))
+  {
+    # match the levels of sample in y to conform to the main plot
+    y$sample <- factor(y$sample, levels=sample_order)
+    p4 <- plot_clinical(y)
+    
+    # Align all plots and return as 1 plot
+    pA <- align_waterfall(p2, p1, p3, p4, title=title)
+    
+    return(pA)
+  }
+  
   # Align the Plots and return as 1 plot
-  pA <- align_y(p2, p1, p3, title)
+  pA <- align_waterfall(p2, p1, p3, title=title)
   
   return(pA)
 }

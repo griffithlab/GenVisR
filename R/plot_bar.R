@@ -4,15 +4,13 @@
 #' @name plot_bar
 #' @param data_frame a data frame in MAF format
 #' @return a ggplot object
+#' @import scales
 
 plot_bar <- function(data_frame)
 {
   #####################################################################################################################
   ####### Function to create the left margin bar plot, function plots the percentage of samples with a mutation #######
   #####################################################################################################################
-  
-  # Require the scales package for use of ..count..
-  require(scales)
   
   # Convert all silent mutations to Synonymous, and all else to non-synonymous
   data_frame$trv_type <- as.character(data_frame$trv_type)
