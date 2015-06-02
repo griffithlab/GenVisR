@@ -16,7 +16,7 @@ plot_clinical <- function(x)
   leg_guide <- guides(fill=guide_legend(ncol=2))
   
   # Define the main plot
-  p1 <- ggplot(x, aes(x=sample, y=variable, fill=value)) + geom_tile() + theme + fill + leg_guide
+  p1 <- ggplot(x, aes(x=sample, y=variable, fill=value)) + geom_tile() + theme + fill + leg_guide + xlab('Sample n=625')
   
   return(p1)
 }
