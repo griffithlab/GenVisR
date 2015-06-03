@@ -70,7 +70,13 @@ mutation_heatmap <- function(x, y, recurrence_cutoff = 0, grid = TRUE, label_x =
   data_frame <- add_gene_to_NA(data_frame)
   
   # Plot the Heatmap
-  p1 <- plot_heatmap(data_frame, grid = grid, label_x = label_x, gene_label_size = gene_label_size, file_type = file_type, drop_mutation = drop_mutation)	
+  if(missing(y))
+  {
+    p1 <- plot_heatmap(data_frame, grid = grid, label_x = label_x, gene_label_size = gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title=TRUE)
+  } else if(!missing(y))
+  {
+    p1 <- plot_heatmap(data_frame, grid = grid, label_x = label_x, gene_label_size = gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title=FALSE)
+  }
   
   # Plot any clinical data if it is specified
   if(!missing(y))

@@ -8,10 +8,11 @@
 #' @param gene_label_size numeric value indicating the size of the gene labels on the y-axis
 #' @param file_type character string specifying the file type, one of 'MAF' or 'TGI'
 #' @param drop_mutation Boolean specifying whether to drop unused "mutation type" levels from the legend
+#' @param plot_x_title Boolean specifying whether to plot the x_axis title
 #' @return a ggplot2 object
 #' @import ggplot2
 
-plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='TGI', drop_mutation=FALSE)
+plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='TGI', drop_mutation=FALSE, plot_x_title=TRUE)
 {
   
   #############################################################################################################
@@ -75,11 +76,15 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
   title <- ggtitle(title)
   
   # Theme, Boolean, if specified to plot x labels, define theme such that labels are plotted
-  if(label_x == TRUE)
+  if(label_x == TRUE & plot_x_title == TRUE)
   {
     theme <-  theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_text(angle=50, hjust=1), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_blank(), axis.title.x=element_text(size=10), legend.title=element_text(size=14), plot.title=element_blank())
-  } else {
+  } else if(label_x == FALSE & plot_x_title == TRUE) {
     theme <-  theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_blank(), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_blank(), axis.title.x=element_text(size=20), legend.title=element_text(size=14), plot.title=element_blank(), panel.border=element_rect(colour='grey80', fill=NA, size=.1), legend.position=("right"))
+  } else if(label_x == TRUE & plot_x_title == FALSE) {
+    theme <-  theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_text(angle=50, hjust=1), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_blank(), axis.title.x=element_blank(), legend.title=element_text(size=14), plot.title=element_blank())
+  } else if(label_x == FALSE & plot_x_title == FALSE) {
+    theme <-  theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_blank(), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_blank(), axis.title.x=element_blank(), legend.title=element_text(size=14), plot.title=element_blank(), panel.border=element_rect(colour='grey80', fill=NA, size=.1), legend.position=("right"))
   }
   
   # ggplot call
