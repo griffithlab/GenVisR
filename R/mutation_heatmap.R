@@ -3,7 +3,8 @@
 #' Plot a mutation landscape plot for a cohort in an annotation file
 #' @name mutation_heatmap
 #' @param x a data frame in annotation format
-#' @param y a data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"
+#' @param y an optional data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"
+#' @param z an optional data frame containing columns sample, mut_burden
 #' @param recurrence_cutoff an integer value to remove genes that do not have x number of mutations
 #' @param grid a boolean value to overlay a grid on the primary plot
 #' @param label_x a boolean value to plot samples on the x axis
@@ -16,7 +17,7 @@
 #' @return a grob for plotting
 #' @export
 
-mutation_heatmap <- function(x, y, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI', genes=NULL, drop_mutation=FALSE)
+mutation_heatmap <- function(x, y, z, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI', genes=NULL, drop_mutation=FALSE)
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
@@ -60,8 +61,19 @@ mutation_heatmap <- function(x, y, recurrence_cutoff = 0, grid = TRUE, label_x =
   }
   
   # Reorder the sample levels in data_frame2 to match the main plot's levels, and then plot the top margin plt
-  data_frame2$sample <- factor(data_frame2$sample, levels=sample_order)
-  p3 <- plot_mutation_recurrence(data_frame2, coverage_space)
+  if(!missing(z))
+  {
+    if(!setequal(sample_order, z$sample))
+    {
+      stop("The sample column in data frame z does not appear to contain the same elements as in data frame x")
+    }
+    z$sample <- factor(z$sample, levels=sample_order)
+    p3 <- build_mutation_recurrence_b(z)
+  } else {
+    data_frame2$sample <- factor(data_frame2$sample, levels=sample_order)
+    p3 <- plot_mutation_recurrence(data_frame2, coverage_space)
+  }
+
   
   # Plot the Left Bar Chart
   p2 <- plot_bar(data_frame)
