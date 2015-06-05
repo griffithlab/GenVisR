@@ -14,10 +14,11 @@
 #' @param file_type a character string specifying the file format of the data frame, one of "TGI", "MAF"
 #' @param genes a character vector specifying genes to plot
 #' @param drop_mutation Boolean specifying whether to drop unused "mutation type" levels from the legend
+#' @param rmv_silent Boolean specifying wheter to remove silent mutations from the left side and main plot
 #' @return a grob for plotting
 #' @export
 
-mutation_heatmap <- function(x, y, z, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI', genes=NULL, drop_mutation=FALSE)
+mutation_heatmap <- function(x, y, z, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='TGI', genes=NULL, drop_mutation=FALSE, rmv_silent=FALSE)
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
@@ -39,6 +40,12 @@ mutation_heatmap <- function(x, y, z, recurrence_cutoff = 0, grid = TRUE, label_
   
   # add in a count of mutations at the sample level before anything is stripped out and save for mutation recurrence plot
   data_frame2 <- add_mutation_counts(data_frame)
+  
+  # Subset the data to remove silent mutations if specified
+  if(rmv_silent==TRUE)
+  {
+    data_frame <- mutation_silent_rmv(data_frame)
+  }
   
   # Remove trv_type that are not the most deleterious for a given gene/sample
   data_frame <- hiearchial_remove_trv_type(data_frame, file_type=file_type)
