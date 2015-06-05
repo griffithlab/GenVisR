@@ -7,7 +7,7 @@
 mutation_heatmap(x, y, recurrence_cutoff = 0, grid = TRUE,
   label_x = FALSE, title = "NULL", gene_label_size = 8,
   coverage_space = 63564965, file_type = "TGI", genes = NULL,
-  drop_mutation = FALSE)
+  drop_mutation = FALSE, rmv_silent = FALSE)
 }
 \arguments{
 \item{x}{a data frame in annotation format}
@@ -31,6 +31,8 @@ mutation_heatmap(x, y, recurrence_cutoff = 0, grid = TRUE,
 \item{genes}{a character vector specifying genes to plot}
 
 \item{drop_mutation}{Boolean specifying whether to drop unused "mutation type" levels from the legend}
+
+\item{rmv_silent}{Boolean specifying wheter to remove silent mutations from the left side and main plot}
 }
 \value{
 a grob for plotting
