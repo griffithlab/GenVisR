@@ -13,6 +13,6 @@ mutation_silent_rmv(x)
 a subset data frame
 }
 \description{
-Subset a MAF file keeping only samples/genes that have >= 1 non-silent mutations
+Subset a MAF file setting keeping only sample information if a mutation is silent
 }
 
