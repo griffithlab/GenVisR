@@ -22,7 +22,7 @@ plot_bar <- function(data_frame)
   total_number_sample <- nlevels(data_frame$sample)
   
   # Define Theme and various other layers to be passed to ggplot
-  theme <- theme(axis.text.y=element_blank(), axis.ticks.y=element_blank(), axis.title.y=element_blank(), legend.position=('none'), axis.title.x=element_text(size=14))
+  theme <- theme(axis.text.y=element_blank(), axis.ticks.y=element_blank(), axis.title.y=element_blank(), legend.position=('none'), axis.title.x=element_text(size=18))
   y_limits <- ylim(100, 0)
   y_label <- ylab('% Samples With Mutation')	
   legend <- scale_fill_manual(name="Translational Effect", values=c("red", "blue"), breaks=c('Synonymous', 'Non Synonymous'), drop=FALSE)

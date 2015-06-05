@@ -38,7 +38,7 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
   {
     
     # Declare a color palette
-    palette <- c('#4f00A8', '#A80100', '#CF5A59', '#A80079', '#BC2D94', '#CF59AE', '#000000', '#006666', '#00A8A8', '#009933', '#ffff00', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
+    palette <- c('#4f00A8', '#A80100', '#CF5A59', '#A80079', '#BC2D94', '#CF59AE', '#000000', '#006666', '#00A8A8', '#009933', '#999900', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
     
     #A80100 => red
     
@@ -79,7 +79,7 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
   {
     theme <-  theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_text(angle=50, hjust=1), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_blank(), axis.title.x=element_text(size=10), legend.title=element_text(size=14), plot.title=element_blank())
   } else {
-    theme <-  theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_blank(), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_blank(), axis.title.x=element_blank(), legend.title=element_text(size=14), plot.title=element_blank(), panel.border=element_rect(colour='grey80', fill=NA, size=.1), legend.position=("right"))
+    theme <-  theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_blank(), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_blank(), axis.title.x=element_blank(), legend.title=element_text(size=18), plot.title=element_blank(), panel.border=element_rect(colour='grey80', fill=NA, size=.1), legend.position=("right"), legend.text=element_text(size=16))
   }
   
   # ggplot call
