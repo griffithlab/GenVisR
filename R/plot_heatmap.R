@@ -38,7 +38,7 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
   {
     
     # Declare a color palette
-    palette <- c('#4f00A8', '#A80100', '#CF5A59', '#A80079', '#BC2D94', '#CF59AE', '#000000', '#006666', '#00A8A8', '#009933', '#59CF74', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
+    palette <- c('#4f00A8', '#A80100', '#CF5A59', '#A80079', '#BC2D94', '#CF59AE', '#000000', '#006666', '#00A8A8', '#009933', '#ffff00', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
     
     #A80100 => red
     
