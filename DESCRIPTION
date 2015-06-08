@@ -8,3 +8,5 @@ Depends: R (>= 3.0.0)
 Imports: ggplot2, plyr, gridExtra, GenomicRanges, gtable, UniProt.ws, FField, RMySQL, scales
 License: GPL-2
 LazyData: true
+Suggests: knitr
+VignetteBuilder: knitr
