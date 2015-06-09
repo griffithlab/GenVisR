@@ -1,58 +1,48 @@
 ---
-title: "gRog: Introduction"
+title: "gRog: An introduction"
 author: "Zachary Skidmore"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{gRog: Introduction}
+  %\VignetteIndexEntry{gRog: An introduction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+## Introduction
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+Intuitively visualizing and interpreting the abundance of cohort data originating from high-throughput genomic technologies continues to be challenging. Graphical R obsrvations of genomics (gRog) attempts to alleviate this burden by providing highly customizable publication quailty graphics focused primarily on a cohort level. gRog attempts to maintain a high degree of flexability while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
 
-## Vignette Info
+## Functions
 
-Note the various macros within the `vignette` setion of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+### mutSpec
 
-## Styles
+`mutSpec` provides a method of visualizing the mutational landscape of a cohort. The input to `mutSpec` consists of a data frame derived from either a .maf (version 2.4) file or a file in MGI annotation format (obtained from The [Genome Modeling System](https://github.com/genome/gms)). `mutspec` will by display the mutation type in the main panel while showing the mutation burden and the percentage of samples with a mutation in the side panels. Conflicts arising from multiple mutations in the same gene/sample cell are resolved by a hiearchial removal of mutations keeping the most deleterious as defined in the order of the "mutation type" legend. This hiearchial removal occurs only in the main panel.
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+`BRCA_MAF` is a truncated MAF file consisting of 50 samples from the TCGA project corresponding to [Breast invasive carcinoma](https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files#TCGAMAFFiles-BRCA:Breastinvasivecarcinoma) [(complete data)](https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf). using this dataset we can view the default behavior of `mutSpec`:
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r}
+library(GGgenome)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
-
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE}
+mutSpec(BRCA_MAF)
 ```
 
-Also a quote using `>`:
+This type of view is of limited use given the large number of genes, often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to do this, the `recurrence_cutoff` parameter will remove genes from the data which do not have at least x number of samples mutated. For example are data set contains 50 samples, to plot genes with mutations present in at least 6% of samples:
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE}
+mutSpec(BRCA_MAF, recurrence_cutoff=3)
+```
+
+Alternativley one can select the genes of interest using the `genes` parameter, for example if it was only desirable to plot "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE}
+mutSpec(BRCA_MAF, genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
+```
+
+It is important to note that the Mutation Burden plot does not change during these subsets, this is calculated directly from the input via the formula: $mutations\ in\ sample/coverage\ space * 1000000$ by default the coverage space defaults to the size in base pairs of the "SeqCap EZ Human Exome Library v2.0". This default can be changed via the parameter `coverage_space`. This calculation is only meant to be a rough estimate as actual coverage space can vary from sample to sample, for a more accurate calculation the user has the option to supply an optional argument `z` giving the users own calculation for each sample, this should be a data frame of the following form:
+```{r kable, echo=FALSE}
+library(knitr)
+kable(cbind(sample=c("sample1", "sample2"), mut_burden=c(2, 5)))
+```

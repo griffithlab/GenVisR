@@ -28,7 +28,7 @@ plot_bar <- function(data_frame)
   legend <- scale_fill_manual(name="Translational Effect", values=c("red", "blue"), breaks=c('Synonymous', 'Non Synonymous'), drop=FALSE)
   
   # Plotting call
-  p1 <- ggplot(na.omit(data_frame), aes(x=gene, total_number_sample=total_number_sample, y=(..count..)/total_number_sample * 100, fill=trv_type), environment = environment()) + geom_bar(position='stack', alpha=.75) + coord_flip() + theme + y_label + scale_y_reverse() + legend	
+  p1 <- ggplot(na.omit(data_frame), aes(x=gene, total_number_sample=total_number_sample, y=(..count..)/total_number_sample * 100, fill=trv_type), environment = environment()) + geom_bar(position='stack', alpha=.75, width=1) + coord_flip() + theme + y_label + scale_y_reverse() + legend	
   
   return(p1)
 }

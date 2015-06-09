@@ -6,7 +6,7 @@
 \title{Plot a mutation landscape}
 \usage{
 mutSpec(x, y, z, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE,
-  title = "NULL", gene_label_size = 8, coverage_space = 63564965,
+  title = "", gene_label_size = 8, coverage_space = 63564965,
   file_type = "MAF", genes = NULL, drop_mutation = FALSE,
   rmv_silent = FALSE)
 }

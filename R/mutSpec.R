@@ -18,7 +18,7 @@
 #' @return a grob for plotting
 #' @export
 
-mutSpec <- function(x, y, z, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='NULL', gene_label_size=8, coverage_space=63564965, file_type='MAF', genes=NULL, drop_mutation=FALSE, rmv_silent=FALSE)
+mutSpec <- function(x, y, z, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='', gene_label_size=8, coverage_space=44100000, file_type='MAF', genes=NULL, drop_mutation=FALSE, rmv_silent=FALSE)
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
