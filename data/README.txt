@@ -1,0 +1,1 @@
+BRCA_MAF => /dccfiles_prod/tcgafiles/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf, https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files => verified public

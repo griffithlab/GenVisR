@@ -18,9 +18,6 @@ align_waterfall <- function(p2, p1, p3, p4, title=title)
   ############## Function to take three ggplots and align the plotting space on the y_axis and x_axis #########
   #############################################################################################################
   
-  require(gridExtra)
-  require(gtable)
-  
   # define the ggplot's as grobs and create a blank plot
   gA <- ggplotGrob(p2)
   gB <- ggplotGrob(p1)
