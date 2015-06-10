@@ -75,5 +75,4 @@ lolliplot <- function(data, cosmic=TRUE, fill_value='trv_type', label_column=NUL
   plot <- build_lolli(geneData, length, observed_mutation, cosmic_mutation, fill_value, label_column, plot_text_angle, plot_text_size, point_size, gene_colour, AAsequence, plot_sidechain=plot_sidechain)
   
   return(plot)
-  
 }

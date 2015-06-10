@@ -7,7 +7,6 @@
 
 correct_spread_coord_points <- function(x)
 {
-  
   # if frequency of group == 1 return the original coordinate else return the new spread coordinate
   if(x[4] == 1)
   {

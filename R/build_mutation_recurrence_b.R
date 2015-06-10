@@ -4,6 +4,7 @@
 #' @name build_mutation_recurrence_b
 #' @param x a data frame containing columns sample, mut_burden
 #' @return a ggplot object
+#' @import ggplot2
 
 build_mutation_recurrence_b <- function(x)
 {  

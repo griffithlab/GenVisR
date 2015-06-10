@@ -7,6 +7,8 @@
 #' @param p3 ggplot object displaying mutation burden on sample
 #' @param title optional a character string giving a title for the plot
 #' @return a grob object
+#' @import gridExtra
+#' @import gtable
 
 align_y <- function(p2, p1, p3, title)
 {
@@ -18,10 +20,7 @@ align_y <- function(p2, p1, p3, title)
   #############################################################################################################
   ############## Function to take three ggplots and align the plotting space on the y_axis and x_axis #########
   #############################################################################################################
-  
-  require(gridExtra)
-  require(gtable)
-  
+
   # define the ggplot's as grobs and create a blank plot
   gA <- ggplotGrob(p2)
   gB <- ggplotGrob(p1)

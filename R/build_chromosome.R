@@ -7,11 +7,10 @@
 #' @param chr_txt_angle integer specifying angle of text when plotting band text
 #' @param chr_txt_size integer specifying size of text when plotting band text
 #' @return ggplot object
+#' @import ggplot2
 
 build_chromosome <- function(data_frame, chromosome, chr_txt_angle=chr_txt_angle, chr_txt_size=chr_txt_size)
 {
-  require(ggplot2)
-  
   # define theme layer for ggplot
   theme <- theme(axis.text.x=element_blank(), axis.text.y=element_blank(), axis.title.x=element_blank(), axis.ticks.x=element_blank(), axis.ticks.y=element_blank(), legend.position='right')
   # modify ggplot legend defaults

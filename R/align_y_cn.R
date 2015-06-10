@@ -5,13 +5,11 @@
 #' @param p1 ggplot object of chromosome
 #' @param p2 ggplot object of CN
 #' @return ggplot object
+#' @import gtable
+#' @import gridExtra
 
 align_y_cn <- function(p1, p2)
 {
-  
-  require(gridExtra)
-  require(gtable)
-  
   # define the ggplot's as grobs and create a blank plot
   gA <- ggplotGrob(p1)
   gB <- ggplotGrob(p2)

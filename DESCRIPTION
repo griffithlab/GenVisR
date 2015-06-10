@@ -1,12 +1,12 @@
 Package: GGgenome
-Title: Genomic Visualization
+Title: Genomic Cohort Visualization
 Version: 0.0.0.9000
 Authors@R: person("Zachary", "Skidmore", , "zskidmor@genome.wustl.edu", role = c("aut", "cre"))
 Maintainer: Zachary Skidmore <zskidmor@genome.wustl.edu>
-Description: Produce publication quality graphics from standard genomic data files
+Description: Produce highly customizable publication quality graphics for genomic data at the cohort level.
 Depends: R (>= 3.0.0)
-Imports: ggplot2, plyr (>= 1.8.2.9), gridExtra, GenomicRanges, gtable, UniProt.ws, FField, RMySQL, scales
-License: GPL-2
+Imports: ggplot2, plyr (>= 1.8.2.9), gridExtra, GenomicRanges, gtable, UniProt.ws, FField, RMySQL, scales, biomaRt, gtools, reshape2
+License: GPL (>=3)
 LazyData: true
 Suggests: knitr
 VignetteBuilder: knitr

@@ -23,8 +23,7 @@ mutSpec <- function(x, clinDat=NULL, mutBurden=NULL, recurrence_cutoff = 0, grid
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
   ############################################################################################
-  require(ggplot2)
-  
+
   if(toupper(file_type) == toupper('MAF'))
   {
     data_frame <- MAF_to_anno(x)

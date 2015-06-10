@@ -11,12 +11,11 @@
 #' @param Y_lab_size integer specifying the size of the Y label
 #' @param facet_lab_size integer specifying the size of the faceted labels
 #' @return ggplot object
+#' @import scales
+#' @import ggplot2
 
 buildCN_cohort <- function(data_frame, plot_title=NULL, background='grey90', CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10)
 {
-  require(ggplot2)
-  require(scales)
-  
   CN_data <- na.omit(data_frame)
   dummy_data <- data_frame
   

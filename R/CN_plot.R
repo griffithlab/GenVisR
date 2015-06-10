@@ -12,7 +12,6 @@
 
 CN_plot <- function(x, genome='hg19', chr='chr1', chr_txt_angle=45, chr_txt_size=5)
 {
-  
   if(chr == 'all')
   {
     x <- reformat_cn(x)

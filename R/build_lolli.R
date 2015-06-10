@@ -15,14 +15,14 @@
 #' @param sequence_data object of class dataframe giving AA sequence, sidechain, and coord required if plot_sidechain is true
 #' @param plot_sidechain boolean specifying whether to plot the AA sidechain instead of domain information
 #' @return a ggplot2 object
+#' @import ggplot2
 
 build_lolli <- function(gene_data, length, mutation_observed, mutation_cosmic, fill_value, label_column, plot_text_angle, plot_text_size, point_size, gene_colour, sequence_data, plot_sidechain=FALSE)
 {
   ###################################################################################
   ####################### Function to make lolliplot type plot ######################
   ###################################################################################
-  library('ggplot2')
-  
+
   # build the various features of the plot
   
   # Build gene base either using domain information or AA sidechain information

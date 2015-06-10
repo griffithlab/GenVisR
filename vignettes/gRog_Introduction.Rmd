@@ -41,7 +41,7 @@ Alternativley one can select the genes of interest using the `genes` parameter, 
 mutSpec(BRCA_MAF, genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
 ```
 
-It is important to note that the Mutation Burden plot does not change during these subsets, this is calculated directly from the input via the formula: $mutations\ in\ sample/coverage\ space * 1000000$ by default the coverage space defaults to the size in base pairs of the "SeqCap EZ Human Exome Library v2.0". This default can be changed via the parameter `coverage_space`. This calculation is only meant to be a rough estimate as actual coverage space can vary from sample to sample, for a more accurate calculation the user has the option to supply an optional argument `z` giving the users own calculation for each sample, this should be a data frame of the following form:
+It is important to note that the Mutation Burden plot does not change during these subsets, this is calculated directly from the input via the formula: $mutations\ in\ sample/coverage\ space * 1000000$ by default the coverage space defaults to the size in base pairs of the "SeqCap EZ Human Exome Library v2.0". This default can be changed via the parameter `coverage_space`. This calculation is only meant to be a rough estimate as actual coverage space can vary from sample to sample, for a more accurate calculation the user has the option to supply an optional argument `mutBurden` giving the users own calculation for each sample, this should be a data frame of the following form:
 ```{r kable, echo=FALSE}
 library(knitr)
 kable(cbind(sample=c("sample1", "sample2"), mut_burden=c(2, 5)))

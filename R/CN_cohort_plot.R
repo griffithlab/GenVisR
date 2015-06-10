@@ -13,13 +13,12 @@
 #' @param facet_lab_size integer specifying the size of the faceted labels
 #' @return ggplot object
 #' @export
+#' @import plyr
+#' @import reshape2
+#' @import gtools
 
 CN_cohort_plot <- function(data_frame, genome='hg19', plot_title=NULL, background='grey90', CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10)
 {
-  require(plyr)
-  require(reshape2)
-  require(gtools)
-  
   # Get dummy data for genome
   UCSC_Chr_pos <- CN_dummy_data(genome=genome)
   

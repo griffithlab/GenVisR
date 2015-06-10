@@ -7,7 +7,6 @@
 
 CN_dummy_data <- function(genome)
 {
-  
   # Obtain data for UCSC genome and extract relevant columns
   data <- get_cytobands(genome)
   data <- data[,c(1,2,3)]

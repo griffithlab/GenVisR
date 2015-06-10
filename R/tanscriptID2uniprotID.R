@@ -5,15 +5,14 @@
 #' @param transcriptID String specifying ensembl transcript ID
 #' @param taxId integer specifying the uniprot taxonomy id for the species of interest
 #' @return String specifying uniprot ID
+#' @import UniProt.ws
 
 transcriptID2uniprotID <- function(transcriptID, up)
 {
   ###############################################################################################
   ################### Function to retieve Uniprot ID for ensembl transcript #####################
   ###############################################################################################
-  
-  library("UniProt.ws")
-  
+
   # select the database to grab the key from
   kt <- "ENSEMBL_TRANSCRIPT"
   
@@ -27,6 +26,5 @@ transcriptID2uniprotID <- function(transcriptID, up)
   result <- select(up, keys, columns, kt)
   uniprotID <- as.character(result[2])
   
-  return(uniprotID)
-  
+  return(uniprotID) 
 }

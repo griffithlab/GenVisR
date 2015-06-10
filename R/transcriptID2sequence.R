@@ -5,15 +5,14 @@
 #' @param transcriptID String specifying ensembl transcript ID
 #' @param taxId integer specifying the uniprot taxonomy id for the species of interest
 #' @return character vector giving protien sequence
+#' @import UniProt.ws
 
 transcriptID2sequence <- function(transcriptID, up)
 {
   ##############################################################################################
   #################### Function to retrieve ensembl transcript amino acid length ###############
   ##############################################################################################
-  
-  library("UniProt.ws")
-  
+
   # select the database to grab the key from
   kt <- "ENSEMBL_TRANSCRIPT"
   
@@ -33,5 +32,4 @@ transcriptID2sequence <- function(transcriptID, up)
   AAsequence$coord <- rownames(AAsequence)
   
   return(AAsequence)
-  
 }

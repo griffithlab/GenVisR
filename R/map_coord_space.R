@@ -8,7 +8,6 @@
 
 map_coord_space <- function(master, coord)
 {
-  
   # Map the original coordinates to the transformed space
   lt <- coord$start <= master$end
   gt <- coord$end >= master$start

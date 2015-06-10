@@ -5,11 +5,10 @@
 #' @param x object of class dataframe with column names start end 
 #' @param chr character string specifying the chromosome for pseudoexon calculation
 #' @return Object of class data frame
+#' @import plyr
 
 Calculate_Pseudoexons <- function(x, chr)
 {
-  require("plyr")
-  
   # Create GRanges object
   gr <- GRanges(seqnames=chr, ranges=IRanges(start=x$start, end=x$end))
   # Add in meta data

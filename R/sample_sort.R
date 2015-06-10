@@ -4,6 +4,7 @@
 #' @name sample_sort
 #' @param data_frame a data frame in MAF format
 #' @return a vector of samples in a sorted order
+#' @import reshape2
 
 sample_sort <- function(data_frame)
 {
@@ -12,9 +13,7 @@ sample_sort <- function(data_frame)
   ######## Function to perform a hiearchial sort on samples based on the presence of mutations in an ordered list of genes, expects #######
   ######## a dataframe in long format with columns 'sample', 'gene', 'trv_type'                                                     #######
   #########################################################################################################################################
-  
-  require(reshape2)
-  
+
   # recast the data going from long format to wide format, values in this data are counts of a mutation call
   wide_data <- dcast(data_frame, sample ~ gene, fun.aggregate = length, value.var="trv_type")
   

@@ -4,15 +4,14 @@
 #' @name add_mutation_counts
 #' @param data_frame a data frame in long format with columns sample, trv_type
 #' @return a data frame with synonymous/nonsynonymous counts appended 
+#' @import reshape2
 
 add_mutation_counts <- function(data_frame)
 {
   #############################################################################################################################
   ###################### Function to obtain Mutation Frequency counts on a sample level as a data frame #######################
   #############################################################################################################################
-  
-  require(reshape2)
-  
+
   # Change trv_type calls to either synonymous or non synonymous, for use in the mutation per Mb plot
   data_frame$trv_type <- as.character(data_frame$trv_type)
   data_frame$trv_type[toupper(data_frame$trv_type) != toupper('silent')] <- 'Non Synonymous'

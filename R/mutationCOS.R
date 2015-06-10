@@ -4,15 +4,14 @@
 #' @name mutationCOS
 #' @param transcriptID character string specifying ensembl transcript ID to retrieve mutations for
 #' @return object of class data frame giving comsic mutation observations
+#' @import biomaRt
 
 mutationCOS <- function(transcriptID, rep.fact, rep.dist.lmt, attr.fact, adj.max, adj.lmt, iter.max)
 {
   #################################################################################
   ################## function to return cosmic variants given transcript id #######
   #################################################################################
-  
-  library("biomaRt")
-  
+
   # Load in database and select dataset
   ensembl_mart <- useMart("ensembl")
   ensembl_mart <- useDataset("hsapiens_gene_ensembl", mart=ensembl_mart)

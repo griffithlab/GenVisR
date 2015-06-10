@@ -8,8 +8,6 @@
 
 dodge_coord_x <- function(x, rep.fact=5000, rep.dist.lmt=500, attr.fact=.1, adj.max=.1, adj.lmt=.5, iter.max=50000)
 {
-  require(FField)
-  
   # Format into data frame with columns as x and y
   x <- as.data.frame(cbind(x, 0))
   colnames(x) <- c('x', 'y')

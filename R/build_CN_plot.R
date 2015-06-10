@@ -5,11 +5,10 @@
 #' @param data_frame a data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value
 #' @param chr a character string specifying chromosome
 #' @return ggplot2 object
+#' @import ggplot2
 
 build_CN_plot <- function(x, chr)
 {
-  require('ggplot2')
-  
   # Define a THEME
   theme <- theme(axis.text.x=element_text(angle=30, hjust=1))
   
