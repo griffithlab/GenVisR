@@ -3,8 +3,8 @@
 #' Plot a mutation landscape plot for a cohort in an annotation file
 #' @name mutspec
 #' @param x a data frame in annotation format
-#' @param y an optional data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"
-#' @param z an optional data frame containing columns sample, mut_burden
+#' @param clinDat an optional data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"
+#' @param mutBurden an optional data frame containing columns sample, mut_burden
 #' @param recurrence_cutoff an integer value to remove genes that do not have x number of mutations
 #' @param grid a boolean value to overlay a grid on the primary plot
 #' @param label_x a boolean value to plot samples on the x axis
@@ -18,7 +18,7 @@
 #' @return a grob for plotting
 #' @export
 
-mutSpec <- function(x, y, z, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='', gene_label_size=8, coverage_space=44100000, file_type='MAF', genes=NULL, drop_mutation=FALSE, rmv_silent=FALSE)
+mutSpec <- function(x, clinDat=NULL, mutBurden=NULL, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='', gene_label_size=8, coverage_space=44100000, file_type='MAF', genes=NULL, drop_mutation=FALSE, rmv_silent=FALSE)
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
@@ -68,14 +68,14 @@ mutSpec <- function(x, y, z, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE
   }
   
   # Reorder the sample levels in data_frame2 to match the main plot's levels, and then plot the top margin plt
-  if(!missing(z))
+  if(!is.null(mutBurden))
   {
-    if(!setequal(sample_order, z$sample))
+    if(!setequal(sample_order, mutBurden$sample))
     {
       stop("The sample column in data frame z does not appear to contain the same elements as in data frame x")
     }
-    z$sample <- factor(z$sample, levels=sample_order)
-    p3 <- build_mutation_recurrence_b(z)
+    mutBurden$sample <- factor(mutBurden$sample, levels=sample_order)
+    p3 <- build_mutation_recurrence_b(mutBurden)
   } else {
     data_frame2$sample <- factor(data_frame2$sample, levels=sample_order)
     p3 <- plot_mutation_recurrence(data_frame2, coverage_space)
@@ -89,20 +89,20 @@ mutSpec <- function(x, y, z, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE
   data_frame <- add_gene_to_NA(data_frame)
   
   # Plot the Heatmap
-  if(missing(y))
+  if(is.null(clinDat))
   {
     p1 <- plot_heatmap(data_frame, grid = grid, label_x = label_x, gene_label_size = gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title=TRUE)
-  } else if(!missing(y))
+  } else if(!is.null(clinDat))
   {
     p1 <- plot_heatmap(data_frame, grid = grid, label_x = label_x, gene_label_size = gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title=FALSE)
   }
   
   # Plot any clinical data if it is specified
-  if(!missing(y))
+  if(!is.null(clinDat))
   {
     # match the levels of sample in y to conform to the main plot
-    y$sample <- factor(y$sample, levels=sample_order)
-    p4 <- plot_clinical(y)
+    clinDat$sample <- factor(clinDat$sample, levels=sample_order)
+    p4 <- plot_clinical(clinDat)
     
     # Align all plots and return as 1 plot
     pA <- align_waterfall(p2, p1, p3, p4, title=title)

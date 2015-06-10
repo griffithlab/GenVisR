@@ -5,17 +5,17 @@
 \alias{mutspec}
 \title{Plot a mutation landscape}
 \usage{
-mutSpec(x, y, z, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE,
-  title = "", gene_label_size = 8, coverage_space = 63564965,
-  file_type = "MAF", genes = NULL, drop_mutation = FALSE,
-  rmv_silent = FALSE)
+mutSpec(x, clinDat = NULL, mutBurden = NULL, recurrence_cutoff = 0,
+  grid = TRUE, label_x = FALSE, title = "", gene_label_size = 8,
+  coverage_space = 44100000, file_type = "MAF", genes = NULL,
+  drop_mutation = FALSE, rmv_silent = FALSE)
 }
 \arguments{
 \item{x}{a data frame in annotation format}
 
-\item{y}{an optional data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"}
+\item{clinDat}{an optional data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"}
 
-\item{z}{an optional data frame containing columns sample, mut_burden}
+\item{mutBurden}{an optional data frame containing columns sample, mut_burden}
 
 \item{recurrence_cutoff}{an integer value to remove genes that do not have x number of mutations}
 
