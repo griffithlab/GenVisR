@@ -6,6 +6,7 @@
 #' @param chr character string specifying the chromosome for pseudoexon calculation
 #' @return Object of class data frame
 #' @import plyr
+#' @import GenomicRanges
 
 Calculate_Pseudoexons <- function(x, chr)
 {

@@ -4,6 +4,9 @@
 #' @name mutspec
 #' @param x a data frame in annotation format
 #' @param clinDat an optional data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"
+#' @param clin.legend.col an integer specifying the number of columns to plot in the clinical data legend
+#' @param clin.var.colour a named character vector specifying the mapping between colors and variables in the clinical data
+#' @param clin.var.order a character vector of variables to order the clinical legend by
 #' @param mutBurden an optional data frame containing columns sample, mut_burden
 #' @param recurrence_cutoff an integer value to remove genes that do not have x number of mutations
 #' @param grid a boolean value to overlay a grid on the primary plot
@@ -11,14 +14,14 @@
 #' @param title a character string for the plot title
 #' @param gene_label_size an integer specifying the size of labels on Y axis
 #' @param coverage_space an integer specifying the size in bp of the genome covered from which mutations could be called
-#' @param file_type a character string specifying the file format of the data frame, one of "TGI", "MAF"
+#' @param file_type a character string specifying the file format of the data frame, one of "MGI", "MAF"
 #' @param genes a character vector specifying genes to plot
 #' @param drop_mutation Boolean specifying whether to drop unused "mutation type" levels from the legend
 #' @param rmv_silent Boolean specifying wheter to remove silent mutations from the left side and main plot
 #' @return a grob for plotting
 #' @export
 
-mutSpec <- function(x, clinDat=NULL, mutBurden=NULL, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='', gene_label_size=8, coverage_space=44100000, file_type='MAF', genes=NULL, drop_mutation=FALSE, rmv_silent=FALSE)
+mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, clin.var.order=NULL, mutBurden=NULL, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='', gene_label_size=8, coverage_space=44100000, file_type='MAF', genes=NULL, drop_mutation=FALSE, rmv_silent=FALSE)
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
@@ -27,9 +30,9 @@ mutSpec <- function(x, clinDat=NULL, mutBurden=NULL, recurrence_cutoff = 0, grid
   if(toupper(file_type) == toupper('MAF'))
   {
     data_frame <- MAF_to_anno(x)
-  } else if(toupper(file_type) == toupper('TGI'))
+  } else if(toupper(file_type) == toupper('MGI'))
   {
-    data_frame <- TGI_to_anno(x)
+    data_frame <- MGI_to_anno(x)
   } else {
     stop("Unrecognized file_type: ", file_type)
   }
@@ -101,7 +104,7 @@ mutSpec <- function(x, clinDat=NULL, mutBurden=NULL, recurrence_cutoff = 0, grid
   {
     # match the levels of sample in y to conform to the main plot
     clinDat$sample <- factor(clinDat$sample, levels=sample_order)
-    p4 <- plot_clinical(clinDat)
+    p4 <- plot_clinical(clinDat, clin.legend.col=clin.legend.col, clin.var.colour=clin.var.colour, clin.var.order=clin.var.order)
     
     # Align all plots and return as 1 plot
     pA <- align_waterfall(p2, p1, p3, p4, title=title)

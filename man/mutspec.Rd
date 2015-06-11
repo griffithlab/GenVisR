@@ -5,7 +5,8 @@
 \alias{mutspec}
 \title{Plot a mutation landscape}
 \usage{
-mutSpec(x, clinDat = NULL, mutBurden = NULL, recurrence_cutoff = 0,
+mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
+  clin.var.order = NULL, mutBurden = NULL, recurrence_cutoff = 0,
   grid = TRUE, label_x = FALSE, title = "", gene_label_size = 8,
   coverage_space = 44100000, file_type = "MAF", genes = NULL,
   drop_mutation = FALSE, rmv_silent = FALSE)
@@ -14,6 +15,12 @@ mutSpec(x, clinDat = NULL, mutBurden = NULL, recurrence_cutoff = 0,
 \item{x}{a data frame in annotation format}
 
 \item{clinDat}{an optional data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"}
+
+\item{clin.legend.col}{an integer specifying the number of columns to plot in the clinical data legend}
+
+\item{clin.var.colour}{a named character vector specifying the mapping between colors and variables in the clinical data}
+
+\item{clin.var.order}{a character vector of variables to order the clinical legend by}
 
 \item{mutBurden}{an optional data frame containing columns sample, mut_burden}
 
@@ -29,7 +36,7 @@ mutSpec(x, clinDat = NULL, mutBurden = NULL, recurrence_cutoff = 0,
 
 \item{coverage_space}{an integer specifying the size in bp of the genome covered from which mutations could be called}
 
-\item{file_type}{a character string specifying the file format of the data frame, one of "TGI", "MAF"}
+\item{file_type}{a character string specifying the file format of the data frame, one of "MGI", "MAF"}
 
 \item{genes}{a character vector specifying genes to plot}
 

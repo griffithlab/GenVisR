@@ -4,10 +4,17 @@
 \alias{plot_clinical}
 \title{plot clinical information}
 \usage{
-plot_clinical(x)
+plot_clinical(x, clin.legend.col = 1, clin.var.colour = NULL,
+  clin.var.order = NULL)
 }
 \arguments{
 \item{x}{a data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"}
+
+\item{clin.legend.col}{an integer specifying the number of columns to plot in the legend}
+
+\item{clin.var.colour}{a named character vector specifying the mapping between colors and variables}
+
+\item{clin.var.order}{a character vector of variables to order the legend by}
 }
 \value{
 a grob object

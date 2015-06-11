@@ -25,24 +25,50 @@ Intuitively visualizing and interpreting the abundance of cohort data originatin
 library(GGgenome)
 ```
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE}
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 mutSpec(BRCA_MAF)
 ```
 
-This type of view is of limited use given the large number of genes, often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to do this, the `recurrence_cutoff` parameter will remove genes from the data which do not have at least x number of samples mutated. For example are data set contains 50 samples, to plot genes with mutations present in at least 6% of samples:
+This type of view is of limited use given the large number of genes, often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to do this, the `recurrence_cutoff` parameter will remove genes from the data which do not have at least x number of samples mutated. For example the `BRCA_MAF` data set contains 50 samples, to plot genes with mutations present in at least 6% of samples:
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE}
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 mutSpec(BRCA_MAF, recurrence_cutoff=3)
 ```
 
 Alternativley one can select the genes of interest using the `genes` parameter, for example if it was only desirable to plot "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE}
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 mutSpec(BRCA_MAF, genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
 ```
 
-It is important to note that the Mutation Burden plot does not change during these subsets, this is calculated directly from the input via the formula: $mutations\ in\ sample/coverage\ space * 1000000$ by default the coverage space defaults to the size in base pairs of the "SeqCap EZ Human Exome Library v2.0". This default can be changed via the parameter `coverage_space`. This calculation is only meant to be a rough estimate as actual coverage space can vary from sample to sample, for a more accurate calculation the user has the option to supply an optional argument `mutBurden` giving the users own calculation for each sample, this should be a data frame of the following form:
+It is important to note that the Mutation Burden plot does not change during these subsets, this is calculated directly from the input via the formula: $mutations\ in\ sample/coverage\ space * 1000000$ by default the coverage space defaults to the size in base pairs of the "SeqCap EZ Human Exome Library v2.0". This default can be changed via the parameter `coverage_space`. This calculation is only meant to be a rough estimate as actual coverage space can vary from sample to sample, for a more accurate calculation the user has the option to supply an optional argument `mutBurden` giving the users own calculation for each sample, this should be a data frame with columns 'sample', 'mut_burden' taking the following form:
 ```{r kable, echo=FALSE}
 library(knitr)
-kable(cbind(sample=c("sample1", "sample2"), mut_burden=c(2, 5)))
+kable(as.data.frame(cbind(sample=as.character(BRCA_MAF[1:10,16]), mut_burden=as.numeric(rnorm(10, mean=2, sd=.5)))))
 ```
+
+In addition to specifying the mutation burden the user also has the ability to plot additional clinical data. The clinical data supplied should be a data frame in "long" format with column names "sample", "variable", "value". It is recommended to use the `melt` function in the package [reshape2](http://cran.r-project.org/web/packages/reshape2/index.html) to coerce data into this format. Here we add clinical data to be plotted and specify a custom order and colours for variables putting these values in two columns within the legend:
+
+```{r, fig.keep='last', fig.width=10.5, fig.height=7.5, message=FALSE, warning=FALSE, results='hide'}
+# create fake clinical data
+subtype <- c('lumA', 'lumB', 'her2', 'basal', 'normal')
+subtype <- sample(subtype, 50, replace=TRUE)
+age <- c('20-30', '31-50', '51-60', '61+')
+age <- sample(age, 50, replace=TRUE)
+sample <- as.character(unique(BRCA_MAF$Tumor_Sample_Barcode))
+clinical <- as.data.frame(cbind(sample, subtype, age))
+
+# melt the data
+library(reshape2)
+clinical <- melt(clinical, id.vars=c('sample'))
+
+# Run mutSpec
+mutSpec(BRCA_MAF, clinDat=clinical, clin.var.colour=c('lumA'='blue4', 'lumB'='deepskyblue',
+'her2'='hotpink2', 'basal'='firebrick2', 'normal'='green4', '20-30'='#ddd1e7',
+'31-50'='#bba3d0', '51-60'='#9975b9', '61+'='#7647a2'),
+genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"), clin.legend.col=2, clin.var.order=c('lumA',
+'lumB', 'her2', 'basal', 'normal', '20-30', '31-50', '51-60', '61+'))
+```
+
+Occasionally there could be samples not within the .maf file due to a lack of mutations however it may still be desirable to plot these samples. To accomplish this simply add the samples into the appropriate column before loading the data and leave the rest of the columns as NA. Additionally it may be desireable to plot data not in a standard format, if such is the case it is recommended to set the `file_type` parameter to 'MGI' and name columns as 'sample', 'gene_name', and 'trv_type'. Valid levels for 'trv_type' are: "nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", and "silent".
+

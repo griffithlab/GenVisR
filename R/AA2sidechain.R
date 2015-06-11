@@ -10,7 +10,7 @@ AA2sidechain <- function(x)
   
   # Coerce all AA changes to uppercase and then apply switch statement
   x <- toupper(x)
-  x <- switch(x, "F"="Nonpolar", "L"="Nonpolar", "S"="Polar", "Y"="Polar", "C"="Polar", "W"="Nonpolar", "L"="Nonpolar", "P"="Nonpolar", "H"="Basic", "Q"="Polar", "R"="Basic", "I"="Nonpolar", "M"="Nonpolar", "T"="Polar", "N"="Polar", "K"="Basic", "S"="Polar", "R"= "Basic", "V"="Nonpolar", "A"="Nonpolar", "D"= "Acidic", "E"="Acidic", "G"="Polar")
+  x <- switch(EXPR=x, "F"="Nonpolar", "L"="Nonpolar", "S"="Polar", "Y"="Polar", "C"="Polar", "W"="Nonpolar", "L"="Nonpolar", "P"="Nonpolar", "H"="Basic", "Q"="Polar", "R"="Basic", "I"="Nonpolar", "M"="Nonpolar", "T"="Polar", "N"="Polar", "K"="Basic", "S"="Polar", "R"= "Basic", "V"="Nonpolar", "A"="Nonpolar", "D"= "Acidic", "E"="Acidic", "G"="Polar")
   
   return(x)
 }

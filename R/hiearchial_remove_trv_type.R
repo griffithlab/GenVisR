@@ -14,7 +14,7 @@ hiearchial_remove_trv_type <- function(data_frame, file_type)
   #############################################################################################################################
   
   # reorder the trv_type in terms of deleterious effect and refactor the data frame
-  if(toupper(file_type) == toupper('TGI'))
+  if(toupper(file_type) == toupper('MGI'))
   {
     mutation_order <- c("nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent")
   } else if (toupper(file_type) == toupper('MAF'))

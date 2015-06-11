@@ -1,11 +1,11 @@
-#' Convert TGI File
+#' Convert MGI File
 #' 
-#' Convert columns of a mutation annotation file "TGI" into a format recognizable by internal functions
-#' @name TGI_to_anno
-#' @param x a data frame in TGI internal format
-#' @return a data frame coerced from TGI to internal annotation format
+#' Convert columns of a mutation annotation file "MGI" into a format recognizable by internal functions
+#' @name MGI_to_anno
+#' @param x a data frame in MGI internal format
+#' @return a data frame coerced from MGI to internal annotation format
 
-TGI_to_anno <- function(x)
+MGI_to_anno <- function(x)
 {
   ##################################################################################################################
   ############## Function to take a MAF file and coerce it into a format recognizable by other functions ###########
