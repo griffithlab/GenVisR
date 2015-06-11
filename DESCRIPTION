@@ -6,7 +6,7 @@ Maintainer: Zachary Skidmore <zskidmor@genome.wustl.edu>
 Description: Produce highly customizable publication quality graphics for genomic data at the cohort level.
 Depends: R (>= 3.0.0)
 Imports: ggplot2, plyr (>= 1.8.2.9), gridExtra, GenomicRanges, gtable, UniProt.ws, FField, RMySQL, scales, biomaRt, gtools, reshape2
-License: GPL (>=3)
+License: GPL-2
 LazyData: true
 Suggests: knitr
 VignetteBuilder: knitr
