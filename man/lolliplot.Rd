@@ -4,7 +4,7 @@
 \alias{lolliplot}
 \title{Construct Lolliplot from data}
 \usage{
-lolliplot(data, cosmic = TRUE, fill_value = "trv_type",
+lolliplot(data, cosmic = FALSE, fill_value = "trv_type",
   label_column = NULL, plot_text_angle = 45, plot_text_size = 5,
   point_size = 1, gene_colour = "#999999", obs.rep.fact = 5000,
   obs.rep.dist.lmt = 500, obs.attr.fact = 0.1, obs.adj.max = 0.1,

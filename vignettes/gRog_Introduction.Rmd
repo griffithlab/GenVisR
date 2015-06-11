@@ -72,3 +72,16 @@ genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"), clin.legend.col=2, clin.var
 
 Occasionally there could be samples not within the .maf file due to a lack of mutations however it may still be desirable to plot these samples. To accomplish this simply add the samples into the appropriate column before loading the data and leave the rest of the columns as NA. Additionally it may be desireable to plot data not in a standard format, if such is the case it is recommended to set the `file_type` parameter to 'MGI' and name columns as 'sample', 'gene_name', and 'trv_type'. Valid levels for 'trv_type' are: "nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", and "silent".
 
+### lolliplot
+
+`lolliplot` provides a method for visualizing mutation hotspots on a transcript framework. The input consist of a data frame with columns 'transcript_name', 'gene', 'trv_type' and 'amino_acid_change' giving the ensembl transcript id, gene name, and the amino acid change in p. notation respectivley.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+# Create input data
+data <- BRCA_MAF[BRCA_MAF$Hugo_Symbol == 'TP53',c('Hugo_Symbol', 'amino_acid_change_WU', 'Variant_Classification')]
+data <- as.data.frame(cbind(data, 'ENST00000269305'))
+colnames(data) <- c('gene', 'amino_acid_change', 'trv_type', 'transcript_name')
+
+# Call lolliplot
+lolliplot(data)
+```
