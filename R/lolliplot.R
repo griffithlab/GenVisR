@@ -24,12 +24,20 @@
 #' @param cos.iter.max maximum iterations beyond which to stop the simulation cosmic track
 #' @param plot_sidechain boolean value whether to plot the amino acid sidechains instead of protein domains
 #' @param taxId integer specifying the uniprot taxonomy id for the species of interest
+#' @param ensembl.dataset character string specifying what ensembl data set to query when converting to p. notation, ignored if data is already in p.notation
 #' @return object of class ggplot2
 #' @export
 #' @import UniProt.ws
+#' @import RCurl
 
-lolliplot <- function(data, cosmic=FALSE, fill_value='trv_type', label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=3, gene_colour='#999999', obs.rep.fact=5000, obs.rep.dist.lmt=500, obs.attr.fact=.1, obs.adj.max=.1, obs.adj.lmt=.5, obs.iter.max=50000, cos.rep.fact=5000, cos.rep.dist.lmt=500, cos.attr.fact=.1, cos.adj.max=.1, cos.adj.lmt=.5, cos.iter.max=50000, plot_sidechain=FALSE, taxId=9606)
+lolliplot <- function(data, cosmic=FALSE, fill_value='trv_type', label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=3, gene_colour='#999999', obs.rep.fact=5000, obs.rep.dist.lmt=500, obs.attr.fact=.1, obs.adj.max=.1, obs.adj.lmt=.5, obs.iter.max=50000, cos.rep.fact=5000, cos.rep.dist.lmt=500, cos.attr.fact=.1, cos.adj.max=.1, cos.adj.lmt=.5, cos.iter.max=50000, plot_sidechain=FALSE, taxId=9606, ensembl.dataset="hsapiens_gene_ensembl")
 {
+  # Check for internet connectivity
+  if(!is.character(getURL("www.google.com")))
+  {
+    stop("Did not detect an internet connection, check internet connectivity")
+  }
+  
   # Define a taxonomy ID for use in the "transcriptID2" function family for use with UniProt.ws
   up <- UniProt.ws(taxId=taxId)
   
@@ -61,7 +69,7 @@ lolliplot <- function(data, cosmic=FALSE, fill_value='trv_type', label_column=NU
   geneData <- construct_gene(gene, protien_domain, length)
   
   # construct data frame of observed mutations
-  observed_mutation <- mutationObs(data, fill_value, label_column, obs.rep.fact, obs.rep.dist.lmt, obs.attr.fact, obs.adj.max, obs.adj.lmt, obs.iter.max)
+  observed_mutation <- mutationObs(data, fill_value, label_column, obs.rep.fact, obs.rep.dist.lmt, obs.attr.fact, obs.adj.max, obs.adj.lmt, obs.iter.max, ensembl.dataset=ensembl.dataset)
   
   # construct data frame of cosmic mutations
   if(cosmic == TRUE)

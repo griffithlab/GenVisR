@@ -11,7 +11,7 @@ lolliplot(data, cosmic = FALSE, fill_value = "trv_type",
   obs.adj.lmt = 0.5, obs.iter.max = 50000, cos.rep.fact = 5000,
   cos.rep.dist.lmt = 500, cos.attr.fact = 0.1, cos.adj.max = 0.1,
   cos.adj.lmt = 0.5, cos.iter.max = 50000, plot_sidechain = FALSE,
-  taxId = 9606)
+  taxId = 9606, ensembl.dataset = "hsapiens_gene_ensembl")
 }
 \arguments{
 \item{data}{object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations}
@@ -57,6 +57,8 @@ lolliplot(data, cosmic = FALSE, fill_value = "trv_type",
 \item{plot_sidechain}{boolean value whether to plot the amino acid sidechains instead of protein domains}
 
 \item{taxId}{integer specifying the uniprot taxonomy id for the species of interest}
+
+\item{ensembl.dataset}{character string specifying what ensembl data set to query when converting to p. notation, ignored if data is already in p.notation}
 }
 \value{
 object of class ggplot2
