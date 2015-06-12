@@ -27,6 +27,15 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, cl
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
   ############################################################################################
 
+  # Perform quality checks
+  if(!is.data.frame(x))
+  {
+    warning("Did not detect a data frame, attempting to coerce, output device may be incorrect")
+    x <- as.data.frame(x)
+    x <- droplevels(x)
+  }
+  
+  # Convert file type to internal format
   if(toupper(file_type) == toupper('MAF'))
   {
     data_frame <- MAF_to_anno(x)

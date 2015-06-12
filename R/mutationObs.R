@@ -16,7 +16,19 @@ mutationObs <- function(data, fill_value, label_column, rep.fact, rep.dist.lmt, 
   
   # extract the mutation coordinates
   mutation_coord <- data$amino_acid_change
-  mutation_coord <- as.numeric(gsub("p\\.\\w+?(\\d+).*?$", "\\1", mutation_coord, perl=TRUE))
+  if(all(grepl("p\\.", mutation_coord)))
+  {
+    message("Detected p. notation for amino_acid_change")
+    mutation_coord <- as.numeric(gsub("p\\.\\w+?(\\d+).*?$", "\\1", mutation_coord, perl=TRUE))
+  } else if(all(grepl("c\\.", mutation_coord)))
+  {
+    message("Detected c. notation for amino_acid_change")
+    mutation_coord <- as.numeric(gsub("c\\.\\w+?(\\d+).*?$", "\\1", mutation_coord, perl=TRUE))
+    
+  } else {
+    stop("Could not determine notation type for amino_acid_change, check input")
+  }
+  
   
   # combine mutation type and mutation coord into a data frame
   mutation_data <- as.data.frame(cbind(mutation_coord, fill))
