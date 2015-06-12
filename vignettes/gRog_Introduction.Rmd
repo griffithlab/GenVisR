@@ -21,7 +21,7 @@ Intuitively visualizing and interpreting the abundance of cohort data originatin
 
 `BRCA_MAF` is a truncated MAF file consisting of 50 samples from the TCGA project corresponding to [Breast invasive carcinoma](https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files#TCGAMAFFiles-BRCA:Breastinvasivecarcinoma) [(complete data)](https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf). using this dataset we can view the default behavior of `mutSpec`:
 
-```{r}
+```{r, message=FALSE}
 library(GGgenome)
 ```
 
@@ -74,7 +74,8 @@ Occasionally there could be samples not within the .maf file due to a lack of mu
 
 ### lolliplot
 
-`lolliplot` provides a method for visualizing mutation hotspots on a transcript framework. The input consist of a data frame with columns 'transcript_name', 'gene', 'trv_type' and 'amino_acid_change' giving the ensembl transcript id, gene name, and the amino acid change in p. notation respectivley.
+`lolliplot` provides a method for visualizing mutation hotspots on a transcript framework. The input consist of a data frame with columns 'transcript_name', 'gene', 'trv_type' and 'amino_acid_change' giving the ensembl transcript id, gene name, and the amino acid change respectivley. `lolliplot` queries various online databases to extract meta data for the transcript framework and as such needs an active internet connection further it assumes the species to be H.sapiens, this assumption can be changed via the parameters `taxId` and `ensembl.dataset`.
+
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Create input data
@@ -85,3 +86,40 @@ colnames(data) <- c('gene', 'amino_acid_change', 'trv_type', 'transcript_name')
 # Call lolliplot
 lolliplot(data)
 ```
+
+It is recommended for amino acid change to be in p. notation however lolliplot will attempt to convert from c. notation to p.notation by subtracting the 5' UTR transcript length from the c. coordinate, when employing this functionality the user must specify an ensembl data set via the `ensembl.dataset` parameter. Valid data sets can be viewed via:
+```{r, message=FALSE}
+library(biomaRt)
+ensembl_mart <- useMart("ensembl")
+head(listDatasets(ensembl_mart))
+```
+By default `ensembl.dataset` defaults to H.sapiens.
+
+In an effort to maintain a high degree of flexibility the user has the option of selecting columns on which to fill and label. The parameters `fill_value` and `label_column` allow this behavior by taking column names on which to fill and label respectivley. Additionally one can plot the amino acid sidechain information in lieu of protein domains.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+# Add additional columns to the data
+data$gender <- sample(c("Male", "Female"), 15, replace=T)
+data$impact <- sample(c("Low", "Medium", "High"), 15, replace=T)
+
+lolliplot(data, fill_value='gender', label_column='impact', plot_sidechain=TRUE)
+```
+
+For ensembl human transcripts the option exists to add a [cosmic](http://cancer.sanger.ac.uk/cosmic) track to the plot. The user is warned that this type of lookup can be slow requiring several minutes to complete.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+#lolliplot(data, fill_value='trv_type', label_column='amino_acid_change', cosmic=TRUE)
+```
+
+`lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data points in an attempt to achieve a reasonable degree of seperation between points. Suitable defaults have been set however on occasion the user may need to manually adjust the force field parameters. This can be done for both the cosmic and observed tracks via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
+
+## genCov
+
+
+
+
+
+
+
+
+
