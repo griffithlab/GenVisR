@@ -28,7 +28,7 @@
 #' @export
 #' @import UniProt.ws
 
-lolliplot <- function(data, cosmic=FALSE, fill_value='trv_type', label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=1, gene_colour='#999999', obs.rep.fact=5000, obs.rep.dist.lmt=500, obs.attr.fact=.1, obs.adj.max=.1, obs.adj.lmt=.5, obs.iter.max=50000, cos.rep.fact=5000, cos.rep.dist.lmt=500, cos.attr.fact=.1, cos.adj.max=.1, cos.adj.lmt=.5, cos.iter.max=50000, plot_sidechain=FALSE, taxId=9606)
+lolliplot <- function(data, cosmic=FALSE, fill_value='trv_type', label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=3, gene_colour='#999999', obs.rep.fact=5000, obs.rep.dist.lmt=500, obs.attr.fact=.1, obs.adj.max=.1, obs.adj.lmt=.5, obs.iter.max=50000, cos.rep.fact=5000, cos.rep.dist.lmt=500, cos.attr.fact=.1, cos.adj.max=.1, cos.adj.lmt=.5, cos.iter.max=50000, plot_sidechain=FALSE, taxId=9606)
 {
   # Define a taxonomy ID for use in the "transcriptID2" function family for use with UniProt.ws
   up <- UniProt.ws(taxId=taxId)

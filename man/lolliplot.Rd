@@ -6,7 +6,7 @@
 \usage{
 lolliplot(data, cosmic = FALSE, fill_value = "trv_type",
   label_column = NULL, plot_text_angle = 45, plot_text_size = 5,
-  point_size = 1, gene_colour = "#999999", obs.rep.fact = 5000,
+  point_size = 3, gene_colour = "#999999", obs.rep.fact = 5000,
   obs.rep.dist.lmt = 500, obs.attr.fact = 0.1, obs.adj.max = 0.1,
   obs.adj.lmt = 0.5, obs.iter.max = 50000, cos.rep.fact = 5000,
   cos.rep.dist.lmt = 500, cos.attr.fact = 0.1, cos.adj.max = 0.1,
