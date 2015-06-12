@@ -10,7 +10,7 @@ MGI_to_anno <- function(x)
   ##################################################################################################################
   ############## Function to take a MAF file and coerce it into a format recognizable by other functions ###########
   ##################################################################################################################
-  if(!all(colnames(x) %in% c('sample', 'gene_name', 'trv_type')))
+  if(!all(c('sample', 'gene_name', 'trv_type') %in% colnames(x)))
   {
     stop("Did not detect correct column names, check file_type flag")
   }
