@@ -108,14 +108,49 @@ lolliplot(data, fill_value='gender', label_column='impact', plot_sidechain=TRUE)
 For ensembl human transcripts the option exists to add a [cosmic](http://cancer.sanger.ac.uk/cosmic) track to the plot. The user is warned that this type of lookup can be slow requiring several minutes to complete.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+#DEPRECATED: exploring alternatives to biomaRt to obtain this information
+
 #lolliplot(data, fill_value='trv_type', label_column='amino_acid_change', cosmic=TRUE)
 ```
 
-`lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data points in an attempt to achieve a reasonable degree of seperation between points. Suitable defaults have been set however on occasion the user may need to manually adjust the force field parameters. This can be done for both the cosmic and observed tracks via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
+`lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data in an attempt to achieve a reasonable degree of seperation between points. Suitable defaults have been set however on occasion the user may need to manually adjust the force field parameters. This can be done for both the cosmic and observed tracks via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
 
 ## genCov
 
+genCov provides a methodology for viewing coverage information in relation to a gene track. It takes a list of data frames with each data frame containing columns "end" and "cov" corresponding to the region of interest. Additional required arguments are a Granges object specifying the region of interest, a BSgenome, and a txdb object containing transcription metadata (see the package [Granges](http://www.bioconductor.org/packages/release/bioc/html/GenomicRanges.html) for more information). genCov will plot a genomic features track and align coverage data in the list to the plot:
 
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+attach(PTEN_COV)
+
+# need transcript data for reference
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+
+# need a biostrings object for reference
+library(BSgenome.Hsapiens.UCSC.hg19)
+genome <- BSgenome.Hsapiens.UCSC.hg19
+
+# need Granges object 
+gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
+
+# save the data as a named list
+data <- list("PTEN" = PTEN_COV)
+
+# Plot the graphic
+genCov(data, txdb, gr, genome)
+```
+
+By default genCov will perform a log compression of genomic space for each feature type,'Intron','CDS','UTR'. The degree of compression can be set via the parameter `base` which will perform the appropriate log compression for the geatures specified in `transform`. The user can turn off this behavior by setting transform to NULL.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+genCov(data, txdb, gr, genome, transform=NULL)
+```
+
+## CN_cohort_plot
+## CN_plot
+## transition_transversion_plot
+## gene_plot
+## plot_coverage
 
 
 
