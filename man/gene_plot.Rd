@@ -4,7 +4,7 @@
 \alias{gene_plot}
 \title{plot gene}
 \usage{
-gene_plot(txdb, gr, genome, reduce = FALSE, gene_colour = NULL, cores = 1,
+gene_plot(txdb, gr, genome, reduce = FALSE, gene_colour = NULL,
   base = c(10, 2, 2), transform = c("Intron", "CDS", "UTR"))
 }
 \arguments{
@@ -15,8 +15,6 @@ gene_plot(txdb, gr, genome, reduce = FALSE, gene_colour = NULL, cores = 1,
 \item{genome}{Object of class BSgenome specifying the genome}
 
 \item{reduce}{Boolean specifying whether to collapse isoforms in the ROI}
-
-\item{cores}{Integer specifying the number of cores to use for processing}
 
 \item{base}{base A vector of log bases to transform the data, corresponding to the elements of transform}
 

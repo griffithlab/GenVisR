@@ -6,15 +6,15 @@
 #' @param gr A Granges object specifying a region of interest
 #' @param genome Object of class BSgenome specifying the genome
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
-#' @param cores Integer specifying the number of cores to use for processing
 #' @param base  base A vector of log bases to transform the data, corresponding to the elements of transform 
 #' @param transform A vector of strings designating what objects to log transform
 #' @return ggplot object
 #' @export
 #' @import GenomicRanges
 #' @import plyr
+#' @import GenomicFeatures
 
-gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, cores=1, base=c(10,2,2), transform=c('Intron','CDS','UTR')){
+gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR')){
 
   # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
   cds <- formatCDS(txdb, gr, genome=genome, reduce=reduce)

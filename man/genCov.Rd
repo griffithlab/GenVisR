@@ -7,8 +7,8 @@
 genCov(x, txdb, gr, genome, reduce = F, gene_colour = NULL,
   gene_name = "Gene", bg_fill = "black", text_fill = "white",
   border = "black", size = 10, width_ratio = c(1, 10), colour = "blue",
-  plot_type = "line", cores = 1, base = c(10, 2, 2),
-  transform = c("Intron", "CDS", "UTR"))
+  plot_type = "line", base = c(10, 2, 2), transform = c("Intron", "CDS",
+  "UTR"))
 }
 \arguments{
 \item{x}{named list containing data frames with columns stop and cov}
@@ -39,11 +39,11 @@ genCov(x, txdb, gr, genome, reduce = F, gene_colour = NULL,
 
 \item{plot_type}{character string specifying one of line, area for data display}
 
-\item{cores}{Integer specifying the number of cores to use for processing}
-
 \item{base}{A vector of log bases to transform the data, corresponding to the elements of transform}
 
 \item{transform}{A vector of strings designating what objects to log transform}
+
+\item{cores}{Integer specifying the number of cores to use for processing}
 }
 \value{
 ggplot object
