@@ -11,15 +11,15 @@ vignette: >
 
 ## Introduction
 
-Intuitively visualizing and interpreting the abundance of cohort data originating from high-throughput genomic technologies continues to be challenging. Graphical R obsrvations of genomics (gRog) attempts to alleviate this burden by providing highly customizable publication quailty graphics focused primarily on a cohort level. gRog attempts to maintain a high degree of flexability while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
+Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. Graphical R observations of genomics (gRog) attempts to alleviate this burden by providing highly customizable publication-quality graphics focused primarily on a cohort level (i.e., multiple samples/patients). gRog attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
 
 ## Functions
 
 ### mutSpec
 
-`mutSpec` provides a method of visualizing the mutational landscape of a cohort. The input to `mutSpec` consists of a data frame derived from either a .maf (version 2.4) file or a file in MGI annotation format (obtained from The [Genome Modeling System](https://github.com/genome/gms)). `mutspec` will by display the mutation type in the main panel while showing the mutation burden and the percentage of samples with a mutation in the side panels. Conflicts arising from multiple mutations in the same gene/sample cell are resolved by a hiearchial removal of mutations keeping the most deleterious as defined in the order of the "mutation type" legend. This hiearchial removal occurs only in the main panel.
+`mutSpec` provides a method of visualizing the mutational landscape of a cohort. The input to `mutSpec` consists of a data frame derived from either a .maf (version 2.4) file or a file in MGI annotation format (obtained from The [Genome Modeling System](https://github.com/genome/gms)). `mutspec` will display the mutation occurrence and type in the main panel while showing the mutation rate and the percentage of samples with a mutation in the side panels. Conflicts arising from multiple mutations in the same gene/sample cell are resolved by a hierarchical removal of mutations keeping the most deleterious as defined by the order of the "mutation type" legend. This hierarchical removal occurs only in the main panel.
 
-`BRCA_MAF` is a truncated MAF file consisting of 50 samples from the TCGA project corresponding to [Breast invasive carcinoma](https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files#TCGAMAFFiles-BRCA:Breastinvasivecarcinoma) [(complete data)](https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf). using this dataset we can view the default behavior of `mutSpec`:
+`BRCA_MAF` is a truncated MAF file consisting of 50 samples from the TCGA project corresponding to [Breast invasive carcinoma](https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files#TCGAMAFFiles-BRCA:Breastinvasivecarcinoma) [(complete data)](https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf). Using this dataset we can view the default behavior of `mutSpec`:
 
 ```{r, message=FALSE}
 library(GGgenome)
@@ -29,13 +29,13 @@ library(GGgenome)
 mutSpec(BRCA_MAF)
 ```
 
-This type of view is of limited use given the large number of genes, often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to do this, the `recurrence_cutoff` parameter will remove genes from the data which do not have at least x number of samples mutated. For example the `BRCA_MAF` data set contains 50 samples, to plot genes with mutations present in at least 6% of samples:
+This type of view is of limited use given the large number of genes. Often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to do this, the `recurrence_cutoff` parameter will remove genes from the data which do not have at least x number of samples mutated. For example the `BRCA_MAF` data set contains 50 samples, to plot genes with mutations present in at least 3 (6%) of samples:
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 mutSpec(BRCA_MAF, recurrence_cutoff=3)
 ```
 
-Alternativley one can select the genes of interest using the `genes` parameter, for example if it was only desirable to plot "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
+Alternatively one can select genes of interest using the `genes` parameter. For example, if it was desirable to plot only "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 mutSpec(BRCA_MAF, genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
@@ -70,11 +70,11 @@ genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"), clin.legend.col=2, clin.var
 'lumB', 'her2', 'basal', 'normal', '20-30', '31-50', '51-60', '61+'))
 ```
 
-Occasionally there could be samples not within the .maf file due to a lack of mutations however it may still be desirable to plot these samples. To accomplish this simply add the samples into the appropriate column before loading the data and leave the rest of the columns as NA. Additionally it may be desireable to plot data not in a standard format, if such is the case it is recommended to set the `file_type` parameter to 'MGI' and name columns as 'sample', 'gene_name', and 'trv_type'. Valid levels for 'trv_type' are: "nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", and "silent".
+Occasionally there may be samples not represented within the .maf file (due to a lack of mutations). It may still be desirable to plot these samples. To accomplish this simply add the samples into the appropriate column before loading the data and leave the rest of the columns as NA. Additionally it may be desireable to plot data not in a standard format. If this is the case it is recommended to set the `file_type` parameter to 'MGI' and name columns as 'sample', 'gene_name', and 'trv_type'. Valid levels for 'trv_type' are: "nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", and "silent".
 
 ### lolliplot
 
-`lolliplot` provides a method for visualizing mutation hotspots on a transcript framework. The input consist of a data frame with columns 'transcript_name', 'gene', 'trv_type' and 'amino_acid_change' giving the ensembl transcript id, gene name, and the amino acid change respectivley. `lolliplot` queries various online databases to extract meta data for the transcript framework and as such needs an active internet connection further it assumes the species to be H.sapiens, this assumption can be changed via the parameters `taxId` and `ensembl.dataset`.
+`lolliplot` provides a method for visualizing mutation hotspots on a transcript framework. The input consist of a data frame with columns 'transcript_name', 'gene', 'trv_type' and 'amino_acid_change' giving the ensembl transcript id, gene name, and the amino acid change respectivley. `lolliplot` queries various online databases to extract meta data for the transcript framework and as such needs an active internet connection. `lolliplot` also assumes the species to be H.sapiens, this assumption can be changed via the parameters `taxId` and `ensembl.dataset`.
 
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
@@ -93,9 +93,8 @@ library(biomaRt)
 ensembl_mart <- useMart("ensembl")
 head(listDatasets(ensembl_mart))
 ```
-By default `ensembl.dataset` defaults to H.sapiens.
 
-In an effort to maintain a high degree of flexibility the user has the option of selecting columns on which to fill and label. The parameters `fill_value` and `label_column` allow this behavior by taking column names on which to fill and label respectivley. Additionally one can plot the amino acid sidechain information in lieu of protein domains.
+In an effort to maintain a high degree of flexibility the user has the option of selecting columns on which to fill and label. The parameters `fill_value` and `label_column` allow this behavior by taking column names on which to fill and label respectively. Additionally one can plot the amino acid sidechain information in lieu of protein domains.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Add additional columns to the data
@@ -113,7 +112,7 @@ For ensembl human transcripts the option exists to add a [cosmic](http://cancer.
 #lolliplot(data, fill_value='trv_type', label_column='amino_acid_change', cosmic=TRUE)
 ```
 
-`lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data in an attempt to achieve a reasonable degree of seperation between points. Suitable defaults have been set however on occasion the user may need to manually adjust the force field parameters. This can be done for both the cosmic and observed tracks via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
+`lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data in an attempt to achieve a reasonable degree of seperation between points. Suitable defaults have been set. However, on occasion the user may need to manually adjust the force field parameters. This can be done for both the cosmic and observed tracks via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
 
 ## genCov
 
@@ -140,7 +139,7 @@ data <- list("PTEN" = PTEN_COV)
 genCov(data, txdb, gr, genome)
 ```
 
-By default genCov will perform a log compression of genomic space for each feature type,'Intron','CDS','UTR'. The degree of compression can be set via the parameter `base` which will perform the appropriate log compression for the geatures specified in `transform`. The user can turn off this behavior by setting transform to NULL.
+By default genCov will perform a log compression of genomic space for each feature type,'Intron','CDS','UTR'. The degree of compression can be set via the parameter `base` which will perform the appropriate log compression for the features specified in `transform`. The user can turn off this behavior by setting transform to NULL.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 genCov(data, txdb, gr, genome, transform=NULL)
