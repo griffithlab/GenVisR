@@ -2,6 +2,7 @@
 
 export(CN_cohort_plot)
 export(CN_plot)
+export(TvTi)
 export(genCov)
 export(gene_plot)
 export(lolliplot)

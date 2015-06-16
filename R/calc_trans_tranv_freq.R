@@ -8,7 +8,7 @@
 calc_trans_tranv_freq <- function(x)
 {
   # Ensure all possible combinations of trans/tranv are represented
-  trans_tranv <- c("A<-C or T<-G", "A<-G or T<-C", "A<-T or T<-A", "G<-A or C<-T", "G<-C or C<-G", "G<-T or C<-A")
+  trans_tranv <- c("A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G", "G->T or C->A")
   sample <- c('dummy_sample')
   reference <- c('A')
   variant <- c('T')

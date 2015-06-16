@@ -26,7 +26,7 @@ mutationObs <- function(data, fill_value, label_column, rep.fact, rep.dist.lmt, 
     message("Detected c. notation for amino_acid_change, converting to p. notation")
     mutation_coord <- as.numeric(gsub("c\\.\\w+?(\\d+).*?$", "\\1", mutation_coord, perl=TRUE))
     fiveUTR_len <- fetchfiveUTRlen(data$transcript_name[1], dataset=ensembl.dataset)
-    mutation_coord <- mutation_coord - fiveUTR_len
+    mutation_coord <- (mutation_coord - fiveUTR_len)/3
   } else {
     stop("Could not determine notation type for amino_acid_change, check input")
   }

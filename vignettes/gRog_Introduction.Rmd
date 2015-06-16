@@ -87,7 +87,7 @@ colnames(data) <- c('gene', 'amino_acid_change', 'trv_type', 'transcript_name')
 lolliplot(data)
 ```
 
-It is recommended for amino acid change to be in p. notation however lolliplot will attempt to convert from c. notation to p.notation by subtracting the 5' UTR transcript length from the c. coordinate, when employing this functionality the user must specify an ensembl data set via the `ensembl.dataset` parameter. Valid data sets can be viewed via:
+It is recommended for amino acid change to be in p. notation however lolliplot will attempt to convert from c. notation to p.notation by subtracting the 5' UTR transcript length from the c. coordinate and dividing by 3, when employing this functionality the user must specify an ensembl data set via the `ensembl.dataset` parameter. Valid data sets can be viewed via:
 ```{r, message=FALSE}
 library(biomaRt)
 ensembl_mart <- useMart("ensembl")
@@ -143,7 +143,7 @@ genCov(data, txdb, gr, genome)
 By default genCov will perform a log compression of genomic space for each feature type,'Intron','CDS','UTR'. The degree of compression can be set via the parameter `base` which will perform the appropriate log compression for the geatures specified in `transform`. The user can turn off this behavior by setting transform to NULL.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
-genCov(data, txdb, gr, genome, transform=NULL)
+#genCov(data, txdb, gr, genome, transform=NULL)
 ```
 
 ## CN_cohort_plot
