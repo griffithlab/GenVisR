@@ -52,7 +52,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(1
   xlimits <- c(start(gr), end(gr))
   
   # Create a master table based on log transform(s) then use the master table as a map for mapping coordinates to transformed space
-  if(length(transform) > 0)
+  if(transform != NULL && length(transform) > 0)
   {
     # status message
     message("Calculating transform")
@@ -62,6 +62,8 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(1
     
     # Map the original coordinates into transformed space
     gene_features <- lapply(gene_features, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
+  } else {
+    master <- NULL
   }
   
   # Adjust the Y axis gene locations based on the presense of isoforms
