@@ -37,8 +37,13 @@ lolliplot <- function(x, y=NULL, fill_value=NULL, label_column=NULL, plot_text_a
   # Define a taxonomy ID for use in the "transcriptID2" function family for use with UniProt.ws
   up <- UniProt.ws(taxId=taxId)
   
-  # extract transcript id
+  # extract transcript id and subset data y on that id if it exists
   transcriptID <- as.character(x$transcript_name[1])
+  if(!is.null(y))
+  {
+    y <- y[c('transcript_name') == transcriptID,]
+    y <- relevel(y)
+  }
   
   # extract HUGO gene name
   gene <- as.character(x$gene[1])
