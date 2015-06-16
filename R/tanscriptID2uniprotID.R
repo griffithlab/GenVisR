@@ -13,6 +13,8 @@ transcriptID2uniprotID <- function(transcriptID, up)
   ################### Function to retieve Uniprot ID for ensembl transcript #####################
   ###############################################################################################
 
+  library(UniProt.ws)
+  
   # select the database to grab the key from
   kt <- "ENSEMBL_TRANSCRIPT"
   
@@ -23,7 +25,7 @@ transcriptID2uniprotID <- function(transcriptID, up)
   columns <- c("UNIPROTKB")
   
   # submit the query to return the uniprot ID
-  result <- select(up, keys, columns, kt)
+  result <- UniProt.ws::select(up, keys, columns, kt)
   uniprotID <- as.character(result[2])
   
   return(uniprotID) 
