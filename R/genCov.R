@@ -50,7 +50,7 @@ genCov <- function(x, txdb, gr, genome, reduce=F, gene_colour=NULL, gene_name='G
   display_x_axis <- TRUE
   
   # perform the intronic transform on the coverage data
-  if(transform != NULL && length(transform) > 0)
+  if(!is.null(transform) && length(transform) > 0)
   {
     # Obtain a copy of the master gene file
     master <- gp_result$master

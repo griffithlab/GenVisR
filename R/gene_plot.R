@@ -52,7 +52,7 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(1
   xlimits <- c(start(gr), end(gr))
   
   # Create a master table based on log transform(s) then use the master table as a map for mapping coordinates to transformed space
-  if(transform != NULL && length(transform) > 0)
+  if(!is.null(transform) && length(transform) > 0)
   {
     # status message
     message("Calculating transform")
