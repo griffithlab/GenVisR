@@ -2,7 +2,7 @@
 #' 
 #' Construct a Lolliplot from object of class data frame giving observed mutations and an ensembl transcript id
 #' @name lolliplot
-#' @param data object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations
+#' @param x object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations
 #' @param cosmic boolean value specifying if cosmic mutations should be retrieved and plotted
 #' @param fill_value character string giving the name of the column to shade variants on "required"
 #' @param label_column character string specifying column containing text information to be plotted, defaults to NULL
@@ -30,22 +30,19 @@
 #' @import UniProt.ws
 #' @import RCurl
 
-lolliplot <- function(data, cosmic=FALSE, fill_value='trv_type', label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=3, gene_colour='#999999', obs.rep.fact=5000, obs.rep.dist.lmt=500, obs.attr.fact=.1, obs.adj.max=.1, obs.adj.lmt=.5, obs.iter.max=50000, cos.rep.fact=5000, cos.rep.dist.lmt=500, cos.attr.fact=.1, cos.adj.max=.1, cos.adj.lmt=.5, cos.iter.max=50000, plot_sidechain=FALSE, taxId=9606, ensembl.dataset="hsapiens_gene_ensembl")
-{
-  # Check for internet connectivity
-  if(!is.character(getURL("www.google.com")))
-  {
-    stop("Did not detect an internet connection, check internet connectivity")
-  }
+lolliplot <- function(x, cosmic=FALSE, fill_value=NULL, label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=3, gene_colour='#999999', obs.rep.fact=5000, obs.rep.dist.lmt=500, obs.attr.fact=.1, obs.adj.max=.1, obs.adj.lmt=.5, obs.iter.max=50000, cos.rep.fact=5000, cos.rep.dist.lmt=500, cos.attr.fact=.1, cos.adj.max=.1, cos.adj.lmt=.5, cos.iter.max=50000, plot_sidechain=FALSE, taxId=9606, ensembl.dataset="hsapiens_gene_ensembl")
+{  
+  # Perform quality check
+  x <- lolliplot.qual(x)
   
   # Define a taxonomy ID for use in the "transcriptID2" function family for use with UniProt.ws
   up <- UniProt.ws(taxId=taxId)
   
   # extract transcript id
-  transcriptID <- as.character(data$transcript_name[1])
+  transcriptID <- as.character(x$transcript_name[1])
   
   # extract HUGO gene name
-  gene <- as.character(data$gene[1])
+  gene <- as.character(x$gene[1])
   
   # obtain uniprot id
   uniprot_id <- transcriptID2uniprotID(transcriptID, up)
@@ -69,7 +66,7 @@ lolliplot <- function(data, cosmic=FALSE, fill_value='trv_type', label_column=NU
   geneData <- construct_gene(gene, protien_domain, length)
   
   # construct data frame of observed mutations
-  observed_mutation <- mutationObs(data, fill_value, label_column, obs.rep.fact, obs.rep.dist.lmt, obs.attr.fact, obs.adj.max, obs.adj.lmt, obs.iter.max, ensembl.dataset=ensembl.dataset)
+  observed_mutation <- mutationObs(x, fill_value, label_column, obs.rep.fact, obs.rep.dist.lmt, obs.attr.fact, obs.adj.max, obs.adj.lmt, obs.iter.max, ensembl.dataset=ensembl.dataset)
   
   # construct data frame of cosmic mutations
   if(cosmic == TRUE)

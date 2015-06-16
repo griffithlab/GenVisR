@@ -20,13 +20,14 @@ mutationObs <- function(data, fill_value, label_column, rep.fact, rep.dist.lmt, 
   if(all(grepl("p\\.", mutation_coord)))
   {
     message("Detected p. notation for amino_acid_change")
-    mutation_coord <- as.numeric(gsub("p\\.\\w+?(\\d+).*?$", "\\1", mutation_coord, perl=TRUE))
+    mutation_coord <- as.numeric(gsub("p\\.[a-zA-z]*(\\d+).*?$", "\\1", mutation_coord, perl=TRUE))
   } else if(all(grepl("c\\.", mutation_coord)))
   {
+    stop("C. notation is not currently supported please specify amino acid change in P. notation")
     message("Detected c. notation for amino_acid_change, converting to p. notation")
-    mutation_coord <- as.numeric(gsub("c\\.\\w+?(\\d+).*?$", "\\1", mutation_coord, perl=TRUE))
+    mutation_coord <- as.numeric(gsub("c\\.[a-zA-z]*(\\d+).*?$", "\\1", mutation_coord, perl=TRUE))
     fiveUTR_len <- fetchfiveUTRlen(data$transcript_name[1], dataset=ensembl.dataset)
-    mutation_coord <- (mutation_coord - fiveUTR_len)/3
+    mutation_coord <- ceiling((mutation_coord - fiveUTR_len)/3)
   } else {
     stop("Could not determine notation type for amino_acid_change, check input")
   }

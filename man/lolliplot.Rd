@@ -4,17 +4,17 @@
 \alias{lolliplot}
 \title{Construct Lolliplot from data}
 \usage{
-lolliplot(data, cosmic = FALSE, fill_value = "trv_type",
-  label_column = NULL, plot_text_angle = 45, plot_text_size = 5,
-  point_size = 3, gene_colour = "#999999", obs.rep.fact = 5000,
-  obs.rep.dist.lmt = 500, obs.attr.fact = 0.1, obs.adj.max = 0.1,
-  obs.adj.lmt = 0.5, obs.iter.max = 50000, cos.rep.fact = 5000,
-  cos.rep.dist.lmt = 500, cos.attr.fact = 0.1, cos.adj.max = 0.1,
-  cos.adj.lmt = 0.5, cos.iter.max = 50000, plot_sidechain = FALSE,
-  taxId = 9606, ensembl.dataset = "hsapiens_gene_ensembl")
+lolliplot(x, cosmic = FALSE, fill_value = NULL, label_column = NULL,
+  plot_text_angle = 45, plot_text_size = 5, point_size = 3,
+  gene_colour = "#999999", obs.rep.fact = 5000, obs.rep.dist.lmt = 500,
+  obs.attr.fact = 0.1, obs.adj.max = 0.1, obs.adj.lmt = 0.5,
+  obs.iter.max = 50000, cos.rep.fact = 5000, cos.rep.dist.lmt = 500,
+  cos.attr.fact = 0.1, cos.adj.max = 0.1, cos.adj.lmt = 0.5,
+  cos.iter.max = 50000, plot_sidechain = FALSE, taxId = 9606,
+  ensembl.dataset = "hsapiens_gene_ensembl")
 }
 \arguments{
-\item{data}{object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations}
+\item{x}{object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations}
 
 \item{cosmic}{boolean value specifying if cosmic mutations should be retrieved and plotted}
 

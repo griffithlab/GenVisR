@@ -21,18 +21,19 @@ fetchfiveUTRlen <- function(enstID, dataset="hsapiens_gene_ensembl")
   datalist <- listDatasets(ensembl_mart)
   assembly <- datalist[which(datalist$dataset == dataset),c("description")]
   message("using ", assembly, " to convert notation")
-  warning("output may be incorrect if assembly for amino acid change differs from", assembly)
+  warning("output may be incorrect if assembly for amino acid change differs from ", assembly)
+  warning("c.notation conversion is experimental, this is not advised, check output!!!!!!!!")
   
   # Select attributes to retrieve 5'UTR (start, stop)
   attributes <- c("5_utr_start", "5_utr_end")
   
   # Apply various filters using vector of values
   filters <- c("ensembl_transcript_id")
-  values <- c(enstID)
+  values <- c(as.character(enstID))
   
   # Retrieve data and calculate the total 5'UTR length
   FiveUTR <- getBM(attributes=attributes, filters=filters, values=values, mart=ensembl_mart)
-  FiveUTR <- sum(abs(FiveUTR[,1] - FiveUTR[,2]), na.rm=TRUE)
+  FiveUTR <- sum(FiveUTR[,2] - FiveUTR[,1], na.rm=TRUE)
   
   return(FiveUTR)
 }
