@@ -74,24 +74,17 @@ Occasionally there may be samples not represented within the .maf file (due to a
 
 ### lolliplot
 
-`lolliplot` provides a method for visualizing mutation hotspots on a transcript framework. The input consist of a data frame with columns 'transcript_name', 'gene', 'trv_type' and 'amino_acid_change' giving the ensembl transcript id, gene name, and the amino acid change respectivley. `lolliplot` queries various online databases to extract meta data for the transcript framework and as such needs an active internet connection. `lolliplot` also assumes the species to be H.sapiens, this assumption can be changed via the parameters `taxId` and `ensembl.dataset`.
+`lolliplot` provides a method for visualizing mutation hotspots on a transcript framework. The input consist of a data frame with columns 'transcript_name', 'gene' and 'amino_acid_change' giving the ensembl transcript id, gene name, and the amino acid change respectivley. `lolliplot` queries various online databases to extract meta data for the transcript framework and as such needs an active internet connection. `lolliplot` also assumes the species to be H.sapiens, this assumption can be changed via the parameters `taxId` which takes a UniProt Taxonomic identifier.
 
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Create input data
-data <- BRCA_MAF[BRCA_MAF$Hugo_Symbol == 'TP53',c('Hugo_Symbol', 'amino_acid_change_WU', 'Variant_Classification')]
+data <- BRCA_MAF[BRCA_MAF$Hugo_Symbol == 'TP53',c('Hugo_Symbol', 'amino_acid_change_WU')]
 data <- as.data.frame(cbind(data, 'ENST00000269305'))
-colnames(data) <- c('gene', 'amino_acid_change', 'trv_type', 'transcript_name')
+colnames(data) <- c('gene', 'amino_acid_change', 'transcript_name')
 
 # Call lolliplot
 lolliplot(data)
-```
-
-It is recommended for amino acid change to be in p. notation however lolliplot will attempt to convert from c. notation to p.notation by subtracting the 5' UTR transcript length from the c. coordinate and dividing by 3, when employing this functionality the user must specify an ensembl data set via the `ensembl.dataset` parameter. Valid data sets can be viewed via:
-```{r, message=FALSE}
-library(biomaRt)
-ensembl_mart <- useMart("ensembl")
-head(listDatasets(ensembl_mart))
 ```
 
 In an effort to maintain a high degree of flexibility the user has the option of selecting columns on which to fill and label. The parameters `fill_value` and `label_column` allow this behavior by taking column names on which to fill and label respectively. Additionally one can plot the amino acid sidechain information in lieu of protein domains.
@@ -104,15 +97,16 @@ data$impact <- sample(c("Low", "Medium", "High"), 15, replace=T)
 lolliplot(data, fill_value='gender', label_column='impact', plot_sidechain=TRUE)
 ```
 
-For ensembl human transcripts the option exists to add a [cosmic](http://cancer.sanger.ac.uk/cosmic) track to the plot. The user is warned that this type of lookup can be slow requiring several minutes to complete.
+The user has the option of plotting an additional track on the area underneath the gene track via the parameter `y`. Input for this additional layer consists of a data frame with column names 'transcript_name' and 'amino_acid_change' in p. notation. `lolliplot` will capture the input corresponding to the input given in `x` and plot the subsequent data. Additional fill and label columns are allowed however they must match those variables given in `fill_value` and `label_column`.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
-#DEPRECATED: exploring alternatives to biomaRt to obtain this information
+# create additional data
+data2 <- data[,2:4]
 
-#lolliplot(data, fill_value='trv_type', label_column='amino_acid_change', cosmic=TRUE)
+lolliplot(data, y=data2, fill_value='trv_type', label_column='amino_acid_change')
 ```
 
-`lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data in an attempt to achieve a reasonable degree of seperation between points. Suitable defaults have been set. However, on occasion the user may need to manually adjust the force field parameters. This can be done for both the cosmic and observed tracks via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
+`lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data in an attempt to achieve a reasonable degree of seperation between points. Suitable defaults have been set. However, on occasion the user may need to manually adjust the force field parameters. This can be done for both upper and lower tracks via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
 
 ## genCov
 

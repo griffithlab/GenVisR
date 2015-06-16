@@ -4,9 +4,9 @@
 \alias{build_lolli}
 \title{Construct Lolliplot}
 \usage{
-build_lolli(gene_data, length, mutation_observed, mutation_cosmic, fill_value,
-  label_column, plot_text_angle, plot_text_size, point_size, gene_colour,
-  sequence_data, plot_sidechain = FALSE)
+build_lolli(gene_data, length, mutation_observed, mutation_observed2,
+  fill_value, label_column, plot_text_angle, plot_text_size, point_size,
+  gene_colour, sequence_data, plot_sidechain = FALSE)
 }
 \arguments{
 \item{gene_data}{object of class dataframe giving protien domain and gene information}
@@ -15,7 +15,7 @@ build_lolli(gene_data, length, mutation_observed, mutation_cosmic, fill_value,
 
 \item{mutation_observed}{object of class data frame specifying mutations observed in input file}
 
-\item{mutation_cosmic}{optional object of class data frame specifying mutations observed in cosmic}
+\item{mutation_observed2}{optional object of class data frame specifying additional mutations for bottom track}
 
 \item{fill_value}{character string specifying the column on which to colour mutation points}
 

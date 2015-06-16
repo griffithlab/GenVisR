@@ -4,19 +4,18 @@
 \alias{lolliplot}
 \title{Construct Lolliplot from data}
 \usage{
-lolliplot(x, cosmic = FALSE, fill_value = NULL, label_column = NULL,
+lolliplot(x, y = NULL, fill_value = NULL, label_column = NULL,
   plot_text_angle = 45, plot_text_size = 5, point_size = 3,
-  gene_colour = "#999999", obs.rep.fact = 5000, obs.rep.dist.lmt = 500,
-  obs.attr.fact = 0.1, obs.adj.max = 0.1, obs.adj.lmt = 0.5,
-  obs.iter.max = 50000, cos.rep.fact = 5000, cos.rep.dist.lmt = 500,
-  cos.attr.fact = 0.1, cos.adj.max = 0.1, cos.adj.lmt = 0.5,
-  cos.iter.max = 50000, plot_sidechain = FALSE, taxId = 9606,
-  ensembl.dataset = "hsapiens_gene_ensembl")
+  gene_colour = "#999999", obsA.rep.fact = 5000, obsA.rep.dist.lmt = 500,
+  obsA.attr.fact = 0.1, obsA.adj.max = 0.1, obsA.adj.lmt = 0.5,
+  obsA.iter.max = 50000, obsB.rep.fact = 5000, obsB.rep.dist.lmt = 500,
+  obsB.attr.fact = 0.1, obsB.adj.max = 0.1, obsB.adj.lmt = 0.5,
+  obsB.iter.max = 50000, plot_sidechain = FALSE, taxId = 9606)
 }
 \arguments{
 \item{x}{object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations}
 
-\item{cosmic}{boolean value specifying if cosmic mutations should be retrieved and plotted}
+\item{y}{object of class data frame containing columns transcript_name, and amino_acid_change and rows denoting mutations}
 
 \item{fill_value}{character string giving the name of the column to shade variants on "required"}
 
@@ -30,35 +29,33 @@ lolliplot(x, cosmic = FALSE, fill_value = NULL, label_column = NULL,
 
 \item{gene_colour}{color specifying the background fill of the plotted gene}
 
-\item{obs.rep.fact}{repulsive factor for plotted mutations observed track}
+\item{obsA.rep.fact}{repulsive factor for plotted mutations observed track}
 
-\item{obs.rep.dist.lmt}{repulsive distance limit for plotted mutations observed track}
+\item{obsA.rep.dist.lmt}{repulsive distance limit for plotted mutations observed track}
 
-\item{obs.attr.fact}{attraction factor for plotted mutations observed track}
+\item{obsA.attr.fact}{attraction factor for plotted mutations observed track}
 
-\item{obs.adj.max}{maximum position change for each iteration observed track}
+\item{obsA.adj.max}{maximum position change for each iteration observed track}
 
-\item{obs.adj.lmt}{position adjustment limit which simulation stops observed track}
+\item{obsA.adj.lmt}{position adjustment limit which simulation stops observed track}
 
-\item{obs.iter.max}{maximum iterations beyond which to stop the simulation observed track}
+\item{obsA.iter.max}{maximum iterations beyond which to stop the simulation observed track}
 
-\item{cos.rep.fact}{repulsive factor for plotted mutations cosmic track}
+\item{obsB.rep.fact}{repulsive factor for plotted mutations cosmic track}
 
-\item{cos.rep.dist.lmt}{repulsive distance limit for plotted mutations cosmic track}
+\item{obsB.rep.dist.lmt}{repulsive distance limit for plotted mutations cosmic track}
 
-\item{cos.attr.fact}{attraction factor for plotted mutations cosmic track}
+\item{obsB.attr.fact}{attraction factor for plotted mutations cosmic track}
 
-\item{cos.adj.max}{maximum position change for each iteration cosmic track}
+\item{obsB.adj.max}{maximum position change for each iteration cosmic track}
 
-\item{cos.adj.lmt}{position adjustment limit which simulation stops cosmic track}
+\item{obsB.adj.lmt}{position adjustment limit which simulation stops cosmic track}
 
-\item{cos.iter.max}{maximum iterations beyond which to stop the simulation cosmic track}
+\item{obsB.iter.max}{maximum iterations beyond which to stop the simulation cosmic track}
 
 \item{plot_sidechain}{boolean value whether to plot the amino acid sidechains instead of protein domains}
 
 \item{taxId}{integer specifying the uniprot taxonomy id for the species of interest}
-
-\item{ensembl.dataset}{character string specifying what ensembl data set to query when converting to p. notation, ignored if data is already in p.notation}
 }
 \value{
 object of class ggplot2
