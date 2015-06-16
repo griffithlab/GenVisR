@@ -53,6 +53,9 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   }
   UTR <- GRangesList(unlist(lapply(r, f)))
   
+  f <- function(x){x$txname[[1]]}
+  txnames <- lapply(UTR, f)
+  
   # reduce isoforms into one if set to true and convert to GRanges list
   if(reduce==TRUE)
   {
@@ -85,6 +88,13 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
     # Limit the calculated gaps to just the strand of interest
     UTR <- lapply(UTR, function(x) x[strand(x) == as.character(strand(gr))])
   }
+  
+  keys <- names(UTR)
+  f <- function(gr, name){
+    mcols(gr)$txname <- name
+    return(gr)
+  }
+  UTR <- mapply(f, UTR[keys], txnames[keys], SIMPLIFY=F)
   
   return(UTR)
 }

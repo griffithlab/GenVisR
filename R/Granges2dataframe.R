@@ -13,7 +13,7 @@ Granges2dataframe <- function(gr)
   genomic_data <- cbind(range, meta)
   
   # subset and return the desired output
-  genomic_data <- genomic_data[,c('start', 'end', 'GC', 'width')]
+  genomic_data <- genomic_data[,c('start', 'end', 'GC', 'width', 'txname')]
   
   return(genomic_data)
 }

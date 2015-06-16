@@ -30,7 +30,8 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(1
   }else if(is.null(UTR)){
     gene_features <- cds          #AHW: I don't think this would ever happen. But, it's a jungle out there.
   }else{
-    gene_features <- mapply(rbind, cds, UTR, SIMPLIFY=FALSE)
+    keys <- unique(c(names(cds), names(UTR)))
+    gene_features <- setNames(mapply(rbind, cds[keys], UTR[keys], SIMPLIFY=FALSE), keys)
   }
   gene_features <- lapply(gene_features, na.omit)
   if(reduce){
@@ -86,8 +87,8 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(1
   if(length(transform) > 0)
   { 
     # replace original coordinates with transformed coordinates
-    gene_features <- gene_features[,c('trans_start', 'trans_end', 'GC', 'width', 'Type', 'Upper', 'Lower', 'Mid', 'trans_segStart', 'trans_segEnd')]
-    colnames(gene_features) <- c('start', 'end', 'GC', 'width', 'Type', 'Upper', 'Lower', 'Mid', 'segStart', 'segEnd')
+    gene_features <- gene_features[,c('trans_start', 'trans_end', 'GC', 'width', 'Type', 'Upper', 'Lower', 'Mid', 'trans_segStart', 'trans_segEnd', 'txname')]
+    colnames(gene_features) <- c('start', 'end', 'GC', 'width', 'Type', 'Upper', 'Lower', 'Mid', 'segStart', 'segEnd', 'txname')
     
     # set flag to not display x axis values if plot is transformed
     display_x_axis <- FALSE

@@ -19,10 +19,13 @@ extrCDS <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   
   # extract CDS from transcript database given transcript ID
   cds <- cdsFromTXID(txdb, txid)
+  f <- function(x){x$txname[[1]]}
+  txnames <- lapply(cds, f)
   
   if(typeof(cds) != 'S4'){
     return(NA)
   }
+  
   # reduce isoforms into one if set to true and convert to GRanges list
   if(reduce==TRUE)
   {
@@ -55,6 +58,13 @@ extrCDS <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
     # Limit the calculated gaps to just the strand of interest
     cds <- lapply(cds, function(x) x[strand(x) == as.character(strand(gr))])
   }
+  
+  keys <- names(cds)
+  f <- function(gr, name){
+    mcols(gr)$txname <- name
+    return(gr)
+  }
+  cds <- mapply(f, cds[keys], txnames[keys], SIMPLIFY=F)
   
   return(cds)
 }
