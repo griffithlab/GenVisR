@@ -3,21 +3,50 @@
 #' Perform Basic quality checks for lolliplot input
 #' @name lolliplot.qual
 #' @param data object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations
-#' @return lolliplot data frame passing basic quality control
+#' @param data object of class data frame containing columns transcript_name, and amino_acid_change and rows denoting mutations
+#' @return character string specifying input passed quality check
 
-lolliplot.qual <- function(x)
+lolliplot.qual <- function(x, y)
 {
+  # Check that x and y are a data frame, if not attempt to coerce
+  if(!is.data.frame(x))
+  {
+    message("x is not a data frame, attempting to coerce")
+    x <- as.data.frame(x)
+    x <- relevel(x)
+  }
+  
+  if(!is.null(y))
+  {
+    if(!is.data.frame(y))
+    {
+      message("y is not a data frame, attempting to coerce")
+      y <- as.data.frame(y)
+      y <- relevel(y)
+    }
+  }
+  
   # Check for internet connectivity
   if(!is.character(getURL("www.google.com")))
   {
     stop("Did not detect an internet connection, check internet connectivity")
   }
   
-  # Check for correct columns
+  # Check for correct columns in x
   if(!all(c('transcript_name', 'gene', 'amino_acid_change') %in% colnames(x)))
   {
-    Stop("Did not detect correct columns, missing one of transcript_name, gene, amino_acid_change")
+    stop("Did not detect correct columns in x, missing one of transcript_name, gene, amino_acid_change")
   }
   
-  return(x)
+  # Check for correct columns in y
+  if(!is.null(y))
+  {
+    if(!all(c('transcript_name', 'amino_acid_change') %in% colnames(y)))
+    {
+      stop("Did not detect correct columns in y, missing one of transcript_name, amino_acid_change")
+    }
+  }
+
+  
+  return("Input data passed basic quality check")
 }

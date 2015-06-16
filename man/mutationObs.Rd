@@ -4,13 +4,13 @@
 \alias{mutationObs}
 \title{format mutation observations}
 \usage{
-mutationObs(data, fill_value, label_column, rep.fact, rep.dist.lmt, attr.fact,
-  adj.max, adj.lmt, iter.max, ensembl.dataset = "hsapiens_gene_ensembl")
+mutationObs(data, track, fill_value, label_column, rep.fact, rep.dist.lmt,
+  attr.fact, adj.max, adj.lmt, iter.max)
 }
 \arguments{
 \item{data}{object of class data frame with columns trv_type and amino acid change}
 
-\item{ensembl.dataset}{character string specifing the ensembl dataset to query when converting c. notation to p. notation}
+\item{track}{character string specifying one to 'top', 'bottom' to specify proper track}
 }
 \value{
 object of class data frame giving mutation observations

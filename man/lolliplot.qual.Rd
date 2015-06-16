@@ -4,13 +4,15 @@
 \alias{lolliplot.qual}
 \title{Check input to lolliplot}
 \usage{
-lolliplot.qual(x)
+lolliplot.qual(x, y)
 }
 \arguments{
 \item{data}{object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations}
+
+\item{data}{object of class data frame containing columns transcript_name, and amino_acid_change and rows denoting mutations}
 }
 \value{
-lolliplot data frame passing basic quality control
+character string specifying input passed quality check
 }
 \description{
 Perform Basic quality checks for lolliplot input

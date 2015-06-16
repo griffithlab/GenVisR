@@ -5,7 +5,7 @@
 #' @param gene_data object of class dataframe giving protien domain and gene information
 #' @param length integer specifying the length of the protien in amino acids
 #' @param mutation_observed object of class data frame specifying mutations observed in input file
-#' @param mutation_cosmic optional object of class data frame specifying mutations observed in cosmic
+#' @param mutation_observed2 optional object of class data frame specifying additional mutations for bottom track
 #' @param fill_value character string specifying the column on which to colour mutation points
 #' @param label_column character string specifying the column containing the labels to attach to mutation points
 #' @param plot_text_angle numeric value specifying the angle of text to be plotted
@@ -17,7 +17,7 @@
 #' @return a ggplot2 object
 #' @import ggplot2
 
-build_lolli <- function(gene_data, length, mutation_observed, mutation_cosmic, fill_value, label_column, plot_text_angle, plot_text_size, point_size, gene_colour, sequence_data, plot_sidechain=FALSE)
+build_lolli <- function(gene_data, length, mutation_observed, mutation_observed2, fill_value, label_column, plot_text_angle, plot_text_size, point_size, gene_colour, sequence_data, plot_sidechain=FALSE)
 {
   ###################################################################################
   ####################### Function to make lolliplot type plot ######################
@@ -50,29 +50,35 @@ build_lolli <- function(gene_data, length, mutation_observed, mutation_cosmic, f
   guide <- guides(colour=guide_legend(ncol=2))
   
   
-  # construct the plot with or without cosmic track
-  if(is.null(mutation_cosmic))
+  # construct the plot with or without 2nd observed track
+  if(is.null(mutation_observed2))
   {	
     y_limits <- ylim(c(-1, max(mutation_observed$coord_y_dodge) + 5))
     y_label <- ylab('Observed')
     p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 + observed_line + observed_plot + x_label + y_label + title + y_limits + theme + guide
-    
   } else {
-    
-    y_limits <- ylim(c(min(mutation_cosmic$coord_y_dodge) - 1, max(mutation_observed$coord_y_dodge) + 1))
-    y_label <- ylab('Cosmic v Observed')
-    cosmic_plot <- geom_point(data=mutation_cosmic, mapping=aes(x=coord_x_dodge, y=coord_y_dodge), size=point_size)
-    cosmic_line <- geom_segment(data=mutation_cosmic, mapping=aes(x=mutation_coord, y=-1, xend=coord_x_dodge, yend=-1.5))
-    cosmic_line_2 <- geom_segment(data=mutation_cosmic, mapping=aes(x=coord_x_dodge, y=-1.5, xend=coord_x_dodge, yend=coord_y_dodge))
+    y_limits <- ylim(c(min(mutation_observed2$coord_y_dodge) - 1, max(mutation_observed$coord_y_dodge) + 1))
+    y_label <- ylab('Observed')
+    if(any(colnames(mutation_observed2) %in% fill_value))
+    {
+      observed2_plot <- geom_point(data=mutation_observed2, mapping=aes_string(x="coord_x_dodge", y="coord_y_dodge", colour=fill_value), size=point_size) 
+    } else {
+      observed2_plot <- geom_point(data=mutation_observed2, mapping=aes_string(x="coord_x_dodge", y="coord_y_dodge"), size=point_size)
+    }
+    observed2_line <- geom_segment(data=mutation_observed2, mapping=aes(x=mutation_coord, y=-1, xend=coord_x_dodge, yend=-1.5))
+    observed2_line_2 <- geom_segment(data=mutation_observed2, mapping=aes(x=coord_x_dodge, y=-1.5, xend=coord_x_dodge, yend=coord_y_dodge))
       
-    p1 <- ggplot() + gene_plot + domain_plot + observed_line + observed_line_2 + observed_plot + cosmic_line + cosmic_line_2 + cosmic_plot + x_label + y_label + title + y_limits + theme + guide
+    p1 <- ggplot() + gene_plot + domain_plot + observed_line + observed_line_2 + observed_plot + observed2_line + observed2_line_2 + observed2_plot + x_label + y_label + title + y_limits + theme + guide
   }
   
   # If a label column is specified plot labels
-  
-  if(!is.null(label_column)) 
+  if(any(colnames(mutation_observed) %in% "labels")) 
   {
     p1 <- p1 + geom_text(data=mutation_observed, mapping=aes(x=coord_x_dodge, y=coord_y_dodge + .06, label=labels), angle=plot_text_angle, size=plot_text_size, vjust=1, hjust=0)
+  } 
+  if(any(colnames(mutation_observed2) %in% "labels")) 
+  {
+    p1 <- p1 + geom_text(data=mutation_observed2, mapping=aes(x=coord_x_dodge, y=coord_y_dodge - .06, label=labels), angle=plot_text_angle, size=plot_text_size, vjust=0, hjust=1)
   }
   
   return(p1)
