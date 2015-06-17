@@ -8,13 +8,15 @@
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
 #' @param base  base A vector of log bases to transform the data, corresponding to the elements of transform 
 #' @param transform A vector of strings designating what objects to log transform
+#' @param plot_transcript_name Boolean specifying whether to plot the transcript name
+#' @param transcript_name_size Integer specifying the size of the transcript name text
 #' @return ggplot object
 #' @export
 #' @import GenomicRanges
 #' @import plyr
 #' @import GenomicFeatures
 
-gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR')){
+gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'), plot_transcript_name=TRUE, transcript_name_size=6){
 
   # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
   cds <- formatCDS(txdb, gr, genome=genome, reduce=reduce)
@@ -105,7 +107,14 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(1
   }
   
   # construct the gene in gplot
-  gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour)
+  if(reduce == TRUE || plot_transcript_name == FALSE)
+  {
+    gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour, transcript_name=FALSE)
+  } else if(reduce == FALSE && plot_transcript_name == TRUE)
+  {
+    gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour, transcript_name=TRUE, transcript_name_size=transcript_name_size)
+  }
+  
   out <- list('plot' = gene_plot, 'features' = gene_features, 'master' = master)
   return(out)
 }

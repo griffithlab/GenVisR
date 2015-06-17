@@ -8,7 +8,7 @@ genCov(x, txdb, gr, genome, reduce = F, gene_colour = NULL,
   gene_name = "Gene", bg_fill = "black", text_fill = "white",
   border = "black", size = 10, width_ratio = c(1, 10), colour = "blue",
   plot_type = "line", base = c(10, 2, 2), transform = c("Intron", "CDS",
-  "UTR"))
+  "UTR"), plot_transcript_name = TRUE, transcript_name_size = 6)
 }
 \arguments{
 \item{x}{named list containing data frames with columns stop and cov}
@@ -42,6 +42,10 @@ genCov(x, txdb, gr, genome, reduce = F, gene_colour = NULL,
 \item{base}{A vector of log bases to transform the data, corresponding to the elements of transform}
 
 \item{transform}{A vector of strings designating what objects to log transform}
+
+\item{plot_transcript_name}{Boolean specifying whether to plot the transcript name}
+
+\item{transcript_name_size}{Integer specifying the size of the transcript name text}
 
 \item{cores}{Integer specifying the number of cores to use for processing}
 }

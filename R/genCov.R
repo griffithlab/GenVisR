@@ -19,6 +19,8 @@
 #' @param cores Integer specifying the number of cores to use for processing
 #' @param base A vector of log bases to transform the data, corresponding to the elements of transform 
 #' @param transform A vector of strings designating what objects to log transform
+#' @param plot_transcript_name Boolean specifying whether to plot the transcript name
+#' @param transcript_name_size Integer specifying the size of the transcript name text
 #' @return ggplot object
 #' @export
 #' @import GenomicRanges
@@ -26,11 +28,13 @@
 
 genCov <- function(x, txdb, gr, genome, reduce=F, gene_colour=NULL, gene_name='Gene', bg_fill="black", 
                           text_fill="white", border="black", size=10, width_ratio=c(1, 10), colour="blue",
-                          plot_type="line", base=c(10,2,2), transform=c('Intron','CDS','UTR')){
+                          plot_type="line", base=c(10,2,2), transform=c('Intron','CDS','UTR'),
+                          plot_transcript_name=TRUE, transcript_name_size=6){
   
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
   gp_result <- gene_plot(txdb, gr, genome, reduce=reduce, gene_colour=gene_colour,
-                    base=base, transform=transform)
+                    base=base, transform=transform, transcript_name_size=transcript_name_size,
+                    plot_transcript_name=plot_transcript_name)
   gene <- gp_result$plot
   gene_list <- list()
   gene_list[[gene_name]] <- gene
