@@ -5,7 +5,7 @@
 \title{build gene plot}
 \usage{
 build_gene(data_frame, display_x_axis = T, x_limits = NULL,
-  gene_colour = NULL)
+  gene_colour = NULL, transcript_name = FALSE, transcript_name_size = 6)
 }
 \arguments{
 \item{data_frame}{an object of class data frame specifying gene feature information}
@@ -13,6 +13,10 @@ build_gene(data_frame, display_x_axis = T, x_limits = NULL,
 \item{x_limits}{vector specifying x-axis limits of plot}
 
 \item{gene_colour}{character specifying colour of gene to be plotted}
+
+\item{transcript_name}{Boolean specifying whether to plot USCS transcript names}
+
+\item{transcript_name_size}{Integer specifying the size of the transcript name text}
 
 \item{master_gene}{an object of class data frame specifying the master gene feature information resultant of compression}
 

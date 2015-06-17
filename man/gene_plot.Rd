@@ -5,7 +5,8 @@
 \title{plot gene}
 \usage{
 gene_plot(txdb, gr, genome, reduce = FALSE, gene_colour = NULL,
-  base = c(10, 2, 2), transform = c("Intron", "CDS", "UTR"))
+  base = c(10, 2, 2), transform = c("Intron", "CDS", "UTR"),
+  plot_transcript_name = TRUE, transcript_name_size = 6)
 }
 \arguments{
 \item{txdb}{A TxDb object for a genome}
@@ -19,6 +20,10 @@ gene_plot(txdb, gr, genome, reduce = FALSE, gene_colour = NULL,
 \item{base}{base A vector of log bases to transform the data, corresponding to the elements of transform}
 
 \item{transform}{A vector of strings designating what objects to log transform}
+
+\item{plot_transcript_name}{Boolean specifying whether to plot the transcript name}
+
+\item{transcript_name_size}{Integer specifying the size of the transcript name text}
 }
 \value{
 ggplot object
