@@ -41,8 +41,7 @@ lolliplot <- function(x, y=NULL, fill_value=NULL, label_column=NULL, plot_text_a
   transcriptID <- as.character(x$transcript_name[1])
   if(!is.null(y))
   {
-    y <- y[c('transcript_name') == transcriptID,]
-    y <- relevel(y)
+    y <- y[y$transcript_name == transcriptID,]
   }
   
   # extract HUGO gene name
