@@ -5,13 +5,13 @@
 \title{plot transitions/transversions}
 \usage{
 TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
-  x_axis_text_angle = 45, palette = c("#7BC374", "#EFCD8D", "#8763A0",
-  "#6677A0", "#EDEE8D", "#EF8D8D"), file_type = "MAF")
+  x_axis_text_angle = 45, palette = c("#1b9e77", "#d95f02", "#7570b3",
+  "#e7298a", "#66a61e", "#e6ab02"), file_type = "MAF")
 }
 \arguments{
 \item{x}{Object of class data frame containing columns 'sample', reference', 'variant'}
 
-\item{y}{named vector containing expected transition/transversion rates}
+\item{y}{named vector containing expected transition/transversion proportions with names "A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G", "G->T or C->A" or a data frame with column names "Prop", "trans_tranv" and levels of trans_tranv matching "A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G", "G->T or C->A"}
 
 \item{type}{Object of class character specifying whether to plot the Proportion or Frequency, one of "Prop"}
 

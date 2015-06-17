@@ -74,7 +74,7 @@ Occasionally there may be samples not represented within the .maf file (due to a
 
 ### lolliplot
 
-`lolliplot` provides a method for visualizing mutation hotspots on a transcript framework. The input consist of a data frame with columns 'transcript_name', 'gene' and 'amino_acid_change' giving the ensembl transcript id, gene name, and the amino acid change respectivley. `lolliplot` queries various online databases to extract meta data for the transcript framework and as such needs an active internet connection. `lolliplot` also assumes the species to be H.sapiens, this assumption can be changed via the parameters `taxId` which takes a UniProt Taxonomic identifier.
+`lolliplot` provides a method for visualizing mutation hotspots on a transcript framework. The input consist of a data frame with columns 'transcript_name', 'gene' and 'amino_acid_change' giving the ensembl transcript id, gene name, and the amino acid change respectivley. `lolliplot` queries various online databases to extract meta data for the transcript framework and as such needs an active internet connection. `lolliplot` also assumes the species to be H.sapiens, this assumption can be changed via the parameter `taxId` which takes a UniProt Taxonomic identifier.
 
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
@@ -113,8 +113,6 @@ lolliplot(data, y=data2, fill_value='impact', label_column='amino_acid_change')
 genCov provides a methodology for viewing coverage information in relation to a gene track. It takes a list of data frames with each data frame containing columns "end" and "cov" corresponding to the region of interest. Additional required arguments are a Granges object specifying the region of interest, a BSgenome, and a txdb object containing transcription metadata (see the package [Granges](http://www.bioconductor.org/packages/release/bioc/html/GenomicRanges.html) for more information). genCov will plot a genomic features track and align coverage data in the list to the plot:
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
-attach(PTEN_COV)
-
 # need transcript data for reference
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
@@ -139,9 +137,30 @@ By default genCov will perform a log compression of genomic space for each featu
 genCov(data, txdb, gr, genome, transform=NULL)
 ```
 
+## TvTi
+
+`TvTi` provides a framework for visuzlizing transversions and transitions for a cohort. Input consists of a data frame with column names "Tumor_Sample_Barcode", "Reference_Allele", "Tumor_Seq_Allele1", and "Tumor_Seq_Allele2" for a .maf file. Alternativley the user can set the `file_type` parameter to "MGI" and supply columns "sample", "reference", and "variant".
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+TvTi(BRCA_MAF)
+```
+
+By default `TvTi` will plot the propotion of each transition/transversion seen in each sample. This can be overwritten to plot the frequency seen via the parameter `type`.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+TvTi(BRCA_MAF, type='Frequency')
+```
+
+If there are prior expectations about the transition/transversion rate that data can be specified in `y` which takes a named vector with names corresponding to each transition/transversion type.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+expec <- c("A->C or T->G"=1/6, "A->G or T->C"=1/6, "A->T or T->A"=1/6, "G->A or C->T"=1/6, "G->C or C->G"=1/6, "G->T or C->A"=1/6)
+
+TvTi(BRCA_MAF, expec)
+```
+
 ## CN_cohort_plot
 ## CN_plot
-## transition_transversion_plot
 ## gene_plot
 ## plot_coverage
 

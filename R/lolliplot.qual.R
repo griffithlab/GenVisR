@@ -39,7 +39,7 @@ lolliplot.qual <- function(x, y)
   }
   
   # Check that "transcript_name" in x contains only 1 transcript
-  if(unique(x$transcript_name) != 1)
+  if(length(unique(x$transcript_name)) != 1)
   {
     stop("Detected more than 1 transcript in ", x)
   }

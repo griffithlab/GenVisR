@@ -4,12 +4,14 @@
 \alias{build_trans_tranv}
 \title{build transitions/transversions}
 \usage{
-build_trans_tranv(x, type = "Proportion", label_x_axis = TRUE,
+build_trans_tranv(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
   x_axis_text_angle = 45, palette = c("#7BC374", "#EFCD8D", "#8763A0",
-  "#6677A0", "#EDEE8D", "#EF8D8D"))
+  "#6677A0", "#EDEE8D", "#EF8D8D"), plot_expected = FALSE)
 }
 \arguments{
 \item{x}{Object of class data frame containing columns 'trans_tranv', 'sample', 'Freq', and 'Prop'}
+
+\item{y}{Object of class data frame containing columns 'Prop', 'trans_tranv' for display of expected results}
 
 \item{type}{Object of class character specifying whether to plot the Proportion or Frequency, one of "Prop"}
 
@@ -18,6 +20,8 @@ build_trans_tranv(x, type = "Proportion", label_x_axis = TRUE,
 \item{x_axis_text_angle}{Integer specifying the angle to labels on x_axis}
 
 \item{palette}{Character vector of length 6 specifying colors for trans/tranv type}
+
+\item{plot_expected}{Boolean specifying if this is the main TvTi plot or a sub plot for expected values}
 }
 \value{
 GGplot Object

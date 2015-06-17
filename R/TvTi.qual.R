@@ -20,11 +20,28 @@ TvTi.qual <- function(x, y=NULL, file_type='MAF')
   # Check if y input is a data frame 
   if(!is.null(y))
   {
+    # Check y input
+    if(is.data.frame(y))
+    {
+      if(colnames(y) %in% c('Prop', 'trans_tranv'))
+      {
+        stop("Did not detect correct column names in y input, missing one of Prop, trans_tranv")
+      }
+    }
+    if(is.vector(y))
+    {
+        y <- as.data.frame(y)
+        y$trans_tranv <- rownames(y)
+        colnames(y) <- c('Prop', 'trans_tranv')
+        if(typeof(y$Prop) != "double" & typeof(y$Prop) != "numeric")
+        {
+          stop("values in", y, "are not of type double or numeric")
+        }
+    }
     if(!is.data.frame(y))
     {
       warning(y, "is not an object of class data frame, attempting to coerce")
       y <- as.data.frame(y)
-      y <- relevel(y)
     }
   }
   
@@ -66,11 +83,11 @@ TvTi.qual <- function(x, y=NULL, file_type='MAF')
     stop("Unrecognized Base Detected in variant column")
   }
   
-  # Check y input
-  if(!is.null(y))
+  # check y input for proper row names
+  if(!is.null(y))  
   {
     trans.tranv.names <- c("A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G", "G->T or C->A")
-    if(!all(names(y) %in% trans.tranv.names))
+    if(!all(rownames(y) %in% trans.tranv.names))
     {
       stop("Did not detect correct names in:", y)
     }
