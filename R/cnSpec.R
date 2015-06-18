@@ -26,11 +26,17 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL, background='grey90
   # Get dummy data for genome
   if(!is.null(y))
   {
-    y
+    # reformat the input (should change)
+    temp <- y
+    temp1 <- y
+    temp2 <- y
+    
+    temp1$end <- temp$start
+    temp2$start <- temp$end
+    UCSC_Chr_pos <- rbind(temp1, temp2)
   } else {
     UCSC_Chr_pos <- CN_dummy_data(genome=genome)
   }
-  
   
   # Dcast the input data into a recognizable format
   CN_data <- dcast(x, chromosome + start + end ~ sample, value.var = "segmean")
@@ -51,7 +57,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL, background='grey90
   CN_data$sample <- factor(CN_data$sample, levels=sample_sorted)
   
   # Construct the plot
-  p1 <- buildCN_cohort(CN_data, plot_title=plot_title, background=background, CN_low_colour=CN_low_colour, CN_high_colour=CN_high_colour, x_lab_size=x_lab_size, y_lab_size=y_lab_size, facet_lab_size=facet_lab_size)
+  p1 <- cnSpec.build(CN_data, plot_title=plot_title, background=background, CN_low_colour=CN_low_colour, CN_high_colour=CN_high_colour, x_lab_size=x_lab_size, y_lab_size=y_lab_size, facet_lab_size=facet_lab_size)
   
   return(p1)
 }

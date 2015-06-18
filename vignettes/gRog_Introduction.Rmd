@@ -160,6 +160,25 @@ TvTi(brcaMAF, expec)
 ```
 
 ## cnSpec
+
+cnSpec produces a plot displaying copy number segments at a cohort level. Basic input consists of a data frame with column names 'chromosome', 'start', 'end' 'segmean' and 'sample' with rows denoting segments with copy number alterations. A UCSC genome is also required, defaults to 'hg19', to determine chromosomal boundaries.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=TRUE, warning=FALSE, results='asis'}
+# Example input to x
+head(LucCN)
+
+cnSpec(LucCN, genome="hg19")
+```
+
+cnSpec will query the UCSC sql database to obtain chromosomal boundary information, this has been built in as a convenience. If internet connectivity is an issue, or if copy number segment calls are derived from an assemlby not supported by UCSC the user can specify chromosomal boundaries via the argument `y`. This should take the form of a data frame with column names "chromosome", "start", "end".
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
+# Example input to y
+head(hg19chr)
+
+cnSpec(LucCN, y=hg19chr)
+```
+
 ## CN_plot
 ## gene_plot
 ## plot_coverage
