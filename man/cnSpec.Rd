@@ -65,7 +65,7 @@ ggplot object
 
 ggplot object
 
-ggplot object
+character string specifying input passed quality check
 }
 \description{
 given a data frame construct a plot to display CN information for a group of samples
