@@ -23,15 +23,15 @@ buildCN_cohort <- function(data_frame, plot_title=NULL, background='grey90', CN_
   theme <- theme(strip.text.y=element_text(angle=0, size=facet_lab_size), strip.text.x=element_text(size=facet_lab_size), axis.text.y=element_blank(), axis.ticks.y=element_blank(), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), panel.background=element_rect(fill=background), legend.position='right', axis.title.x=element_text(size=x_lab_size, face='bold'), axis.title.y=element_text(size=y_lab_size, face='bold'))
   
   # Define parameters of plot
-  facet <- facet_grid(Sample ~ Chromosome, scales='free', space='free')
+  facet <- facet_grid(sample ~ chromosome, scales='free', space='free')
   fill_gradient <- scale_fill_gradientn(colours=c(CN_low_colour, background, CN_high_colour), values=rescale(c(0, 2, 4)), limits=c(0, 4), oob=squish)
   ylabel <- ylab('Sample')
   xlabel <- xlab('Chromosome')
   title <- ggtitle(plot_title)
   
   # Define main plot using boundaries in dummy data and then plot CN data
-  p1 <- ggplot(data=dummy_data, mapping=aes(xmin=Start, xmax=Stop, ymin=0, ymax=1)) + geom_rect(alpha=0) + scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))
-  p1 <- p1 + geom_rect(data=CN_data, mapping=aes(xmin=Start, xmax=Stop, ymin=0, ymax=1, fill=CN))
+  p1 <- ggplot(data=dummy_data, mapping=aes(xmin=start, xmax=end, ymin=0, ymax=1)) + geom_rect(alpha=0) + scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))
+  p1 <- p1 + geom_rect(data=CN_data, mapping=aes(xmin=start, xmax=end, ymin=0, ymax=1, fill=cn))
   
   # build the plot
   p1 <- p1 + fill_gradient + ylabel + xlabel + facet + theme

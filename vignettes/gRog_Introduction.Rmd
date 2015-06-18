@@ -26,25 +26,25 @@ library(GGgenome)
 ```
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
-mutSpec(BRCA_MAF)
+mutSpec(brcaMAF)
 ```
 
 This type of view is of limited use given the large number of genes. Often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to do this, the `recurrence_cutoff` parameter will remove genes from the data which do not have at least x number of samples mutated. For example the `BRCA_MAF` data set contains 50 samples, to plot genes with mutations present in at least 3 (6%) of samples:
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
-mutSpec(BRCA_MAF, recurrence_cutoff=3)
+mutSpec(brcaMAF, recurrence_cutoff=3)
 ```
 
 Alternatively one can select genes of interest using the `genes` parameter. For example, if it was desirable to plot only "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
-mutSpec(BRCA_MAF, genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
+mutSpec(brcaMAF, genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
 ```
 
 It is important to note that the Mutation Burden plot does not change during these subsets, this is calculated directly from the input via the formula: $mutations\ in\ sample/coverage\ space * 1000000$ by default the coverage space defaults to the size in base pairs of the "SeqCap EZ Human Exome Library v2.0". This default can be changed via the parameter `coverage_space`. This calculation is only meant to be a rough estimate as actual coverage space can vary from sample to sample, for a more accurate calculation the user has the option to supply an optional argument `mutBurden` giving the users own calculation for each sample, this should be a data frame with columns 'sample', 'mut_burden' taking the following form:
 ```{r kable, echo=FALSE}
 library(knitr)
-kable(as.data.frame(cbind(sample=as.character(BRCA_MAF[1:10,16]), mut_burden=as.numeric(rnorm(10, mean=2, sd=.5)))))
+kable(as.data.frame(cbind(sample=as.character(brcaMAF[1:10,16]), mut_burden=as.numeric(rnorm(10, mean=2, sd=.5)))))
 ```
 
 In addition to specifying the mutation burden the user also has the ability to plot additional clinical data. The clinical data supplied should be a data frame in "long" format with column names "sample", "variable", "value". It is recommended to use the `melt` function in the package [reshape2](http://cran.r-project.org/web/packages/reshape2/index.html) to coerce data into this format. Here we add clinical data to be plotted and specify a custom order and colours for variables putting these values in two columns within the legend:
@@ -55,7 +55,7 @@ subtype <- c('lumA', 'lumB', 'her2', 'basal', 'normal')
 subtype <- sample(subtype, 50, replace=TRUE)
 age <- c('20-30', '31-50', '51-60', '61+')
 age <- sample(age, 50, replace=TRUE)
-sample <- as.character(unique(BRCA_MAF$Tumor_Sample_Barcode))
+sample <- as.character(unique(brcaMAF$Tumor_Sample_Barcode))
 clinical <- as.data.frame(cbind(sample, subtype, age))
 
 # melt the data
@@ -63,7 +63,7 @@ library(reshape2)
 clinical <- melt(clinical, id.vars=c('sample'))
 
 # Run mutSpec
-mutSpec(BRCA_MAF, clinDat=clinical, clin.var.colour=c('lumA'='blue4', 'lumB'='deepskyblue',
+mutSpec(brcaMAF, clinDat=clinical, clin.var.colour=c('lumA'='blue4', 'lumB'='deepskyblue',
 'her2'='hotpink2', 'basal'='firebrick2', 'normal'='green4', '20-30'='#ddd1e7',
 '31-50'='#bba3d0', '51-60'='#9975b9', '61+'='#7647a2'),
 genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"), clin.legend.col=2, clin.var.order=c('lumA',
@@ -79,7 +79,7 @@ Occasionally there may be samples not represented within the .maf file (due to a
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Create input data
-data <- BRCA_MAF[BRCA_MAF$Hugo_Symbol == 'TP53',c('Hugo_Symbol', 'amino_acid_change_WU')]
+data <- brcaMAF[brcaMAF$Hugo_Symbol == 'TP53',c('Hugo_Symbol', 'amino_acid_change_WU')]
 data <- as.data.frame(cbind(data, 'ENST00000269305'))
 colnames(data) <- c('gene', 'amino_acid_change', 'transcript_name')
 
@@ -125,7 +125,7 @@ genome <- BSgenome.Hsapiens.UCSC.hg19
 gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
 
 # save the data as a named list
-data <- list("PTEN" = PTEN_COV)
+data <- list("PTEN" = ptenCOV)
 
 # Plot the graphic
 genCov(data, txdb, gr, genome)
@@ -142,13 +142,13 @@ genCov(data, txdb, gr, genome, transform=NULL)
 `TvTi` provides a framework for visuzlizing transversions and transitions for a cohort. Input consists of a data frame with column names "Tumor_Sample_Barcode", "Reference_Allele", "Tumor_Seq_Allele1", and "Tumor_Seq_Allele2" for a .maf file. Alternativley the user can set the `file_type` parameter to "MGI" and supply columns "sample", "reference", and "variant".
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
-TvTi(BRCA_MAF)
+TvTi(brcaMAF)
 ```
 
 By default `TvTi` will plot the propotion of each transition/transversion seen in each sample. This can be overwritten to plot the frequency seen via the parameter `type`.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
-TvTi(BRCA_MAF, type='Frequency')
+TvTi(brcaMAF, type='Frequency')
 ```
 
 If there are prior expectations about the transition/transversion rate that data can be specified in `y` which takes a named vector with names corresponding to each transition/transversion type.
@@ -156,10 +156,10 @@ If there are prior expectations about the transition/transversion rate that data
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 expec <- c("A->C or T->G"=1/6, "A->G or T->C"=1/6, "A->T or T->A"=1/6, "G->A or C->T"=1/6, "G->C or C->G"=1/6, "G->T or C->A"=1/6)
 
-TvTi(BRCA_MAF, expec)
+TvTi(brcaMAF, expec)
 ```
 
-## CN_cohort_plot
+## cnSpec
 ## CN_plot
 ## gene_plot
 ## plot_coverage

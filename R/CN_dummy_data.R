@@ -14,12 +14,12 @@ CN_dummy_data <- function(genome)
   # Obtain max for each chromosome
   maxChrom <- aggregate(chromStart ~ chrom, data=data, max)
   maxChrom <- cbind(maxChrom, maxChrom[,2])
-  colnames(maxChrom) <- c('Chromosome', 'Start', 'Stop')
+  colnames(maxChrom) <- c('chromosome', 'start', 'end')
   
   # Obtain max for each chromosome
   minChrom <- aggregate(chromStart ~ chrom, data=data, min)
   minChrom <- cbind(minChrom, minChrom[,2])
-  colnames(minChrom) <- c('Chromosome', 'Start', 'Stop')
+  colnames(minChrom) <- c('chromosome', 'start', 'end')
   
   # bind all the data together
   data <- rbind(maxChrom, minChrom)
