@@ -5,7 +5,7 @@
 \title{Plot a mutation heatmap}
 \usage{
 plot_heatmap(data_frame, grid = TRUE, label_x = FALSE,
-  gene_label_size = 8, file_type = "TGI", drop_mutation = FALSE,
+  gene_label_size = 8, file_type = "MGI", drop_mutation = FALSE,
   plot_x_title = TRUE)
 }
 \arguments{
@@ -17,7 +17,7 @@ plot_heatmap(data_frame, grid = TRUE, label_x = FALSE,
 
 \item{gene_label_size}{numeric value indicating the size of the gene labels on the y-axis}
 
-\item{file_type}{character string specifying the file type, one of 'MAF' or 'TGI'}
+\item{file_type}{character string specifying the file type, one of 'MAF' or 'MGI'}
 
 \item{drop_mutation}{Boolean specifying whether to drop unused "mutation type" levels from the legend}
 

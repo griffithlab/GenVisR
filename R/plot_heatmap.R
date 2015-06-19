@@ -6,13 +6,13 @@
 #' @param grid boolean value whether to overlay a grid on the plot
 #' @param label_x boolean value whether to label the x axis
 #' @param gene_label_size numeric value indicating the size of the gene labels on the y-axis
-#' @param file_type character string specifying the file type, one of 'MAF' or 'TGI'
+#' @param file_type character string specifying the file type, one of 'MAF' or 'MGI'
 #' @param drop_mutation Boolean specifying whether to drop unused "mutation type" levels from the legend
 #' @param plot_x_title Boolean specifying whether to plot the x_axis title
 #' @return a ggplot2 object
 #' @import ggplot2
 
-plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='TGI', drop_mutation=FALSE, plot_x_title=TRUE)
+plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='MGI', drop_mutation=FALSE, plot_x_title=TRUE)
 {
   
   #############################################################################################################
@@ -35,7 +35,7 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
     horizontal_grid <- geom_hline(yintercept = seq(1.5, length(unique(data_frame$gene)), by=1), linetype='solid', colour='grey80', size=.01)
   }
   
-  if(toupper(file_type) == toupper('TGI'))
+  if(toupper(file_type) == toupper('MGI'))
   {
     
     # Declare a color palette
