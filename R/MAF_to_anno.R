@@ -3,20 +3,30 @@
 #' Convert columns of a mutation annotation file "MAF" into a format recognizable by internal functions
 #' @name MAF_to_anno
 #' @param x a data frame in MAF format
+#' @param label_col Character string specifying the column name of a label column
 #' @return a data frame coerced from MAF to TGI format
 
-MAF_to_anno <- function(x)
+MAF_to_anno <- function(x, label_col)
 {
-  ##################################################################################################################
-  ############## Function to take a MAF file and coerce it into a format recognizable by other functions ###########
-  ##################################################################################################################
-  if(!all(c('Tumor_Sample_Barcode', 'Hugo_Symbol', 'Variant_Classification') %in% colnames(x)))
+  # Check that correct column names are present and convert to internal format
+  expec_col <- c('Tumor_Sample_Barcode', 'Hugo_Symbol', 'Variant_Classification')
+  if(!is.null(label_col))
   {
-    stop("Did not detect correct column names, check file_type flag")
+    expec_col <- c(expec_col, label_col)
+  }
+  if(!all(expec_col %in% colnames(x)))
+  {
+    stop("Did not detect correct column names, check file_type flag?")
   }
 
-  x <- x[,c('Tumor_Sample_Barcode', 'Hugo_Symbol', 'Variant_Classification')]
-  colnames(x) <- c('sample', 'gene', 'trv_type')
+  x <- x[,c('Tumor_Sample_Barcode', 'Hugo_Symbol', 'Variant_Classification', label_col)]
+  if(!is.null(label_col))
+  {
+    colnames(x) <- c('sample', 'gene', 'trv_type', 'label')
+  } else {
+    colnames(x) <- c('sample', 'gene', 'trv_type')
+  }
+  
   
   return(x)
 }

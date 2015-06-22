@@ -4,10 +4,12 @@
 \alias{MGI_to_anno}
 \title{Convert MGI File}
 \usage{
-MGI_to_anno(x)
+MGI_to_anno(x, label_col)
 }
 \arguments{
 \item{x}{a data frame in MGI internal format}
+
+\item{label_col}{Character string specifying the column name of a label column}
 }
 \value{
 a data frame coerced from MGI to internal annotation format

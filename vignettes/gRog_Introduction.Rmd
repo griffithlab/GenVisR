@@ -29,16 +29,16 @@ library(GGgenome)
 mutSpec(brcaMAF)
 ```
 
-This type of view is of limited use given the large number of genes. Often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to do this, the `recurrence_cutoff` parameter will remove genes from the data which do not have at least x number of samples mutated. For example the `BRCA_MAF` data set contains 50 samples, to plot genes with mutations present in at least 3 (6%) of samples:
+This type of view is of limited use given the large number of genes. Often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to do this, the `main.recurrence_cutoff` parameter will remove genes from the data which do not have at least x number of samples mutated. For example the `BRCA_MAF` data set contains 50 samples, to plot genes with mutations present in at least 3 (6%) of samples:
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
-mutSpec(brcaMAF, recurrence_cutoff=3)
+mutSpec(brcaMAF, main.recurrence_cutoff=3)
 ```
 
-Alternatively one can select genes of interest using the `genes` parameter. For example, if it was desirable to plot only "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
+Alternatively one can select genes of interest using the `main.genes` parameter. For example, if it was desirable to plot only "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
-mutSpec(brcaMAF, genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
+mutSpec(brcaMAF, main.genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
 ```
 
 It is important to note that the Mutation Burden plot does not change during these subsets, this is calculated directly from the input via the formula: $mutations\ in\ sample/coverage\ space * 1000000$ by default the coverage space defaults to the size in base pairs of the "SeqCap EZ Human Exome Library v2.0". This default can be changed via the parameter `coverage_space`. This calculation is only meant to be a rough estimate as actual coverage space can vary from sample to sample, for a more accurate calculation the user has the option to supply an optional argument `mutBurden` giving the users own calculation for each sample, this should be a data frame with columns 'sample', 'mut_burden' taking the following form:
@@ -66,7 +66,7 @@ clinical <- melt(clinical, id.vars=c('sample'))
 mutSpec(brcaMAF, clinDat=clinical, clin.var.colour=c('lumA'='blue4', 'lumB'='deepskyblue',
 'her2'='hotpink2', 'basal'='firebrick2', 'normal'='green4', '20-30'='#ddd1e7',
 '31-50'='#bba3d0', '51-60'='#9975b9', '61+'='#7647a2'),
-genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"), clin.legend.col=2, clin.var.order=
+main.genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"), clin.legend.col=2, clin.var.order=
 c('lumA', 'lumB', 'her2', 'basal', 'normal', '20-30', '31-50', '51-60', '61+'))
 ```
 
