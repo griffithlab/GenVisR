@@ -9,48 +9,42 @@
 #' @param clin.var.order a character vector of variables to order the clinical legend by
 #' @param mutBurden an optional data frame containing columns sample, mut_burden
 #' @param recurrence_cutoff an integer value to remove genes that do not have x number of mutations
-#' @param grid a boolean value to overlay a grid on the primary plot
-#' @param label_x a boolean value to plot samples on the x axis
+#' @param main.grid a boolean value to overlay a grid on the primary plot
+#' @param main.label_x a boolean value to plot samples on the x axis
 #' @param title a character string for the plot title
-#' @param gene_label_size an integer specifying the size of labels on Y axis
+#' @param main.gene_label_size an integer specifying the size of labels on Y axis
 #' @param coverage_space an integer specifying the size in bp of the genome covered from which mutations could be called
 #' @param file_type a character string specifying the file format of the data frame, one of "MGI", "MAF"
-#' @param genes a character vector specifying genes to plot
+#' @param main.genes a character vector specifying genes to plot
 #' @param drop_mutation Boolean specifying whether to drop unused "mutation type" levels from the legend
 #' @param rmv_silent Boolean specifying wheter to remove silent mutations from the left side and main plot
+#' @param main.label_col Character string specifying an optional column name from which to derive cell labels from
+#' @param main.plot_label_size Integer specifying the size of labels for cells in the main panel
 #' @return a grob for plotting
 #' @export
 
-mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, clin.var.order=NULL, mutBurden=NULL, recurrence_cutoff = 0, grid = TRUE, label_x = FALSE, title ='', gene_label_size=8, coverage_space=44100000, file_type='MAF', genes=NULL, drop_mutation=FALSE, rmv_silent=FALSE)
+mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, clin.var.order=NULL, mutBurden=NULL, main.recurrence_cutoff = 0, main.grid = TRUE, main.label_x = FALSE, title ='', main.gene_label_size=8, coverage_space=44100000, file_type='MAF', main.genes=NULL, drop_mutation=FALSE, rmv_silent=FALSE, main.label_col=NULL, main.plot_label_size=4)
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
   ############################################################################################
-
-  # Perform quality checks
-  if(!is.data.frame(x))
-  {
-    warning("Did not detect a data frame, attempting to coerce, output device may be incorrect")
-    x <- as.data.frame(x)
-    x <- droplevels(x)
-  }
   
-  # Convert file type to internal format
-  if(toupper(file_type) == toupper('MAF'))
+  # Perform data quality checks and coversions
+  inputDat <- mutSpec.qual(x, clinDat, mutBurden, file_type=file_type, label_col=main.label_col)
+  data_frame <- inputDat[[1]]
+  clinDat <- inputDat[[2]]
+  mutBurden <- inputDat[[3]]
+  
+  # Set flag if it is desirable to plot cell text
+  if(!is.null(main.label_col))
   {
-    data_frame <- MAF_to_anno(x)
-  } else if(toupper(file_type) == toupper('MGI'))
-  {
-    data_frame <- MGI_to_anno(x)
+    main.plot_label_flag <- TRUE
   } else {
-    stop("Unrecognized file_type: ", file_type)
+    main.plot_label_flag <- FALSE
   }
-  
-  # Extract columns from annotation format needed for a mutation heatmap
-  data_frame <- data_frame[,c('sample', 'gene', 'trv_type')]
   
   # add in a count of mutations at the sample level before anything is stripped out and save for mutation recurrence plot
-  data_frame2 <- add_mutation_counts(data_frame)
+  data_frame2 <- add_mutation_counts(data_frame[,c('sample', 'gene', 'trv_type')])
   
   # Subset the data to remove silent mutations if specified
   if(rmv_silent==TRUE)
@@ -70,12 +64,12 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, cl
   data_frame$sample <- factor(data_frame$sample, levels=sample_order)
   
   # Subset the data based on the recurrence of mutations at the gene level
-  data_frame <- mutation_recurrence_subset(data_frame, recurrence_cutoff)
+  data_frame <- mutation_recurrence_subset(data_frame, main.recurrence_cutoff)
   
   # Subset the data based on a vector of genes if supplied
-  if(!is.null(genes))
+  if(!is.null(main.genes))
   {
-    data_frame <- mutation_sample_subset(data_frame, genes)
+    data_frame <- mutation_sample_subset(data_frame, main.genes)
   }
   
   # Reorder the sample levels in data_frame2 to match the main plot's levels, and then plot the top margin plt
@@ -102,10 +96,10 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, cl
   # Plot the Heatmap
   if(is.null(clinDat))
   {
-    p1 <- plot_heatmap(data_frame, grid = grid, label_x = label_x, gene_label_size = gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title=TRUE)
+    p1 <- plot_heatmap(data_frame, grid = main.grid, label_x = main.label_x, gene_label_size = main.gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title = TRUE, plot_label = main.plot_label_flag, plot_label_size = main.plot_label_size)
   } else if(!is.null(clinDat))
   {
-    p1 <- plot_heatmap(data_frame, grid = grid, label_x = label_x, gene_label_size = gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title=FALSE)
+    p1 <- plot_heatmap(data_frame, grid = main.grid, label_x = main.label_x, gene_label_size = main.gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title = FALSE, plot_label = main.plot_label_flag, plot_label_size = main.plot_label_size)
   }
   
   # Plot any clinical data if it is specified

@@ -4,10 +4,12 @@
 \alias{MAF_to_anno}
 \title{Convert MAF File}
 \usage{
-MAF_to_anno(x)
+MAF_to_anno(x, label_col)
 }
 \arguments{
 \item{x}{a data frame in MAF format}
+
+\item{label_col}{Character string specifying the column name of a label column}
 }
 \value{
 a data frame coerced from MAF to TGI format

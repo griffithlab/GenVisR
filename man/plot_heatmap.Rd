@@ -6,7 +6,7 @@
 \usage{
 plot_heatmap(data_frame, grid = TRUE, label_x = FALSE,
   gene_label_size = 8, file_type = "MGI", drop_mutation = FALSE,
-  plot_x_title = TRUE)
+  plot_x_title = TRUE, plot_label = FALSE, plot_label_size = 4)
 }
 \arguments{
 \item{data_frame}{a data frame in MAF format}
@@ -22,6 +22,10 @@ plot_heatmap(data_frame, grid = TRUE, label_x = FALSE,
 \item{drop_mutation}{Boolean specifying whether to drop unused "mutation type" levels from the legend}
 
 \item{plot_x_title}{Boolean specifying whether to plot the x_axis title}
+
+\item{plot_label}{Boolean specifying whether to plot text inside each cell}
+
+\item{plot_label_size}{Integer specifying text size of cell labels}
 }
 \value{
 a ggplot2 object

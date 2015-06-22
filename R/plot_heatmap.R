@@ -9,10 +9,12 @@
 #' @param file_type character string specifying the file type, one of 'MAF' or 'MGI'
 #' @param drop_mutation Boolean specifying whether to drop unused "mutation type" levels from the legend
 #' @param plot_x_title Boolean specifying whether to plot the x_axis title
+#' @param plot_label Boolean specifying whether to plot text inside each cell
+#' @param plot_label_size Integer specifying text size of cell labels
 #' @return a ggplot2 object
 #' @import ggplot2
 
-plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='MGI', drop_mutation=FALSE, plot_x_title=TRUE)
+plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='MGI', drop_mutation=FALSE, plot_x_title=TRUE, plot_label=FALSE, plot_label_size=4)
 {
   
   #############################################################################################################
@@ -40,8 +42,6 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
     
     # Declare a color palette
     palette <- c('#4f00A8', '#A80100', '#CF5A59', '#A80079', '#BC2D94', '#CF59AE', '#000000', '#006666', '#00A8A8', '#009933', '#59CF74', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
-    
-    #A80100 => red
     
     # Create Legend labels
     breaks <- c("nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent")
@@ -75,6 +75,13 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
   # Plot Title
   title <- ggtitle(title)
   
+  if(plot_label == TRUE)
+  {
+    label <- geom_text(data=data_frame, mapping=aes(x=sample, y=gene, label=label), size=plot_label_size, colour='white')
+  } else {
+    label <- geom_blank()
+  }
+  
   # Theme, Boolean, if specified to plot x labels, define theme such that labels are plotted
   if(label_x == TRUE & plot_x_title == TRUE)
   {
@@ -90,9 +97,9 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
   # ggplot call
   if(grid == TRUE)
   {
-    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + vertical_grid + horizontal_grid + scale_x_discrete(drop=FALSE) + title
+    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + vertical_grid + horizontal_grid + scale_x_discrete(drop=FALSE) + title + label
   } else {
-    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + scale_x_discrete(drop=FALSE) + title
+    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + scale_x_discrete(drop=FALSE) + title + label
   }
   
   return(p1)

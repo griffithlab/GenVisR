@@ -6,10 +6,11 @@
 \title{Plot a mutation landscape}
 \usage{
 mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
-  clin.var.order = NULL, mutBurden = NULL, recurrence_cutoff = 0,
-  grid = TRUE, label_x = FALSE, title = "", gene_label_size = 8,
-  coverage_space = 44100000, file_type = "MAF", genes = NULL,
-  drop_mutation = FALSE, rmv_silent = FALSE)
+  clin.var.order = NULL, mutBurden = NULL, main.recurrence_cutoff = 0,
+  main.grid = TRUE, main.label_x = FALSE, title = "",
+  main.gene_label_size = 8, coverage_space = 44100000, file_type = "MAF",
+  main.genes = NULL, drop_mutation = FALSE, rmv_silent = FALSE,
+  main.label_col = NULL, main.plot_label_size = 4)
 }
 \arguments{
 \item{x}{a data frame in annotation format}
@@ -24,25 +25,29 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
 
 \item{mutBurden}{an optional data frame containing columns sample, mut_burden}
 
-\item{recurrence_cutoff}{an integer value to remove genes that do not have x number of mutations}
+\item{main.grid}{a boolean value to overlay a grid on the primary plot}
 
-\item{grid}{a boolean value to overlay a grid on the primary plot}
-
-\item{label_x}{a boolean value to plot samples on the x axis}
+\item{main.label_x}{a boolean value to plot samples on the x axis}
 
 \item{title}{a character string for the plot title}
 
-\item{gene_label_size}{an integer specifying the size of labels on Y axis}
+\item{main.gene_label_size}{an integer specifying the size of labels on Y axis}
 
 \item{coverage_space}{an integer specifying the size in bp of the genome covered from which mutations could be called}
 
 \item{file_type}{a character string specifying the file format of the data frame, one of "MGI", "MAF"}
 
-\item{genes}{a character vector specifying genes to plot}
+\item{main.genes}{a character vector specifying genes to plot}
 
 \item{drop_mutation}{Boolean specifying whether to drop unused "mutation type" levels from the legend}
 
 \item{rmv_silent}{Boolean specifying wheter to remove silent mutations from the left side and main plot}
+
+\item{main.label_col}{Character string specifying an optional column name from which to derive cell labels from}
+
+\item{main.plot_label_size}{Integer specifying the size of labels for cells in the main panel}
+
+\item{recurrence_cutoff}{an integer value to remove genes that do not have x number of mutations}
 }
 \value{
 a grob for plotting
