@@ -6,7 +6,8 @@
 \usage{
 plot_heatmap(data_frame, grid = TRUE, label_x = FALSE,
   gene_label_size = 8, file_type = "MGI", drop_mutation = FALSE,
-  plot_x_title = TRUE, plot_label = FALSE, plot_label_size = 4)
+  plot_x_title = TRUE, plot_label = FALSE, plot_label_size = 4,
+  plot_palette = NULL)
 }
 \arguments{
 \item{data_frame}{a data frame in MAF format}
@@ -26,6 +27,8 @@ plot_heatmap(data_frame, grid = TRUE, label_x = FALSE,
 \item{plot_label}{Boolean specifying whether to plot text inside each cell}
 
 \item{plot_label_size}{Integer specifying text size of cell labels}
+
+\item{plot_pallete}{Character vector specifying colors to fill on mutation type}
 }
 \value{
 a ggplot2 object

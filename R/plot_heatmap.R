@@ -11,10 +11,11 @@
 #' @param plot_x_title Boolean specifying whether to plot the x_axis title
 #' @param plot_label Boolean specifying whether to plot text inside each cell
 #' @param plot_label_size Integer specifying text size of cell labels
+#' @param plot_pallete Character vector specifying colors to fill on mutation type
 #' @return a ggplot2 object
 #' @import ggplot2
 
-plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='MGI', drop_mutation=FALSE, plot_x_title=TRUE, plot_label=FALSE, plot_label_size=4)
+plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='MGI', drop_mutation=FALSE, plot_x_title=TRUE, plot_label=FALSE, plot_label_size=4, plot_palette=NULL)
 {
   
   #############################################################################################################
@@ -37,22 +38,26 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
     horizontal_grid <- geom_hline(yintercept = seq(1.5, length(unique(data_frame$gene)), by=1), linetype='solid', colour='grey80', size=.01)
   }
   
+  # Declare the appropriate palette
+  if(!is.null(plot_palette))
+  {
+    palette <- plot_palette
+  } else if(toupper(file_type) == toupper('MGI'))
+  {
+    palette <- c('#4f00A8', '#A80100', '#CF5A59', '#A80079', '#BC2D94', '#CF59AE', '#000000', '#006666', '#00A8A8', '#009933', '#59CF74', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
+  } else if(toupper(file_type) == toupper('MAF'))
+  {
+    palette <- c('#A80100', '#CF5A59', '#A80079', '#CF59AE', '#4f00A8', '#9159CF', '#000000', '#59CF74', '#00A8A8', '#79F2F2', '#006666', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C')
+  }
+  
+  # Create breaks specific and labels for specified file type
   if(toupper(file_type) == toupper('MGI'))
   {
-    
-    # Declare a color palette
-    palette <- c('#4f00A8', '#A80100', '#CF5A59', '#A80079', '#BC2D94', '#CF59AE', '#000000', '#006666', '#00A8A8', '#009933', '#59CF74', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
-    
     # Create Legend labels
     breaks <- c("nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent")
     labels <- c("Nonsense", "Frame Shift Deletion", "Frame Shift Insertion", "Splice Site Deletion", "Splice Site Insertion", "Splice Site", "Stop Loss", "In Frame Deletion", "In Frame Insertion", "Missense", "Splice Region", "5' Flank", "3' Flank", "3' UTR", "5' UTR", "RNA", "Intronic", "Silent")
-    
   } else if(toupper(file_type) == toupper('MAF'))
   {
-    
-    # Declare a color palette
-    palette <- c('#A80100', '#CF5A59', '#A80079', '#CF59AE', '#4f00A8', '#9159CF', '#000000', '#59CF74', '#00A8A8', '#79F2F2', '#006666', '#002AA8', '#5977CF', '#F37812', '#F2B079', '#888811', '#FDF31C')
-    
     # Create Legend Labels
     breaks <- c("Nonsense_Mutation", "Frame_Shift_Ins", "Frame_Shift_Del", "In_Frame_Ins", "In_Frame_Del", "Nonstop_Mutation", "Splice_Site", "Missense_Mutation", "5\'Flank", "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron", "IGR", "Silent", "Targeted_Region")
     labels <- c("Nonsense", "Frame Shift Insertion", "Frame Shift Deletion", "In Frame Insertion", "In Frame Deletion", "Nonstop", "Splice Site", "Missense", "5' Flank", "3' Flank", "5' UTR", "3' UTR", "RNA", "Intron", "Intergenic Region", "Silent", "Targeted Region")

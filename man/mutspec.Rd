@@ -10,7 +10,7 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
   main.grid = TRUE, main.label_x = FALSE, title = "",
   main.gene_label_size = 8, coverage_space = 44100000, file_type = "MAF",
   main.genes = NULL, drop_mutation = FALSE, rmv_silent = FALSE,
-  main.label_col = NULL, main.plot_label_size = 4)
+  main.label_col = NULL, main.plot_label_size = 4, main.palette = NULL)
 }
 \arguments{
 \item{x}{a data frame in annotation format}
@@ -46,6 +46,8 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
 \item{main.label_col}{Character string specifying an optional column name from which to derive cell labels from}
 
 \item{main.plot_label_size}{Integer specifying the size of labels for cells in the main panel}
+
+\item{main.palette}{Character vector specifying colors to fill on mutation type}
 
 \item{recurrence_cutoff}{an integer value to remove genes that do not have x number of mutations}
 }

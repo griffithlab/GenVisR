@@ -8,6 +8,12 @@
 
 mutation_sample_subset <- function(x, genes)
 {
+  if(typeof(genes) != 'character' & class(genes) != 'character')
+  {
+    warning("argument supplied to main.genes is not a character vector, attempting to coerce")
+    genes <- as.character(genes)
+  }
+  
   genes <- c(genes, NA)
   x <- x[(x$gene %in% genes), ]
   
