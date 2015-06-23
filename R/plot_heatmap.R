@@ -29,13 +29,13 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
   ####################################### define layers for ggplot call ########################################
   
   # Grid options
-  vertical_grid <- geom_vline(xintercept = seq(.5, nlevels(data_frame$sample), by=1), linetype='solid', colour='grey80', size=.01)
+  vertical_grid <- geom_vline(xintercept = seq(.5, nlevels(data_frame$sample), by=1), linetype='solid', colour='grey80', size=.05)
   
   if(length(unique(data_frame$gene)) == 1)
   {
     horizontal_grid <- geom_hline()
   } else {
-    horizontal_grid <- geom_hline(yintercept = seq(1.5, length(unique(data_frame$gene)), by=1), linetype='solid', colour='grey80', size=.01)
+    horizontal_grid <- geom_hline(yintercept = seq(1.5, length(unique(data_frame$gene)), by=1), linetype='solid', colour='grey80', size=.05)
   }
   
   # Declare the appropriate palette
@@ -54,8 +54,8 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
   if(toupper(file_type) == toupper('MGI'))
   {
     # Create Legend labels
-    breaks <- c("nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent")
-    labels <- c("Nonsense", "Frame Shift Deletion", "Frame Shift Insertion", "Splice Site Deletion", "Splice Site Insertion", "Splice Site", "Stop Loss", "In Frame Deletion", "In Frame Insertion", "Missense", "Splice Region", "5' Flank", "3' Flank", "3' UTR", "5' UTR", "RNA", "Intronic", "Silent")
+    breaks <- c("nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent", "positive", "negative", "unknown")
+    labels <- c("Nonsense", "Frame Shift Deletion", "Frame Shift Insertion", "Splice Site Deletion", "Splice Site Insertion", "Splice Site", "Stop Loss", "In Frame Deletion", "In Frame Insertion", "Missense", "Splice Region", "5' Flank", "3' Flank", "3' UTR", "5' UTR", "RNA", "Intronic", "Silent", "Positive", "Negative", "Unknown")
   } else if(toupper(file_type) == toupper('MAF'))
   {
     # Create Legend Labels
@@ -94,7 +94,7 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
   } else if(label_x == FALSE & plot_x_title == TRUE) {
     theme <-  theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_blank(), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_blank(), axis.title.x=element_text(size=20), legend.title=element_text(size=14), plot.title=element_blank(), panel.border=element_rect(colour='grey80', fill=NA, size=.1), legend.position=("right"))
   } else if(label_x == TRUE & plot_x_title == FALSE) {
-    theme <-  theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_text(angle=50, hjust=1), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_blank(), axis.title.x=element_blank(), legend.title=element_text(size=14), plot.title=element_blank())
+    theme <- theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_text(angle=50, hjust=1, size=14), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_text(size=20), axis.title.x=element_blank(), legend.title=element_text(size=16), plot.title=element_blank(), legend.text=element_text(size=14))
   } else if(label_x == FALSE & plot_x_title == FALSE) {
     theme <-  theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_blank(), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_blank(), axis.title.x=element_blank(), legend.title=element_text(size=14), plot.title=element_blank(), panel.border=element_rect(colour='grey80', fill=NA, size=.1), legend.position=("right"))
   }
@@ -102,7 +102,7 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
   # ggplot call
   if(grid == TRUE)
   {
-    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + vertical_grid + horizontal_grid + scale_x_discrete(drop=FALSE) + title + label
+    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + vertical_grid + horizontal_grid + scale_x_discrete(drop=FALSE) + title + label + ylab("Gene")
   } else {
     p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + scale_x_discrete(drop=FALSE) + title + label
   }

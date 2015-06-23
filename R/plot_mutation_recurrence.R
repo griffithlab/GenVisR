@@ -18,7 +18,7 @@ plot_mutation_recurrence <- function(data_frame, coverage_space)
   #print(data_frame)
   
   # Alter GGplot2 Theme 
-  theme <- theme(panel.border =  element_blank(), axis.line =  element_line(), panel.background=element_rect(fill='white'), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), axis.ticks.x=element_blank(), axis.text.x=element_blank(), axis.title.x=element_blank(), legend.title=element_text(size=14))
+  theme <- theme(panel.border = element_blank(), axis.line = element_line(), panel.background=element_rect(fill='white'), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), axis.ticks.x=element_blank(), axis.text.x=element_blank(), axis.title.x=element_blank(), legend.title=element_text(size=14), axis.title.y=element_text(size=16))   
   
   # Add Legend
   legend <- scale_fill_manual(name="Translational Effect", values=c("red", "blue"), breaks=c("Synonymous", "Non Synonymous"), drop=FALSE)
