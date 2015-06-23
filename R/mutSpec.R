@@ -81,15 +81,15 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, cl
       stop("The sample column in data frame z does not appear to contain the same elements as in data frame x")
     }
     mutBurden$sample <- factor(mutBurden$sample, levels=sample_order)
-    p3 <- build_mutation_recurrence_b(mutBurden)
+    p3 <- build.mutRecurB.mutSpec(mutBurden)
   } else {
     data_frame2$sample <- factor(data_frame2$sample, levels=sample_order)
-    p3 <- plot_mutation_recurrence(data_frame2, coverage_space)
+    p3 <- build.mutRecurA.mutSpec(data_frame2, coverage_space)
   }
 
   
   # Plot the Left Bar Chart
-  p2 <- plot_bar(data_frame)
+  p2 <- build.mutOccur.mutSpec(data_frame)
   
   # if there are any NA values in the data frame for a gene, give these NA values a gene name so they are plotted properly
   data_frame <- add_gene_to_NA(data_frame)
@@ -97,10 +97,10 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, cl
   # Plot the Heatmap
   if(is.null(clinDat))
   {
-    p1 <- plot_heatmap(data_frame, grid = main.grid, label_x = main.label_x, gene_label_size = main.gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title = TRUE, plot_label = main.plot_label_flag, plot_label_size = main.plot_label_size, plot_palette=main.palette)
+    p1 <- build.main.mutSpec(data_frame, grid = main.grid, label_x = main.label_x, gene_label_size = main.gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title = TRUE, plot_label = main.plot_label_flag, plot_label_size = main.plot_label_size, plot_palette=main.palette)
   } else if(!is.null(clinDat))
   {
-    p1 <- plot_heatmap(data_frame, grid = main.grid, label_x = main.label_x, gene_label_size = main.gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title = FALSE, plot_label = main.plot_label_flag, plot_label_size = main.plot_label_size, plot_palette=main.palette)
+    p1 <- build.main.mutSpec(data_frame, grid = main.grid, label_x = main.label_x, gene_label_size = main.gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title = FALSE, plot_label = main.plot_label_flag, plot_label_size = main.plot_label_size, plot_palette=main.palette)
   }
   
   # Plot any clinical data if it is specified
@@ -108,7 +108,7 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, cl
   {
     # match the levels of sample in y to conform to the main plot
     clinDat$sample <- factor(clinDat$sample, levels=sample_order)
-    p4 <- plot_clinical(clinDat, clin.legend.col=clin.legend.col, clin.var.colour=clin.var.colour, clin.var.order=clin.var.order)
+    p4 <- build.clin.mutSpec(clinDat, clin.legend.col=clin.legend.col, clin.var.colour=clin.var.colour, clin.var.order=clin.var.order)
     
     # Align all plots and return as 1 plot
     pA <- align_waterfall(p2, p1, p3, p4, title=title)

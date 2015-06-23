@@ -1,12 +1,12 @@
 #' plot mutation burden
 #' 
 #' plot a barchart showing mutations per MB
-#' @name plot_mutation_recurrence
+#' @name build.mutRecurA.mutSpec
 #' @param data_frame a data frame in MAF format
 #' @param coverage_space an integer specifying the coverage space in base pairs from which a mutation could occur
 #' @return a ggplot object
 
-plot_mutation_recurrence <- function(data_frame, coverage_space)
+build.mutRecurA.mutSpec <- function(data_frame, coverage_space)
 {
   #############################################################################################################################
   #################################### Function to plot the top margin barplot ################################################

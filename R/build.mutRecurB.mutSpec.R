@@ -1,12 +1,12 @@
 #' plot mutation burden
 #' 
 #' plot a barchart showing mutation burden given by data frame
-#' @name build_mutation_recurrence_b
+#' @name build.mutRecurB.mutSpec
 #' @param x a data frame containing columns sample, mut_burden
 #' @return a ggplot object
 #' @import ggplot2
 
-build_mutation_recurrence_b <- function(x)
+build.mutRecurB.mutSpec <- function(x)
 {  
   # add in fake column for legend (necessary to have legend for proper plot alignment)
   # make everything white to hide legend

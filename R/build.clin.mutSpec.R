@@ -1,7 +1,7 @@
 #' plot clinical information
 #' 
 #' given a data frame with columns names sample, variable, and value create a ggplot2 object
-#' @name plot_clinical
+#' @name build.clin.mutSpec
 #' @param x a data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"
 #' @param clin.legend.col an integer specifying the number of columns to plot in the legend
 #' @param clin.var.colour a named character vector specifying the mapping between colors and variables
@@ -9,7 +9,7 @@
 #' @return a grob object
 #' @import ggplot2
 
-plot_clinical <- function(x, clin.legend.col=1, clin.var.colour=NULL, clin.var.order=NULL)
+build.clin.mutSpec <- function(x, clin.legend.col=1, clin.var.colour=NULL, clin.var.order=NULL)
 {
   # Define parameters
   x_label <- xlab(paste0("Sample n=", length(unique(x$sample))))

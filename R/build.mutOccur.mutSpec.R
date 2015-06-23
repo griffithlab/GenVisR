@@ -1,12 +1,12 @@
 #' plot mutation recurrence in genes
 #' 
 #' plot a bar graph displaying the percentage of samples with a mutation
-#' @name plot_bar
+#' @name build.mutOccur.mutSpec
 #' @param data_frame a data frame in MAF format
 #' @return a ggplot object
 #' @import scales
 
-plot_bar <- function(data_frame)
+build.mutOccur.mutSpec <- function(data_frame)
 {
   #####################################################################################################################
   ####### Function to create the left margin bar plot, function plots the percentage of samples with a mutation #######

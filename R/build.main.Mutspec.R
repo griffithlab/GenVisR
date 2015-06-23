@@ -1,7 +1,7 @@
 #' Plot a mutation heatmap
 #' 
 #' Plot a Mutation Landscape with variables sample, gene, mutation
-#' @name plot_heatmap
+#' @name build.main.mutSpec
 #' @param data_frame a data frame in MAF format
 #' @param grid boolean value whether to overlay a grid on the plot
 #' @param label_x boolean value whether to label the x axis
@@ -15,7 +15,7 @@
 #' @return a ggplot2 object
 #' @import ggplot2
 
-plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='MGI', drop_mutation=FALSE, plot_x_title=TRUE, plot_label=FALSE, plot_label_size=4, plot_palette=NULL)
+build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='MGI', drop_mutation=FALSE, plot_x_title=TRUE, plot_label=FALSE, plot_label_size=4, plot_palette=NULL)
 {
   
   #############################################################################################################
