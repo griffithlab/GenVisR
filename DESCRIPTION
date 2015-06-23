@@ -4,7 +4,7 @@ Version: 0.99.0
 Authors@R: person("Zachary", "Skidmore", , "zskidmor@genome.wustl.edu", role = c("aut", "cre"))
 Maintainer: Zachary Skidmore <zskidmor@genome.wustl.edu>
 Description: Produce highly customizable publication quality graphics for genomic data at the cohort level.
-Depends: R (>= 3.0.0), UniProt.ws
+Depends: R (>= 3.1.1), UniProt.ws
 Imports: ggplot2 (>= 0.9.2), plyr (>= 1.8.3), gridExtra, GenomicRanges, gtable, FField, RMySQL, scales, biomaRt, gtools, reshape2, RCurl, GenomicFeatures
 License: GPL-3 + file LICENSE
 BugReports: https://github.com/griffithlab/GGgenome/issues
