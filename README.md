@@ -5,7 +5,7 @@ Intuitively visualizing and interpreting data from high-throughput genomic techn
 
 * Install devtools
 ```R
-install.packages(devtools)
+install.packages("devtools")
 ```
 
 * Install Bioconductor dependencies
@@ -16,7 +16,7 @@ biocLite(c("GenomicRanges", "biomaRt", "GenomicFeatures", "UniProt.ws"))
 
 * It is suggested but not required to install knitr and rmarkdown for vignette creation
 ```R
-install.packages(c(rmarkdown, knitr))
+install.packages(c("rmarkdown", "knitr"))
 ```
 
 * Install GGgenome
