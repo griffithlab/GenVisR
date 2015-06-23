@@ -18,6 +18,9 @@ mutSpec.qual <- function(x, y, z, file_type, label_col)
     x <- as.data.frame(x)
   }
   
+  # drop unused levels in x
+  x <- droplevels(x)
+  
   # Convert file type to internal format
   if(toupper(file_type) == toupper("MAF"))
   {
@@ -32,6 +35,8 @@ mutSpec.qual <- function(x, y, z, file_type, label_col)
   # Check input data to clinDat
   if(!is.null(y))
   {
+    y <- droplevels(y)
+    
     if(!is.data.frame(y))
     {
       warning("Did not detect a data frame for clinDat, attempting to coerce")
@@ -47,6 +52,8 @@ mutSpec.qual <- function(x, y, z, file_type, label_col)
   # check input data to mutBurden
   if(!is.null(z))
   {
+    z <- droplevels(z)
+    
     if(!is.data.frame(z))
     {
       warning("Did not detect a data frame for mutBurden, attempting to coerce")
