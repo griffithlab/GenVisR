@@ -13,7 +13,7 @@ lolliplot.qual <- function(x, y)
   {
     message(x, " is not a data frame, attempting to coerce")
     x <- as.data.frame(x)
-    x <- relevel(x)
+    x <- droplevels(x)
   }
   
   if(!is.null(y))
@@ -22,7 +22,7 @@ lolliplot.qual <- function(x, y)
     {
       message(y, "is not a data frame, attempting to coerce")
       y <- as.data.frame(y)
-      y <- relevel(y)
+      y <- droplevels(y)
     }
   }
   
@@ -35,7 +35,7 @@ lolliplot.qual <- function(x, y)
   # Check for correct columns in x
   if(!all(c('transcript_name', 'gene', 'amino_acid_change') %in% colnames(x)))
   {
-    stop("Did not detect correct columns in ", x,", missing one of transcript_name, gene, amino_acid_change")
+    stop("Did not detect correct columns in x, missing one of transcript_name, gene, amino_acid_change")
   }
   
   # Check that "transcript_name" in x contains only 1 transcript
@@ -49,10 +49,9 @@ lolliplot.qual <- function(x, y)
   {
     if(!all(c('transcript_name', 'amino_acid_change') %in% colnames(y)))
     {
-      stop("Did not detect correct columns in ", y,", missing one of transcript_name, amino_acid_change")
+      stop("Did not detect correct columns in y, missing one of transcript_name, amino_acid_change")
     }
   }
 
-  
-  return("Input data passed basic quality check")
+  return(list(x, y))
 }

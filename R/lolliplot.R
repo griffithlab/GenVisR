@@ -32,7 +32,9 @@
 lolliplot <- function(x, y=NULL, fill_value=NULL, label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=3, gene_colour='#999999', obsA.rep.fact=5000, obsA.rep.dist.lmt=500, obsA.attr.fact=.1, obsA.adj.max=.1, obsA.adj.lmt=.5, obsA.iter.max=50000, obsB.rep.fact=5000, obsB.rep.dist.lmt=500, obsB.attr.fact=.1, obsB.adj.max=.1, obsB.adj.lmt=.5, obsB.iter.max=50000, plot_sidechain=FALSE, taxId=9606)
 {  
   # Perform quality check
-  lolliplot.qual(x, y)
+  input <- lolliplot.qual(x, y)
+  x <- input[[1]]
+  y <- input[[2]]
   
   # Define a taxonomy ID for use in the "transcriptID2" function family for use with UniProt.ws
   up <- UniProt.ws(taxId=taxId)
