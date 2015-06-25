@@ -179,7 +179,8 @@ head(hg19chr)
 cnSpec(LucCN, y=hg19chr)
 ```
 
-## CN_plot
+## cnView
+## ideoView
 ## gene_plot
 ## plot_coverage
 

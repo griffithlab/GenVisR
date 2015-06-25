@@ -7,17 +7,17 @@
 #' @return object of class data frame
 
 subset_chr <- function(x, chr)
-{
+{ 
   # subset data frame based on value specified in chr argument
   if(chr == 'all')
   {
     return(x)
   }
-  else if(any(chr == levels(x$Chr)))
+  else if(any(chr == levels(x$chromosome)))
   {
-    x <- x[x$Chr == chr,]
+    x <- x[x$chromosome == chr,]
     return(x)
   } else {
-    stop("chr string does not match chr in data.frame")
+    stop("value in chr does not match values in chromosome column of x")
   }
 }

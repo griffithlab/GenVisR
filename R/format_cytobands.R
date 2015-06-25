@@ -13,13 +13,13 @@ format_cytobands <- function(data_frame, chromosome)
   data_frame$height_max <- .5
   
   # subset bands retrieve pulling just the chromosome requested, also creating an alternating vector to map text to
-  data_frame <- subset(data_frame, data_frame[,1] == chromosome)
+  data_frame <- data_frame[data_frame$chrom == chromosome,]
   alternate <- c("top", "bottom")
   alternate <- rep_len(alternate, nrow(data_frame))
   data_frame$alternate <- alternate
   
   # Get median of band for geom_text
-  band_median <- apply(data_frame[,c(2,3)], 1, median)
+  band_median <- apply(data_frame[,c("chromStart", "chromEnd")], 1, median)
   data_frame$band_center <- band_median
   
   # set up y positions for geom_text call
@@ -27,9 +27,10 @@ format_cytobands <- function(data_frame, chromosome)
   data_frame$text_y <- text_y
   
   # add p/q arm distinction
-  Parm_boolean <- grepl("^p", data_frame[,4])
+  # developer note, this is assigned to the last column which should be 11 unless UCSC database changes
+  Parm_boolean <- grepl("^p", data_frame[,c('name')])
   data_frame[Parm_boolean, 11] <- "p"
-  Qarm_boolean <- grepl("^q", data_frame[,4])
+  Qarm_boolean <- grepl("^q", data_frame[,c('name')])
   data_frame[Qarm_boolean, 11] <- "q"
   colnames(data_frame)[11] <- c("arm")
   
