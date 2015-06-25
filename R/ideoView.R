@@ -16,7 +16,7 @@ ideoView <- function(genome='hg19', y=NULL, chromosome='chr1', chr_txt_angle=45,
   if(is.null(y))
   {
     # obtain the cytogenetic band information for the requested reference
-    cytobands <- get_cytobands(genome=genome)
+    cytobands <- suppressWarnings(get_cytobands(genome=genome))
   } else {
     cytobands <- y
   }

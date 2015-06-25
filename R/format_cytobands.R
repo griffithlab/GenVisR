@@ -27,6 +27,7 @@ format_cytobands <- function(data_frame, chromosome)
   data_frame$text_y <- text_y
   
   # add p/q arm distinction
+  # developer note, this is assigned to the last column which should be 11 unless UCSC database changes
   Parm_boolean <- grepl("^p", data_frame[,c('name')])
   data_frame[Parm_boolean, 11] <- "p"
   Qarm_boolean <- grepl("^q", data_frame[,c('name')])
