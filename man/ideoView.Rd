@@ -4,13 +4,11 @@
 \alias{ideoView}
 \title{plot chromosome}
 \usage{
-ideoView(genome = "hg19", y = NULL, chromosome = "chr1",
-  chr_txt_angle = 45, chr_txt_size = 5)
+ideoView(x, y = NULL, chromosome = "chr1", chr_txt_angle = 45,
+  chr_txt_size = 5)
 }
 \arguments{
-\item{genome}{character string specifying UCSC genome, not required if y is specified}
-
-\item{y}{data frame specifying cytogenetic information for a genome, should contain columns "chrom", "chromStart", "chromEnd", "name", "gieStain"}
+\item{x}{data frame specifying cytogenetic information for a genome, should contain columns "chrom", "chromStart", "chromEnd", "name", "gieStain"}
 
 \item{chromosome}{character string specifying UCSC chromosome to plot}
 

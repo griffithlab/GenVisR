@@ -4,14 +4,18 @@
 \alias{build.cnView.main}
 \title{construct CN plot}
 \usage{
-build.cnView.main(x, chr, cnDiff = FALSE)
+build.cnView.main(x, y, z = NULL, chr, cnDiff = FALSE)
 }
 \arguments{
+\item{x}{a data frame with columns chromosome, coordinate, cn, p_value}
+
+\item{y}{a data frame with columns chromosome, coordinate for plotting boundaries}
+
+\item{z}{a data frame with columns chromsome, start, end, segmean specifying segments called from copy number (optional)}
+
 \item{chr}{a character string specifying chromosome}
 
 \item{cnDiff}{Boolean specifying whether values in cn are copy number differences or actual copy number}
-
-\item{data_frame}{a data frame with columns chromosome, coordinate, cn, p_value}
 }
 \value{
 ggplot2 object

@@ -4,13 +4,15 @@
 \alias{cnView}
 \title{plot CN values}
 \usage{
-cnView(x, y = NULL, genome = "hg19", chr = "chr1", main.cnDiff = FALSE,
-  chr_txt_angle = 45, chr_txt_size = 5)
+cnView(x, y = NULL, z = NULL, genome = "hg19", chr = "chr1",
+  main.cnDiff = FALSE, chr_txt_angle = 45, chr_txt_size = 5)
 }
 \arguments{
 \item{x}{a data frame with columns chromosome, coordinate, cn, p_value}
 
 \item{y}{a data frame with columns "chrom", "chromStart", "chromEnd", "name", "gieStain"}
+
+\item{z}{a data frame with columns "chromosome", "start", "end", "segmean"}
 
 \item{genome}{character string specifying UCSC genome to use}
 
