@@ -21,5 +21,5 @@ install.packages(c("rmarkdown", "knitr"))
 
 * Install GGgenome
 ```R
-devtools::install_github("griffithlab/Gggenome")
+devtools::install_github("griffithlab/GenVisR")
 ```
