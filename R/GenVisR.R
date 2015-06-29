@@ -1,6 +1,6 @@
-#' GGgenome
+#' GenVisR
 #' 
-#' @name GGgenome
+#' @name GenVisR
 #' @docType package
 NULL
 
