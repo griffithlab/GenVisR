@@ -1,5 +1,5 @@
-# GGgenome
-Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. GGgenome attempts to alleviate this burden by providing highly customizable publication-quality graphics focused primarily on a cohort level (i.e., multiple samples/patients). GGgenome attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
+# GenVisR
+Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. GenVisr (Genomic Visualizations in R) attempts to alleviate this burden by providing highly customizable publication-quality graphics focused primarily on a cohort level (i.e., multiple samples/patients). GGgenome attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
 
 ## Installation Instructions
 

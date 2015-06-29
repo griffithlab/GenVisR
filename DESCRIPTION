@@ -1,5 +1,5 @@
-Package: GGgenome
-Title: Genomic Cohort Visualization
+Package: GenVisR
+Title: Genomic Visualizations in R
 Version: 0.99.0
 Authors@R: c(person("Zachary", "Skidmore", , "zskidmor@genome.wustl.edu", role = c("aut", "cre")), person("Alex H. Wagner", "Developer", role="aut"), person("Katie M. Campbell", "Developer", role="aut"))
 Maintainer: Zachary Skidmore <zskidmor@genome.wustl.edu>
