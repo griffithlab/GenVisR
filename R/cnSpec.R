@@ -12,13 +12,14 @@
 #' @param x_lab_size integer specifying the size of the X label
 #' @param Y_lab_size integer specifying the size of the Y label
 #' @param facet_lab_size integer specifying the size of the faceted labels
+#' @param layers a valid ggplot layer to over-ride default parameters
 #' @return ggplot object
 #' @export
 #' @import plyr
 #' @import reshape2
 #' @import gtools
 
-cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL, background='grey90', CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10)
+cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL, background='grey90', CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)
 {
   # Perform quality check on input data
   cnSpec.qual(x, y)
@@ -57,7 +58,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL, background='grey90
   CN_data$sample <- factor(CN_data$sample, levels=sample_sorted)
   
   # Construct the plot
-  p1 <- cnSpec.build(CN_data, plot_title=plot_title, background=background, CN_low_colour=CN_low_colour, CN_high_colour=CN_high_colour, x_lab_size=x_lab_size, y_lab_size=y_lab_size, facet_lab_size=facet_lab_size)
+  p1 <- build.cnSpec(CN_data, plot_title=plot_title, background=background, CN_low_colour=CN_low_colour, CN_high_colour=CN_high_colour, x_lab_size=x_lab_size, y_lab_size=y_lab_size, facet_lab_size=facet_lab_size, layers=layers)
   
   return(p1)
 }

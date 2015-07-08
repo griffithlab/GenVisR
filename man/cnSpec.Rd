@@ -8,12 +8,12 @@
 cnSpec(x, y = NULL, genome = "hg19", plot_title = NULL,
   background = "grey90", CN_low_colour = "#002EB8",
   CN_high_colour = "#A30000", x_lab_size = 12, y_lab_size = 12,
-  facet_lab_size = 10)
+  facet_lab_size = 10, layers = NULL)
 
 cnSpec(x, y = NULL, genome = "hg19", plot_title = NULL,
   background = "grey90", CN_low_colour = "#002EB8",
   CN_high_colour = "#A30000", x_lab_size = 12, y_lab_size = 12,
-  facet_lab_size = 10)
+  facet_lab_size = 10, layers = NULL)
 
 cnSpec.qual(x, y)
 }
@@ -35,6 +35,8 @@ cnSpec.qual(x, y)
 \item{x_lab_size}{integer specifying the size of the X label}
 
 \item{facet_lab_size}{integer specifying the size of the faceted labels}
+
+\item{layers}{a valid ggplot layer to over-ride default parameters}
 
 \item{Y_lab_size}{integer specifying the size of the Y label}
 

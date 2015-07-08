@@ -1,7 +1,7 @@
 #' Construct CN cohort plot
 #' 
 #' given a data frame construct a plot to display CN information for a group of samples
-#' @name cnSpec.build
+#' @name build.cnSpec
 #' @param data_frame object of class data frame containing columns Chromosome, Start, Stop, CN, Sample
 #' @param plot_title character string for title of plot
 #' @param background character string specifying backround color of plot
@@ -10,11 +10,12 @@
 #' @param x_lab_size integer specifying the size of the X label
 #' @param Y_lab_size integer specifying the size of the Y label
 #' @param facet_lab_size integer specifying the size of the faceted labels
+#' @param layers Additional layers to be plotted, can be a theme but must be a ggplot layer
 #' @return ggplot object
 #' @import scales
 #' @import ggplot2
 
-cnSpec.build <- function(data_frame, plot_title=NULL, background='grey90', CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10)
+build.cnSpec <- function(data_frame, plot_title=NULL, background='grey90', CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)
 {
   CN_data <- na.omit(data_frame)
   dummy_data <- data_frame
@@ -28,13 +29,19 @@ cnSpec.build <- function(data_frame, plot_title=NULL, background='grey90', CN_lo
   ylabel <- ylab('Sample')
   xlabel <- xlab('Chromosome')
   title <- ggtitle(plot_title)
+  if(!is.null(layers))
+  {
+    layers <- layers
+  } else {
+    layers <- geom_blank()
+  }
   
   # Define main plot using boundaries in dummy data and then plot CN data
   p1 <- ggplot(data=dummy_data, mapping=aes(xmin=start, xmax=end, ymin=0, ymax=1)) + geom_rect(alpha=0) + scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))
   p1 <- p1 + geom_rect(data=CN_data, mapping=aes(xmin=start, xmax=end, ymin=0, ymax=1, fill=cn))
   
   # build the plot
-  p1 <- p1 + fill_gradient + ylabel + xlabel + facet + theme
+  p1 <- p1 + fill_gradient + ylabel + xlabel + facet + theme + layers
   
   # if title is supplied plot it
   if(!is.null(plot_title))
