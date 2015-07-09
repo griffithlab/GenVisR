@@ -9,12 +9,13 @@
 #' @param x_axis_text_angle Integer specifying the angle to labels on x_axis
 #' @param palette Character vector of length 6 specifying colors for trans/tranv type
 #' @param file_type Character string specifying the format the input is in, one of 'MAF', 'MGI'
+#' @param layers Additional ggplot2 layers to add
 #' @return Object of class data frame with indels removed
 #' @import plyr
 #' @import ggplot2
 #' @export
 
-TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c('#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02'), file_type='MAF')
+TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c('#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02'), file_type='MAF', layers=NULL)
 {
   # Perform quality checks
   if(!is.null(y))
@@ -45,12 +46,12 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_an
   }
   
   # Build the Transition/Transversion Plot
-  p1 <- build_trans_tranv(x, y, type=type, x_axis_text_angle=x_axis_text_angle, palette=palette, label_x_axis=label_x_axis)
+  p1 <- build.TvTi(x, y, type=type, x_axis_text_angle=x_axis_text_angle, palette=palette, label_x_axis=label_x_axis, layers=layers)
   
   if(!is.null(y))
   {
     # If y is input plot the expected values
-    p2 <- build_trans_tranv(y, y, type=type, x_axis_text_angle=x_axis_text_angle, palette=palette, label_x_axis=label_x_axis, plot_expected=TRUE)
+    p2 <- build.TvTi(y, y, type=type, x_axis_text_angle=x_axis_text_angle, palette=palette, label_x_axis=label_x_axis, plot_expected=TRUE, layers=layers)
     
     # Align the plots
     p3 <- align_y_TvTi(p1, p2)

@@ -19,7 +19,7 @@ biocLite(c("GenomicRanges", "biomaRt", "GenomicFeatures", "UniProt.ws"))
 install.packages(c("rmarkdown", "knitr"))
 ```
 
-* Install GGgenome
+* Install GenVisR
 ```R
 devtools::install_github("griffithlab/GenVisR")
 ```

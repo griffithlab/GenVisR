@@ -4,10 +4,12 @@
 \alias{build.mutOccur.mutSpec}
 \title{plot mutation recurrence in genes}
 \usage{
-build.mutOccur.mutSpec(data_frame)
+build.mutOccur.mutSpec(data_frame, layers = NULL)
 }
 \arguments{
 \item{data_frame}{a data frame in MAF format}
+
+\item{layers}{additional ggplot2 layers}
 }
 \value{
 a ggplot object

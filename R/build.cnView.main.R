@@ -7,10 +7,11 @@
 #' @param z a data frame with columns chromsome, start, end, segmean specifying segments called from copy number (optional)
 #' @param chr a character string specifying chromosome
 #' @param cnDiff Boolean specifying whether values in cn are copy number differences or actual copy number
+#' @param layers additional ggplot2 layers to add
 #' @return ggplot2 object
 #' @import ggplot2
 
-build.cnView.main <- function(x, y, z=NULL, chr, cnDiff=FALSE)
+build.cnView.main <- function(x, y, z=NULL, chr, cnDiff=FALSE, layers=NULL)
 {
   # Define various parameters of the plot
   dummy_data <- geom_point(data=y, mapping=aes(x=coordinate, y=2), alpha=0)
@@ -31,6 +32,13 @@ build.cnView.main <- function(x, y, z=NULL, chr, cnDiff=FALSE)
   }
   xlabel <- xlab('Coordinate')
   
+  if(!is.null(layers))
+  {
+    layers <- layers
+  } else {
+    layers <- geom_blank()
+  }
+  
   # Define points to plot for the main plot and apply shading function
   cnpoints <- geom_point(data=x, mapping=aes(x=coordinate, y=cn, colour=cn, alpha=1-p_value))
   
@@ -43,7 +51,7 @@ build.cnView.main <- function(x, y, z=NULL, chr, cnDiff=FALSE)
   }
   
   # build the plot
-  p1 <- ggplot() + cnpoints + shade_cn + ylabel + xlabel + theme + cnseg + dummy_data
+  p1 <- ggplot() + cnpoints + shade_cn + ylabel + xlabel + theme + cnseg + dummy_data + layers
   
   if(chr == 'all')
   {

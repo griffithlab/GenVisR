@@ -6,10 +6,11 @@
 #' @param chromosome character string specifying UCSC chromosome to plot one of chr... or all
 #' @param chr_txt_angle integer specifying angle of text when plotting band text
 #' @param chr_txt_size integer specifying size of text when plotting band text
+#' @param layers additional ggplot2 layers to plot
 #' @return ggplot object
 #' @import ggplot2
 
-build.ideogram <- function(data_frame, chromosome, chr_txt_angle=chr_txt_angle, chr_txt_size=chr_txt_size)
+build.ideogram <- function(data_frame, chromosome, chr_txt_angle=chr_txt_angle, chr_txt_size=chr_txt_size, layers=NULL)
 {
   # define theme layer for ggplot
   theme <- theme(axis.text.x=element_blank(), axis.text.y=element_blank(), axis.title.x=element_blank(), axis.ticks.x=element_blank(), axis.ticks.y=element_blank(), legend.position='right')
@@ -22,12 +23,18 @@ build.ideogram <- function(data_frame, chromosome, chr_txt_angle=chr_txt_angle, 
   text_line_seg_p <- geom_segment(data=subset(data_frame, data_frame$alternate == 'top'), mapping=aes(x=band_center, y=text_y, xend=band_center, yend=height_max))
   text_line_seg_q <- geom_segment(data=subset(data_frame, data_frame$alternate == 'bottom'), mapping=aes(x=band_center, y=text_y, xend=band_center, yend=height_min))
   ylabel <- ylab(chromosome)
+  if(!is.null(layers))
+  {
+    layers <- layers
+  } else {
+    layers <- geom_blank()
+  }
   
   # define the chromosome main body plot
   chr <- ggplot(data_frame, aes(xmin=chromStart, xmax=chromEnd, ymin=height_min, ymax=height_max)) + geom_rect(aes(fill=gieStain)) + ylim(-1.2, 1.2)
   
   #plot the resulting layers
-  chr <- chr + P_arm_text + Q_arm_text + text_line_seg_p + text_line_seg_q + theme + ylabel + legend
+  chr <- chr + P_arm_text + Q_arm_text + text_line_seg_p + text_line_seg_q + theme + ylabel + legend + layers
   
   return(chr)
 }

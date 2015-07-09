@@ -4,7 +4,7 @@
 \alias{build.cnView.main}
 \title{construct CN plot}
 \usage{
-build.cnView.main(x, y, z = NULL, chr, cnDiff = FALSE)
+build.cnView.main(x, y, z = NULL, chr, cnDiff = FALSE, layers = NULL)
 }
 \arguments{
 \item{x}{a data frame with columns chromosome, coordinate, cn, p_value}
@@ -16,6 +16,8 @@ build.cnView.main(x, y, z = NULL, chr, cnDiff = FALSE)
 \item{chr}{a character string specifying chromosome}
 
 \item{cnDiff}{Boolean specifying whether values in cn are copy number differences or actual copy number}
+
+\item{layers}{additional ggplot2 layers to add}
 }
 \value{
 ggplot2 object

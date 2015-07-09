@@ -12,10 +12,11 @@
 #' @param plot_label Boolean specifying whether to plot text inside each cell
 #' @param plot_label_size Integer specifying text size of cell labels
 #' @param plot_pallete Character vector specifying colors to fill on mutation type
+#' @param layers additional ggplot2 layers to plot
 #' @return a ggplot2 object
 #' @import ggplot2
 
-build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='MGI', drop_mutation=FALSE, plot_x_title=TRUE, plot_label=FALSE, plot_label_size=4, plot_palette=NULL)
+build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='MGI', drop_mutation=FALSE, plot_x_title=TRUE, plot_label=FALSE, plot_label_size=4, plot_palette=NULL, layers=NULL)
 {
   
   #############################################################################################################
@@ -99,12 +100,20 @@ build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_
     theme <-  theme(axis.ticks=element_blank(), panel.grid.major = element_blank(), panel.grid.minor=element_blank(), panel.background=element_rect(fill='white', colour='white'), axis.text.x=element_blank(), axis.text.y=element_text(size=gene_label_size, colour='black', face='italic'), axis.title.y=element_blank(), axis.title.x=element_blank(), legend.title=element_text(size=14), plot.title=element_blank(), panel.border=element_rect(colour='grey80', fill=NA, size=.1), legend.position=("right"))
   }
   
+  # additional parameters
+  if(!is.null(layers))
+  {
+    layers <- layers
+  } else {
+    layers <- geom_blank()
+  }
+  
   # ggplot call
   if(grid == TRUE)
   {
-    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + vertical_grid + horizontal_grid + scale_x_discrete(drop=FALSE) + title + label
+    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + vertical_grid + horizontal_grid + scale_x_discrete(drop=FALSE) + title + label + layers
   } else {
-    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + scale_x_discrete(drop=FALSE) + title + label
+    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + scale_x_discrete(drop=FALSE) + title + label + layers
   }
   
   return(p1)

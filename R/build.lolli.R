@@ -1,7 +1,7 @@
 #' Construct Lolliplot
 #' 
 #' Construct Lolliplot given gene and mutation data
-#' @name build_lolli
+#' @name build.lolli
 #' @param gene_data object of class dataframe giving protien domain and gene information
 #' @param length integer specifying the length of the protien in amino acids
 #' @param mutation_observed object of class data frame specifying mutations observed in input file
@@ -14,10 +14,11 @@
 #' @param gene_colour color to shade plotted gene
 #' @param sequence_data object of class dataframe giving AA sequence, sidechain, and coord required if plot_sidechain is true
 #' @param plot_sidechain boolean specifying whether to plot the AA sidechain instead of domain information
+#' @param layers additional ggplot2 layers to plot
 #' @return a ggplot2 object
 #' @import ggplot2
 
-build_lolli <- function(gene_data, length, mutation_observed, mutation_observed2, fill_value, label_column, plot_text_angle, plot_text_size, point_size, gene_colour, sequence_data, plot_sidechain=FALSE)
+build.lolli <- function(gene_data, length, mutation_observed, mutation_observed2, fill_value, label_column, plot_text_angle, plot_text_size, point_size, gene_colour, sequence_data, plot_sidechain=FALSE, layers=NULL)
 {
   ###################################################################################
   ####################### Function to make lolliplot type plot ######################
@@ -55,7 +56,7 @@ build_lolli <- function(gene_data, length, mutation_observed, mutation_observed2
   {	
     y_limits <- ylim(c(-1, max(mutation_observed$coord_y_dodge) + 5))
     y_label <- ylab('Observed')
-    p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 + observed_line + observed_plot + x_label + y_label + title + y_limits + theme + guide
+    p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 + observed_line + observed_plot + x_label + y_label + title + y_limits + theme + guide + layers
   } else {
     y_limits <- ylim(c(min(mutation_observed2$coord_y_dodge) - 1, max(mutation_observed$coord_y_dodge) + 1))
     y_label <- ylab('Observed')
@@ -68,7 +69,7 @@ build_lolli <- function(gene_data, length, mutation_observed, mutation_observed2
     observed2_line <- geom_segment(data=mutation_observed2, mapping=aes(x=mutation_coord, y=-1, xend=coord_x_dodge, yend=-1.5))
     observed2_line_2 <- geom_segment(data=mutation_observed2, mapping=aes(x=coord_x_dodge, y=-1.5, xend=coord_x_dodge, yend=coord_y_dodge))
       
-    p1 <- ggplot() + gene_plot + domain_plot + observed_line + observed_line_2 + observed_plot + observed2_line + observed2_line_2 + observed2_plot + x_label + y_label + title + y_limits + theme + guide
+    p1 <- ggplot() + gene_plot + domain_plot + observed_line + observed_line_2 + observed_plot + observed2_line + observed2_line_2 + observed2_plot + x_label + y_label + title + y_limits + theme + guide + layers
   }
   
   # If a label column is specified plot labels

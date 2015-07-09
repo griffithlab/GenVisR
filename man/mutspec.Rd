@@ -10,7 +10,9 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
   main.grid = TRUE, main.label_x = FALSE, title = "",
   main.gene_label_size = 8, coverage_space = 44100000, file_type = "MAF",
   main.genes = NULL, drop_mutation = FALSE, rmv_silent = FALSE,
-  main.label_col = NULL, main.plot_label_size = 4, main.palette = NULL)
+  main.label_col = NULL, main.plot_label_size = 4, main.palette = NULL,
+  sampRecur.layers = NULL, clin.layers = NULL, main.layers = NULL,
+  mutRecur.layers = NULL)
 }
 \arguments{
 \item{x}{a data frame in annotation format}
@@ -48,6 +50,14 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
 \item{main.plot_label_size}{Integer specifying the size of labels for cells in the main panel}
 
 \item{main.palette}{Character vector specifying colors to fill on mutation type}
+
+\item{sampRecur.layers}{Additional ggplot2 layers to plot on the sample recurence chart}
+
+\item{clin.layers}{Additional ggplot2 layers to plot on the clinical data}
+
+\item{main.layers}{Additional ggplot2 layers to plot on the main panel}
+
+\item{mutRecur.layers}{Additional ggplot2 layers to plot on the mutation burden data}
 
 \item{recurrence_cutoff}{an integer value to remove genes that do not have x number of mutations}
 }

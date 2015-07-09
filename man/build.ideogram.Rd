@@ -5,7 +5,7 @@
 \title{build chromosome}
 \usage{
 build.ideogram(data_frame, chromosome, chr_txt_angle = chr_txt_angle,
-  chr_txt_size = chr_txt_size)
+  chr_txt_size = chr_txt_size, layers = NULL)
 }
 \arguments{
 \item{data_frame}{a data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value}
@@ -15,6 +15,8 @@ build.ideogram(data_frame, chromosome, chr_txt_angle = chr_txt_angle,
 \item{chr_txt_angle}{integer specifying angle of text when plotting band text}
 
 \item{chr_txt_size}{integer specifying size of text when plotting band text}
+
+\item{layers}{additional ggplot2 layers to plot}
 }
 \value{
 ggplot object

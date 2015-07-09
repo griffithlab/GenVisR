@@ -5,7 +5,7 @@
 \title{plot chromosome}
 \usage{
 ideoView(x, y = NULL, chromosome = "chr1", chr_txt_angle = 45,
-  chr_txt_size = 5)
+  chr_txt_size = 5, layers = NULL)
 }
 \arguments{
 \item{x}{data frame specifying cytogenetic information for a genome, should contain columns "chrom", "chromStart", "chromEnd", "name", "gieStain"}
@@ -15,6 +15,8 @@ ideoView(x, y = NULL, chromosome = "chr1", chr_txt_angle = 45,
 \item{chr_txt_angle}{integer specifying angle of text when plotting band text}
 
 \item{chr_txt_size}{integer specifying size of text when plotting band text}
+
+\item{layers}{additional ggplot2 layers for the ideogram}
 }
 \value{
 ggplot object

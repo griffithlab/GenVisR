@@ -5,24 +5,29 @@
 \title{plot CN values}
 \usage{
 cnView(x, y = NULL, z = NULL, genome = "hg19", chr = "chr1",
-  main.cnDiff = FALSE, chr_txt_angle = 45, chr_txt_size = 5)
+  main.cnDiff = FALSE, ideo.chr_txt_angle = 45, ideo.chr_txt_size = 5,
+  main.layers = NULL, ideo.layers = NULL)
 }
 \arguments{
 \item{x}{a data frame with columns chromosome, coordinate, cn, p_value}
 
-\item{y}{a data frame with columns "chrom", "chromStart", "chromEnd", "name", "gieStain"}
+\item{y}{an optional data frame with columns "chrom", "chromStart", "chromEnd", "name", "gieStain" for plotting the ideogram}
 
-\item{z}{a data frame with columns "chromosome", "start", "end", "segmean"}
+\item{z}{a data frame with columns "chromosome", "start", "end", "segmean" for plotting segment calls}
 
-\item{genome}{character string specifying UCSC genome to use}
+\item{genome}{character string specifying UCSC genome to use, uneccessary if y is supplied}
 
 \item{chr}{character string specifying UCSC chromosome to plot one of chr... or all}
 
 \item{main.cnDiff}{Boolean specifying whether values in cn are copy number differences or actual copy number}
 
-\item{chr_txt_angle}{integer specifying angle of text when plotting band text}
+\item{ideo.chr_txt_angle}{integer specifying angle of text when plotting band text}
 
-\item{chr_txt_size}{integer specifying size of text when plotting band text}
+\item{ideo.chr_txt_size}{integer specifying size of text when plotting band text}
+
+\item{main.layers}{additional ggplot2 layers for the main plot}
+
+\item{ideo.layers}{additional ggplot2 layers for the ideogram}
 }
 \value{
 ggplot object

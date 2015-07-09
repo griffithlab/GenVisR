@@ -1,16 +1,17 @@
 #' build coverage plot
 #' 
 #' given data build a coverage plot to represent the data
-#' @name build_coverage
+#' @name build.genCov.coverage
 #' @param data_frame an object of class data frame containing columns stop and cov
 #' @param xlimits vector giving x-axis limits for plot, inferred from data if not specified
 #' @param colour character string specifying the color of the data in the plot
 #' @param plot_type character string specifying one of line, area for data display
 #' @param display_x_axis boolean specifying whether to plot x-axis labels
+#' @param layers additional ggplot2 layers to plot
 #' @return ggplot object
 #' @import ggplot2
 
-build_coverage <- function(data_frame, x_limits=NULL, display_x_axis=TRUE, colour="blue", plot_type="line")
+build.genCov.coverage <- function(data_frame, x_limits=NULL, display_x_axis=TRUE, colour="blue", plot_type="line", layers=NULL)
 { 
   # Specify various parameters of the plot
   line <- geom_line(colour=colour)
@@ -23,6 +24,13 @@ build_coverage <- function(data_frame, x_limits=NULL, display_x_axis=TRUE, colou
     x_limits <- xlim(x_limits)
   }
   
+  if(!is.null(layers))
+  {
+    layers <- layers
+  } else {
+    layers <- geom_blank()
+  }
+  
   # Define the theme
   if(display_x_axis == TRUE)
   {
@@ -32,7 +40,7 @@ build_coverage <- function(data_frame, x_limits=NULL, display_x_axis=TRUE, colou
   }
   
   # Define the main plot
-  cov_plot <- ggplot(data_frame, aes(x=end, y=cov)) + x_limits + theme
+  cov_plot <- ggplot(data_frame, aes(x=end, y=cov)) + x_limits + theme + layers
   
   # Define Control structure for plot type
   if(plot_type == "line")

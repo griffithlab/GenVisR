@@ -3,10 +3,11 @@
 #' plot a bar graph displaying the percentage of samples with a mutation
 #' @name build.mutOccur.mutSpec
 #' @param data_frame a data frame in MAF format
+#' @param layers additional ggplot2 layers
 #' @return a ggplot object
 #' @import scales
 
-build.mutOccur.mutSpec <- function(data_frame)
+build.mutOccur.mutSpec <- function(data_frame, layers=NULL)
 {
   #####################################################################################################################
   ####### Function to create the left margin bar plot, function plots the percentage of samples with a mutation #######
@@ -26,9 +27,15 @@ build.mutOccur.mutSpec <- function(data_frame)
   y_limits <- ylim(100, 0)
   y_label <- ylab('% Samples With Mutation')	
   legend <- scale_fill_manual(name="Translational Effect", values=c("red", "blue"), breaks=c('Synonymous', 'Non Synonymous'), drop=FALSE)
+  if(!is.null(layers))
+  {
+    layers <- layers
+  } else {
+    layers <- geom_blank()
+  }
   
   # Plotting call
-  p1 <- ggplot(na.omit(data_frame), aes(x=gene, total_number_sample=total_number_sample, y=(..count..)/total_number_sample * 100, fill=trv_type), environment = environment()) + geom_bar(position='stack', alpha=.75, width=1) + coord_flip() + theme + y_label + scale_y_reverse() + legend	
+  p1 <- ggplot(na.omit(data_frame), aes(x=gene, total_number_sample=total_number_sample, y=(..count..)/total_number_sample * 100, fill=trv_type), environment = environment()) + geom_bar(position='stack', alpha=.75, width=1) + coord_flip() + theme + y_label + scale_y_reverse() + legend + layers	
   
   return(p1)
 }

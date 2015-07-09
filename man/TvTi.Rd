@@ -6,7 +6,7 @@
 \usage{
 TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
   x_axis_text_angle = 45, palette = c("#1b9e77", "#d95f02", "#7570b3",
-  "#e7298a", "#66a61e", "#e6ab02"), file_type = "MAF")
+  "#e7298a", "#66a61e", "#e6ab02"), file_type = "MAF", layers = NULL)
 }
 \arguments{
 \item{x}{Object of class data frame containing columns 'sample', reference', 'variant'}
@@ -22,6 +22,8 @@ TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
 \item{palette}{Character vector of length 6 specifying colors for trans/tranv type}
 
 \item{file_type}{Character string specifying the format the input is in, one of 'MAF', 'MGI'}
+
+\item{layers}{Additional ggplot2 layers to add}
 }
 \value{
 Object of class data frame with indels removed

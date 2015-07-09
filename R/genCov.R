@@ -7,34 +7,34 @@
 #' @param gr A Granges object specifying a region of interest
 #' @param genome Object of class BSgenome specifying the genome
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
-#' @param gene_colour character string specifying the colour of the gene to be plotted
+#' @param gene.colour character string specifying the colour of the gene to be plotted
 #' @param gene_name character string specifying the name of the gene or ROI
-#' @param bg_fill character string giving the colour to fill the label
-#' @param text_fill character string giving the colour to fill the text
-#' @param border character string specifying the colour to fill the border of the label
-#' @param size integer specifying the size of the text within the label
-#' @param width_ratio vector of length 2 giving the ratio of track labels to plot
-#' @param colour character string specifying the color of the data in the plot
-#' @param plot_type character string specifying one of line, area for data display
-#' @param cores Integer specifying the number of cores to use for processing
+#' @param label.bg_fill character string giving the colour to fill the label
+#' @param label.text_fill character string giving the colour to fill the text
+#' @param label.border character string specifying the colour to fill the border of the label
+#' @param label.size integer specifying the size of the text within the label
+#' @param label.width_ratio vector of length 2 giving the ratio of track labels to plot
+#' @param cov.colour character string specifying the color of the data in the coverage plot
+#' @param cov.plot_type character string specifying one of line, area for coverage data display
+#' @param cov.layers additional ggplot2 layers for the coverage plot
 #' @param base A vector of log bases to transform the data, corresponding to the elements of transform 
 #' @param transform A vector of strings designating what objects to log transform
-#' @param plot_transcript_name Boolean specifying whether to plot the transcript name
-#' @param transcript_name_size Integer specifying the size of the transcript name text
+#' @param gene.plot_transcript_name Boolean specifying whether to plot the transcript name
+#' @param gene.transcript_name_size Integer specifying the size of the transcript name text
 #' @return ggplot object
 #' @export
 #' @import GenomicRanges
 #' @import plyr
 
-genCov <- function(x, txdb, gr, genome, reduce=F, gene_colour=NULL, gene_name='Gene', bg_fill="black", 
-                          text_fill="white", border="black", size=10, width_ratio=c(1, 10), colour="blue",
-                          plot_type="line", base=c(10,2,2), transform=c('Intron','CDS','UTR'),
-                          plot_transcript_name=TRUE, transcript_name_size=6){
+genCov <- function(x, txdb, gr, genome, reduce=F, gene.colour=NULL, gene_name='Gene', label.bg_fill="black", 
+                          label.text_fill="white", label.border="black", label.size=10, label.width_ratio=c(1, 10), cov.colour="blue",
+                          cov.plot_type="line", cov.layers=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'),
+                          gene.plot_transcript_name=TRUE, gene.transcript_name_size=6){
   
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
-  gp_result <- gene_plot(txdb, gr, genome, reduce=reduce, gene_colour=gene_colour,
-                    base=base, transform=transform, transcript_name_size=transcript_name_size,
-                    plot_transcript_name=plot_transcript_name)
+  gp_result <- geneViz(txdb, gr, genome, reduce=reduce, gene_colour=gene.colour,
+                    base=base, transform=transform, transcript_name_size=gene.transcript_name_size,
+                    plot_transcript_name=gene.plot_transcript_name)
   gene <- gp_result$plot
   gene_list <- list()
   gene_list[[gene_name]] <- gene
@@ -89,13 +89,13 @@ genCov <- function(x, txdb, gr, genome, reduce=F, gene_colour=NULL, gene_name='G
   }
   
   # obtain coverage plots for the data input as a list
-  coverage_plot <- lapply(coverage_data, build_coverage, colour=colour, plot_type=plot_type, x_limits=xlimits, display_x_axis=display_x_axis)
+  coverage_plot <- lapply(coverage_data, build.genCov.coverage, colour=cov.colour, plot_type=cov.plot_type, x_limits=xlimits, display_x_axis=display_x_axis, layers=cov.layers)
   # Combine both gene and coverage plot lists
   merged_data <- c(gene_list, coverage_plot)
   
   # Plot the data on a track
-  track_coverage_plot <- plot_track(merged_data, gene_name=gene_name, bg_fill=bg_fill, text_fill=text_fill,
-                                    border=border, size=size, axis_align='width', width_ratio=width_ratio, nested_list=T)
+  track_coverage_plot <- trackViz(merged_data, gene_name=gene_name, bg_fill=label.bg_fill, text_fill=label.text_fill,
+                                    label.border=border, label.size=size, axis_align='width', width_ratio=label.width_ratio, nested_list=T)
   
   return(track_coverage_plot)
 }

@@ -10,7 +10,7 @@
 #' @param chr_txt_size integer specifying size of text when plotting band text
 #' @return a list of data frames passing quality checks
 
-cnView.qual <- function(x, y)
+cnView.qual <- function(x, y, genome)
 {
   # Check input to x
   if(!is.data.frame(x))
@@ -40,6 +40,8 @@ cnView.qual <- function(x, y)
   # make sure the chromosome column is of class factor
   x$chromosome <- as.factor(x$chromosome)
   
+  # Check y data
+  preloaded <- c("hg38", "hg19", "mm10", "mm9", "rn5")
   if(!is.null(y))
   {
     if(!is.data.frame(y))
@@ -53,10 +55,12 @@ cnView.qual <- function(x, y)
     {
       stop("Did not detect correct columns in y, missing one of chrom, chromStart, chromEnd, name, gieStain")
     }
-  } else {
+  } else if(any(genome == preloaded)){
+    # Do nothing here, just a control structure
+  } else{
     if(!is.character(getURL("www.google.com")))
     {
-      stop("Did not detect an internet connection, this is required if y is not specified")
+      stop("Did not detect an internet connection, this is required if y is not specified and genome is not preloaded")
     }
   }
   
