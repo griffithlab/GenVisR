@@ -181,8 +181,9 @@ cnSpec(LucCN, y=hg19chr)
 
 ## cnView
 ## ideoView
-## gene_plot
-## plot_coverage
+## trackViz
+## geneViz
+
 
 
 

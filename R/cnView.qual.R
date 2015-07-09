@@ -56,7 +56,7 @@ cnView.qual <- function(x, y, genome)
       stop("Did not detect correct columns in y, missing one of chrom, chromStart, chromEnd, name, gieStain")
     }
   } else if(any(genome == preloaded)){
-    next
+    # Do nothing here, just a control structure
   } else{
     if(!is.character(getURL("www.google.com")))
     {

@@ -29,6 +29,7 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1', main.cnDiff=FAL
   {
     message("genome specified is preloaded, retrieving data...")
     cytobands <- cytoGeno[cytoGeno$genome == genome,]
+    cytobands <- cytobands[,-which(colnames(cytobands) == "genome")]
   } else if(is.null(y)){
     # obtain the cytogenetic band information for the requested reference
     message("attempting to query UCSC sql database for cytogenic band information")
