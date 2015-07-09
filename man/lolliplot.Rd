@@ -10,7 +10,8 @@ lolliplot(x, y = NULL, fill_value = NULL, label_column = NULL,
   obsA.attr.fact = 0.1, obsA.adj.max = 0.1, obsA.adj.lmt = 0.5,
   obsA.iter.max = 50000, obsB.rep.fact = 5000, obsB.rep.dist.lmt = 500,
   obsB.attr.fact = 0.1, obsB.adj.max = 0.1, obsB.adj.lmt = 0.5,
-  obsB.iter.max = 50000, plot_sidechain = FALSE, taxId = 9606)
+  obsB.iter.max = 50000, plot_sidechain = FALSE, taxId = 9606,
+  layers = NULL)
 }
 \arguments{
 \item{x}{object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations}
@@ -56,6 +57,8 @@ lolliplot(x, y = NULL, fill_value = NULL, label_column = NULL,
 \item{plot_sidechain}{boolean value whether to plot the amino acid sidechains instead of protein domains}
 
 \item{taxId}{integer specifying the uniprot taxonomy id for the species of interest}
+
+\item{layers}{additional ggplot2 layers to plot}
 }
 \value{
 object of class ggplot2

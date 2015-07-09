@@ -3,30 +3,38 @@
 #' given data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value plot CN
 #' @name cnView
 #' @param x a data frame with columns chromosome, coordinate, cn, p_value
-#' @param y a data frame with columns "chrom", "chromStart", "chromEnd", "name", "gieStain"
-#' @param z a data frame with columns "chromosome", "start", "end", "segmean"
-#' @param genome character string specifying UCSC genome to use
+#' @param y an optional data frame with columns "chrom", "chromStart", "chromEnd", "name", "gieStain" for plotting the ideogram
+#' @param z a data frame with columns "chromosome", "start", "end", "segmean" for plotting segment calls
+#' @param genome character string specifying UCSC genome to use, uneccessary if y is supplied
 #' @param chr character string specifying UCSC chromosome to plot one of chr... or all
 #' @param main.cnDiff Boolean specifying whether values in cn are copy number differences or actual copy number
-#' @param chr_txt_angle integer specifying angle of text when plotting band text
-#' @param chr_txt_size integer specifying size of text when plotting band text
+#' @param ideo.chr_txt_angle integer specifying angle of text when plotting band text
+#' @param ideo.chr_txt_size integer specifying size of text when plotting band text
+#' @param main.layers additional ggplot2 layers for the main plot
+#' @param ideo.layers additional ggplot2 layers for the ideogram
 #' @return ggplot object
 #' @export
 
-cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1', main.cnDiff=FALSE, chr_txt_angle=45, chr_txt_size=5)
+cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1', main.cnDiff=FALSE, ideo.chr_txt_angle=45, ideo.chr_txt_size=5, main.layers=NULL, ideo.layers=NULL)
 {
   # Perform a basic quality check
-  input <- cnView.qual(x, y)
+  input <- cnView.qual(x, y, genome)
   x <- input[[1]]
   y <- input[[2]]
   
   # Obtain Cytogenetic Band information
-  # use y input or query UCSC for the data
-  if(is.null(y))
+  # use y input or query UCSC for the data if it's not preloaded
+  preloaded <- c("hg38", "hg19", "mm10", "mm9", "rn5")
+  if(is.null(y) && any(genome == preloaded))
   {
+    message("genome specified is preloaded, retrieving data...")
+    cytobands <- cytoGeno[cytoGeno$genome == genome,]
+  } else if(is.null(y)){
     # obtain the cytogenetic band information for the requested reference
+    message("attempting to query UCSC sql database for cytogenic band information")
     cytobands <- suppressWarnings(get_cytobands(genome=genome))
   } else {
+    message("using y for cytogenic band information...")
     cytobands <- y
   }
   
@@ -47,13 +55,13 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1', main.cnDiff=FAL
   }
   
   # plot chromosome 
-  chromosome_plot <- ideoView(cytobands, chromosome=chr, chr_txt_angle=chr_txt_angle, chr_txt_size=chr_txt_size)
+  chromosome_plot <- ideoView(cytobands, chromosome=chr, chr_txt_angle=ideo.chr_txt_angle, chr_txt_size=ideo.chr_txt_size, layers=ideo.layers)
   
   # if requested plot only selected chromosome
   x <- subset_chr(x, chr)
   
   # build the cn plot
-  CN_plot <- build.cnView.main(x, dummyData, z=z, chr=chr, cnDiff=main.cnDiff)
+  CN_plot <- build.cnView.main(x, dummyData, z=z, chr=chr, cnDiff=main.cnDiff, layers=main.layers)
   
   p1 <- align_y_cn(chromosome_plot, CN_plot)
   

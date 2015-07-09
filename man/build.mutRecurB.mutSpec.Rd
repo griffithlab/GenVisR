@@ -4,10 +4,12 @@
 \alias{build.mutRecurB.mutSpec}
 \title{plot mutation burden}
 \usage{
-build.mutRecurB.mutSpec(x)
+build.mutRecurB.mutSpec(x, layers = NULL)
 }
 \arguments{
 \item{x}{a data frame containing columns sample, mut_burden}
+
+\item{layers}{additional ggplot2 layers to plot}
 }
 \value{
 a ggplot object

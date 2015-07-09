@@ -4,11 +4,12 @@
 \alias{genCov}
 \title{produce a coverage plot}
 \usage{
-genCov(x, txdb, gr, genome, reduce = F, gene_colour = NULL,
-  gene_name = "Gene", bg_fill = "black", text_fill = "white",
-  border = "black", size = 10, width_ratio = c(1, 10), colour = "blue",
-  plot_type = "line", base = c(10, 2, 2), transform = c("Intron", "CDS",
-  "UTR"), plot_transcript_name = TRUE, transcript_name_size = 6)
+genCov(x, txdb, gr, genome, reduce = F, gene.colour = NULL,
+  gene_name = "Gene", label.bg_fill = "black", label.text_fill = "white",
+  label.border = "black", label.size = 10, label.width_ratio = c(1, 10),
+  cov.colour = "blue", cov.plot_type = "line", cov.layers = NULL,
+  base = c(10, 2, 2), transform = c("Intron", "CDS", "UTR"),
+  gene.plot_transcript_name = TRUE, gene.transcript_name_size = 6)
 }
 \arguments{
 \item{x}{named list containing data frames with columns stop and cov}
@@ -21,33 +22,33 @@ genCov(x, txdb, gr, genome, reduce = F, gene_colour = NULL,
 
 \item{reduce}{Boolean specifying whether to collapse isoforms in the ROI}
 
-\item{gene_colour}{character string specifying the colour of the gene to be plotted}
+\item{gene.colour}{character string specifying the colour of the gene to be plotted}
 
 \item{gene_name}{character string specifying the name of the gene or ROI}
 
-\item{bg_fill}{character string giving the colour to fill the label}
+\item{label.bg_fill}{character string giving the colour to fill the label}
 
-\item{text_fill}{character string giving the colour to fill the text}
+\item{label.text_fill}{character string giving the colour to fill the text}
 
-\item{border}{character string specifying the colour to fill the border of the label}
+\item{label.border}{character string specifying the colour to fill the border of the label}
 
-\item{size}{integer specifying the size of the text within the label}
+\item{label.size}{integer specifying the size of the text within the label}
 
-\item{width_ratio}{vector of length 2 giving the ratio of track labels to plot}
+\item{label.width_ratio}{vector of length 2 giving the ratio of track labels to plot}
 
-\item{colour}{character string specifying the color of the data in the plot}
+\item{cov.colour}{character string specifying the color of the data in the coverage plot}
 
-\item{plot_type}{character string specifying one of line, area for data display}
+\item{cov.plot_type}{character string specifying one of line, area for coverage data display}
+
+\item{cov.layers}{additional ggplot2 layers for the coverage plot}
 
 \item{base}{A vector of log bases to transform the data, corresponding to the elements of transform}
 
 \item{transform}{A vector of strings designating what objects to log transform}
 
-\item{plot_transcript_name}{Boolean specifying whether to plot the transcript name}
+\item{gene.plot_transcript_name}{Boolean specifying whether to plot the transcript name}
 
-\item{transcript_name_size}{Integer specifying the size of the transcript name text}
-
-\item{cores}{Integer specifying the number of cores to use for processing}
+\item{gene.transcript_name_size}{Integer specifying the size of the transcript name text}
 }
 \value{
 ggplot object

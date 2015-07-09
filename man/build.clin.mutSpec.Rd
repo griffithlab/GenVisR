@@ -5,7 +5,7 @@
 \title{plot clinical information}
 \usage{
 build.clin.mutSpec(x, clin.legend.col = 1, clin.var.colour = NULL,
-  clin.var.order = NULL)
+  clin.var.order = NULL, clin.layers = NULL)
 }
 \arguments{
 \item{x}{a data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"}
@@ -15,6 +15,8 @@ build.clin.mutSpec(x, clin.legend.col = 1, clin.var.colour = NULL,
 \item{clin.var.colour}{a named character vector specifying the mapping between colors and variables}
 
 \item{clin.var.order}{a character vector of variables to order the legend by}
+
+\item{clin.layers}{additional ggplot2 layers to plot}
 }
 \value{
 a grob object

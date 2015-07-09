@@ -4,9 +4,10 @@
 #' @name build.mutRecurA.mutSpec
 #' @param data_frame a data frame in MAF format
 #' @param coverage_space an integer specifying the coverage space in base pairs from which a mutation could occur
+#' @param layers Additional ggplot2 layers to plot
 #' @return a ggplot object
 
-build.mutRecurA.mutSpec <- function(data_frame, coverage_space)
+build.mutRecurA.mutSpec <- function(data_frame, coverage_space, layers=NULL)
 {
   #############################################################################################################################
   #################################### Function to plot the top margin barplot ################################################
@@ -26,8 +27,16 @@ build.mutRecurA.mutSpec <- function(data_frame, coverage_space)
   # add y label
   y_label <- ylab('Mutations per MB')
   
+  # additional parameters
+  if(!is.null(layers))
+  {
+    layers <- layers
+  } else {
+    layers <- geom_blank()
+  }
+  
   # ggplot2 call
-  p1 <- ggplot(data_frame, aes(x=sample, y=mutation_per_MB, fill=trv_type)) + geom_bar(stat='identity', alpha=.75, width=1) + theme + y_label + legend
+  p1 <- ggplot(data_frame, aes(x=sample, y=mutation_per_MB, fill=trv_type)) + geom_bar(stat='identity', alpha=.75, width=1) + theme + y_label + legend + layers
   
   return(p1)
 }

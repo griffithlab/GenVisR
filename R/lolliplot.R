@@ -24,12 +24,13 @@
 #' @param obsB.iter.max maximum iterations beyond which to stop the simulation cosmic track
 #' @param plot_sidechain boolean value whether to plot the amino acid sidechains instead of protein domains
 #' @param taxId integer specifying the uniprot taxonomy id for the species of interest
+#' @param layers additional ggplot2 layers to plot
 #' @return object of class ggplot2
 #' @export
 #' @import UniProt.ws
 #' @import RCurl
 
-lolliplot <- function(x, y=NULL, fill_value=NULL, label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=3, gene_colour='#999999', obsA.rep.fact=5000, obsA.rep.dist.lmt=500, obsA.attr.fact=.1, obsA.adj.max=.1, obsA.adj.lmt=.5, obsA.iter.max=50000, obsB.rep.fact=5000, obsB.rep.dist.lmt=500, obsB.attr.fact=.1, obsB.adj.max=.1, obsB.adj.lmt=.5, obsB.iter.max=50000, plot_sidechain=FALSE, taxId=9606)
+lolliplot <- function(x, y=NULL, fill_value=NULL, label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=3, gene_colour='#999999', obsA.rep.fact=5000, obsA.rep.dist.lmt=500, obsA.attr.fact=.1, obsA.adj.max=.1, obsA.adj.lmt=.5, obsA.iter.max=50000, obsB.rep.fact=5000, obsB.rep.dist.lmt=500, obsB.attr.fact=.1, obsB.adj.max=.1, obsB.adj.lmt=.5, obsB.iter.max=50000, plot_sidechain=FALSE, taxId=9606, layers=NULL)
 {  
   # Perform quality check
   input <- lolliplot.qual(x, y)
@@ -82,7 +83,7 @@ lolliplot <- function(x, y=NULL, fill_value=NULL, label_column=NULL, plot_text_a
   }
   
   # construct the lolliplot
-  plot <- build_lolli(geneData, length, observed_mutation, observed_mutation2, fill_value, label_column, plot_text_angle, plot_text_size, point_size, gene_colour, AAsequence, plot_sidechain=plot_sidechain)
+  plot <- build.lolli(geneData, length, observed_mutation, observed_mutation2, fill_value, label_column, plot_text_angle, plot_text_size, point_size, gene_colour, AAsequence, plot_sidechain=plot_sidechain, layers=layers)
   
   return(plot)
 }

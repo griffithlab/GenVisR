@@ -1,7 +1,7 @@
 #' plot with named tracka
 #' 
 #' given a named list of plots, plot them on tracks
-#' @name plot_track
+#' @name trackViz
 #' @param ... named list of plots 
 #' @param bg_fill character string giving the colour to fill the label
 #' @param text_fill character string giving the colour to fill the text
@@ -13,7 +13,7 @@
 #' @return ggplotGrob object
 #' @import gridExtra
 
-plot_track <- function(..., bg_fill="black", text_fill="white", border="black", size=10, axis_align='none', width_ratio=c(1, 10), nested_list=F)
+trackViz <- function(..., bg_fill="black", text_fill="white", border="black", size=10, axis_align='none', width_ratio=c(1, 10), nested_list=F)
 {
   # Grab all the tracks/data to be plotted as a named list, check and correct if list is within a list
   if(nested_list==T)

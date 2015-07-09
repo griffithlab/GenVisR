@@ -1,7 +1,7 @@
 #' plot gene
 #' 
 #' given a Granges object plot genomic features within the Granges object
-#' @name gene_plot
+#' @name geneViz
 #' @param txdb A TxDb object for a genome
 #' @param gr A Granges object specifying a region of interest
 #' @param genome Object of class BSgenome specifying the genome
@@ -16,7 +16,7 @@
 #' @import plyr
 #' @import GenomicFeatures
 
-gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'), plot_transcript_name=TRUE, transcript_name_size=6){
+geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'), plot_transcript_name=TRUE, transcript_name_size=6){
 
   # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
   cds <- formatCDS(txdb, gr, genome=genome, reduce=reduce)
@@ -109,10 +109,10 @@ gene_plot <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(1
   # construct the gene in gplot
   if(reduce == TRUE || plot_transcript_name == FALSE)
   {
-    gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour, transcript_name=FALSE)
+    gene_plot <- build.gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour, transcript_name=FALSE)
   } else if(reduce == FALSE && plot_transcript_name == TRUE)
   {
-    gene_plot <- build_gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour, transcript_name=TRUE, transcript_name_size=transcript_name_size)
+    gene_plot <- build.gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour, transcript_name=TRUE, transcript_name_size=transcript_name_size)
   }
   
   out <- list('plot' = gene_plot, 'features' = gene_features, 'master' = master)

@@ -4,7 +4,7 @@
 \alias{cnView.qual}
 \title{check input to cnView}
 \usage{
-cnView.qual(x, y)
+cnView.qual(x, y, genome)
 }
 \arguments{
 \item{x}{a data frame with columns chromosome, coordinate, cn, p_value}

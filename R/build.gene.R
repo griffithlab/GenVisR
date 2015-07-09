@@ -1,7 +1,7 @@
 #' build gene plot
 #' 
 #' given a data frame with gene feature information build the ggplot2 object
-#' @name build_gene
+#' @name build.gene
 #' @param data_frame an object of class data frame specifying gene feature information
 #' @param master_gene an object of class data frame specifying the master gene feature information resultant of compression
 #' @param display_axis Boolean specifying whether to display X axis coordinate values
@@ -12,7 +12,7 @@
 #' @return ggplot object
 #' @import ggplot2
 
-build_gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=NULL, transcript_name=FALSE, transcript_name_size=6)
+build.gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=NULL, transcript_name=FALSE, transcript_name_size=6)
 { 
   # Define various parameters of plot
   if(is.null(gene_colour))
