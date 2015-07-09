@@ -2,14 +2,13 @@
 #' 
 #' given a genome obtain Start and Stop positions for all chromosomes in the genome
 #' @name CN_dummy_data
-#' @param genome character string specifying UCSC genome from which data is derived
-#' @return object of class data frame
+#' @param x data frame containg columns chromosome, start, end
+#' @return object of class data frame formatted to internal specifications
 
-CN_dummy_data <- function(genome)
+CN_dummy_data <- function(x)
 {
-  # Obtain data for UCSC genome and extract relevant columns
-  data <- get_cytobands(genome)
-  data <- data[,c(1,2,3)]
+  # Extract the columns needed, should be chromosome start stop in that order
+  data <- x[,c(1,2,3)]
   
   # Obtain max for each chromosome
   maxChrom <- aggregate(chromStart ~ chrom, data=data, max)

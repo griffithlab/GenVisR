@@ -3,18 +3,23 @@
 #' given a data frame construct a plot to display CN information for a group of samples
 #' @name cnSpec
 #' @param x object of class data frame containing columns Chromosome, Start, Stop, SegMean, Sample.name
-#' @param y object of class data frame containing option ......
+#' @param y object of class data frame containing user supplied chromosome locations
+#' @param genome character string specifying a user supplied genome
 #' @return character string specifying input passed quality check
 
-cnSpec.qual <- function(x, y)
+cnSpec.qual <- function(x, y, genome)
 {
   # Check for internet connection or for a value to y
   if(is.null(y))
   {
-    # Check for internet connectivity
-    if(!is.character(getURL("www.google.com")))
+    # Check for internet connectivity if genome is not preloaded
+    preloaded <- c("hg38", "hg19", "mm10", "mm9", "rn5")
+    if(!any(genome == preloaded))
     {
-      stop("Did not detect an internet connection, check internet connectivity or supply a value to y")
+      if(!is.character(getURL("www.google.com")))
+      {
+        stop("Did not detect an internet connection or a preloaded genome, check internet connectivity or supply a value to y")
+      }
     }
   }
   

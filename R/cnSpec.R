@@ -22,21 +22,37 @@
 cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL, background='grey90', CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)
 {
   # Perform quality check on input data
-  cnSpec.qual(x, y)
+  cnSpec.qual(x, y, genome)
   
   # Get dummy data for genome
+  # Check to see if y is specified if not check if genome is preloaded
+  # else attempt to query UCSC if unsuccessful report an error
+  preloaded <- c("hg38", "hg19", "mm10", "mm9", "rn5")
   if(!is.null(y))
   {
-    # reformat the input (should change)
+    message("detected value in y, reformating...")
+    # reformat the input (i.e. put)
     temp <- y
     temp1 <- y
     temp2 <- y
-    
     temp1$end <- temp$start
     temp2$start <- temp$end
     UCSC_Chr_pos <- rbind(temp1, temp2)
+  } else if(is.null(y) && any(genome == preloaded)){
+    message("genome specified is preloaded, retrieving data...")
+    UCSC_Chr_pos <- cytoGeno[cytoGeno$genome == genome,]
+    UCSC_Chr_pos <- CN_dummy_data(UCSC_Chr_pos)
   } else {
-    UCSC_Chr_pos <- CN_dummy_data(genome=genome)
+    # Obtain data for UCSC genome and extract relevant columns
+    message("attempting to query UCSC sql database for chromosome positions")
+    cyto_data <- suppressWarnings(get_cytobands(genome))
+    UCSC_Chr_pos <- CN_dummy_data(cyto_data)
+  }
+  
+  # Check that dummy data has a size, if not report an error
+  if(nrow(UCSC_Chr_pos) < 1)
+  {
+    stop("Could not retrieve chromosome positions from UCSC, please specify y")
   }
   
   # Dcast the input data into a recognizable format

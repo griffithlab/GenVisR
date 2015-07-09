@@ -4,13 +4,13 @@
 \alias{CN_dummy_data}
 \title{retrieve and format CN_cohort plot supplemental data}
 \usage{
-CN_dummy_data(genome)
+CN_dummy_data(x)
 }
 \arguments{
-\item{genome}{character string specifying UCSC genome from which data is derived}
+\item{x}{data frame containg columns chromosome, start, end}
 }
 \value{
-object of class data frame
+object of class data frame formatted to internal specifications
 }
 \description{
 given a genome obtain Start and Stop positions for all chromosomes in the genome
