@@ -8,14 +8,19 @@
 
 mutation_sample_subset <- function(x, genes)
 {
+  # Perform quality checks
   if(typeof(genes) != 'character' & class(genes) != 'character')
   {
     warning("argument supplied to main.genes is not a character vector, attempting to coerce")
     genes <- as.character(genes)
   }
+  if(!all(genes %in% x$gene))
+  {
+    warning("genes supplied in main.genes contains an element not found in x")
+  }
   
   genes <- c(genes, NA)
-  x <- x[(x$gene %in% genes), ]
+  x <- x[(toupper(x$gene) %in% toupper(genes)), ]
   
   return(x)
 }
