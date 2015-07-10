@@ -14,7 +14,7 @@ build.mutRecurB.mutSpec <- function(x, layers=NULL)
   x$Type <- "Non Synonymous"
   
   # Define Theme
-  theme <- theme(panel.border =  element_blank(), axis.line =  element_line(), panel.background=element_rect(fill='white'), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), axis.ticks.x=element_blank(), axis.text.x=element_blank(), axis.title.x=element_blank(), legend.text=element_text(colour='white'), legend.title=element_text(colour='white'), legend.key=element_rect(colour='white', fill="white"))
+  theme <- theme(axis.ticks.x=element_blank(), axis.text.x=element_blank(), axis.title.x=element_blank(), legend.text=element_text(colour='white'), legend.title=element_text(colour='white'), legend.key=element_rect(colour='white', fill="white"))
   
   # Define additional parameters
   y_label <- ylab("Mutation Burden")
@@ -29,7 +29,7 @@ build.mutRecurB.mutSpec <- function(x, layers=NULL)
   }
   
   # ggplot2 call
-  p1 <- ggplot(x, aes(x=sample, y=mut_burden, fill=Type)) + geom_bar(stat='identity', alpha=.75, width=1) + theme + y_label + legend + guide + layers
+  p1 <- ggplot(x, aes(x=sample, y=mut_burden, fill=Type)) + geom_bar(stat='identity', alpha=.75, width=1) + theme_bw() + theme + y_label + legend + guide + layers
   
   return(p1)
 }
