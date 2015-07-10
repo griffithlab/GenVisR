@@ -5,7 +5,7 @@
 #' @param data_frame a data frame in MAF format
 #' @param layers additional ggplot2 layers
 #' @return a ggplot object
-#' @import scales
+#' @import plyr
 
 build.mutOccur.mutSpec <- function(data_frame, layers=NULL)
 {
@@ -22,6 +22,10 @@ build.mutOccur.mutSpec <- function(data_frame, layers=NULL)
   # Define the number of samples for the Percentage calculation (Note, to pass a variable outside of aes into aes it needs to be defined again)
   total_number_sample <- nlevels(data_frame$sample)
   
+  # Make a count column
+  data_frame <- count(data_frame, c("gene", "trv_type"))
+  data_frame$prop <- data_frame$freq/total_number_sample * 100
+  
   # Define Theme and various other layers to be passed to ggplot
   theme <- theme(axis.text.y=element_blank(), axis.ticks.y=element_blank(), axis.title.y=element_blank(), legend.position=('none'))
   y_limits <- ylim(100, 0)
@@ -35,7 +39,7 @@ build.mutOccur.mutSpec <- function(data_frame, layers=NULL)
   }
   
   # Plotting call
-  p1 <- ggplot(na.omit(data_frame), aes(x=gene, total_number_sample=total_number_sample, y=(..count..)/total_number_sample * 100, fill=trv_type), environment = environment()) + geom_bar(position='stack', alpha=.75, width=1) + coord_flip() + theme + y_label + scale_y_reverse() + legend + layers	
+  p1 <- ggplot(na.omit(data_frame), aes(x=gene, y=prop, fill=trv_type)) + geom_bar(position='stack', alpha=.75, width=1, stat='identity') + theme_bw() + coord_flip() + theme + y_label + scale_y_reverse() + legend + layers	
   
   return(p1)
 }

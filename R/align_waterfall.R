@@ -19,7 +19,7 @@ align_waterfall <- function(p2, p1, p3, p4, title=title)
   #############################################################################################################
   
   # define the ggplot's as grobs and create a blank plot
-  gA <- ggplotGrob(p2)
+  gA <- suppressWarnings(ggplotGrob(p2))
   gB <- ggplotGrob(p1)
   gC <- ggplotGrob(p3)
   blankPanel<-grid.rect(gp=gpar(col="white"))
