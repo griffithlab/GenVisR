@@ -2,7 +2,7 @@
 #' 
 #' produce a coverage plot displaying gene and coverage information
 #' @name genCov
-#' @param x named list containing data frames with columns stop and cov
+#' @param x named list containing data frames with columns end and cov
 #' @param txdb A TxDb object for a genome
 #' @param gr A Granges object specifying a region of interest
 #' @param genome Object of class BSgenome specifying the genome
@@ -30,6 +30,13 @@ genCov <- function(x, txdb, gr, genome, reduce=F, gene.colour=NULL, gene_name='G
                           label.text_fill="white", label.border="black", label.size=10, label.width_ratio=c(1, 10), cov.colour="blue",
                           cov.plot_type="line", cov.layers=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'),
                           gene.plot_transcript_name=TRUE, gene.transcript_name_size=6){
+  
+  # Perform data quality checks
+  data <- genCov.qual(x, txdb, gr, genome)
+  x <- data[[1]]
+  txdb <- data[[2]]
+  gr <- data[[3]]
+  genome <- data[[4]]
   
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
   gp_result <- geneViz(txdb, gr, genome, reduce=reduce, gene_colour=gene.colour,
@@ -95,7 +102,7 @@ genCov <- function(x, txdb, gr, genome, reduce=F, gene.colour=NULL, gene_name='G
   
   # Plot the data on a track
   track_coverage_plot <- trackViz(merged_data, gene_name=gene_name, bg_fill=label.bg_fill, text_fill=label.text_fill,
-                                    label.border=border, label.size=size, axis_align='width', width_ratio=label.width_ratio, nested_list=T)
+                                    border=label.border, size=label.size, axis_align='width', width_ratio=label.width_ratio, nested_list=T)
   
   return(track_coverage_plot)
 }

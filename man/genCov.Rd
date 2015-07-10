@@ -12,7 +12,7 @@ genCov(x, txdb, gr, genome, reduce = F, gene.colour = NULL,
   gene.plot_transcript_name = TRUE, gene.transcript_name_size = 6)
 }
 \arguments{
-\item{x}{named list containing data frames with columns stop and cov}
+\item{x}{named list containing data frames with columns end and cov}
 
 \item{txdb}{A TxDb object for a genome}
 
