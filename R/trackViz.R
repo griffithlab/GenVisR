@@ -12,6 +12,8 @@
 #' @param nested_list boolean specifying whether plots are in a named list nested in another list
 #' @return ggplotGrob object
 #' @import gridExtra
+#' @import ggplot2
+#' @export
 
 trackViz <- function(..., bg_fill="black", text_fill="white", border="black", size=10, axis_align='none', width_ratio=c(1, 10), nested_list=F)
 {

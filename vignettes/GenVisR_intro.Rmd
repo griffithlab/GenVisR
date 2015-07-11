@@ -22,7 +22,7 @@ Intuitively visualizing and interpreting data from high-throughput genomic techn
 `BRCA_MAF` is a truncated MAF file consisting of 50 samples from the TCGA project corresponding to [Breast invasive carcinoma](https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files#TCGAMAFFiles-BRCA:Breastinvasivecarcinoma) [(complete data)](https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf). Using this dataset we can view the default behavior of `mutSpec`:
 
 ```{r, message=FALSE}
-library(GGgenome)
+library(GenVisR)
 ```
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
@@ -165,24 +165,84 @@ cnSpec produces a plot displaying copy number segments at a cohort level. Basic 
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=TRUE, warning=FALSE, results='asis'}
 # Example input to x
-head(LucCN)
+head(LucCNseg)
 
-cnSpec(LucCN, genome="hg19")
+cnSpec(LucCNseg, genome="hg19")
 ```
 
-cnSpec will query the UCSC sql database to obtain chromosomal boundary information, this has been built in as a convenience. If internet connectivity is an issue, or if copy number segment calls are derived from an assemlby not supported by UCSC the user can specify chromosomal boundaries via the argument `y`. This should take the form of a data frame with column names "chromosome", "start", "end".
+By default a few select genomes are preloaded, if input into `genome` is not preloaded cnSpec will query the UCSC sql database to obtain chromosomal boundary information. This has been built in as a convenience, if internet connectivity is an issue, or if copy number segment calls are derived from an assemlby not supported by UCSC the user can specify chromosomal boundaries via the argument `y`. This should take the form of a data frame with column names "chromosome", "start", "end".
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
-# Example input to y
-head(hg19chr)
-
-cnSpec(LucCN, y=hg19chr)
+cnSpec(LucCNseg, y=hg19chr)
 ```
 
 ## cnView
+
+cnView produces visualizations for raw copy number calls focused on either a single chromosome or all chromosomes. Input consists of a data frame with columns "chromosome", "coordinate", "cn", and "p_value". and a specification of which chromosome to plot `chr` and which genome `genome`. The algorithm will create a transparency for all calls/observations based on the "p_value" column. If this behavior is not desired, or if this inforamtion is not available it is recommended to set all observations in this column to a significant p-value.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
+cnView(Luc2CNraw, chr='chr14', genome='hg19')
+```
+
+cnView also has the ability to overlay segment calls on the plot if they are available, this is done by giving a data frame with columns: "chromosome", "start", "end", "segmean" to the argument `z`.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
+# Obtain CN segments for Luc2 corresponding to chromosome 14
+CNseg <- LucCNseg[LucCNseg$sample == 'Luc2' & LucCNseg$chromosome == 14,]
+
+cnView(Luc2CNraw, z=CNseg, chr='chr14', genome='hg19')
+```
+
+cnView obtains ideogram information either via a preloaded genome or the UCSC sql database if it is available. In the interest of flexibility the user also has the option of specifying cytogenetic information to the argument `y`. This input should take the form of a data frame with column names "chrom", "chromStart", "chromEnd", "name", "gieStain". This format mirrors what is retrievable via the afore mentioned database.
+
 ## ideoView
-## trackViz
+The user has the ability to plot an ideogram representative of the chromosome of interest. Basic input consists of a data frame with column names: "chrom", "chromStart", "chromEnd", "name", "gieStain" mirroring the format retrievable from the UCSC sql database, and a chromosome for which to display. Here we use the preloaded genome hg38.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
+# Obtain cytogenetic information for the genome of interest
+data <- cytoGeno[cytoGeno$genome == 'hg38',]
+
+ideoView(data, chromosome='chr1')
+```
+
 ## geneViz
+It is also possible to plot just a gene of interest identified by specifying a Txdb object, GRanges object, and a BSgenome.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+# need transcript data for reference
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+
+# need a biostrings object for reference
+library(BSgenome.Hsapiens.UCSC.hg19)
+genome <- BSgenome.Hsapiens.UCSC.hg19
+
+# need Granges object 
+gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
+
+# Plot the graphic
+geneViz(txdb, gr, genome)
+```
+
+## trackViz
+Often it is usefull to plot multiple graphics in the same window. trackViz provides a mechanism for accomplishing this using a named list. The names in the list will be displayed as labels. It should be noted that elements within the list should be ggplot2 objects.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
+library(ggplot2)
+
+# Obtain cytogenetic information for the genome of interest
+data <- cytoGeno[cytoGeno$genome == 'hg38',]
+
+chr1 <- ideoView(data, chromosome='chr1')
+chr2 <- ideoView(data, chromosome='chr2')
+chr3 <- ideoView(data, chromosome='chr3')
+
+data <- list("CHR1" = chr1, "CHR2" = chr2, "CHR3" = chr3)
+
+trackViz(data, nested_list=TRUE)
+```
+
+
 
 
 
