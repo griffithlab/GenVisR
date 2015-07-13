@@ -7,7 +7,7 @@
 build.main.mutSpec(data_frame, grid = TRUE, label_x = FALSE,
   gene_label_size = 8, file_type = "MGI", drop_mutation = FALSE,
   plot_x_title = TRUE, plot_label = FALSE, plot_label_size = 4,
-  plot_palette = NULL, layers = NULL)
+  plot_palette = NULL, layers = NULL, plot_label_angle = 0)
 }
 \arguments{
 \item{data_frame}{a data frame in MAF format}
@@ -29,6 +29,8 @@ build.main.mutSpec(data_frame, grid = TRUE, label_x = FALSE,
 \item{plot_label_size}{Integer specifying text size of cell labels}
 
 \item{layers}{additional ggplot2 layers to plot}
+
+\item{plot_label_angle}{angle at which to plot label text if plot_label is true}
 
 \item{plot_pallete}{Character vector specifying colors to fill on mutation type}
 }

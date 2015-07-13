@@ -14,7 +14,7 @@ mutation_sample_subset <- function(x, genes)
     warning("argument supplied to main.genes is not a character vector, attempting to coerce")
     genes <- as.character(genes)
   }
-  if(!all(genes %in% x$gene))
+  if(!all(toupper(genes) %in% toupper(x$gene)))
   {
     warning("genes supplied in main.genes contains an element not found in x")
   }

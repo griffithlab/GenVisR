@@ -12,7 +12,7 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
   main.genes = NULL, drop_mutation = FALSE, rmv_silent = FALSE,
   main.label_col = NULL, main.plot_label_size = 4, main.palette = NULL,
   sampRecur.layers = NULL, clin.layers = NULL, main.layers = NULL,
-  mutRecur.layers = NULL)
+  mutRecur.layers = NULL, main.plot_label_angle = 0)
 }
 \arguments{
 \item{x}{a data frame in annotation format}
@@ -58,6 +58,8 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
 \item{main.layers}{Additional ggplot2 layers to plot on the main panel}
 
 \item{mutRecur.layers}{Additional ggplot2 layers to plot on the mutation burden data}
+
+\item{main.plot_label_angle}{Integer specifying the degree of rotation for text if mian.label_col is specified}
 
 \item{recurrence_cutoff}{an integer value to remove genes that do not have x number of mutations}
 }
