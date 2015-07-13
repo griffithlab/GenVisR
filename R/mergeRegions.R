@@ -2,7 +2,7 @@
 #' 
 #' Create a master region table by merging isoforms
 #' @name mergeRegions
-#' @param txdb A TxDb object for a genome
+#' @param geneFeatures A dataframe specifying features of a gene
 #' @param gr Granges object specifying the ROI
 #' @param base A vector of log bases to transform the data, corresponding to the elements of transform 
 #' @param transform A vector of strings designating what objects to log transform
