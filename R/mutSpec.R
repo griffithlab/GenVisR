@@ -20,6 +20,7 @@
 #' @param rmv_silent Boolean specifying wheter to remove silent mutations from the left side and main plot
 #' @param main.label_col Character string specifying an optional column name from which to derive cell labels from
 #' @param main.plot_label_size Integer specifying the size of labels for cells in the main panel
+#' @param main.plot_label_angle Integer specifying the degree of rotation for text if mian.label_col is specified
 #' @param main.palette Character vector specifying colors to fill on mutation type
 #' @param sampRecur.layers Additional ggplot2 layers to plot on the sample recurence chart
 #' @param clin.layers Additional ggplot2 layers to plot on the clinical data 
@@ -28,7 +29,7 @@
 #' @return a grob for plotting
 #' @export
 
-mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, clin.var.order=NULL, mutBurden=NULL, main.recurrence_cutoff = 0, main.grid = TRUE, main.label_x = FALSE, title ='', main.gene_label_size=8, coverage_space=44100000, file_type='MAF', main.genes=NULL, drop_mutation=FALSE, rmv_silent=FALSE, main.label_col=NULL, main.plot_label_size=4, main.palette=NULL, sampRecur.layers=NULL, clin.layers=NULL, main.layers=NULL, mutRecur.layers=NULL)
+mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, clin.var.order=NULL, mutBurden=NULL, main.recurrence_cutoff = 0, main.grid = TRUE, main.label_x = FALSE, title ='', main.gene_label_size=8, coverage_space=44100000, file_type='MAF', main.genes=NULL, drop_mutation=FALSE, rmv_silent=FALSE, main.label_col=NULL, main.plot_label_size=4, main.palette=NULL, sampRecur.layers=NULL, clin.layers=NULL, main.layers=NULL, mutRecur.layers=NULL, main.plot_label_angle=0)
 {
   ############################################################################################
   ######## Function to create a mutation heatmap given a file in TGI annotation format #######
@@ -101,10 +102,10 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, cl
   # Plot the Heatmap
   if(is.null(clinDat))
   {
-    p1 <- build.main.mutSpec(data_frame, grid = main.grid, label_x = main.label_x, gene_label_size = main.gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title = TRUE, plot_label = main.plot_label_flag, plot_label_size = main.plot_label_size, plot_palette=main.palette, layers=main.layers)
+    p1 <- build.main.mutSpec(data_frame, grid = main.grid, label_x = main.label_x, gene_label_size = main.gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title = TRUE, plot_label = main.plot_label_flag, plot_label_size = main.plot_label_size, plot_palette=main.palette, layers=main.layers, plot_label_angle=main.plot_label_angle)
   } else if(!is.null(clinDat))
   {
-    p1 <- build.main.mutSpec(data_frame, grid = main.grid, label_x = main.label_x, gene_label_size = main.gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title = FALSE, plot_label = main.plot_label_flag, plot_label_size = main.plot_label_size, plot_palette=main.palette, layers=main.layers)
+    p1 <- build.main.mutSpec(data_frame, grid = main.grid, label_x = main.label_x, gene_label_size = main.gene_label_size, file_type = file_type, drop_mutation = drop_mutation, plot_x_title = FALSE, plot_label = main.plot_label_flag, plot_label_size = main.plot_label_size, plot_palette=main.palette, layers=main.layers, plot_label_angle=main.plot_label_angle)
   }
   
   # Plot any clinical data if it is specified

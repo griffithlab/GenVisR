@@ -13,10 +13,11 @@
 #' @param plot_label_size Integer specifying text size of cell labels
 #' @param plot_pallete Character vector specifying colors to fill on mutation type
 #' @param layers additional ggplot2 layers to plot
+#' @param plot_label_angle angle at which to plot label text if plot_label is true
 #' @return a ggplot2 object
 #' @import ggplot2
 
-build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='MGI', drop_mutation=FALSE, plot_x_title=TRUE, plot_label=FALSE, plot_label_size=4, plot_palette=NULL, layers=NULL)
+build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8, file_type='MGI', drop_mutation=FALSE, plot_x_title=TRUE, plot_label=FALSE, plot_label_size=4, plot_palette=NULL, layers=NULL, plot_label_angle=0)
 {
   
   #############################################################################################################
@@ -83,7 +84,7 @@ build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_
   
   if(plot_label == TRUE)
   {
-    label <- geom_text(data=data_frame, mapping=aes(x=sample, y=gene, label=label), size=plot_label_size, colour='white')
+    label <- geom_text(data=data_frame, mapping=aes(x=sample, y=gene, label=label), size=plot_label_size, colour='white', angle=plot_label_angle)
   } else {
     label <- geom_blank()
   }
