@@ -2,7 +2,7 @@
 #' 
 #' Convert a data frame such that mutation type are converted to boolean instead of counts 
 #' @name convert_to_boolean
-#' @param data_frame a data frame in MAF format
+#' @param x a data frame in MAF format
 #' @return a data frame with values converted to boolean
 
 convert_to_boolean <- function(x)

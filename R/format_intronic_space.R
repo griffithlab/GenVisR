@@ -4,7 +4,7 @@
 #' @name format_intronic_space
 #' @param introns list of data frames containing intronic features
 #' @param exons list of data frames contatining exonic/UTR features
-#' @param Granges object specifying the ROI
+#' @param gr Granges object specifying the ROI
 #' @return Object of class data frame
 
 format_intronic_space <- function(introns, exons, gr)

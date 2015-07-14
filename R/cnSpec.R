@@ -9,8 +9,8 @@
 #' @param background character string specifying backround color of plot
 #' @param CN_low_colour character string specifying low value of colour gradient 
 #' @param CN_high_colour character string specifying high value of colour gradient
-#' @param x_lab_size integer specifying the size of the X label
-#' @param Y_lab_size integer specifying the size of the Y label
+#' @param x_lab_size integer specifying the size of the x label
+#' @param y_lab_size integer specifying the size of the y label
 #' @param facet_lab_size integer specifying the size of the faceted labels
 #' @param layers a valid ggplot layer to over-ride default parameters
 #' @return ggplot object
@@ -22,7 +22,9 @@
 cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL, background='grey90', CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)
 {
   # Perform quality check on input data
-  cnSpec.qual(x, y, genome)
+  data <- cnSpec.qual(x, y, genome)
+  x <- data[[1]]
+  y <- data[[2]]
   
   # Get dummy data for genome
   # Check to see if y is specified if not check if genome is preloaded
@@ -40,7 +42,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL, background='grey90
     UCSC_Chr_pos <- rbind(temp1, temp2)
   } else if(is.null(y) && any(genome == preloaded)){
     message("genome specified is preloaded, retrieving data...")
-    UCSC_Chr_pos <- cytoGeno[cytoGeno$genome == genome,]
+    UCSC_Chr_pos <- GenVisR::cytoGeno[GenVisR::cytoGeno$genome == genome,]
     UCSC_Chr_pos <- CN_dummy_data(UCSC_Chr_pos)
   } else {
     # Obtain data for UCSC genome and extract relevant columns

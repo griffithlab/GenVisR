@@ -14,7 +14,7 @@
 build.cnView.main <- function(x, y, z=NULL, chr, cnDiff=FALSE, layers=NULL)
 {
   # Define various parameters of the plot
-  dummy_data <- geom_point(data=y, mapping=aes(x=coordinate, y=2), alpha=0)
+  dummy_data <- geom_point(data=y, mapping=aes_string(x='coordinate', y=2), alpha=0)
   
   theme <- theme(axis.text.x=element_text(angle=30, hjust=1))
   if(cnDiff == TRUE)
@@ -39,13 +39,19 @@ build.cnView.main <- function(x, y, z=NULL, chr, cnDiff=FALSE, layers=NULL)
     layers <- geom_blank()
   }
   
-  # Define points to plot for the main plot and apply shading function
-  cnpoints <- geom_point(data=x, mapping=aes(x=coordinate, y=cn, colour=cn, alpha=1-p_value))
+  # if x contains a p_value column set an alpha for it and plot points
+  if(any('p_value' %in% colnames(x)))
+  {
+    x$transparency <- 1-x$p_value
+    cnpoints <- geom_point(data=x, mapping=aes_string(x='coordinate', y='cn', colour='cn', alpha='transparency'))
+  } else {
+    cnpoints <- geom_point(data=x, mapping=aes_string(x='coordinate', y='cn', colour='cn'))
+  }
   
   # Define segments for main plot
   if(!is.null(z))
   {
-    cnseg <- geom_segment(data=z, mapping=aes(x=start, xend=end, y=segmean, yend=segmean), colour='green', size=2)
+    cnseg <- geom_segment(data=z, mapping=aes_string(x='start', xend='end', y='segmean', yend='segmean'), colour='green', size=2)
   } else {
     cnseg <- geom_blank()
   }

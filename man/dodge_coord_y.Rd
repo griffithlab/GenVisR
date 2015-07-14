@@ -8,6 +8,8 @@ dodge_coord_y(x, track = "top")
 }
 \arguments{
 \item{x}{data frame containing columns coord_x_dodge and group}
+
+\item{track}{character vector, one of "top", "bottom" specifying whether to dodge in a positive or negative fashion}
 }
 \value{
 numeric vector of dodged position coordinates on y axis

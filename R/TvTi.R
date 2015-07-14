@@ -16,7 +16,7 @@
 #' @export
 
 TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c('#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02'), file_type='MAF', layers=NULL)
-{
+{ 
   # Perform quality checks
   if(!is.null(y))
   {

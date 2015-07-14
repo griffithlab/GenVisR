@@ -5,6 +5,7 @@
 #' @param txdb A TxDb object for a genome
 #' @param txid A list of TXIDs
 #' @return Object of class Granges
+#' @importFrom "IRanges" IRanges
 
 cdsFromTXID <- function(txdb, txid){
   r <- select(txdb, as.character(txid), 

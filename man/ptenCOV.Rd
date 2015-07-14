@@ -9,7 +9,7 @@
 data(ptenCOV)
 }
 \description{
-A data set containing coverage data for pten obtained using "bedtools multicov" from "Convergent loss of PTEN leads to clinical resistance to a PI3Kα inhibitor" PMID:25409150
+A data set containing coverage data for pten obtained using "bedtools multicov" from "Convergent loss of PTEN leads to clinical resistance to a PI3K-alpha inhibitor" PMID:25409150
 }
 \keyword{datasets}
 

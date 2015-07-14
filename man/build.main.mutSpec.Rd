@@ -28,11 +28,11 @@ build.main.mutSpec(data_frame, grid = TRUE, label_x = FALSE,
 
 \item{plot_label_size}{Integer specifying text size of cell labels}
 
+\item{plot_palette}{Character vector specifying colors to fill on mutation type}
+
 \item{layers}{additional ggplot2 layers to plot}
 
 \item{plot_label_angle}{angle at which to plot label text if plot_label is true}
-
-\item{plot_pallete}{Character vector specifying colors to fill on mutation type}
 }
 \value{
 a ggplot2 object

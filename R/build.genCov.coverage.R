@@ -3,7 +3,7 @@
 #' given data build a coverage plot to represent the data
 #' @name build.genCov.coverage
 #' @param data_frame an object of class data frame containing columns stop and cov
-#' @param xlimits vector giving x-axis limits for plot, inferred from data if not specified
+#' @param x_limits vector giving x-axis limits for plot, inferred from data if not specified
 #' @param colour character string specifying the color of the data in the plot
 #' @param plot_type character string specifying one of line, area for data display
 #' @param display_x_axis boolean specifying whether to plot x-axis labels
@@ -40,7 +40,7 @@ build.genCov.coverage <- function(data_frame, x_limits=NULL, display_x_axis=TRUE
   }
   
   # Define the main plot
-  cov_plot <- ggplot(data_frame, aes(x=end, y=cov)) + x_limits + theme + layers
+  cov_plot <- ggplot(data_frame, aes_string(x='end', y='cov')) + x_limits + theme + layers
   
   # Define Control structure for plot type
   if(plot_type == "line")

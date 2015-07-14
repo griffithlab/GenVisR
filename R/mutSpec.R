@@ -8,7 +8,7 @@
 #' @param clin.var.colour a named character vector specifying the mapping between colors and variables in the clinical data
 #' @param clin.var.order a character vector of variables to order the clinical legend by
 #' @param mutBurden an optional data frame containing columns sample, mut_burden
-#' @param recurrence_cutoff an integer value to remove genes that do not have x number of mutations
+#' @param main.recurrence_cutoff an integer value to remove genes that do not have x number of mutations
 #' @param main.grid a boolean value to overlay a grid on the primary plot
 #' @param main.label_x a boolean value to plot samples on the x axis
 #' @param title a character string for the plot title
@@ -86,7 +86,7 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, cl
       stop("The sample column in data frame z does not appear to contain the same elements as in data frame x")
     }
     mutBurden$sample <- factor(mutBurden$sample, levels=sample_order)
-    p3 <- build.mutRecurB.mutSpec(mutBurden, layers=mutRecur.layres)
+    p3 <- build.mutRecurB.mutSpec(mutBurden, layers=mutRecur.layers)
   } else {
     data_frame2$sample <- factor(data_frame2$sample, levels=sample_order)
     p3 <- build.mutRecurA.mutSpec(data_frame2, coverage_space, layers=mutRecur.layers)

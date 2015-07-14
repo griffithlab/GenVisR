@@ -12,12 +12,6 @@ cnView.qual(x, y, genome)
 \item{y}{a data frame with columns "chrom", "chromStart", "chromEnd", "name", "gieStain"}
 
 \item{genome}{character string specifying UCSC genome to use}
-
-\item{chr}{character string specifying UCSC chromosome to plot one of chr... or all}
-
-\item{chr_txt_angle}{integer specifying angle of text when plotting band text}
-
-\item{chr_txt_size}{integer specifying size of text when plotting band text}
 }
 \value{
 a list of data frames passing quality checks

@@ -26,7 +26,7 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   }
   r <- r[idx,]
   n <- function(x){return(as.numeric(x))}
-  f <- function(r){
+  f1 <- function(r){
     if (is.na(r['CDSSTART'])){
       r['UTRSTART'] <- n(r['EXONSTART'])
       r['UTREND'] <- n(r['EXONEND'])
@@ -39,11 +39,11 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
     }
     return(r)
   }
-  df <- as.data.frame(t(apply(r,1,f)))
+  df <- as.data.frame(t(apply(r,1,f1)))
   r['UTRSTART'] <- as.numeric(as.character(df$UTRSTART))
   r['UTREND'] <- as.numeric(as.character(df$UTREND))
   r <- split(r, r['TXID'])
-  f <- function(r){
+  f2 <- function(r){
     g <- GRanges(seqnames = unlist(r['TXCHROM']), 
                  ranges = IRanges(start = as.numeric(unlist(r['UTRSTART'])), end = as.numeric(unlist(r['UTREND']))),
                  strand = unlist(r['TXSTRAND']),
@@ -51,10 +51,10 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
                  exonrank=unlist(r['EXONRANK']))
     return(g)
   }
-  UTR <- GRangesList(unlist(lapply(r, f)))
+  UTR <- GRangesList(unlist(lapply(r, f2)))
   
-  f <- function(x){x$txname[[1]]}
-  txnames <- lapply(UTR, f)
+  f3 <- function(x){x$txname[[1]]}
+  txnames <- lapply(UTR, f3)
   
   # reduce isoforms into one if set to true and convert to GRanges list
   if(reduce==TRUE)
@@ -66,10 +66,10 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   # If Granges object is not an entire gene zoom in to the region specified
   UTR <- lapply(UTR, intersect, gr)
   
-  f <- function(x){
+  f4 <- function(x){
     return(length(x) > 0)
   }
-  idx <- as.vector(unlist(lapply(UTR, f)))
+  idx <- as.vector(unlist(lapply(UTR, f4)))
   UTR <- UTR[idx]
   if(length(UTR) == 0){
     return(NA)
@@ -90,11 +90,11 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   }
   
   keys <- names(UTR)
-  f <- function(gr, name){
+  f5 <- function(gr, name){
     mcols(gr)$txname <- name
     return(gr)
   }
-  UTR <- mapply(f, UTR[keys], txnames[keys], SIMPLIFY=F)
+  UTR <- mapply(f5, UTR[keys], txnames[keys], SIMPLIFY=F)
   
   return(UTR)
 }

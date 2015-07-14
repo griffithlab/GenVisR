@@ -2,8 +2,8 @@
 #' 
 #' Perform Basic quality checks for lolliplot input
 #' @name lolliplot.qual
-#' @param data object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations
-#' @param data object of class data frame containing columns transcript_name, and amino_acid_change and rows denoting mutations
+#' @param x object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations
+#' @param y object of class data frame containing columns transcript_name, and amino_acid_change and rows denoting mutations
 #' @return character string specifying input passed quality check
 
 lolliplot.qual <- function(x, y)

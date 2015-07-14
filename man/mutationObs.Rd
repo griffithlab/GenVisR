@@ -11,6 +11,22 @@ mutationObs(data, track, fill_value, label_column, rep.fact, rep.dist.lmt,
 \item{data}{object of class data frame with columns trv_type and amino acid change}
 
 \item{track}{character string specifying one to 'top', 'bottom' to specify proper track}
+
+\item{fill_value}{character string giving the name of the column to shade variants on}
+
+\item{label_column}{character string specifying column containing text information to be plotted}
+
+\item{rep.fact}{repulsive factor for plotted mutations observed track}
+
+\item{rep.dist.lmt}{repulsive distance limit for plotted mutations observed track}
+
+\item{attr.fact}{attraction factor for plotted mutations observed track}
+
+\item{adj.max}{maximum position change for each iteration observed track}
+
+\item{adj.lmt}{position adjustment limit which simulation stops observed track}
+
+\item{iter.max}{maximum iterations beyond which to stop the simulation observed track}
 }
 \value{
 object of class data frame giving mutation observations

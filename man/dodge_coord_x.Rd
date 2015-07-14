@@ -9,6 +9,18 @@ dodge_coord_x(x, rep.fact = 5000, rep.dist.lmt = 500, attr.fact = 0.1,
 }
 \arguments{
 \item{x}{numeric vector of position coordinates on x axis}
+
+\item{rep.fact}{repulsive factor for plotted mutations observed track}
+
+\item{rep.dist.lmt}{repulsive distance limit for plotted mutations observed track}
+
+\item{attr.fact}{attraction factor for plotted mutations observed track}
+
+\item{adj.max}{maximum position change for each iteration observed track}
+
+\item{adj.lmt}{position adjustment limit which simulation stops observed track}
+
+\item{iter.max}{maximum iterations beyond which to stop the simulation observed track}
 }
 \value{
 numeric vector of dodged position coordinates on x axis

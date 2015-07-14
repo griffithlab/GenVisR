@@ -3,6 +3,7 @@
 #' given amino acid position coordinates on, before grouping and dodge on y axis
 #' @name dodge_coord_y
 #' @param x data frame containing columns coord_x_dodge and group
+#' @param track character vector, one of "top", "bottom" specifying whether to dodge in a positive or negative fashion
 #' @return numeric vector of dodged position coordinates on y axis
 
 dodge_coord_y <- function(x, track='top')

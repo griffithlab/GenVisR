@@ -5,6 +5,7 @@
 #' @param genome character string giving a UCSC genome
 #' @return object of class data frame
 #' @import RMySQL
+#' @import DBI
 
 get_cytobands <- function(genome)
 {

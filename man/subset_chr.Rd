@@ -7,9 +7,9 @@
 subset_chr(x, chr)
 }
 \arguments{
-\item{chr}{character string specifying UCSC chromosome to plot one of chr... or all}
+\item{x}{a data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value}
 
-\item{data_frame}{a data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value}
+\item{chr}{character string specifying UCSC chromosome to plot one of chr... or all}
 }
 \value{
 object of class data frame

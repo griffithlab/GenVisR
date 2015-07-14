@@ -28,7 +28,7 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1', main.cnDiff=FAL
   if(is.null(y) && any(genome == preloaded))
   {
     message("genome specified is preloaded, retrieving data...")
-    cytobands <- cytoGeno[cytoGeno$genome == genome,]
+    cytobands <- GenVisR::cytoGeno[GenVisR::cytoGeno$genome == genome,]
     cytobands <- cytobands[,-which(colnames(cytobands) == "genome")]
   } else if(is.null(y)){
     # obtain the cytogenetic band information for the requested reference
