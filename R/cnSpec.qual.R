@@ -1,7 +1,7 @@
 #' Construct CN cohort plot
 #' 
 #' given a data frame construct a plot to display CN information for a group of samples
-#' @name cnSpec
+#' @name cnSpec.qual
 #' @param x object of class data frame containing columns Chromosome, Start, Stop, SegMean, Sample.name
 #' @param y object of class data frame containing user supplied chromosome locations
 #' @param genome character string specifying a user supplied genome
@@ -52,5 +52,5 @@ cnSpec.qual <- function(x, y, genome)
     stop("Did not detect correct columns in x, missing one of chromosome, start, end, segmean, sample")
   }
   
-  return("Input data passed basic quality check")
+  return(list(x, y))
 }

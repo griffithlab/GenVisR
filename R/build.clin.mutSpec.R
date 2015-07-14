@@ -12,6 +12,8 @@
 
 build.clin.mutSpec <- function(x, clin.legend.col=1, clin.var.colour=NULL, clin.var.order=NULL, clin.layers=NULL)
 {
+
+  
   # Define parameters
   x_label <- xlab(paste0("Sample n=", length(unique(x$sample))))
   leg_guide <- guides(fill=guide_legend(ncol=clin.legend.col))
@@ -40,9 +42,9 @@ build.clin.mutSpec <- function(x, clin.legend.col=1, clin.var.colour=NULL, clin.
   # Define the main plot
   if(!is.null(clin.var.colour))
   {
-    p1 <- ggplot(x, aes(x=sample, y=variable, fill=value)) + geom_tile() + theme + x_label + leg_guide + clin_fill_colour + layers
+    p1 <- ggplot(x, aes_string(x='sample', y='variable', fill='value')) + geom_tile() + theme + x_label + leg_guide + clin_fill_colour + layers
   } else {
-    p1 <- ggplot(x, aes(x=sample, y=variable, fill=value)) + geom_tile() + theme + x_label + leg_guide + layers
+    p1 <- ggplot(x, aes_string(x='sample', y='variable', fill='value')) + geom_tile() + theme + x_label + leg_guide + layers
   }
   
   

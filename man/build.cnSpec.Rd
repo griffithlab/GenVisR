@@ -21,11 +21,11 @@ build.cnSpec(data_frame, plot_title = NULL, background = "grey90",
 
 \item{x_lab_size}{integer specifying the size of the X label}
 
+\item{y_lab_size}{integer specifying the size of the Y label}
+
 \item{facet_lab_size}{integer specifying the size of the faceted labels}
 
 \item{layers}{Additional layers to be plotted, can be a theme but must be a ggplot layer}
-
-\item{Y_lab_size}{integer specifying the size of the Y label}
 }
 \value{
 ggplot object

@@ -27,6 +27,8 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
 
 \item{mutBurden}{an optional data frame containing columns sample, mut_burden}
 
+\item{main.recurrence_cutoff}{an integer value to remove genes that do not have x number of mutations}
+
 \item{main.grid}{a boolean value to overlay a grid on the primary plot}
 
 \item{main.label_x}{a boolean value to plot samples on the x axis}
@@ -60,8 +62,6 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
 \item{mutRecur.layers}{Additional ggplot2 layers to plot on the mutation burden data}
 
 \item{main.plot_label_angle}{Integer specifying the degree of rotation for text if mian.label_col is specified}
-
-\item{recurrence_cutoff}{an integer value to remove genes that do not have x number of mutations}
 }
 \value{
 a grob for plotting

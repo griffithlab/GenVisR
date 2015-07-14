@@ -36,7 +36,7 @@ build.mutRecurA.mutSpec <- function(data_frame, coverage_space, layers=NULL)
   }
   
   # ggplot2 call
-  p1 <- ggplot(data_frame, aes(x=sample, y=mutation_per_MB, fill=trv_type)) + geom_bar(stat='identity', alpha=.75, width=1) + theme_bw() + theme + y_label + legend + layers
+  p1 <- ggplot(data_frame, aes_string(x='sample', y='mutation_per_MB', fill='trv_type')) + geom_bar(stat='identity', alpha=.75, width=1) + theme_bw() + theme + y_label + legend + layers
   
   return(p1)
 }

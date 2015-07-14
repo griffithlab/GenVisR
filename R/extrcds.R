@@ -19,8 +19,8 @@ extrCDS <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   
   # extract CDS from transcript database given transcript ID
   cds <- cdsFromTXID(txdb, txid)
-  f <- function(x){x$txname[[1]]}
-  txnames <- lapply(cds, f)
+  f1 <- function(x){x$txname[[1]]}
+  txnames <- lapply(cds, f1)
   
   if(typeof(cds) != 'S4'){
     return(NA)
@@ -35,10 +35,10 @@ extrCDS <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   
   # If Granges object is not an entire gene zoom in to the region specified
   cds <- lapply(cds, intersect, gr)
-  f <- function(x){
+  f2 <- function(x){
     return(length(x) > 0)
   }
-  idx <- as.vector(unlist(lapply(cds, f)))
+  idx <- as.vector(unlist(lapply(cds, f2)))
   cds <- cds[idx]
   if(length(cds) == 0){
     return(NA)
@@ -60,11 +60,11 @@ extrCDS <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   }
   
   keys <- names(cds)
-  f <- function(gr, name){
+  f3 <- function(gr, name){
     mcols(gr)$txname <- name
     return(gr)
   }
-  cds <- mapply(f, cds[keys], txnames[keys], SIMPLIFY=F)
+  cds <- mapply(f3, cds[keys], txnames[keys], SIMPLIFY=F)
   
   return(cds)
 }

@@ -39,7 +39,7 @@ build.mutOccur.mutSpec <- function(data_frame, layers=NULL)
   }
   
   # Plotting call
-  p1 <- ggplot(na.omit(data_frame), aes(x=gene, y=prop, fill=trv_type)) + geom_bar(position='stack', alpha=.75, width=1, stat='identity') + theme_bw() + coord_flip() + theme + y_label + scale_y_reverse() + legend + layers	
+  p1 <- ggplot(na.omit(data_frame), aes_string(x='gene', y='prop', fill='trv_type')) + geom_bar(position='stack', alpha=.75, width=1, stat='identity') + theme_bw() + coord_flip() + theme + y_label + scale_y_reverse() + legend + layers	
   
   return(p1)
 }

@@ -7,7 +7,7 @@
 convert_to_boolean(x)
 }
 \arguments{
-\item{data_frame}{a data frame in MAF format}
+\item{x}{a data frame in MAF format}
 }
 \value{
 a data frame with values converted to boolean

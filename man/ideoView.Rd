@@ -4,8 +4,8 @@
 \alias{ideoView}
 \title{plot chromosome}
 \usage{
-ideoView(x, y = NULL, chromosome = "chr1", chr_txt_angle = 45,
-  chr_txt_size = 5, layers = NULL)
+ideoView(x, chromosome = "chr1", chr_txt_angle = 45, chr_txt_size = 5,
+  layers = NULL)
 }
 \arguments{
 \item{x}{data frame specifying cytogenetic information for a genome, should contain columns "chrom", "chromStart", "chromEnd", "name", "gieStain"}

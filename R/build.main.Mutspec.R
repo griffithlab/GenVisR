@@ -11,7 +11,7 @@
 #' @param plot_x_title Boolean specifying whether to plot the x_axis title
 #' @param plot_label Boolean specifying whether to plot text inside each cell
 #' @param plot_label_size Integer specifying text size of cell labels
-#' @param plot_pallete Character vector specifying colors to fill on mutation type
+#' @param plot_palette Character vector specifying colors to fill on mutation type
 #' @param layers additional ggplot2 layers to plot
 #' @param plot_label_angle angle at which to plot label text if plot_label is true
 #' @return a ggplot2 object
@@ -27,6 +27,8 @@ build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_
   #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ NOTES ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
   # 1. scale_x_discret(drop=FALSE), added to ggplot2 call to ensure samples remove by 'mutation_recurrence_subset' are still plotted as empty tiles #
   #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
+  
+
   
   ####################################### define layers for ggplot call ########################################
   
@@ -84,7 +86,7 @@ build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_
   
   if(plot_label == TRUE)
   {
-    label <- geom_text(data=data_frame, mapping=aes(x=sample, y=gene, label=label), size=plot_label_size, colour='white', angle=plot_label_angle)
+    label <- geom_text(data=data_frame, mapping=aes_string(x='sample', y='gene', label='label'), size=plot_label_size, colour='white', angle=plot_label_angle)
   } else {
     label <- geom_blank()
   }
@@ -112,9 +114,9 @@ build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_
   # ggplot call
   if(grid == TRUE)
   {
-    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + vertical_grid + horizontal_grid + scale_x_discrete(drop=FALSE) + title + label + layers
+    p1 <- ggplot(data_frame, aes_string('sample', 'gene')) + geom_tile(aes_string(fill='trv_type'), position="identity") + theme + legend + ggtitle(title) + x_label + vertical_grid + horizontal_grid + scale_x_discrete(drop=FALSE) + title + label + layers
   } else {
-    p1 <- ggplot(data_frame, aes(sample, gene)) + geom_tile(aes(fill=trv_type), position="identity") + theme + legend + ggtitle(title) + x_label + scale_x_discrete(drop=FALSE) + title + label + layers
+    p1 <- ggplot(data_frame, aes_string('sample', 'gene')) + geom_tile(aes_string(fill='trv_type'), position="identity") + theme + legend + ggtitle(title) + x_label + scale_x_discrete(drop=FALSE) + title + label + layers
   }
   
   return(p1)

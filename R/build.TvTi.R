@@ -15,9 +15,12 @@
 
 build.TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c('#7BC374', '#EFCD8D', '#8763A0', '#6677A0', '#EDEE8D', '#EF8D8D'), plot_expected=FALSE, layers=NULL)
 {
+  
   if(!is.null(y))
   {
-    expected <- geom_hline(data=y, mapping=aes(yintercept=cumsum(Prop)), linetype="longdash", size=1)
+    # cumulativley sum the expected values and plot
+    y$cumsum <- cumsum(y$Prop)
+    expected <- geom_hline(data=y, mapping=aes_string(yintercept='cumsum'), linetype="longdash", size=1)
   } else {
     expected <- geom_blank()
   }
@@ -25,12 +28,12 @@ build.TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_t
   # Define various parameters of plot
   if(plot_expected == TRUE)
   {
-    bar <- geom_bar(data=x, mapping=aes(x='Expected', y=Prop, fill=trans_tranv), stat='identity', width=1)
+    bar <- geom_bar(data=x, mapping=aes_string(x=shQuote('Expected'), y='Prop', fill='trans_tranv'), stat='identity', width=1)
   } else if(toupper(type) == 'PROPORTION') {
-    bar <- geom_bar(data=x, mapping=aes(x=sample, y=Prop, fill=trans_tranv), stat='identity', width=1)
+    bar <- geom_bar(data=x, mapping=aes_string(x='sample', y='Prop', fill='trans_tranv'), stat='identity', width=1)
   } else if(toupper(type) == 'FREQUENCY')
   {
-    bar <- geom_bar(data=x, mapping=aes(x=sample, y=Freq, fill=trans_tranv), stat='identity', width=1)
+    bar <- geom_bar(data=x, mapping=aes_string(x='sample', y='Freq', fill='trans_tranv'), stat='identity', width=1)
   }
   ylabel <- ylab(type)
   xlabel <- xlab(paste0("Sample: n=", length(unique(x$sample))))

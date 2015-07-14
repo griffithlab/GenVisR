@@ -11,7 +11,7 @@ format_intronic_space(introns, exons, gr)
 
 \item{exons}{list of data frames contatining exonic/UTR features}
 
-\item{Granges}{object specifying the ROI}
+\item{gr}{Granges object specifying the ROI}
 }
 \value{
 Object of class data frame

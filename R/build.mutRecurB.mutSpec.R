@@ -9,6 +9,9 @@
 
 build.mutRecurB.mutSpec <- function(x, layers=NULL)
 {  
+  # appease R CMD CHECK
+  globalVariables(c('mut_burden', 'Type'))
+  
   # add in fake column for legend (necessary to have legend for proper plot alignment)
   # make everything white to hide legend
   x$Type <- "Non Synonymous"
@@ -29,7 +32,7 @@ build.mutRecurB.mutSpec <- function(x, layers=NULL)
   }
   
   # ggplot2 call
-  p1 <- ggplot(x, aes(x=sample, y=mut_burden, fill=Type)) + geom_bar(stat='identity', alpha=.75, width=1) + theme_bw() + theme + y_label + legend + guide + layers
+  p1 <- ggplot(x, aes_string(x='sample', y='mut_burden', fill='Type')) + geom_bar(stat='identity', alpha=.75, width=1) + theme_bw() + theme + y_label + legend + guide + layers
   
   return(p1)
 }

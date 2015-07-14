@@ -10,7 +10,7 @@
 #' @return ggplot object
 #' @export
 
-ideoView <- function(x, y=NULL, chromosome='chr1', chr_txt_angle=45, chr_txt_size=5, layers=NULL)
+ideoView <- function(x, chromosome='chr1', chr_txt_angle=45, chr_txt_size=5, layers=NULL)
 {
   cytobands <- x
   

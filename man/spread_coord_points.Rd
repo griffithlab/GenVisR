@@ -8,11 +8,13 @@ spread_coord_points(x, spread_degree)
 }
 \arguments{
 \item{x}{list}
+
+\item{spread_degree}{degree of repulsion between points}
 }
 \value{
 numeric vector of spread points
 }
 \description{
-given a data frame with median and group spreadd coordinates within that group
+given a data frame with median and group spreadd coordinates within that group (I think this function is deprecated)
 }
 

@@ -3,6 +3,12 @@
 #' given amino acid position coordinates on, before grouping and dodge on x axis
 #' @name dodge_coord_x
 #' @param x numeric vector of position coordinates on x axis
+#' @param rep.fact repulsive factor for plotted mutations observed track
+#' @param rep.dist.lmt repulsive distance limit for plotted mutations observed track
+#' @param attr.fact attraction factor for plotted mutations observed track
+#' @param adj.max maximum position change for each iteration observed track
+#' @param adj.lmt position adjustment limit which simulation stops observed track
+#' @param iter.max maximum iterations beyond which to stop the simulation observed track
 #' @return numeric vector of dodged position coordinates on x axis
 #' @import FField
 

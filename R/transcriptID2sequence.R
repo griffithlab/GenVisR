@@ -3,7 +3,7 @@
 #' Retrieve the length of an ensembl transcript ID in amino acids
 #' @name transcriptID2sequence
 #' @param transcriptID String specifying ensembl transcript ID
-#' @param taxId integer specifying the uniprot taxonomy id for the species of interest
+#' @param up uniprot data object from UniProt.ws
 #' @return character vector giving protien sequence
 #' @import UniProt.ws
 

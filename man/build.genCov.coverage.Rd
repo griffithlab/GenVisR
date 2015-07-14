@@ -10,6 +10,8 @@ build.genCov.coverage(data_frame, x_limits = NULL, display_x_axis = TRUE,
 \arguments{
 \item{data_frame}{an object of class data frame containing columns stop and cov}
 
+\item{x_limits}{vector giving x-axis limits for plot, inferred from data if not specified}
+
 \item{display_x_axis}{boolean specifying whether to plot x-axis labels}
 
 \item{colour}{character string specifying the color of the data in the plot}
@@ -17,8 +19,6 @@ build.genCov.coverage(data_frame, x_limits = NULL, display_x_axis = TRUE,
 \item{plot_type}{character string specifying one of line, area for data display}
 
 \item{layers}{additional ggplot2 layers to plot}
-
-\item{xlimits}{vector giving x-axis limits for plot, inferred from data if not specified}
 }
 \value{
 ggplot object

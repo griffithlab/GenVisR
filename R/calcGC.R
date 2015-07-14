@@ -5,6 +5,7 @@
 #' @param gr A Granges object to calculate GC content for
 #' @param genome Object of class BSgenome specifying the genome to calculate GC content from
 #' @return Object of class GRanges
+#' @import Biostrings
 
 calcGC <- function(gr, genome)
 {

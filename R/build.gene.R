@@ -3,8 +3,7 @@
 #' given a data frame with gene feature information build the ggplot2 object
 #' @name build.gene
 #' @param data_frame an object of class data frame specifying gene feature information
-#' @param master_gene an object of class data frame specifying the master gene feature information resultant of compression
-#' @param display_axis Boolean specifying whether to display X axis coordinate values
+#' @param display_x_axis Boolean specifying whether to display X axis coordinate values
 #' @param x_limits vector specifying x-axis limits of plot
 #' @param gene_colour character specifying colour of gene to be plotted
 #' @param transcript_name Boolean specifying whether to plot USCS transcript names
@@ -14,12 +13,14 @@
 
 build.gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=NULL, transcript_name=FALSE, transcript_name_size=6)
 { 
+
+  
   # Define various parameters of plot
   if(is.null(gene_colour))
   {
-    gene_features <- geom_rect(data=data_frame, mapping=aes(xmin=start, xmax=end, ymin=Upper, ymax=Lower, fill=GC))
+    gene_features <- geom_rect(data=data_frame, mapping=aes_string(xmin='start', xmax='end', ymin='Upper', ymax='Lower', fill='GC'))
   } else {
-    gene_features <- geom_rect(data=data_frame, mapping=aes(xmin=start, xmax=end, ymin=Upper, ymax=Lower), fill=gene_colour)
+    gene_features <- geom_rect(data=data_frame, mapping=aes_string(xmin='start', xmax='end', ymin='Upper', ymax='Lower'), fill=gene_colour)
   }
   
   if(transcript_name == TRUE)
@@ -27,12 +28,13 @@ build.gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=
     transcript_data_x <- aggregate(start ~ txname, data=data_frame, min)
     transcript_data_y <- aggregate(Mid ~ txname, data=data_frame, max)
     transcript_data <- merge(transcript_data_x, transcript_data_y, by="txname")
-    transcript_name <- geom_text(data=transcript_data, mapping=aes(x=start-1, y=Mid, label=txname), angle=90, vjust=0, size=transcript_name_size)
+    transcript_data$label_pos <- transcript_data$start - 1.5
+    transcript_name <- geom_text(data=transcript_data, mapping=aes_string(x='label_pos', y='Mid', label='txname'), angle=90, vjust=0, size=transcript_name_size)
   } else {
     transcript_name <- geom_blank()
   }
   
-  gene_track <- geom_segment(data=data_frame, mapping=aes(x=segStart, xend=segEnd, y=Mid, yend=Mid))
+  gene_track <- geom_segment(data=data_frame, mapping=aes_string(x='segStart', xend='segEnd', y='Mid', yend='Mid'))
   if(is.null(x_limits))
   {
     xlimits <- xlim(c(min(data_frame$start), max(data_frame$end)))

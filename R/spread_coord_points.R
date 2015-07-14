@@ -1,8 +1,9 @@
 #' spread coordinates
 #' 
-#' given a data frame with median and group spreadd coordinates within that group
+#' given a data frame with median and group spreadd coordinates within that group (I think this function is deprecated)
 #' @name spread_coord_points
 #' @param x list 
+#' @param spread_degree degree of repulsion between points
 #' @return numeric vector of spread points
 
 spread_coord_points <- function(x, spread_degree)

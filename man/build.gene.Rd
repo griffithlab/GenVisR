@@ -10,6 +10,8 @@ build.gene(data_frame, display_x_axis = T, x_limits = NULL,
 \arguments{
 \item{data_frame}{an object of class data frame specifying gene feature information}
 
+\item{display_x_axis}{Boolean specifying whether to display X axis coordinate values}
+
 \item{x_limits}{vector specifying x-axis limits of plot}
 
 \item{gene_colour}{character specifying colour of gene to be plotted}
@@ -17,10 +19,6 @@ build.gene(data_frame, display_x_axis = T, x_limits = NULL,
 \item{transcript_name}{Boolean specifying whether to plot USCS transcript names}
 
 \item{transcript_name_size}{Integer specifying the size of the transcript name text}
-
-\item{master_gene}{an object of class data frame specifying the master gene feature information resultant of compression}
-
-\item{display_axis}{Boolean specifying whether to display X axis coordinate values}
 }
 \value{
 ggplot object

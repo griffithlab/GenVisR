@@ -2,7 +2,7 @@
 #' 
 #' given a data frame with cytogenetic band locations subset out specific chromosome
 #' @name subset_chr
-#' @param data_frame a data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value
+#' @param x a data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value
 #' @param chr character string specifying UCSC chromosome to plot one of chr... or all
 #' @return object of class data frame
 

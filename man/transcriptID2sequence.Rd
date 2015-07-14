@@ -9,7 +9,7 @@ transcriptID2sequence(transcriptID, up)
 \arguments{
 \item{transcriptID}{String specifying ensembl transcript ID}
 
-\item{taxId}{integer specifying the uniprot taxonomy id for the species of interest}
+\item{up}{uniprot data object from UniProt.ws}
 }
 \value{
 character vector giving protien sequence

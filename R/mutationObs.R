@@ -4,6 +4,14 @@
 #' @name mutationObs
 #' @param data object of class data frame with columns trv_type and amino acid change
 #' @param track character string specifying one to 'top', 'bottom' to specify proper track
+#' @param fill_value character string giving the name of the column to shade variants on
+#' @param label_column character string specifying column containing text information to be plotted
+#' @param rep.fact repulsive factor for plotted mutations observed track
+#' @param rep.dist.lmt repulsive distance limit for plotted mutations observed track
+#' @param attr.fact attraction factor for plotted mutations observed track
+#' @param adj.max maximum position change for each iteration observed track
+#' @param adj.lmt position adjustment limit which simulation stops observed track
+#' @param iter.max maximum iterations beyond which to stop the simulation observed track
 #' @return object of class data frame giving mutation observations
 
 mutationObs <- function(data, track, fill_value, label_column, rep.fact, rep.dist.lmt, attr.fact, adj.max, adj.lmt, iter.max)
@@ -27,13 +35,8 @@ mutationObs <- function(data, track, fill_value, label_column, rep.fact, rep.dis
   {
     message("Detected p. notation for amino_acid_change")
     mutation_coord <- as.numeric(gsub("p\\.[a-zA-z]*(\\d+).*?$", "\\1", mutation_coord, perl=TRUE))
-  } else if(all(grepl("c\\.", mutation_coord)))
-  {
+  } else if(all(grepl("c\\.", mutation_coord))) {
     stop("C. notation is not currently supported please specify amino acid change in P. notation")
-    message("Detected c. notation for amino_acid_change, converting to p. notation")
-    mutation_coord <- as.numeric(gsub("c\\.[a-zA-z]*(\\d+).*?$", "\\1", mutation_coord, perl=TRUE))
-    fiveUTR_len <- fetchfiveUTRlen(data$transcript_name[1], dataset=ensembl.dataset)
-    mutation_coord <- ceiling((mutation_coord - fiveUTR_len)/3)
   } else {
     stop("Could not determine notation type for amino_acid_change, check input")
   }

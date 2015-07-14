@@ -17,6 +17,8 @@ geneViz(txdb, gr, genome, reduce = FALSE, gene_colour = NULL, base = c(10,
 
 \item{reduce}{Boolean specifying whether to collapse isoforms in the ROI}
 
+\item{gene_colour}{character string specifying the colour of genomic features plotted}
+
 \item{base}{base A vector of log bases to transform the data, corresponding to the elements of transform}
 
 \item{transform}{A vector of strings designating what objects to log transform}

@@ -8,7 +8,7 @@
 #' @param CN_low_colour character string specifying low value of colour gradient 
 #' @param CN_high_colour character string specifying high value of colour gradient
 #' @param x_lab_size integer specifying the size of the X label
-#' @param Y_lab_size integer specifying the size of the Y label
+#' @param y_lab_size integer specifying the size of the Y label
 #' @param facet_lab_size integer specifying the size of the faceted labels
 #' @param layers Additional layers to be plotted, can be a theme but must be a ggplot layer
 #' @return ggplot object
@@ -17,6 +17,8 @@
 
 build.cnSpec <- function(data_frame, plot_title=NULL, background='grey90', CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)
 {
+
+  
   CN_data <- na.omit(data_frame)
   dummy_data <- data_frame
   
@@ -37,8 +39,8 @@ build.cnSpec <- function(data_frame, plot_title=NULL, background='grey90', CN_lo
   }
   
   # Define main plot using boundaries in dummy data and then plot CN data
-  p1 <- ggplot(data=dummy_data, mapping=aes(xmin=start, xmax=end, ymin=0, ymax=1)) + geom_rect(alpha=0) + scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))
-  p1 <- p1 + geom_rect(data=CN_data, mapping=aes(xmin=start, xmax=end, ymin=0, ymax=1, fill=cn))
+  p1 <- ggplot(data=dummy_data, mapping=aes_string(xmin='start', xmax='end', ymin=0, ymax=1)) + geom_rect(alpha=0) + scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))
+  p1 <- p1 + geom_rect(data=CN_data, mapping=aes_string(xmin='start', xmax='end', ymin=0, ymax=1, fill='cn'))
   
   # build the plot
   p1 <- p1 + fill_gradient + ylabel + xlabel + facet + theme + layers
