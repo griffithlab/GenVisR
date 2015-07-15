@@ -13,7 +13,7 @@ mergeRegions(gene_features, gr, base, transform)
 
 \item{transform}{A vector of strings designating what objects to log transform}
 
-\item{txdb}{A TxDb object for a genome}
+\item{geneFeatures}{A dataframe specifying features of a gene}
 }
 \value{
 Master region table data frame

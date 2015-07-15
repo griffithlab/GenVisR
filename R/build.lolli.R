@@ -82,7 +82,7 @@ build.lolli <- function(gene_data, length, mutation_observed, mutation_observed2
   } 
   if(any(colnames(mutation_observed2) %in% "labels")) 
   {
-    mutation_observed2$y_label_offset <- mutation_observed$coord_y_dodge - .06
+    mutation_observed2$y_label_offset <- mutation_observed2$coord_y_dodge - .06
     p1 <- p1 + geom_text(data=mutation_observed2, mapping=aes_string(x='coord_x_dodge', y='y_label_offset', label='labels'), angle=plot_text_angle, size=plot_text_size, vjust=0, hjust=1)
   }
   
