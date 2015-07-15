@@ -7,13 +7,13 @@
 mergeRegions(gene_features, gr, base, transform)
 }
 \arguments{
+\item{gene_features}{A dataframe specifying features of a gene}
+
 \item{gr}{Granges object specifying the ROI}
 
 \item{base}{A vector of log bases to transform the data, corresponding to the elements of transform}
 
 \item{transform}{A vector of strings designating what objects to log transform}
-
-\item{geneFeatures}{A dataframe specifying features of a gene}
 }
 \value{
 Master region table data frame
