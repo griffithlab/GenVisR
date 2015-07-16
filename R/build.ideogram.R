@@ -33,10 +33,10 @@ build.ideogram <- function(data_frame, chromosome, chr_txt_angle=chr_txt_angle, 
   }
   
   # define the chromosome main body plot
-  chr <- ggplot(data_frame, aes_string(xmin='chromStart', xmax='chromEnd', ymin='height_min', ymax='height_max')) + geom_rect(aes_string(fill='gieStain')) + ylim(-1.2, 1.2)
+  chr <- ggplot(data_frame, aes_string(xmin='chromStart', xmax='chromEnd', ymin='height_min', ymax='height_max')) + geom_rect(aes_string(fill='gieStain'), colour='black') + ylim(-1.2, 1.2)
   
   #plot the resulting layers
-  chr <- chr + P_arm_text + Q_arm_text + text_line_seg_p + text_line_seg_q + theme + ylabel + legend + layers
+  chr <- chr + P_arm_text + Q_arm_text + text_line_seg_p + text_line_seg_q + theme_bw() + theme + ylabel + legend + layers
   
   return(chr)
 }

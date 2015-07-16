@@ -31,7 +31,7 @@ build.lolli <- function(gene_data, length, mutation_observed, mutation_observed2
   {
     sequence_data$coord_start <- as.numeric(as.character(sequence_data$coord)) - 1
     sequence_data$coord_end <- as.numeric(as.character(sequence_data$coord))
-    gene_plot <- geom_rect(data=sequence_data, mapping=aes_string(xmin='coord_start', xmax='coord_end', ymin=-1, ymax=1, fill='sidechain'))
+    gene_plot <- geom_rect(data=sequence_data, mapping=aes_string(xmin='coord_start', xmax='coord_end', ymin=-.5, ymax=.5, fill='sidechain'))
     domain_plot <- NULL
   } else {
     gene_plot <- geom_rect(data=gene_data[1,], mapping=aes_string(xmin='pos_from', xmax='pos_to', ymin='height_min', ymax='height_max'), fill='#999999', colour='#000000')
@@ -41,7 +41,7 @@ build.lolli <- function(gene_data, length, mutation_observed, mutation_observed2
   
   # Build the Observed track
   observed_plot <- geom_point(data=mutation_observed, mapping=aes_string(x='coord_x_dodge', y='coord_y_dodge', colour=fill_value), size=point_size)
-  observed_line <- geom_segment(data=mutation_observed, mapping=aes_string(x='mutation_coord', y=1, xend='coord_x_dodge', yend=1.5))
+  observed_line <- geom_segment(data=mutation_observed, mapping=aes_string(x='mutation_coord', y=.5, xend='coord_x_dodge', yend=1.5))
   observed_line_2 <- geom_segment(data=mutation_observed, mapping=aes_string(x='coord_x_dodge', y=1.5, xend='coord_x_dodge', yend='coord_y_dodge'))
   
   # Miscelaneous features
@@ -58,7 +58,7 @@ build.lolli <- function(gene_data, length, mutation_observed, mutation_observed2
   {	
     y_limits <- ylim(c(-1, max(mutation_observed$coord_y_dodge) + 1))
     y_label <- ylab('Observed')
-    p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 + observed_line + observed_plot + x_label + y_label + title + y_limits + theme + guide + layers
+    p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 + observed_line + observed_plot + x_label + y_label + title + y_limits + theme_bw() + theme + guide + layers
   } else {
     y_limits <- ylim(c(min(mutation_observed2$coord_y_dodge) - 1, max(mutation_observed$coord_y_dodge) + 1))
     y_label <- ylab('Observed')
@@ -68,10 +68,10 @@ build.lolli <- function(gene_data, length, mutation_observed, mutation_observed2
     } else {
       observed2_plot <- geom_point(data=mutation_observed2, mapping=aes_string(x='coord_x_dodge', y='coord_y_dodge'), size=point_size)
     }
-    observed2_line <- geom_segment(data=mutation_observed2, mapping=aes_string(x='mutation_coord', y=-1, xend='coord_x_dodge', yend=-1.5))
+    observed2_line <- geom_segment(data=mutation_observed2, mapping=aes_string(x='mutation_coord', y=-.5, xend='coord_x_dodge', yend=-1.5))
     observed2_line_2 <- geom_segment(data=mutation_observed2, mapping=aes_string(x='coord_x_dodge', y=-1.5, xend='coord_x_dodge', yend='coord_y_dodge'))
       
-    p1 <- ggplot() + gene_plot + domain_plot + observed_line + observed_line_2 + observed_plot + observed2_line + observed2_line_2 + observed2_plot + x_label + y_label + title + y_limits + theme + guide + layers
+    p1 <- ggplot() + gene_plot + domain_plot + observed_line + observed_line_2 + observed_plot + observed2_line + observed2_line_2 + observed2_plot + x_label + y_label + title + y_limits + theme_bw() + theme + guide + layers
   }
   
   # If a label column is specified plot labels

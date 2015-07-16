@@ -4,16 +4,14 @@
 \alias{build.cnSpec}
 \title{Construct CN cohort plot}
 \usage{
-build.cnSpec(data_frame, plot_title = NULL, background = "grey90",
-  CN_low_colour = "#002EB8", CN_high_colour = "#A30000", x_lab_size = 12,
-  y_lab_size = 12, facet_lab_size = 10, layers = NULL)
+build.cnSpec(data_frame, plot_title = NULL, CN_low_colour = "#002EB8",
+  CN_high_colour = "#A30000", x_lab_size = 12, y_lab_size = 12,
+  facet_lab_size = 10, layers = NULL)
 }
 \arguments{
 \item{data_frame}{object of class data frame containing columns Chromosome, Start, Stop, CN, Sample}
 
 \item{plot_title}{character string for title of plot}
-
-\item{background}{character string specifying backround color of plot}
 
 \item{CN_low_colour}{character string specifying low value of colour gradient}
 

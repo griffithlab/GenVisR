@@ -5,7 +5,8 @@
 \title{build gene plot}
 \usage{
 build.gene(data_frame, display_x_axis = T, x_limits = NULL,
-  gene_colour = NULL, transcript_name = FALSE, transcript_name_size = 6)
+  gene_colour = NULL, transcript_name = FALSE, transcript_name_size = 4,
+  layers = NULL)
 }
 \arguments{
 \item{data_frame}{an object of class data frame specifying gene feature information}
@@ -19,6 +20,8 @@ build.gene(data_frame, display_x_axis = T, x_limits = NULL,
 \item{transcript_name}{Boolean specifying whether to plot USCS transcript names}
 
 \item{transcript_name_size}{Integer specifying the size of the transcript name text}
+
+\item{layers}{additional ggplot2 layers to plot}
 }
 \value{
 ggplot object

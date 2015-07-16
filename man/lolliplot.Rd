@@ -4,8 +4,8 @@
 \alias{lolliplot}
 \title{Construct Lolliplot from data}
 \usage{
-lolliplot(x, y = NULL, fill_value = NULL, label_column = NULL,
-  plot_text_angle = 45, plot_text_size = 5, point_size = 3,
+lolliplot(x, y = NULL, fillCol = NULL, labelCol = NULL,
+  plot_text_angle = 45, plot_text_size = 5, point_size = 4,
   gene_colour = "#999999", obsA.rep.fact = 5000, obsA.rep.dist.lmt = 500,
   obsA.attr.fact = 0.1, obsA.adj.max = 0.1, obsA.adj.lmt = 0.5,
   obsA.iter.max = 50000, obsB.rep.fact = 5000, obsB.rep.dist.lmt = 500,
@@ -18,13 +18,13 @@ lolliplot(x, y = NULL, fill_value = NULL, label_column = NULL,
 
 \item{y}{object of class data frame containing columns transcript_name, and amino_acid_change and rows denoting mutations}
 
-\item{fill_value}{character string giving the name of the column to shade variants on "required"}
+\item{fillCol}{character string giving the name of the column to shade variants on "required"}
 
-\item{label_column}{character string specifying column containing text information to be plotted, defaults to NULL}
+\item{labelCol}{character string specifying column containing text information to be plotted, defaults to NULL}
 
-\item{plot_text_angle}{integer specifying angle of text to be plotted if label_column is specified}
+\item{plot_text_angle}{integer specifying angle of text to be plotted if labelCol is specified}
 
-\item{plot_text_size}{integer specifying the size of the text plotted if label_column is specified}
+\item{plot_text_size}{integer specifying the size of the text plotted if labelCol is specified}
 
 \item{point_size}{integer specifying the size of points plotted}
 

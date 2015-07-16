@@ -57,7 +57,7 @@ build.cnView.main <- function(x, y, z=NULL, chr, cnDiff=FALSE, layers=NULL)
   }
   
   # build the plot
-  p1 <- ggplot() + cnpoints + shade_cn + ylabel + xlabel + theme + cnseg + dummy_data + layers
+  p1 <- ggplot() + cnpoints + shade_cn + ylabel + xlabel + theme_bw() + theme + cnseg + dummy_data + layers
   
   if(chr == 'all')
   {

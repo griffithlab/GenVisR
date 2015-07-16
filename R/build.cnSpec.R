@@ -4,7 +4,6 @@
 #' @name build.cnSpec
 #' @param data_frame object of class data frame containing columns Chromosome, Start, Stop, CN, Sample
 #' @param plot_title character string for title of plot
-#' @param background character string specifying backround color of plot
 #' @param CN_low_colour character string specifying low value of colour gradient 
 #' @param CN_high_colour character string specifying high value of colour gradient
 #' @param x_lab_size integer specifying the size of the X label
@@ -15,7 +14,7 @@
 #' @import scales
 #' @import ggplot2
 
-build.cnSpec <- function(data_frame, plot_title=NULL, background='grey90', CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)
+build.cnSpec <- function(data_frame, plot_title=NULL, CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)
 {
 
   
@@ -23,11 +22,11 @@ build.cnSpec <- function(data_frame, plot_title=NULL, background='grey90', CN_lo
   dummy_data <- data_frame
   
   # Define Theme of plot
-  theme <- theme(strip.text.y=element_text(angle=0, size=facet_lab_size), strip.text.x=element_text(size=facet_lab_size), axis.text.y=element_blank(), axis.ticks.y=element_blank(), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), panel.background=element_rect(fill=background), legend.position='right', axis.title.x=element_text(size=x_lab_size, face='bold'), axis.title.y=element_text(size=y_lab_size, face='bold'))
+  theme <- theme(strip.text.y=element_text(angle=0, size=facet_lab_size), strip.text.x=element_text(size=facet_lab_size), axis.text.y=element_blank(), axis.ticks.y=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), legend.position='right', axis.title.x=element_text(size=x_lab_size, face='bold'), axis.title.y=element_text(size=y_lab_size, face='bold'))
   
   # Define parameters of plot
   facet <- facet_grid(sample ~ chromosome, scales='free', space='free')
-  fill_gradient <- scale_fill_gradientn(colours=c(CN_low_colour, background, CN_high_colour), values=rescale(c(0, 2, 4)), limits=c(0, 4), oob=squish)
+  fill_gradient <- scale_fill_gradientn(colours=c(CN_low_colour, 'white', CN_high_colour), values=rescale(c(0, 2, 4)), limits=c(0, 4), oob=squish)
   ylabel <- ylab('Sample')
   xlabel <- xlab('Chromosome')
   title <- ggtitle(plot_title)
@@ -43,7 +42,7 @@ build.cnSpec <- function(data_frame, plot_title=NULL, background='grey90', CN_lo
   p1 <- p1 + geom_rect(data=CN_data, mapping=aes_string(xmin='start', xmax='end', ymin=0, ymax=1, fill='cn'))
   
   # build the plot
-  p1 <- p1 + fill_gradient + ylabel + xlabel + facet + theme + layers
+  p1 <- p1 + fill_gradient + ylabel + xlabel + facet + theme_bw() + theme + layers
   
   # if title is supplied plot it
   if(!is.null(plot_title))

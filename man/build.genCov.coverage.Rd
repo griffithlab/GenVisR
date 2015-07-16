@@ -16,7 +16,7 @@ build.genCov.coverage(data_frame, x_limits = NULL, display_x_axis = TRUE,
 
 \item{colour}{character string specifying the color of the data in the plot}
 
-\item{plot_type}{character string specifying one of line, area for data display}
+\item{plot_type}{character string specifying one of line, area, bar for data display}
 
 \item{layers}{additional ggplot2 layers to plot}
 }

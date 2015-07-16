@@ -5,11 +5,12 @@
 \title{produce a coverage plot}
 \usage{
 genCov(x, txdb, gr, genome, reduce = F, gene.colour = NULL,
-  gene_name = "Gene", label.bg_fill = "black", label.text_fill = "white",
-  label.border = "black", label.size = 10, label.width_ratio = c(1, 10),
-  cov.colour = "blue", cov.plot_type = "line", cov.layers = NULL,
-  base = c(10, 2, 2), transform = c("Intron", "CDS", "UTR"),
-  gene.plot_transcript_name = TRUE, gene.transcript_name_size = 6)
+  gene_name = "Gene", gene.layers = NULL, label.bg_fill = "black",
+  label.text_fill = "white", label.border = "black", label.size = 10,
+  label.width_ratio = c(1, 10), cov.colour = "blue",
+  cov.plot_type = "line", cov.layers = NULL, base = c(10, 2, 2),
+  transform = c("Intron", "CDS", "UTR"), gene.plot_transcript_name = TRUE,
+  gene.transcript_name_size = 4)
 }
 \arguments{
 \item{x}{named list containing data frames with columns end and cov}
@@ -26,6 +27,8 @@ genCov(x, txdb, gr, genome, reduce = F, gene.colour = NULL,
 
 \item{gene_name}{character string specifying the name of the gene or ROI}
 
+\item{gene.layers}{additional ggplot2 layers for the gene plot}
+
 \item{label.bg_fill}{character string giving the colour to fill the label}
 
 \item{label.text_fill}{character string giving the colour to fill the text}
@@ -38,7 +41,7 @@ genCov(x, txdb, gr, genome, reduce = F, gene.colour = NULL,
 
 \item{cov.colour}{character string specifying the color of the data in the coverage plot}
 
-\item{cov.plot_type}{character string specifying one of line, area for coverage data display}
+\item{cov.plot_type}{character string specifying one of line, area or bar for coverage data display}
 
 \item{cov.layers}{additional ggplot2 layers for the coverage plot}
 
