@@ -6,7 +6,7 @@
 \usage{
 geneViz(txdb, gr, genome, reduce = FALSE, gene_colour = NULL, base = c(10,
   2, 2), transform = c("Intron", "CDS", "UTR"), plot_transcript_name = TRUE,
-  transcript_name_size = 6)
+  transcript_name_size = 4, layers = NULL)
 }
 \arguments{
 \item{txdb}{A TxDb object for a genome}
@@ -26,6 +26,8 @@ geneViz(txdb, gr, genome, reduce = FALSE, gene_colour = NULL, base = c(10,
 \item{plot_transcript_name}{Boolean specifying whether to plot the transcript name}
 
 \item{transcript_name_size}{Integer specifying the size of the transcript name text}
+
+\item{layers}{additional ggplot2 layers to plot}
 }
 \value{
 ggplot object

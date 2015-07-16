@@ -1,24 +1,24 @@
-#' plot with named tracka
+#' plot with named tracks
 #' 
-#' given a named list of plots, plot them on tracks
+#' given a named list of plots, display them on tracks
 #' @name trackViz
-#' @param ... named list of plots 
-#' @param bg_fill character string giving the colour to fill the label
-#' @param text_fill character string giving the colour to fill the text
+#' @param ... named list of ggplot2 plots 
+#' @param bgFill character string giving the colour to fill the label
+#' @param textFill character string giving the colour to fill the text
 #' @param border character string specifying the colour to fill the border of the label
 #' @param size integer specifying the size of the text within the label
 #' @param axis_align character string specifying axis to align plotting space on, one of 'both', 'height', 'width', 'none'
-#' @param width_ratio vector of length 2 giving the ratio of track labels to plot
-#' @param nested_list boolean specifying whether plots are in a named list nested in another list
+#' @param widthRatio vector of length 2 giving the ratio of track labels to plots
+#' @param list boolean specifying whether plots are in a named list or specified individually via ...
 #' @return ggplotGrob object
 #' @import gridExtra
 #' @import ggplot2
 #' @export
 
-trackViz <- function(..., bg_fill="black", text_fill="white", border="black", size=10, axis_align='none', width_ratio=c(1, 10), nested_list=F)
+trackViz <- function(..., bgFill="black", textFill="white", border="black", size=10, axis_align='none', widthRatio=c(1, 10), list=T)
 {
   # Grab all the tracks/data to be plotted as a named list, check and correct if list is within a list
-  if(nested_list==T)
+  if(list==T)
   {
     data <- list(...)
     data <- data[[1]]
@@ -27,14 +27,14 @@ trackViz <- function(..., bg_fill="black", text_fill="white", border="black", si
   }
   
   # Build Track labels and store as a list containing grob objects, then convert to a single grob
-  labels <- lapply(names(data), build_track_name, bg_fill=bg_fill, text_fill=text_fill, border=border, size=size)
+  labels <- lapply(names(data), build_track_name, bg_fill=bgFill, text_fill=textFill, border=border, size=size)
   label_plot <- do.call(arrangeGrob, lapply(labels, ggplotGrob))
   
   # Convert the plots corresponding to track labels to a single grob
   data_plot <- align_plot(data, axis=axis_align)
   
   # arrange the label and data plot 
-  p1 <- grid.arrange(label_plot, data_plot, ncol=2, widths=width_ratio)
+  p1 <- grid.arrange(label_plot, data_plot, ncol=2, widths=widthRatio)
   
   return(p1)
 }

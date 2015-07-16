@@ -11,6 +11,7 @@
 #' @param plot_transcript_name Boolean specifying whether to plot the transcript name
 #' @param transcript_name_size Integer specifying the size of the transcript name text
 #' @param gene_colour character string specifying the colour of genomic features plotted
+#' @param layers additional ggplot2 layers to plot
 #' @return ggplot object
 #' @export
 #' @import GenomicRanges
@@ -18,7 +19,7 @@
 #' @import GenomicFeatures
 #' @importFrom "IRanges" IRanges
 
-geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'), plot_transcript_name=TRUE, transcript_name_size=6){
+geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'), plot_transcript_name=TRUE, transcript_name_size=4, layers=NULL){
 
   # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
   cds <- formatCDS(txdb, gr, genome=genome, reduce=reduce)
@@ -111,10 +112,10 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,
   # construct the gene in gplot
   if(reduce == TRUE || plot_transcript_name == FALSE)
   {
-    gene_plot <- build.gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour, transcript_name=FALSE)
+    gene_plot <- build.gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour, transcript_name=FALSE, layers=layers)
   } else if(reduce == FALSE && plot_transcript_name == TRUE)
   {
-    gene_plot <- build.gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour, transcript_name=TRUE, transcript_name_size=transcript_name_size)
+    gene_plot <- build.gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour, transcript_name=TRUE, transcript_name_size=transcript_name_size, layers=layers)
   }
   
   out <- list('plot' = gene_plot, 'features' = gene_features, 'master' = master)

@@ -4,10 +4,10 @@
 #' @name lolliplot
 #' @param x object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations
 #' @param y object of class data frame containing columns transcript_name, and amino_acid_change and rows denoting mutations
-#' @param fill_value character string giving the name of the column to shade variants on "required"
-#' @param label_column character string specifying column containing text information to be plotted, defaults to NULL
-#' @param plot_text_angle integer specifying angle of text to be plotted if label_column is specified
-#' @param plot_text_size integer specifying the size of the text plotted if label_column is specified
+#' @param fillCol character string giving the name of the column to shade variants on "required"
+#' @param labelCol character string specifying column containing text information to be plotted, defaults to NULL
+#' @param plot_text_angle integer specifying angle of text to be plotted if labelCol is specified
+#' @param plot_text_size integer specifying the size of the text plotted if labelCol is specified
 #' @param point_size integer specifying the size of points plotted
 #' @param gene_colour color specifying the background fill of the plotted gene
 #' @param obsA.rep.fact repulsive factor for plotted mutations observed track
@@ -30,7 +30,7 @@
 #' @import UniProt.ws
 #' @import RCurl
 
-lolliplot <- function(x, y=NULL, fill_value=NULL, label_column=NULL, plot_text_angle=45, plot_text_size=5, point_size=3, gene_colour='#999999', obsA.rep.fact=5000, obsA.rep.dist.lmt=500, obsA.attr.fact=.1, obsA.adj.max=.1, obsA.adj.lmt=.5, obsA.iter.max=50000, obsB.rep.fact=5000, obsB.rep.dist.lmt=500, obsB.attr.fact=.1, obsB.adj.max=.1, obsB.adj.lmt=.5, obsB.iter.max=50000, plot_sidechain=FALSE, taxId=9606, layers=NULL)
+lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL, plot_text_angle=45, plot_text_size=5, point_size=4, gene_colour='#999999', obsA.rep.fact=5000, obsA.rep.dist.lmt=500, obsA.attr.fact=.1, obsA.adj.max=.1, obsA.adj.lmt=.5, obsA.iter.max=50000, obsB.rep.fact=5000, obsB.rep.dist.lmt=500, obsB.attr.fact=.1, obsB.adj.max=.1, obsB.adj.lmt=.5, obsB.iter.max=50000, plot_sidechain=FALSE, taxId=9606, layers=NULL)
 {  
   # Perform quality check
   input <- lolliplot.qual(x, y)
@@ -72,18 +72,18 @@ lolliplot <- function(x, y=NULL, fill_value=NULL, label_column=NULL, plot_text_a
   geneData <- construct_gene(gene, protien_domain, length)
   
   # construct data frame of observed mutations for top track
-  observed_mutation <- mutationObs(x, 'top', fill_value, label_column, obsA.rep.fact, obsA.rep.dist.lmt, obsA.attr.fact, obsA.adj.max, obsA.adj.lmt, obsA.iter.max)
+  observed_mutation <- mutationObs(x, 'top', fillCol, labelCol, obsA.rep.fact, obsA.rep.dist.lmt, obsA.attr.fact, obsA.adj.max, obsA.adj.lmt, obsA.iter.max)
   
   # construct data frame of observed mutations for bottom track
   if(!is.null(y))
   {
-    observed_mutation2 <- mutationObs(y, 'bottom', fill_value, label_column, obsB.rep.fact, obsB.rep.dist.lmt, obsB.attr.fact, obsB.adj.max, obsB.adj.lmt, obsB.iter.max)
+    observed_mutation2 <- mutationObs(y, 'bottom', fillCol, labelCol, obsB.rep.fact, obsB.rep.dist.lmt, obsB.attr.fact, obsB.adj.max, obsB.adj.lmt, obsB.iter.max)
   } else {
     observed_mutation2 <- NULL
   }
   
   # construct the lolliplot
-  plot <- build.lolli(geneData, length, observed_mutation, observed_mutation2, fill_value, label_column, plot_text_angle, plot_text_size, point_size, gene_colour, AAsequence, plot_sidechain=plot_sidechain, layers=layers)
+  plot <- build.lolli(geneData, length, observed_mutation, observed_mutation2, fillCol, labelCol, plot_text_angle, plot_text_size, point_size, gene_colour, AAsequence, plot_sidechain=plot_sidechain, layers=layers)
   
   return(plot)
 }

@@ -8,6 +8,7 @@
 #' @param genome Object of class BSgenome specifying the genome
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
 #' @param gene.colour character string specifying the colour of the gene to be plotted
+#' @param gene.layers additional ggplot2 layers for the gene plot
 #' @param gene_name character string specifying the name of the gene or ROI
 #' @param label.bg_fill character string giving the colour to fill the label
 #' @param label.text_fill character string giving the colour to fill the text
@@ -15,7 +16,7 @@
 #' @param label.size integer specifying the size of the text within the label
 #' @param label.width_ratio vector of length 2 giving the ratio of track labels to plot
 #' @param cov.colour character string specifying the color of the data in the coverage plot
-#' @param cov.plot_type character string specifying one of line, area for coverage data display
+#' @param cov.plot_type character string specifying one of line, area or bar for coverage data display
 #' @param cov.layers additional ggplot2 layers for the coverage plot
 #' @param base A vector of log bases to transform the data, corresponding to the elements of transform 
 #' @param transform A vector of strings designating what objects to log transform
@@ -26,10 +27,10 @@
 #' @import GenomicRanges
 #' @import plyr
 
-genCov <- function(x, txdb, gr, genome, reduce=F, gene.colour=NULL, gene_name='Gene', label.bg_fill="black", 
+genCov <- function(x, txdb, gr, genome, reduce=F, gene.colour=NULL, gene_name='Gene', gene.layers=NULL, label.bg_fill="black", 
                           label.text_fill="white", label.border="black", label.size=10, label.width_ratio=c(1, 10), cov.colour="blue",
                           cov.plot_type="line", cov.layers=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'),
-                          gene.plot_transcript_name=TRUE, gene.transcript_name_size=6){
+                          gene.plot_transcript_name=TRUE, gene.transcript_name_size=4){
   
   # Perform data quality checks
   data <- genCov.qual(x, txdb, gr, genome)
@@ -41,7 +42,7 @@ genCov <- function(x, txdb, gr, genome, reduce=F, gene.colour=NULL, gene_name='G
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
   gp_result <- geneViz(txdb, gr, genome, reduce=reduce, gene_colour=gene.colour,
                     base=base, transform=transform, transcript_name_size=gene.transcript_name_size,
-                    plot_transcript_name=gene.plot_transcript_name)
+                    plot_transcript_name=gene.plot_transcript_name, layers=gene.layers)
   gene <- gp_result$plot
   gene_list <- list()
   gene_list[[gene_name]] <- gene
@@ -101,8 +102,8 @@ genCov <- function(x, txdb, gr, genome, reduce=F, gene.colour=NULL, gene_name='G
   merged_data <- c(gene_list, coverage_plot)
   
   # Plot the data on a track
-  track_coverage_plot <- trackViz(merged_data, gene_name=gene_name, bg_fill=label.bg_fill, text_fill=label.text_fill,
-                                    border=label.border, size=label.size, axis_align='width', width_ratio=label.width_ratio, nested_list=T)
+  track_coverage_plot <- trackViz(merged_data, gene_name=gene_name, bgFill=label.bg_fill, textFill=label.text_fill,
+                                    border=label.border, size=label.size, axis_align='width', widthRatio=label.width_ratio, list=T)
   
   return(track_coverage_plot)
 }

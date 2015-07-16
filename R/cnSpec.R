@@ -6,7 +6,6 @@
 #' @param y object of class data frame containing columns chromosome start end
 #' @param genome character string specifying UCSC genome from which data is derived
 #' @param plot_title character string for title of plot
-#' @param background character string specifying backround color of plot
 #' @param CN_low_colour character string specifying low value of colour gradient 
 #' @param CN_high_colour character string specifying high value of colour gradient
 #' @param x_lab_size integer specifying the size of the x label
@@ -19,7 +18,7 @@
 #' @import reshape2
 #' @import gtools
 
-cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL, background='grey90', CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)
+cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL, CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)
 {
   # Perform quality check on input data
   data <- cnSpec.qual(x, y, genome)
@@ -76,7 +75,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL, background='grey90
   CN_data$sample <- factor(CN_data$sample, levels=sample_sorted)
   
   # Construct the plot
-  p1 <- build.cnSpec(CN_data, plot_title=plot_title, background=background, CN_low_colour=CN_low_colour, CN_high_colour=CN_high_colour, x_lab_size=x_lab_size, y_lab_size=y_lab_size, facet_lab_size=facet_lab_size, layers=layers)
+  p1 <- build.cnSpec(CN_data, plot_title=plot_title, CN_low_colour=CN_low_colour, CN_high_colour=CN_high_colour, x_lab_size=x_lab_size, y_lab_size=y_lab_size, facet_lab_size=facet_lab_size, layers=layers)
   
   return(p1)
 }

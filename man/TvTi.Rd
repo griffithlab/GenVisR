@@ -5,8 +5,8 @@
 \title{plot transitions/transversions}
 \usage{
 TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
-  x_axis_text_angle = 45, palette = c("#1b9e77", "#d95f02", "#7570b3",
-  "#e7298a", "#66a61e", "#e6ab02"), file_type = "MAF", layers = NULL)
+  x_axis_text_angle = 45, palette = c("#2A2650", "#95fE52", "#F9C59B",
+  "#0F722C", "#D7C7E9", "#FFB93F"), file_type = "MAF", layers = NULL)
 }
 \arguments{
 \item{x}{Object of class data frame containing columns 'sample', reference', 'variant'}

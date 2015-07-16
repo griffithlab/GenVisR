@@ -2,18 +2,17 @@
 % Please edit documentation in R/trackViz.R
 \name{trackViz}
 \alias{trackViz}
-\title{plot with named tracka}
+\title{plot with named tracks}
 \usage{
-trackViz(..., bg_fill = "black", text_fill = "white", border = "black",
-  size = 10, axis_align = "none", width_ratio = c(1, 10),
-  nested_list = F)
+trackViz(..., bgFill = "black", textFill = "white", border = "black",
+  size = 10, axis_align = "none", widthRatio = c(1, 10), list = T)
 }
 \arguments{
-\item{...}{named list of plots}
+\item{...}{named list of ggplot2 plots}
 
-\item{bg_fill}{character string giving the colour to fill the label}
+\item{bgFill}{character string giving the colour to fill the label}
 
-\item{text_fill}{character string giving the colour to fill the text}
+\item{textFill}{character string giving the colour to fill the text}
 
 \item{border}{character string specifying the colour to fill the border of the label}
 
@@ -21,14 +20,14 @@ trackViz(..., bg_fill = "black", text_fill = "white", border = "black",
 
 \item{axis_align}{character string specifying axis to align plotting space on, one of 'both', 'height', 'width', 'none'}
 
-\item{width_ratio}{vector of length 2 giving the ratio of track labels to plot}
+\item{widthRatio}{vector of length 2 giving the ratio of track labels to plots}
 
-\item{nested_list}{boolean specifying whether plots are in a named list nested in another list}
+\item{list}{boolean specifying whether plots are in a named list or specified individually via ...}
 }
 \value{
 ggplotGrob object
 }
 \description{
-given a named list of plots, plot them on tracks
+given a named list of plots, display them on tracks
 }
 

@@ -20,7 +20,7 @@ build.TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_t
   {
     # cumulativley sum the expected values and plot
     y$cumsum <- cumsum(y$Prop)
-    expected <- geom_hline(data=y, mapping=aes_string(yintercept='cumsum'), linetype="longdash", size=1)
+    expected <- geom_hline(data=y, mapping=aes_string(yintercept='cumsum'), linetype="longdash", size=.5)
   } else {
     expected <- geom_blank()
   }
@@ -57,7 +57,7 @@ build.TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_t
   
   
   # Define plot
-  p1 <- ggplot() + bar + xlabel + ylabel + theme + fill_palette + expected +guides(fill=guide_legend(reverse=TRUE)) + layers
+  p1 <- ggplot() + bar + xlabel + ylabel + theme_bw() + theme + fill_palette + expected +guides(fill=guide_legend(reverse=TRUE)) + layers
   
   return(p1)
 }

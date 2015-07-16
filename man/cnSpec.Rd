@@ -5,9 +5,8 @@
 \title{Construct CN cohort plot}
 \usage{
 cnSpec(x, y = NULL, genome = "hg19", plot_title = NULL,
-  background = "grey90", CN_low_colour = "#002EB8",
-  CN_high_colour = "#A30000", x_lab_size = 12, y_lab_size = 12,
-  facet_lab_size = 10, layers = NULL)
+  CN_low_colour = "#002EB8", CN_high_colour = "#A30000", x_lab_size = 12,
+  y_lab_size = 12, facet_lab_size = 10, layers = NULL)
 }
 \arguments{
 \item{x}{object of class data frame containing columns chromosome, start, end, segmean, sample}
@@ -17,8 +16,6 @@ cnSpec(x, y = NULL, genome = "hg19", plot_title = NULL,
 \item{genome}{character string specifying UCSC genome from which data is derived}
 
 \item{plot_title}{character string for title of plot}
-
-\item{background}{character string specifying backround color of plot}
 
 \item{CN_low_colour}{character string specifying low value of colour gradient}
 

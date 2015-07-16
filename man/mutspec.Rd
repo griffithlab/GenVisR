@@ -8,7 +8,7 @@
 mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
   clin.var.order = NULL, mutBurden = NULL, main.recurrence_cutoff = 0,
   main.grid = TRUE, main.label_x = FALSE, title = "",
-  main.gene_label_size = 8, coverage_space = 44100000, file_type = "MAF",
+  main.gene_label_size = 8, coverageSpace = 44100000, file_type = "MAF",
   main.genes = NULL, drop_mutation = FALSE, rmv_silent = FALSE,
   main.label_col = NULL, main.plot_label_size = 4, main.palette = NULL,
   sampRecur.layers = NULL, clin.layers = NULL, main.layers = NULL,
@@ -37,7 +37,7 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
 
 \item{main.gene_label_size}{an integer specifying the size of labels on Y axis}
 
-\item{coverage_space}{an integer specifying the size in bp of the genome covered from which mutations could be called}
+\item{coverageSpace}{an integer specifying the size in bp of the genome covered from which mutations could be called}
 
 \item{file_type}{a character string specifying the file format of the data frame, one of "MGI", "MAF"}
 

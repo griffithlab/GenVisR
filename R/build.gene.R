@@ -8,10 +8,11 @@
 #' @param gene_colour character specifying colour of gene to be plotted
 #' @param transcript_name Boolean specifying whether to plot USCS transcript names
 #' @param transcript_name_size Integer specifying the size of the transcript name text
+#' @param layers additional ggplot2 layers to plot
 #' @return ggplot object
 #' @import ggplot2
 
-build.gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=NULL, transcript_name=FALSE, transcript_name_size=6)
+build.gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=NULL, transcript_name=FALSE, transcript_name_size=4, layers=NULL)
 { 
 
   
@@ -50,9 +51,16 @@ build.gene <- function(data_frame, display_x_axis=T, x_limits=NULL, gene_colour=
     theme <- theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(), legend.position='top')
   }
   
+  if(is.null(layers))
+  {
+    layers <- geom_blank()
+  } else {
+    layers <- layers
+  }
+  
   # Define the main plot
   
-  gene_plot <- ggplot() + gene_track + gene_features + theme + xlimits + transcript_name
+  gene_plot <- ggplot() + gene_track + gene_features + theme_bw() + theme + xlimits + transcript_name + layers
   
   return(gene_plot)
 }

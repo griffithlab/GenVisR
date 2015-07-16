@@ -65,6 +65,6 @@ extrCDS <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
     return(gr)
   }
   cds <- mapply(f3, cds[keys], txnames[keys], SIMPLIFY=F)
-  
+
   return(cds)
 }
