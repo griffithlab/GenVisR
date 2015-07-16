@@ -195,6 +195,24 @@ cnView(Luc2CNraw, z=CNseg, chr='chr14', genome='hg19')
 
 cnView obtains ideogram information either via a preloaded genome or the UCSC sql database if it is available. In the interest of flexibility the user also has the option of specifying cytogenetic information to the argument `y`. This input should take the form of a data frame with column names "chrom", "chromStart", "chromEnd", "name", "gieStain". This format mirrors what is retrievable via the afore mentioned database.
 
+## covBars
+
+covBars produces a plot displaying sequencing coverage at a cohort level. Basic input consists of a matrix with representing samples, rows denoting sequencing depth, and elements of the matrix representing the number of bases.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=TRUE, warning=FALSE, results='asis'}
+# Example input to x
+set.seed(123)
+x <- matrix(sample(100000,500), nrow=50, ncol=10, dimnames=list(0:49,paste0("Sample",1:10)))
+
+covBars(x)
+```
+
+By default a rainbow color scheme from red to violet is used. An alternate vector of colors can be supplied.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
+covBars(x, col=c("blue","grey","red"))
+```
+
 ## ideoView
 The user has the ability to plot an ideogram representative of the chromosome of interest. Basic input consists of a data frame with column names: "chrom", "chromStart", "chromEnd", "name", "gieStain" mirroring the format retrievable from the UCSC sql database, and a chromosome for which to display. Here we use the preloaded genome hg38.
 
