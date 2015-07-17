@@ -213,6 +213,27 @@ By default a rainbow color scheme from red to violet is used. An alternate vecto
 covBars(x, col=c("blue","grey","red"))
 ```
 
+## cnFreq
+
+cnFreq produces a plot displaying the proportion (default) or frequency of copy number losses/gains at a cohort level. Basic input consists of a data frame with rows representing the proportion of CN losses/gains across the genome (default), or actual CN values.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=TRUE, warning=FALSE, results='asis'}
+# Example input to x
+set.seed(123)
+xstart <- seq(0,4990000,length.out=500)
+xloss <- rep(runif(10,0,0.6),rep(50,10))/1.5
+xloss <- xloss + jitter(xloss,amount=0.002)
+x <- data.frame(chromosome=rep(paste0("chr",1:5),rep(500,5)), start=xstart, end=xstart+10000, loss=xloss, gain=(1-xloss))
+
+cnFreq(x)
+```
+
+An alternate long data frame format with actual copy number values may be used. The default cutoffs for loss and gain are 1.5 and 2.5 respectively.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
+cnFreq(LucCNseg)
+```
+
 ## ideoView
 The user has the ability to plot an ideogram representative of the chromosome of interest. Basic input consists of a data frame with column names: "chrom", "chromStart", "chromEnd", "name", "gieStain" mirroring the format retrievable from the UCSC sql database, and a chromosome for which to display. Here we use the preloaded genome hg38.
 
