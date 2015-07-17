@@ -11,6 +11,9 @@ covBars.qual(x, col)
 
 \item{col}{vector of colors for the coverage bars}
 }
+\value{
+a list of data frame and color vector
+}
 \description{
 given a matrix construct a plot to display coverage as percentage bars for a group of samples
 }

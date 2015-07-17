@@ -11,6 +11,18 @@ covBars(x, col = NULL, plot_title = NULL, background = "grey90",
 \item{x}{object of class data frame containing rows for the coverage and columns the sample names}
 
 \item{col}{vector of colors for the coverage bars}
+
+\item{plot_title}{character string for title of plot}
+
+\item{background}{character string specifying backround color of plot}
+
+\item{x_lab_size}{integer specifying the size of the X label}
+
+\item{y_lab_size}{integer specifying the size of the Y label}
+
+\item{facet_lab_size}{integer specifying the size of the faceted labels}
+
+\item{layers}{Additional layers to be plotted, can be a theme but must be a ggplot layer}
 }
 \value{
 ggplot object
