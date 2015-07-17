@@ -4,6 +4,7 @@
 #' @name covBars.qual
 #' @param x object of class matrix containing rows for the coverage and columns the sample names
 #' @param col vector of colors for the coverage bars
+#' @return a list of data frame and color vector
 
 covBars.qual <- function(x, col)
 {

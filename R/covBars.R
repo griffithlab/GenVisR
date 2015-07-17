@@ -4,7 +4,14 @@
 #' @name covBars
 #' @param x object of class data frame containing rows for the coverage and columns the sample names
 #' @param col vector of colors for the coverage bars
+#' @param plot_title character string for title of plot
+#' @param background character string specifying backround color of plot
+#' @param x_lab_size integer specifying the size of the X label
+#' @param y_lab_size integer specifying the size of the Y label
+#' @param facet_lab_size integer specifying the size of the faceted labels
+#' @param layers Additional layers to be plotted, can be a theme but must be a ggplot layer
 #' @return ggplot object
+#' @export
 #' @import ggplot2
 #' @import reshape2
 #' @export
