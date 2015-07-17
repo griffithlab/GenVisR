@@ -4,7 +4,7 @@
 \alias{build.gene}
 \title{build gene plot}
 \usage{
-build.gene(data_frame, display_x_axis = T, x_limits = NULL,
+build.gene(data_frame, display_x_axis = TRUE, x_limits = NULL,
   gene_colour = NULL, transcript_name = FALSE, transcript_name_size = 4,
   layers = NULL)
 }

@@ -69,4 +69,7 @@ a grob for plotting
 \description{
 Plot a mutation landscape plot for a cohort in an annotation file
 }
+\examples{
+mutSpec(brcaMAF)
+}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/trackViz.R
 \name{trackViz}
 \alias{trackViz}
-\title{plot with named tracks}
+\title{Overlay tracks with plots}
 \usage{
 trackViz(..., bgFill = "black", textFill = "white", border = "black",
   size = 10, axis_align = "none", widthRatio = c(1, 10), list = T)
@@ -29,5 +29,17 @@ ggplotGrob object
 }
 \description{
 given a named list of plots, display them on tracks
+}
+\examples{
+# Obtain cytogenetic information for the genome of interest
+data <- cytoGeno[cytoGeno$genome == 'hg38',]
+
+chr1 <- ideoView(data, chromosome='chr1', chr_txt_size=4)
+chr2 <- ideoView(data, chromosome='chr2', chr_txt_size=4)
+chr3 <- ideoView(data, chromosome='chr3', chr_txt_size=4)
+
+data <- list("CHR1" = chr1, "CHR2" = chr2, "CHR3" = chr3)
+
+trackViz(data, list=TRUE)
 }
 

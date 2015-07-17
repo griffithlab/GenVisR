@@ -23,7 +23,6 @@ Intuitively visualizing and interpreting data from high-throughput genomic techn
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Load GenVisR and set seed
 library(GenVisR)
-set.seed(426)
 
 # Plot the mutation landscape
 mutSpec(brcaMAF)
@@ -206,7 +205,6 @@ covBars produces a plot displaying sequencing coverage at a cohort level. Basic 
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=TRUE, warning=FALSE, results='asis'}
 # Example input to x
-set.seed(123)
 x <- matrix(sample(100000,500), nrow=50, ncol=10, dimnames=list(0:49,paste0("Sample",1:10)))
 
 covBars(x)
@@ -273,9 +271,13 @@ mutSpec(brcaMAF)
 dev.off()
 ```
 
-For the majority of plots there is a layer parameter, this allows the user to specify additional ggplot2 layers.
+For the majority of plots there is a layer parameter, this allows the user to specify additional ggplot2 layers. Using this parameter one could perform a variety of tasks including modifying the theme to control label text size, adding titles to plots, etc.
 
+## Session Info
 
+```{r}
+sessionInfo()
+```
 
 
 

@@ -2,30 +2,30 @@
 % Please edit documentation in R/cnView.R
 \name{cnView}
 \alias{cnView}
-\title{plot CN values}
+\title{plot raw copy number calls for a sample}
 \usage{
 cnView(x, y = NULL, z = NULL, genome = "hg19", chr = "chr1",
   main.cnDiff = FALSE, ideo.chr_txt_angle = 45, ideo.chr_txt_size = 5,
   main.layers = NULL, ideo.layers = NULL)
 }
 \arguments{
-\item{x}{a data frame with columns chromosome, coordinate, cn, p_value}
+\item{x}{object of class data frame with columns "chromosome", "coordinate", "cn", "p_value" consisting of raw cn calls from a single sample}
 
-\item{y}{an optional data frame with columns "chrom", "chromStart", "chromEnd", "name", "gieStain" for plotting the ideogram}
+\item{y}{object of class data frame with columns "chrom", "chromStart", "chromEnd", "name", "gieStain" for plotting the ideogram (optional)}
 
-\item{z}{a data frame with columns "chromosome", "start", "end", "segmean" for plotting segment calls}
+\item{z}{object of class data frame with columns "chromosome", "start", "end", "segmean" consisting of cn segment calls (optional)}
 
-\item{genome}{character string specifying UCSC genome to use, uneccessary if y is supplied}
+\item{genome}{character string specifying UCSC genome to use, uneccessary if y is supplied, defaults to "hg19"}
 
-\item{chr}{character string specifying UCSC chromosome to plot one of chr... or all}
+\item{chr}{character string specifying UCSC chromosome to plot one of "chr..." or "all"}
 
-\item{main.cnDiff}{Boolean specifying whether values in cn are copy number differences or actual copy number}
+\item{main.cnDiff}{Boolean specifying whether values in cn are copy number differences or actual copy numbers}
 
-\item{ideo.chr_txt_angle}{integer specifying angle of text when plotting band text}
+\item{ideo.chr_txt_angle}{integer specifying angle of text when plotting chromosome band text}
 
-\item{ideo.chr_txt_size}{integer specifying size of text when plotting band text}
+\item{ideo.chr_txt_size}{integer specifying size of text when plotting chromosome band text}
 
-\item{main.layers}{additional ggplot2 layers for the main plot}
+\item{main.layers}{additional ggplot2 layers for the main cn plot}
 
 \item{ideo.layers}{additional ggplot2 layers for the ideogram}
 }
@@ -33,6 +33,9 @@ cnView(x, y = NULL, z = NULL, genome = "hg19", chr = "chr1",
 ggplot object
 }
 \description{
-given data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value plot CN
+given data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value plot raw copy number calls
+}
+\examples{
+cnView(Luc2CNraw, chr='chr14', genome='hg19', ideo.chr_txt_size=4)
 }
 

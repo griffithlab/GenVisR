@@ -14,13 +14,13 @@ lolliplot(x, y = NULL, fillCol = NULL, labelCol = NULL,
   layers = NULL)
 }
 \arguments{
-\item{x}{object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations}
+\item{x}{object of class data frame containing column names "transcript_name", "gene", and "amino_acid_change" with rows denoting mutations for top track}
 
-\item{y}{object of class data frame containing columns transcript_name, and amino_acid_change and rows denoting mutations}
+\item{y}{object of class data frame containing columns "transcript_name", and "amino_acid_change" with rows denoting mutations for bottom track (optional)}
 
-\item{fillCol}{character string giving the name of the column to shade variants on "required"}
+\item{fillCol}{character string giving the name of the column to shade variants on, required}
 
-\item{labelCol}{character string specifying column containing text information to be plotted, defaults to NULL}
+\item{labelCol}{character string specifying column containing text information to be plotted, (optional) defaults to NULL}
 
 \item{plot_text_angle}{integer specifying angle of text to be plotted if labelCol is specified}
 
@@ -65,5 +65,14 @@ object of class ggplot2
 }
 \description{
 Construct a Lolliplot from object of class data frame giving observed mutations and an ensembl transcript id
+}
+\examples{
+# Create input data
+data <- brcaMAF[brcaMAF$Hugo_Symbol == 'TP53',c('Hugo_Symbol', 'amino_acid_change_WU')]
+data <- as.data.frame(cbind(data, 'ENST00000269305'))
+colnames(data) <- c('gene', 'amino_acid_change', 'transcript_name')
+
+# Call lolliplot
+lolliplot(data)
 }
 

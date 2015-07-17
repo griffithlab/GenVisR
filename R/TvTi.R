@@ -4,16 +4,18 @@
 #' @name TvTi
 #' @param x Object of class data frame containing columns 'sample', reference', 'variant'
 #' @param y named vector containing expected transition/transversion proportions with names "A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G", "G->T or C->A" or a data frame with column names "Prop", "trans_tranv" and levels of trans_tranv matching "A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G", "G->T or C->A"
-#' @param type Object of class character specifying whether to plot the Proportion or Frequency, one of "Prop"
+#' @param type Object of class character specifying whether to plot the Proportion or Frequency, one of "Proportion", "Frequency"
 #' @param label_x_axis boolean specifying wheter to label x axis
-#' @param x_axis_text_angle Integer specifying the angle to labels on x_axis
-#' @param palette Character vector of length 6 specifying colors for trans/tranv type
+#' @param x_axis_text_angle Integer specifying the angle of labels on the x_axis
+#' @param palette Character vector of length 6 specifying colors for each trans/tranv type
 #' @param file_type Character string specifying the format the input is in, one of 'MAF', 'MGI'
 #' @param layers Additional ggplot2 layers to add
-#' @return Object of class data frame with indels removed
+#' @examples
+#' TvTi(brcaMAF, type='Frequency', palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"), x_axis_text_angle=60)
+#' @return ggplot2 object
 #' @import plyr
-#' @import ggplot2
 #' @export
+
 
 TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c("#2A2650", "#95fE52", "#F9C59B", "#0F722C", "#D7C7E9", "#FFB93F"), file_type='MAF', layers=NULL)
 { 

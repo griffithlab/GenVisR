@@ -1,8 +1,8 @@
 #' produce a coverage plot
 #' 
-#' produce a coverage plot displaying gene and coverage information
+#' produce a coverage plot displaying gene and coverage information for a region of interest
 #' @name genCov
-#' @param x named list containing data frames with columns end and cov
+#' @param x named list containing data frames with columns "end" and "cov" consisting of read pileups at bases of interest
 #' @param txdb A TxDb object for a genome
 #' @param gr A Granges object specifying a region of interest
 #' @param genome Object of class BSgenome specifying the genome
@@ -11,23 +11,40 @@
 #' @param gene.layers additional ggplot2 layers for the gene plot
 #' @param gene_name character string specifying the name of the gene or ROI
 #' @param label.bg_fill character string giving the colour to fill the label
-#' @param label.text_fill character string giving the colour to fill the text
+#' @param label.text_fill character string giving the colour to fill label text
 #' @param label.border character string specifying the colour to fill the border of the label
 #' @param label.size integer specifying the size of the text within the label
-#' @param label.width_ratio vector of length 2 giving the ratio of track labels to plot
-#' @param cov.colour character string specifying the color of the data in the coverage plot
+#' @param label.width_ratio integer vector of length 2 giving the ratio of track labels to plot
+#' @param cov.colour character string specifying the colour of the data in the coverage plot
 #' @param cov.plot_type character string specifying one of line, area or bar for coverage data display
 #' @param cov.layers additional ggplot2 layers for the coverage plot
 #' @param base A vector of log bases to transform the data, corresponding to the elements of transform 
-#' @param transform A vector of strings designating what objects to log transform
+#' @param transform A vector of strings designating what objects to log transform accepts "Intron", "CDS", and "UTR"
 #' @param gene.plot_transcript_name Boolean specifying whether to plot the transcript name
 #' @param gene.transcript_name_size Integer specifying the size of the transcript name text
 #' @return ggplot object
+#' @examples
+#' # Load transcript meta data
+#' library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+#' txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+#' 
+#' # Load BSgenome
+#' library(BSgenome.Hsapiens.UCSC.hg19)
+#' genome <- BSgenome.Hsapiens.UCSC.hg19
+#' 
+#' # Define a region of interest 
+#' gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
+#' 
+#' # Define preloaded coverage data as named list
+#' data <- list("PTEN" = ptenCOV)
+#' 
+#' # Call genCov
+#' genCov(data, txdb, gr, genome, gene.transcript_name_size=3)
 #' @export
 #' @import GenomicRanges
 #' @import plyr
 
-genCov <- function(x, txdb, gr, genome, reduce=F, gene.colour=NULL, gene_name='Gene', gene.layers=NULL, label.bg_fill="black", 
+genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene.colour=NULL, gene_name='Gene', gene.layers=NULL, label.bg_fill="black", 
                           label.text_fill="white", label.border="black", label.size=10, label.width_ratio=c(1, 10), cov.colour="blue",
                           cov.plot_type="line", cov.layers=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'),
                           gene.plot_transcript_name=TRUE, gene.transcript_name_size=4){
@@ -103,7 +120,7 @@ genCov <- function(x, txdb, gr, genome, reduce=F, gene.colour=NULL, gene_name='G
   
   # Plot the data on a track
   track_coverage_plot <- trackViz(merged_data, gene_name=gene_name, bgFill=label.bg_fill, textFill=label.text_fill,
-                                    border=label.border, size=label.size, axis_align='width', widthRatio=label.width_ratio, list=T)
+                                    border=label.border, size=label.size, axis_align='width', widthRatio=label.width_ratio, list=TRUE)
   
   return(track_coverage_plot)
 }

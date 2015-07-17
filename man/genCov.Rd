@@ -4,7 +4,7 @@
 \alias{genCov}
 \title{produce a coverage plot}
 \usage{
-genCov(x, txdb, gr, genome, reduce = F, gene.colour = NULL,
+genCov(x, txdb, gr, genome, reduce = FALSE, gene.colour = NULL,
   gene_name = "Gene", gene.layers = NULL, label.bg_fill = "black",
   label.text_fill = "white", label.border = "black", label.size = 10,
   label.width_ratio = c(1, 10), cov.colour = "blue",
@@ -13,7 +13,7 @@ genCov(x, txdb, gr, genome, reduce = F, gene.colour = NULL,
   gene.transcript_name_size = 4)
 }
 \arguments{
-\item{x}{named list containing data frames with columns end and cov}
+\item{x}{named list containing data frames with columns "end" and "cov" consisting of read pileups at bases of interest}
 
 \item{txdb}{A TxDb object for a genome}
 
@@ -31,15 +31,15 @@ genCov(x, txdb, gr, genome, reduce = F, gene.colour = NULL,
 
 \item{label.bg_fill}{character string giving the colour to fill the label}
 
-\item{label.text_fill}{character string giving the colour to fill the text}
+\item{label.text_fill}{character string giving the colour to fill label text}
 
 \item{label.border}{character string specifying the colour to fill the border of the label}
 
 \item{label.size}{integer specifying the size of the text within the label}
 
-\item{label.width_ratio}{vector of length 2 giving the ratio of track labels to plot}
+\item{label.width_ratio}{integer vector of length 2 giving the ratio of track labels to plot}
 
-\item{cov.colour}{character string specifying the color of the data in the coverage plot}
+\item{cov.colour}{character string specifying the colour of the data in the coverage plot}
 
 \item{cov.plot_type}{character string specifying one of line, area or bar for coverage data display}
 
@@ -47,7 +47,7 @@ genCov(x, txdb, gr, genome, reduce = F, gene.colour = NULL,
 
 \item{base}{A vector of log bases to transform the data, corresponding to the elements of transform}
 
-\item{transform}{A vector of strings designating what objects to log transform}
+\item{transform}{A vector of strings designating what objects to log transform accepts "Intron", "CDS", and "UTR"}
 
 \item{gene.plot_transcript_name}{Boolean specifying whether to plot the transcript name}
 
@@ -57,6 +57,24 @@ genCov(x, txdb, gr, genome, reduce = F, gene.colour = NULL,
 ggplot object
 }
 \description{
-produce a coverage plot displaying gene and coverage information
+produce a coverage plot displaying gene and coverage information for a region of interest
+}
+\examples{
+# Load transcript meta data
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+
+# Load BSgenome
+library(BSgenome.Hsapiens.UCSC.hg19)
+genome <- BSgenome.Hsapiens.UCSC.hg19
+
+# Define a region of interest
+gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
+
+# Define preloaded coverage data as named list
+data <- list("PTEN" = ptenCOV)
+
+# Call genCov
+genCov(data, txdb, gr, genome, gene.transcript_name_size=3)
 }
 
