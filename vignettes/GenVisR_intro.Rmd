@@ -1,5 +1,5 @@
 ---
-title: "gRog: An introduction"
+title: "GenVisR: An introduction"
 author: "Zachary Skidmore"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
