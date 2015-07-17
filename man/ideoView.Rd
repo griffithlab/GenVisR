@@ -2,7 +2,7 @@
 % Please edit documentation in R/ideoView.R
 \name{ideoView}
 \alias{ideoView}
-\title{plot chromosome}
+\title{Chromosome plot}
 \usage{
 ideoView(x, chromosome = "chr1", chr_txt_angle = 45, chr_txt_size = 5,
   layers = NULL)
@@ -22,6 +22,13 @@ ideoView(x, chromosome = "chr1", chr_txt_angle = 45, chr_txt_size = 5,
 ggplot object
 }
 \description{
-plot chromosome in ggplot using UCSC database
+plot a chromosome in ggplot using UCSC database
+}
+\examples{
+# Obtain cytogenetic information for the genome of interest from attached data set cytoGeno
+data <- cytoGeno[cytoGeno$genome == 'hg38',]
+
+# Call ideoView for chromosome 1
+ideoView(data, chromosome='chr1', chr_txt_size=4)
 }
 

@@ -2,10 +2,10 @@
 #' 
 #' Construct a Lolliplot from object of class data frame giving observed mutations and an ensembl transcript id
 #' @name lolliplot
-#' @param x object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations
-#' @param y object of class data frame containing columns transcript_name, and amino_acid_change and rows denoting mutations
-#' @param fillCol character string giving the name of the column to shade variants on "required"
-#' @param labelCol character string specifying column containing text information to be plotted, defaults to NULL
+#' @param x object of class data frame containing column names "transcript_name", "gene", and "amino_acid_change" with rows denoting mutations for top track
+#' @param y object of class data frame containing columns "transcript_name", and "amino_acid_change" with rows denoting mutations for bottom track (optional)
+#' @param fillCol character string giving the name of the column to shade variants on, required
+#' @param labelCol character string specifying column containing text information to be plotted, (optional) defaults to NULL
 #' @param plot_text_angle integer specifying angle of text to be plotted if labelCol is specified
 #' @param plot_text_size integer specifying the size of the text plotted if labelCol is specified
 #' @param point_size integer specifying the size of points plotted
@@ -25,6 +25,14 @@
 #' @param plot_sidechain boolean value whether to plot the amino acid sidechains instead of protein domains
 #' @param taxId integer specifying the uniprot taxonomy id for the species of interest
 #' @param layers additional ggplot2 layers to plot
+#' @examples
+#' # Create input data
+#' data <- brcaMAF[brcaMAF$Hugo_Symbol == 'TP53',c('Hugo_Symbol', 'amino_acid_change_WU')]
+#' data <- as.data.frame(cbind(data, 'ENST00000269305'))
+#' colnames(data) <- c('gene', 'amino_acid_change', 'transcript_name')
+#'
+#' # Call lolliplot
+#' lolliplot(data)
 #' @return object of class ggplot2
 #' @export
 #' @import UniProt.ws

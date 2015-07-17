@@ -4,35 +4,38 @@
 \alias{cnSpec}
 \title{Construct CN cohort plot}
 \usage{
-cnSpec(x, y = NULL, genome = "hg19", plot_title = NULL,
+cnSpec(x, y = NULL, genome = "hg19", title = NULL,
   CN_low_colour = "#002EB8", CN_high_colour = "#A30000", x_lab_size = 12,
   y_lab_size = 12, facet_lab_size = 10, layers = NULL)
 }
 \arguments{
-\item{x}{object of class data frame containing columns chromosome, start, end, segmean, sample}
+\item{x}{object of class data frame containing columns "chromosome", "start", "end", "segmean", "sample" consisting of CN segment calls}
 
-\item{y}{object of class data frame containing columns chromosome start end}
+\item{y}{object of class data frame containing columns "chromosome", "start", "end" specifying chromosome boundary coordinates for all chromosomes in a genome (optional)}
 
-\item{genome}{character string specifying UCSC genome from which data is derived}
+\item{genome}{character string specifying UCSC genome from which data is derived, defaults to "hg19"}
 
-\item{plot_title}{character string for title of plot}
+\item{title}{character string specifying title of plot}
 
-\item{CN_low_colour}{character string specifying low value of colour gradient}
+\item{CN_low_colour}{character string specifying low value of colour gradient to plot}
 
-\item{CN_high_colour}{character string specifying high value of colour gradient}
+\item{CN_high_colour}{character string specifying high value of colour gradient to plot}
 
-\item{x_lab_size}{integer specifying the size of the x label}
+\item{x_lab_size}{integer specifying the size of the x labels on the plot}
 
-\item{y_lab_size}{integer specifying the size of the y label}
+\item{y_lab_size}{integer specifying the size of the y label on the plot}
 
 \item{facet_lab_size}{integer specifying the size of the faceted labels}
 
-\item{layers}{a valid ggplot layer to over-ride default parameters}
+\item{layers}{Additional ggplot2 layers to plot}
 }
 \value{
 ggplot object
 }
 \description{
 given a data frame construct a plot to display CN information for a group of samples
+}
+\examples{
+cnSpec(LucCNseg, genome="hg19")
 }
 

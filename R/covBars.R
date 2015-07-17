@@ -6,7 +6,7 @@
 #' @param col vector of colors for the coverage bars
 #' @return ggplot object
 #' @import ggplot2
-#' @import reshape
+#' @import reshape2
 #' @export
 
 covBars <- function(x, col=NULL, plot_title=NULL, background='grey90', x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)

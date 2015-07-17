@@ -94,7 +94,7 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
     mcols(gr)$txname <- name
     return(gr)
   }
-  UTR <- mapply(f5, UTR[keys], txnames[keys], SIMPLIFY=F)
+  UTR <- mapply(f5, UTR[keys], txnames[keys], SIMPLIFY=FALSE)
   
   return(UTR)
 }

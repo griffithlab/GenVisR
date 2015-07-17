@@ -1,12 +1,18 @@
-#' plot chromosome
+#' Chromosome plot
 #' 
-#' plot chromosome in ggplot using UCSC database
+#' plot a chromosome in ggplot using UCSC database
 #' @name ideoView
 #' @param x data frame specifying cytogenetic information for a genome, should contain columns "chrom", "chromStart", "chromEnd", "name", "gieStain"
 #' @param chromosome character string specifying UCSC chromosome to plot
 #' @param chr_txt_angle integer specifying angle of text when plotting band text
 #' @param chr_txt_size integer specifying size of text when plotting band text
 #' @param layers additional ggplot2 layers for the ideogram
+#' @examples
+#' # Obtain cytogenetic information for the genome of interest from attached data set cytoGeno
+#' data <- cytoGeno[cytoGeno$genome == 'hg38',]
+#'
+#' # Call ideoView for chromosome 1
+#' ideoView(data, chromosome='chr1', chr_txt_size=4)
 #' @return ggplot object
 #' @export
 

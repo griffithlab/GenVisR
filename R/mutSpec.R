@@ -26,6 +26,8 @@
 #' @param clin.layers Additional ggplot2 layers to plot on the clinical data 
 #' @param main.layers Additional ggplot2 layers to plot on the main panel
 #' @param mutRecur.layers Additional ggplot2 layers to plot on the mutation burden data
+#' @examples
+#' mutSpec(brcaMAF)
 #' @return a grob for plotting
 #' @export
 

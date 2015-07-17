@@ -1,4 +1,4 @@
-#' plot gene
+#' Gene Plot 
 #' 
 #' given a Granges object plot genomic features within the Granges object
 #' @name geneViz
@@ -13,6 +13,18 @@
 #' @param gene_colour character string specifying the colour of genomic features plotted
 #' @param layers additional ggplot2 layers to plot
 #' @return ggplot object
+#' @examples
+#' # need transcript data for reference
+#' txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+#'
+#' # need a biostrings object for reference
+#' genome <- BSgenome.Hsapiens.UCSC.hg19
+#'
+#' # need Granges object 
+#' gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
+#' 
+#' # Plot the graphic
+#' geneViz(txdb, gr, genome)
 #' @export
 #' @import GenomicRanges
 #' @import plyr

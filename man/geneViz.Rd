@@ -2,7 +2,7 @@
 % Please edit documentation in R/geneViz.R
 \name{geneViz}
 \alias{geneViz}
-\title{plot gene}
+\title{Gene Plot}
 \usage{
 geneViz(txdb, gr, genome, reduce = FALSE, gene_colour = NULL, base = c(10,
   2, 2), transform = c("Intron", "CDS", "UTR"), plot_transcript_name = TRUE,
@@ -34,5 +34,18 @@ ggplot object
 }
 \description{
 given a Granges object plot genomic features within the Granges object
+}
+\examples{
+# need transcript data for reference
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+
+# need a biostrings object for reference
+genome <- BSgenome.Hsapiens.UCSC.hg19
+
+# need Granges object
+gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
+
+# Plot the graphic
+geneViz(txdb, gr, genome)
 }
 
