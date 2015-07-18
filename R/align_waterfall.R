@@ -6,12 +6,11 @@
 #' @param p2 ggplot object displaying mutation burden on gene
 #' @param p3 ggplot object displaying mutation burden on sample
 #' @param p4 ggplot object displaying clinical information "optional"
-#' @param title optional a character string giving a title for the plot
 #' @return a grob object
 #' @import gridExtra
 #' @import gtable
 
-align_waterfall <- function(p2, p1, p3, p4, title=title)
+align_waterfall <- function(p2, p1, p3, p4)
 {
   
   #############################################################################################################
@@ -47,16 +46,11 @@ align_waterfall <- function(p2, p1, p3, p4, title=title)
   gB$heights[2:5] <- as.list(maxheight)
   
   # plot the grobs with grid.arrange
-  if(is.character(title) & !missing(p4))
+  if(!missing(p4))
   {
-    p1 <- grid.arrange(blankPanel, gC, gA, gB, blankPanel, gD, ncol=2, nrow=3, widths=c(.8,4), heights=c(1,4,1.2), main=textGrob(title, gp=gpar(fontsize=20)))
-  } else if(is.character(title) & missing(p4)) {
-    p1 <- grid.arrange(blankPanel, gC, gA, gB, ncol=2, nrow=2, widths=c(1,4), heights=c(1,4), main=textGrob(title, gp=gpar(fontsize=20)))
-  } else if(!missing(p4))
-  {
-    p1 <- grid.arrange(blankPanel, gC, gA, gB, blankPanel, gD, ncol=2, nrow=2, widths=c(.8,4), heights=c(1,4, 1.2))
+    p1 <- arrangeGrob(blankPanel, gC, gA, gB, blankPanel, gD, ncol=2, nrow=3, widths=c(.8,4), heights=c(1,4,1.2))
   } else {
-    p1 <- grid.arrange(blankPanel, gC, gA, gB, ncol=2, nrow=2, widths=c(1,4), heights=c(1,4))
+    p1 <- arrangeGrob(blankPanel, gC, gA, gB, ncol=2, nrow=2, widths=c(1,4), heights=c(1,4))
   }
 
   return(p1)

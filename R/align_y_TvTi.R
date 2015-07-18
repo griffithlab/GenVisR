@@ -20,7 +20,7 @@ align_y_TvTi <- function(p1, p2)
   gB$heights[2:5] <- as.list(maxheight)
   
   # plot the grobs with grid.arrange
-  p1 <- grid.arrange(gB, gA, ncol=2, nrow=1, widths=c(1,4))
+  p1 <- arrangeGrob(gB, gA, ncol=2, nrow=1, widths=c(1,4))
   
   return(p1)
 }

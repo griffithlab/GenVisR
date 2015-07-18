@@ -7,12 +7,12 @@
 \usage{
 mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
   clin.var.order = NULL, mutBurden = NULL, main.recurrence_cutoff = 0,
-  main.grid = TRUE, main.label_x = FALSE, title = "",
-  main.gene_label_size = 8, coverageSpace = 44100000, file_type = "MAF",
-  main.genes = NULL, drop_mutation = FALSE, rmv_silent = FALSE,
-  main.label_col = NULL, main.plot_label_size = 4, main.palette = NULL,
-  sampRecur.layers = NULL, clin.layers = NULL, main.layers = NULL,
-  mutRecur.layers = NULL, main.plot_label_angle = 0)
+  main.grid = TRUE, main.label_x = FALSE, main.gene_label_size = 8,
+  coverageSpace = 44100000, file_type = "MAF", main.genes = NULL,
+  drop_mutation = FALSE, rmv_silent = FALSE, main.label_col = NULL,
+  main.plot_label_size = 4, main.palette = NULL, sampRecur.layers = NULL,
+  clin.layers = NULL, main.layers = NULL, mutRecur.layers = NULL,
+  main.plot_label_angle = 0)
 }
 \arguments{
 \item{x}{a data frame in annotation format}
@@ -32,8 +32,6 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
 \item{main.grid}{a boolean value to overlay a grid on the primary plot}
 
 \item{main.label_x}{a boolean value to plot samples on the x axis}
-
-\item{title}{a character string for the plot title}
 
 \item{main.gene_label_size}{an integer specifying the size of labels on Y axis}
 

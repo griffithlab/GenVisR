@@ -14,6 +14,7 @@
 #' TvTi(brcaMAF, type='Frequency', palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"), x_axis_text_angle=60)
 #' @return ggplot2 object
 #' @import plyr
+#' @import gridExtra
 #' @export
 
 
@@ -58,7 +59,7 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_an
     # Align the plots
     p3 <- align_y_TvTi(p1, p2)
     
-    return(p3)
+    return(grid.arrange(p3))
   }
 
   

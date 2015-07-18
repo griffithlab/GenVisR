@@ -38,7 +38,7 @@ build.cnFreq <- function(data_frame, plotType, plot_title=NULL, background='grey
   p1 <- p1 + geom_hline(aes(yintercept=0), linetype="dotted")
   
   # build the plot
-  p1 <- p1 + ylabel + xlabel + facet + theme
+  p1 <- p1 + ylabel + xlabel + facet + theme_bw() +theme
   
   # if there are other layers, add them
   if(!is.null(layers))
