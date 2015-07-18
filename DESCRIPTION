@@ -5,9 +5,9 @@ Authors@R: c(person("Zachary", "Skidmore", , "zskidmor@genome.wustl.edu", role =
 Maintainer: Zachary Skidmore <zskidmor@genome.wustl.edu>
 Description: Produce highly customizable publication quality graphics for genomic data at the cohort level.
 Depends: R (>= 3.2.1), UniProt.ws
-Imports: ggplot2 (>= 0.9.2), plyr (>= 1.8.3), gridExtra, GenomicRanges, gtable, FField, RMySQL, scales, biomaRt, gtools, reshape2, RCurl, GenomicFeatures, Biostrings, DBI, IRanges
+Imports: ggplot2 (>= 0.9.2), plyr (>= 1.8.3), gridExtra, GenomicRanges, gtable, FField, RMySQL, scales, biomaRt, gtools, reshape2, RCurl, GenomicFeatures, Biostrings, DBI, IRanges, grid
 License: GPL-3 + file LICENSE
-BugReports: https://github.com/griffithlab/GGgenome/issues
+BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification
 LazyData: true
 Suggests: knitr, BSgenome.Hsapiens.UCSC.hg19, TxDb.Hsapiens.UCSC.hg19.knownGene

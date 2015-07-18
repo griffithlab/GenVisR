@@ -69,7 +69,8 @@ library(BSgenome.Hsapiens.UCSC.hg19)
 genome <- BSgenome.Hsapiens.UCSC.hg19
 
 # Define a region of interest
-gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
+gr <- GRanges(seqnames=c("chr10"),
+ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
 
 # Define preloaded coverage data as named list
 data <- list("PTEN" = ptenCOV)

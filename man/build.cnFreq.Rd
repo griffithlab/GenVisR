@@ -4,7 +4,7 @@
 \alias{build.cnFreq}
 \title{Construct CN frequency plot}
 \usage{
-build.cnFreq(data_frame, plotType, plot_title = NULL, background = "grey90",
+build.cnFreq(data_frame, plotType, plot_title = NULL,
   CN_low_colour = "#002EB8", CN_high_colour = "#A30000", x_lab_size = 12,
   y_lab_size = 12, facet_lab_size = 10, layers = NULL)
 }
@@ -14,8 +14,6 @@ build.cnFreq(data_frame, plotType, plot_title = NULL, background = "grey90",
 \item{plotType}{character string to determine whether to plot proportions or frequencies}
 
 \item{plot_title}{character string for title of plot}
-
-\item{background}{character string specifying backround color of plot}
 
 \item{CN_low_colour}{character string specifying low value of colour gradient}
 

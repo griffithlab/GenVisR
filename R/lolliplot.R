@@ -65,7 +65,7 @@ lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL, plot_text_angle=45
   length <- transcriptID2length(transcriptID, up)
   
   # obtain amino acid sequence and format if it is requested to plot the sidechain
-  if(plot_sidechain==T)
+  if(plot_sidechain==TRUE)
   {
     AAsequence <- transcriptID2sequence(transcriptID, up)
     AAsequence$sidechain <- sapply(AAsequence[,1], AA2sidechain)

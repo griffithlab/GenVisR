@@ -5,7 +5,7 @@
 \title{Overlay tracks with plots}
 \usage{
 trackViz(..., bgFill = "black", textFill = "white", border = "black",
-  size = 10, axis_align = "none", widthRatio = c(1, 10), list = T)
+  size = 10, axis_align = "none", widthRatio = c(1, 10), list = TRUE)
 }
 \arguments{
 \item{...}{named list of ggplot2 plots}

@@ -10,7 +10,7 @@
 calcGC <- function(gr, genome)
 {
   # Calculate the GC content for the given Granges object
-  GC <- as.data.frame(alphabetFrequency(getSeq(genome, gr), as.prob=T))
+  GC <- as.data.frame(alphabetFrequency(getSeq(genome, gr), as.prob=TRUE))
   GC <- GC$G + GC$C
   
   # append this information to the Granges object

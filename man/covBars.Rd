@@ -30,4 +30,11 @@ ggplot object
 \description{
 given a matrix construct a plot to display coverage as percentage bars for a group of samples
 }
+\examples{
+# Create data
+x <- matrix(sample(100000,500), nrow=50, ncol=10, dimnames=list(0:49,paste0("Sample",1:10)))
+
+# Call function
+covBars(x)
+}
 

@@ -32,6 +32,7 @@ ggplot2 object
 Given a data frame with columns reference, variant, and sample construct a transition/transversion plot
 }
 \examples{
-TvTi(brcaMAF, type='Frequency', palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"), x_axis_text_angle=60)
+TvTi(brcaMAF, type='Frequency',
+palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"), x_axis_text_angle=60)
 }
 

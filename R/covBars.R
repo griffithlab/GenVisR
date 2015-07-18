@@ -11,6 +11,12 @@
 #' @param facet_lab_size integer specifying the size of the faceted labels
 #' @param layers Additional layers to be plotted, can be a theme but must be a ggplot layer
 #' @return ggplot object
+#' @examples
+#' # Create data
+#' x <- matrix(sample(100000,500), nrow=50, ncol=10, dimnames=list(0:49,paste0("Sample",1:10)))
+#' 
+#' # Call function
+#' covBars(x)
 #' @export
 #' @import ggplot2
 #' @import reshape2

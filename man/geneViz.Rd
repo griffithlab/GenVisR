@@ -37,13 +37,16 @@ given a Granges object plot genomic features within the Granges object
 }
 \examples{
 # need transcript data for reference
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 
 # need a biostrings object for reference
+library(BSgenome.Hsapiens.UCSC.hg19)
 genome <- BSgenome.Hsapiens.UCSC.hg19
 
 # need Granges object
-gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
+gr <- GRanges(seqnames=c("chr10"),
+ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
 
 # Plot the graphic
 geneViz(txdb, gr, genome)
