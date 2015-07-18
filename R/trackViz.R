@@ -26,10 +26,10 @@
 #' @import ggplot2
 #' @export
 
-trackViz <- function(..., bgFill="black", textFill="white", border="black", size=10, axis_align='none', widthRatio=c(1, 10), list=T)
+trackViz <- function(..., bgFill="black", textFill="white", border="black", size=10, axis_align='none', widthRatio=c(1, 10), list=TRUE)
 {
   # Grab all the tracks/data to be plotted as a named list, check and correct if list is within a list
-  if(list==T)
+  if(list==TRUE)
   {
     data <- list(...)
     data <- data[[1]]

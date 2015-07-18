@@ -92,8 +92,8 @@ In an effort to maintain a high degree of flexibility the user has the option of
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Add additional columns to the data
-data$gender <- sample(c("Male", "Female"), 15, replace=T)
-data$impact <- sample(c("Low", "Medium", "High"), 15, replace=T)
+data$gender <- sample(c("Male", "Female"), 15, replace=TRUE)
+data$impact <- sample(c("Low", "Medium", "High"), 15, replace=TRUE)
 
 # Call lolliplot
 lolliplot(data, fillCol='gender', labelCol='impact', plot_sidechain=TRUE)
@@ -124,7 +124,8 @@ library(BSgenome.Hsapiens.UCSC.hg19)
 genome <- BSgenome.Hsapiens.UCSC.hg19
 
 # Define a region of interest 
-gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
+gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), 
+end=c(89729532)), strand=strand(c("+")))
 
 # Define preloaded coverage data as named list
 data <- list("PTEN" = ptenCOV)
@@ -154,14 +155,17 @@ TvTi(brcaMAF, x_axis_text_angle=60)
 
 ```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide'}
 # Plot the frequency with a different color pallete
-TvTi(brcaMAF, type='Frequency', palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"), x_axis_text_angle=60)
+TvTi(brcaMAF, type='Frequency', 
+palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"), 
+x_axis_text_angle=60)
 ```
 
 If there are prior expectations about the transition/transversion rate the user can specify that information via the argument `y` which takes a named vector with names corresponding to each transition/transversion type. The vector must be of length 6 with names "A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G", and "G->T or C->A". The Resultant plot will contain an additional subplot corresponding to the apriori expectations.
 
 ```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide'}
 # Create a named vector of apriori expectations
-expec <- c("A->C or T->G"=1/6, "A->G or T->C"=1/6, "A->T or T->A"=1/6, "G->A or C->T"=1/6, "G->C or C->G"=1/6, "G->T or C->A"=1/6)
+expec <- c("A->C or T->G"=1/6, "A->G or T->C"=1/6, "A->T or T->A"=1/6,
+"G->A or C->T"=1/6, "G->C or C->G"=1/6, "G->T or C->A"=1/6)
 
 # Call TvTi with the additional data
 TvTi(brcaMAF, expec, x_axis_text_angle=60)
@@ -205,7 +209,8 @@ covBars produces a plot displaying sequencing coverage at a cohort level. Basic 
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=TRUE, warning=FALSE, results='asis'}
 # Example input to x
-x <- matrix(sample(100000,500), nrow=50, ncol=10, dimnames=list(0:49,paste0("Sample",1:10)))
+x <- matrix(sample(100000,500), nrow=50, ncol=10, 
+dimnames=list(0:49,paste0("Sample",1:10)))
 
 covBars(x)
 ```
@@ -226,7 +231,8 @@ set.seed(123)
 xstart <- seq(0,4990000,length.out=500)
 xloss <- rep(runif(10,0,0.6),rep(50,10))/1.5
 xloss <- xloss + jitter(xloss,amount=0.002)
-x <- data.frame(chromosome=rep(paste0("chr",1:5),rep(500,5)), start=xstart, end=xstart+10000, loss=xloss, gain=(1-xloss))
+x <- data.frame(chromosome=rep(paste0("chr",1:5),rep(500,5)), 
+start=xstart, end=xstart+10000, loss=xloss, gain=(1-xloss))
 
 cnFreq(x)
 ```
@@ -259,7 +265,8 @@ txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 genome <- BSgenome.Hsapiens.UCSC.hg19
 
 # need Granges object 
-gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
+gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), 
+end=c(89729532)), strand=strand(c("+")))
 
 # Plot the graphic
 geneViz(txdb, gr, genome)
