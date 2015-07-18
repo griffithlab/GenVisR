@@ -20,7 +20,7 @@ align_y_cn <- function(p1, p2)
   gB$widths[2:5] <- as.list(maxwidth)
   
   # plot the grobs with grid.arrange
-  p1 <- grid.arrange(gA, gB, ncol=1, nrow=2, heights=c(1,2))
+  p1 <- arrangeGrob(gA, gB, ncol=1, nrow=2, heights=c(1,2))
   
   return(p1)
 }

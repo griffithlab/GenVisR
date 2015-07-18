@@ -4,7 +4,7 @@
 \alias{align_waterfall}
 \title{align plots}
 \usage{
-align_waterfall(p2, p1, p3, p4, title = title)
+align_waterfall(p2, p1, p3, p4)
 }
 \arguments{
 \item{p2}{ggplot object displaying mutation burden on gene}
@@ -14,8 +14,6 @@ align_waterfall(p2, p1, p3, p4, title = title)
 \item{p3}{ggplot object displaying mutation burden on sample}
 
 \item{p4}{ggplot object displaying clinical information "optional"}
-
-\item{title}{optional a character string giving a title for the plot}
 }
 \value{
 a grob object

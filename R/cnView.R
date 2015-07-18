@@ -15,6 +15,7 @@
 #' @return ggplot object
 #' @examples
 #' cnView(Luc2CNraw, chr='chr14', genome='hg19', ideo.chr_txt_size=4)
+#' @import gridExtra
 #' @export
 
 cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1', main.cnDiff=FALSE, ideo.chr_txt_angle=45, ideo.chr_txt_size=5, main.layers=NULL, ideo.layers=NULL)
@@ -68,5 +69,5 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1', main.cnDiff=FAL
   
   p1 <- align_y_cn(chromosome_plot, CN_plot)
   
-  return(p1)
+  return(grid.arrange(p1))
 }
