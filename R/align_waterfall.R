@@ -47,14 +47,9 @@ align_waterfall <- function(p2, p1, p3, p4, title=title)
   gB$heights[2:5] <- as.list(maxheight)
   
   # plot the grobs with grid.arrange
-  if(is.character(title) & !missing(p4))
+  if(!missing(p4))
   {
-    p1 <- grid.arrange(blankPanel, gC, gA, gB, blankPanel, gD, ncol=2, nrow=3, widths=c(.8,4), heights=c(1,4,1.2), main=textGrob(title, gp=gpar(fontsize=20)))
-  } else if(is.character(title) & missing(p4)) {
-    p1 <- grid.arrange(blankPanel, gC, gA, gB, ncol=2, nrow=2, widths=c(1,4), heights=c(1,4), main=textGrob(title, gp=gpar(fontsize=20)))
-  } else if(!missing(p4))
-  {
-    p1 <- grid.arrange(blankPanel, gC, gA, gB, blankPanel, gD, ncol=2, nrow=2, widths=c(.8,4), heights=c(1,4, 1.2))
+    p1 <- grid.arrange(blankPanel, gC, gA, gB, blankPanel, gD, ncol=2, nrow=3, widths=c(.8,4), heights=c(1,4, 1.2))
   } else {
     p1 <- grid.arrange(blankPanel, gC, gA, gB, ncol=2, nrow=2, widths=c(1,4), heights=c(1,4))
   }
