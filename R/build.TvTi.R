@@ -9,11 +9,12 @@
 #' @param x_axis_text_angle Integer specifying the angle to labels on x_axis
 #' @param palette Character vector of length 6 specifying colors for trans/tranv type
 #' @param plot_expected Boolean specifying if this is the main TvTi plot or a sub plot for expected values
-#' @param layers Additional ggplot2 layers to plot
+#' @param tvti.layers Additional ggplot2 layers for the main plot
+#' @param expec.layers Additional ggplot2 layers for the expected values plot
 #' @return GGplot Object
 #' @import ggplot2
 
-build.TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c('#7BC374', '#EFCD8D', '#8763A0', '#6677A0', '#EDEE8D', '#EF8D8D'), plot_expected=FALSE, layers=NULL)
+build.TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c('#7BC374', '#EFCD8D', '#8763A0', '#6677A0', '#EDEE8D', '#EF8D8D'), plot_expected=FALSE, tvti.layers=NULL, expec.layers=NULL)
 {
   
   if(!is.null(y))
@@ -37,10 +38,10 @@ build.TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_t
   }
   ylabel <- ylab(type)
   xlabel <- xlab(paste0("Sample: n=", length(unique(x$sample))))
-  fill_palette <- scale_fill_manual(name='Transistion/Transverstion', values=palette)
-  if(!is.null(layers))
+  fill_palette <- scale_fill_manual(name='Transistion/Transversion', values=palette)
+  if(!is.null(tvti.layers))
   {
-    layers <- layers
+    layers <- tvti.layers
   } else {
     layers <- geom_blank()
   }
@@ -49,6 +50,12 @@ build.TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_t
   if(plot_expected == TRUE)
   {
     theme <- theme(axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank(), legend.position='none', axis.title.x=element_blank(), axis.text.x=element_text(angle=x_axis_text_angle, hjust=1, vjust=1))
+    if(!is.null(expec.layers))
+    {
+        layers <- expec.layers
+    } else {
+        layers <- geom_blank()
+    }
   } else if(label_x_axis == TRUE) {
     theme <- theme(axis.text.x=element_text(angle=x_axis_text_angle, hjust=1, vjust=1))
   } else {

@@ -55,6 +55,7 @@ TvTi.qual <- function(x, y=NULL, file_type='MAF')
     } else {
       stop("Could not find all columns requested, missing one of reference, variant, sample")
     } 
+    x <- x[,c('reference', 'variant', 'sample')]
   } else if(file_type == 'MAF')
   {
     if(any(grepl('^Tumor_Sample_Barcode$', colnames(x))) && any(grepl('^Reference_Allele$', colnames(x))) && any(grepl('^Tumor_Seq_Allele1$', colnames(x))) && any(grepl('^Tumor_Seq_Allele2$', colnames(x))))
@@ -89,10 +90,9 @@ TvTi.qual <- function(x, y=NULL, file_type='MAF')
     trans.tranv.names <- c("A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G", "G->T or C->A")
     if(!all(rownames(y) %in% trans.tranv.names))
     {
-      stop("Did not detect correct names in:", y)
+      stop("Did not detect correct names in y")
     }
-    return(list('input1'=x, 'input2'=y))
   }
   
-  return(x)
+  return(list('input1'=x, 'input2'=y))
 }

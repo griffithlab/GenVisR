@@ -15,7 +15,10 @@ rm.mnuc <- function(x)
   
   new_size <- nrow(x)
   
-  warning("Multi Nucleotide codes are not currently supported, removed: ", original_size - new_size, " multi nucleotides present in data")
+  if(new_size != original_size)
+  {
+      warning("Multi Nucleotide codes are not currently supported, removed: ", original_size - new_size, " multi nucleotides present in data") 
+  }
   
   return(x)
 }
