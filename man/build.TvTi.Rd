@@ -6,7 +6,8 @@
 \usage{
 build.TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
   x_axis_text_angle = 45, palette = c("#7BC374", "#EFCD8D", "#8763A0",
-  "#6677A0", "#EDEE8D", "#EF8D8D"), plot_expected = FALSE, layers = NULL)
+  "#6677A0", "#EDEE8D", "#EF8D8D"), plot_expected = FALSE,
+  tvti.layers = NULL, expec.layers = NULL)
 }
 \arguments{
 \item{x}{Object of class data frame containing columns 'trans_tranv', 'sample', 'Freq', and 'Prop'}
@@ -23,7 +24,9 @@ build.TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
 
 \item{plot_expected}{Boolean specifying if this is the main TvTi plot or a sub plot for expected values}
 
-\item{layers}{Additional ggplot2 layers to plot}
+\item{tvti.layers}{Additional ggplot2 layers for the main plot}
+
+\item{expec.layers}{Additional ggplot2 layers for the expected values plot}
 }
 \value{
 GGplot Object

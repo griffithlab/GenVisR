@@ -6,7 +6,8 @@
 \usage{
 TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
   x_axis_text_angle = 45, palette = c("#2A2650", "#95fE52", "#F9C59B",
-  "#0F722C", "#D7C7E9", "#FFB93F"), file_type = "MAF", layers = NULL)
+  "#0F722C", "#D7C7E9", "#FFB93F"), file_type = "MAF", tvti.layers = NULL,
+  expec.layers = NULL)
 }
 \arguments{
 \item{x}{Object of class data frame containing columns 'sample', reference', 'variant'}
@@ -23,7 +24,9 @@ TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
 
 \item{file_type}{Character string specifying the format the input is in, one of 'MAF', 'MGI'}
 
-\item{layers}{Additional ggplot2 layers to add}
+\item{tvti.layers}{Additional ggplot2 layers to add to the main panel plot}
+
+\item{expec.layers}{Additional ggplot2 layers to add to the expected values plot}
 }
 \value{
 ggplot2 object

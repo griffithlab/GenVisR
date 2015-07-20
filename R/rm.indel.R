@@ -15,7 +15,10 @@ rm.indel <- function(x)
   
   new_size <- nrow(x)
   
-  message("Removed ", original_size - new_size, " indels present in data")
-  
+  # Print message if indels have been removed
+  if(new_size != original_size)
+  {
+      message("Removed ", original_size - new_size, " indels present in data")
+  }
   return(x)
 }

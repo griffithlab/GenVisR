@@ -9,7 +9,8 @@
 #' @param x_axis_text_angle Integer specifying the angle of labels on the x_axis
 #' @param palette Character vector of length 6 specifying colors for each trans/tranv type
 #' @param file_type Character string specifying the format the input is in, one of 'MAF', 'MGI'
-#' @param layers Additional ggplot2 layers to add
+#' @param tvti.layers Additional ggplot2 layers to add to the main panel plot
+#' @param expec.layers Additional ggplot2 layers to add to the expected values plot
 #' @examples
 #' TvTi(brcaMAF, type='Frequency', 
 #' palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"), x_axis_text_angle=60)
@@ -19,20 +20,16 @@
 #' @export
 
 
-TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c("#2A2650", "#95fE52", "#F9C59B", "#0F722C", "#D7C7E9", "#FFB93F"), file_type='MAF', layers=NULL)
+TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c("#2A2650", "#95fE52", "#F9C59B", "#0F722C", "#D7C7E9", "#FFB93F"), file_type='MAF', tvti.layers=NULL, expec.layers=NULL)
 { 
   # Perform quality checks
-  if(!is.null(y))
-  {
     out <- TvTi.qual(x, y, file_type=file_type)
     x <- out$input1
     y <- out$input2
-  } else {
-    x <- TvTi.qual(x, file_type=file_type)
-  }
   
   # add transition/transversion info
-  x <- adply(x, 1, anno_trans_tranv)
+  message("annotating transitions and transversions")
+  x <- adply(x, 1, anno_trans_tranv, .progress='text')
   
   # Calculate the proportion of transitions/transversions
   x <- calc_trans_tranv_freq(x)
@@ -50,12 +47,12 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_an
   }
   
   # Build the Transition/Transversion Plot
-  p1 <- build.TvTi(x, y, type=type, x_axis_text_angle=x_axis_text_angle, palette=palette, label_x_axis=label_x_axis, layers=layers)
+  p1 <- build.TvTi(x, y, type=type, x_axis_text_angle=x_axis_text_angle, palette=palette, label_x_axis=label_x_axis, tvti.layers=tvti.layers, expec.layers=NULL)
   
   if(!is.null(y))
   {
     # If y is input plot the expected values
-    p2 <- build.TvTi(y, y, type=type, x_axis_text_angle=x_axis_text_angle, palette=palette, label_x_axis=label_x_axis, plot_expected=TRUE, layers=layers)
+    p2 <- build.TvTi(y, y, type=type, x_axis_text_angle=x_axis_text_angle, palette=palette, label_x_axis=label_x_axis, plot_expected=TRUE, tvti.layers=NULL, expec.layers=expec.layers)
     
     # Align the plots
     p3 <- align_y_TvTi(p1, p2)
