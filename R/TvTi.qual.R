@@ -17,6 +17,12 @@ TvTi.qual <- function(x, y=NULL, file_type='MAF')
     x <- relevel(x)
   }
   
+  # check for duplicate elements in x
+  if(nrow(unique(x)) != nrow(x))
+  {
+      warning("Detected duplicate rows in x, was this expected?")
+  }
+  
   # Check if y input is a data frame 
   if(!is.null(y))
   {
@@ -91,6 +97,12 @@ TvTi.qual <- function(x, y=NULL, file_type='MAF')
     if(!all(rownames(y) %in% trans.tranv.names))
     {
       stop("Did not detect correct names in y")
+    }
+    
+    # check that y sums to 1 (i.e. its a true proportion among all elements)
+    if(sum(y$Prop) != 1)
+    {
+        stop("The sum of elements in y should equal 1")
     }
   }
   
