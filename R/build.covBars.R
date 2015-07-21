@@ -26,7 +26,7 @@ build.covBars <- function(data_frame, col, plot_title=NULL, background='grey90',
   facet <- facet_grid(sample ~ ., scales='free', space='free')
   fill_gradient <- scale_fill_gradientn(colours=col)
   ylabel <- ylab('Sample')
-  xlabel <- xlab('Coverage')
+  xlabel <- xlab('Cumulative Coverage')
   
   # Define main plot using boundaries and then plot actual data
   p1 <- ggplot(data=xmelt, mapping=aes_string(xmin='xmin', xmax='bp', ymin=0, ymax=1)) + geom_rect(alpha=0) + scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))
