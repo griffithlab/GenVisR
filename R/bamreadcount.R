@@ -7,7 +7,7 @@
 #' @export 
 #' @import GenomicRanges
 #' @import Rsamtools
-#' @import IRanges
+#' @importFrom "IRanges" IRanges
 #' @import reshape2
 
 bamreadcount <- function(bamfile){
