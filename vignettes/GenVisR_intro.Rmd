@@ -72,10 +72,10 @@ main.genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"), clin.legend.col=2, cli
 c('lumA', 'lumB', 'her2', 'basal', 'normal', '20-30', '31-50', '51-60', '61+'))
 ```
 
-Occasionally there may be samples not represented within the .maf file (due to a lack of mutations). It may still be desirable to plot these samples. To accomplish this simply add the relevant samples into the appropriate column before loading the data and leave the rest of the columns as NA. Additionally it may be desireable to plot data not in a standard format. If this is the case it is recommended to set the `file_type` parameter to 'MGI' and name columns as 'sample', 'gene_name', and 'trv_type'. Valid levels for 'trv_type' are: "nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", and "silent".
+Occasionally there may be samples not represented within the .maf file (due to a lack of mutations). It may still be desirable to plot these samples. To accomplish this simply add the relevant samples into the appropriate column before loading the data and leave the rest of the columns as NA. Additionally it may be desirable to plot data not in a standard format. If this is the case it is recommended to set the `file_type` parameter to 'MGI' and name columns as 'sample', 'gene_name', and 'trv_type'. Valid levels for 'trv_type' are: "nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", and "silent".
 
 ### lolliplot
-`lolliplot` provides a method for visualizing mutation hotspots overlayed on a protein framework. Basic input consist of a data frame with required columns 'transcript_name', 'gene' and 'amino_acid_change' giving the ensembl transcript id, gene name, and the amino acid change in p. notation respectivley. The data frame must contain only one unique transcript name. `lolliplot` queries various online databases to extract meta data for the transcript framework and as such needs an active internet connection. `lolliplot` also assumes the species to be *H.sapiens*, this assumption can be changed via the parameter `taxId` which takes a UniProt Taxonomic identifier.
+`lolliplot` provides a method for visualizing mutation hotspots overlayed on a protein framework. Basic input consist of a data frame with required columns 'transcript_name', 'gene' and 'amino_acid_change' giving the ensembl transcript id, gene name, and the amino acid change in p. notation respectively. The data frame must contain only one unique transcript name. `lolliplot` queries various online databases to extract meta data for the transcript framework and as such needs an active internet connection. `lolliplot` also assumes the species to be *H.sapiens*, this assumption can be changed via the parameter `taxId` which takes a UniProt Taxonomic identifier.
 
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
@@ -109,7 +109,7 @@ data2 <- data[,2:4]
 lolliplot(data, y=data2, fillCol='impact', labelCol='amino_acid_change')
 ```
 
-`lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data in an attempt to achieve a reasonable degree of seperation between points. Suitable defaults have been set for the majority of use cases. On occasion the user may need to manually adjust the force field parameters. This can be done for both upper and lower tracks individually via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
+`lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data in an attempt to achieve a reasonable degree of separation between points. Suitable defaults have been set for the majority of use cases. On occasion the user may need to manually adjust the force field parameters. This can be done for both upper and lower tracks individually via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
 
 ### genCov
 `genCov` provides a methodology for viewing coverage information in relation to a gene track. It takes a named list of data frames with each data frame containing column names "end" and "cov" and rows corresponding to coordinates within the region of interest. Additional required arguments are a Granges object specifying the region of interest, a BSgenome for gc content calculation, and a TxDb object containing transcription metadata (see the package [Granges](http://www.bioconductor.org/packages/release/bioc/html/GenomicRanges.html) for more information). genCov will plot a genomic features track and align coverage data in the list to the plot. It is recommended to use [bedtools multicov](http://bedtools.readthedocs.org/en/latest/content/tools/multicov.html) to obtain coverage information for a region of interest. We demonstrate `genCov` functionality using the attached data set ptenCOV which contains coverage information for the gene PTEN.
@@ -143,7 +143,7 @@ By default genCov will perform a log compression of genomic space for each featu
 ```
 
 ### TvTi
-`TvTi` provides a framework for visualizing transversions and transitions for a given cohort. Input consists of a .maf (version 2.4) file containing sample and allele information (see .maf spec). Alternativley the `file_type` parameter can be set to "MGI" with the input supplied consisting of a data frame with column names "sample", "reference", and "variant". TvTi will remove indels and multinucleotide calls from the input and plot the proportion of Transition/Transversion types for each sample specified in the input file.
+`TvTi` provides a framework for visualizing transversions and transitions for a given cohort. Input consists of a .maf (version 2.4) file containing sample and allele information (see .maf spec). Alternatively the `file_type` parameter can be set to "MGI" with the input supplied consisting of a data frame with column names "sample", "reference", and "variant". TvTi will remove indels and multinucleotide calls from the input and plot the proportion of Transition/Transversion types for each sample specified in the input file.
 
 
 ```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide'}
@@ -151,7 +151,7 @@ By default genCov will perform a log compression of genomic space for each featu
 TvTi(brcaMAF, x_axis_text_angle=60)
 ```
 
-`TvTi` will also plot the observed frequency of each Transition/Transversion type in lieu of proportion if the `type` parameter is set to "Frequency". Here we plot the observed frequency from `brcaMAF` and change the default colors of the plot. When modifying the color palette via the `palette` parameter specify a character vector of length 6 contaning a new color for each Transition/Transversion type.
+`TvTi` will also plot the observed frequency of each Transition/Transversion type in lieu of proportion if the `type` parameter is set to "Frequency". Here we plot the observed frequency from `brcaMAF` and change the default colors of the plot. When modifying the color palette via the `palette` parameter specify a character vector of length 6 containing a new color for each Transition/Transversion type.
 
 ```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide'}
 # Plot the frequency with a different color pallete
@@ -178,7 +178,7 @@ cnSpec produces a plot displaying copy number segments at a cohort level. Basic 
 cnSpec(LucCNseg, genome="hg19")
 ```
 
-By default a few select genomes are attached as part of GenVisR, these are "hg38", "hg19", "mm10", "mm9", "rn5". If input into `genome` is not one of the previously mentioned genomes cnSpec will attempt to query the UCSC sql database to obtain chromosomal boundary information. This has been built in as a convenience, if internet connectivity is an issue, or if copy number segment calls are derived from an assemlby not supported by UCSC the user can specify chromosomal boundaries via the argument `y`. This should take the form of a data frame with column names "chromosome", "start", "end". An example of this is provided in the attached data set hg19chr.
+By default a few select genomes are attached as part of GenVisR, these are "hg38", "hg19", "mm10", "mm9", "rn5". If input into `genome` is not one of the previously mentioned genomes cnSpec will attempt to query the UCSC sql database to obtain chromosomal boundary information. This has been built in as a convenience, if internet connectivity is an issue, or if copy number segment calls are derived from an assembly not supported by UCSC the user can specify chromosomal boundaries via the argument `y`. This should take the form of a data frame with column names "chromosome", "start", "end". An example of this is provided in the attached data set hg19chr.
 ```{r, fig.keep='last', fig.width=10, fig.height=4.5, message=FALSE, warning=FALSE, results='asis'}
 # Call cnSpec with the y parameter
 cnSpec(LucCNseg, y=hg19chr)
@@ -273,7 +273,7 @@ geneViz(txdb, gr, genome)
 ```
 
 ### trackViz
-Often it is usefull to plot multiple graphics in the same window. `trackViz` provides a mechanism for accomplishing this using a named list. The names in the list will be displayed as labels. It should be noted that elements within the list should be ggplot2 objects.
+Often it is useful to plot multiple graphics in the same window. `trackViz` provides a mechanism for accomplishing this using a named list. The names in the list will be displayed as labels. It should be noted that elements within the list should be ggplot2 objects.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
 # Obtain cytogenetic information for the genome of interest
@@ -290,7 +290,7 @@ trackViz(data, list=TRUE)
 
 ## Hints
 
-Due to the complex nature and variablity of the graphics produced by GenVisR it is recommended that the user adjust the graphics device size for all outputs manually. If not given enough space within the graphics device grob objects will start to collide This can be done via the following:
+Due to the complex nature and variability of the graphics produced by GenVisR it is recommended that the user adjust the graphics device size for all outputs manually. If not given enough space within the graphics device grob objects will start to collide This can be done via the following:
 
 ```{r, eval=FALSE}
 pdf(file="plot.pdf", height=8, width=14)
