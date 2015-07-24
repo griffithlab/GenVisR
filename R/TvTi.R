@@ -39,7 +39,7 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_an
   # re-level based on proportion values or via a smart sort if requested
   if(name_sort == TRUE)
   {
-      sample_order <- unique(x$sample)
+      sample_order <- as.vector(unique(x$sample))
       sample_order <- mixedsort(sample_order)
       x$sample <- factor(x$sample, levels=sample_order)
   } else {
