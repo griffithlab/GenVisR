@@ -11,16 +11,18 @@
 #' @param file_type Character string specifying the format the input is in, one of 'MAF', 'MGI'
 #' @param tvti.layers Additional ggplot2 layers to add to the main panel plot
 #' @param expec.layers Additional ggplot2 layers to add to the expected values plot
+#' @param name_sort Boolean specifying whether to sort samples by name
 #' @examples
 #' TvTi(brcaMAF, type='Frequency', 
 #' palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"), x_axis_text_angle=60)
 #' @return ggplot2 object
 #' @import plyr
 #' @import gridExtra
+#' @importFrom "gtools" mixedsort
 #' @export
 
 
-TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c("#2A2650", "#95fE52", "#F9C59B", "#0F722C", "#D7C7E9", "#FFB93F"), file_type='MAF', tvti.layers=NULL, expec.layers=NULL)
+TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c("#2A2650", "#95fE52", "#F9C59B", "#0F722C", "#D7C7E9", "#FFB93F"), file_type='MAF', tvti.layers=NULL, expec.layers=NULL, name_sort=FALSE)
 { 
   # Perform quality checks
     out <- TvTi.qual(x, y, file_type=file_type)
@@ -34,11 +36,18 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE, x_axis_text_an
   # Calculate the proportion of transitions/transversions
   x <- calc_trans_tranv_freq(x)
   
-  # re-level based on proportion values
-  sample_order <- x[order(x$trans_tranv, -x$Prop),]
-  sample_order <- sample_order[sample_order$Prop != 0,]
-  sample_order <- unique(sample_order$sample)
-  x$sample <- factor(x$sample, levels=sample_order)
+  # re-level based on proportion values or via a smart sort if requested
+  if(name_sort == TRUE)
+  {
+      sample_order <- unique(x$sample)
+      sample_order <- mixedsort(sample_order)
+      x$sample <- factor(x$sample, levels=sample_order)
+  } else {
+      sample_order <- x[order(x$trans_tranv, -x$Prop),]
+      sample_order <- sample_order[sample_order$Prop != 0,]
+      sample_order <- unique(sample_order$sample)
+      x$sample <- factor(x$sample, levels=sample_order)
+  }
   
   # Perform a quality control on y to ensure fill levels match x
   if(!is.null(y))
