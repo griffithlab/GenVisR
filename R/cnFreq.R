@@ -52,7 +52,9 @@ cnFreq <- function(x, CN_low_cutoff=1.5, CN_high_cutoff=2.5, plot_title=NULL, CN
   x <- as.data.frame(x)
  
   # Maintain the order of chromosomes
-  x$chromosome <- factor(x$chromosome, levels=mixedsort(unique(x$chromosome)))
+  chr_order <- as.vector(unique(x$chromosome))
+  chr_order <- mixedsort(chr_order)
+  x$chromosome <- factor(x$chromosome, levels=chr_order)
   
   # Construct the plot
   p1 <- build.cnFreq(x, plotType, plot_title=plot_title, CN_low_colour=CN_low_colour, CN_high_colour=CN_high_colour, x_lab_size=x_lab_size, y_lab_size=y_lab_size, facet_lab_size=facet_lab_size, layers=layers)

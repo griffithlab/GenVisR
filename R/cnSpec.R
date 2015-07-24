@@ -71,9 +71,11 @@ cnSpec <- function(x, y=NULL, genome='hg19', title=NULL, CN_low_colour='#002EB8'
   colnames(CN_data) <- c('chromosome', 'start', 'end', 'sample', 'cn')
   
   # Change the order of chromosomes and samples (natural sort order)
-  chromosome_sorted <- mixedsort(unique(CN_data$chromosome))
+  chromosome_sorted <- as.vector(unique(CN_data$chromosome))
+  chromosome_sorted <- mixedsort(chromosome_sorted)
   CN_data$chromosome <- factor(CN_data$chromosome, levels=chromosome_sorted)
-  sample_sorted <- mixedsort(unique(CN_data$sample))
+  sample_sorted <- as.vector(unique(CN_data$sample))
+  sample_sorted <- mixedsort(sample_sorted)
   CN_data$sample <- factor(CN_data$sample, levels=sample_sorted)
   
   # Construct the plot
