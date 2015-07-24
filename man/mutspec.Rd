@@ -25,7 +25,7 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
 
 \item{clin.var.order}{a character vector of variables to order the clinical legend by}
 
-\item{mutBurden}{an optional data frame containing columns sample, mut_burden}
+\item{mutBurden}{an optional data frame containing columns sample, mut_burden with sample levels matching those supplied in x}
 
 \item{main.recurrence_cutoff}{an integer value to remove genes that do not have x number of mutations}
 

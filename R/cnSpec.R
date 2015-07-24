@@ -18,7 +18,7 @@
 #' @export
 #' @import plyr
 #' @import reshape2
-#' @import gtools
+#' @importFrom "gtools" mixedsort
 
 cnSpec <- function(x, y=NULL, genome='hg19', title=NULL, CN_low_colour='#002EB8', CN_high_colour='#A30000', x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)
 {
@@ -71,9 +71,11 @@ cnSpec <- function(x, y=NULL, genome='hg19', title=NULL, CN_low_colour='#002EB8'
   colnames(CN_data) <- c('chromosome', 'start', 'end', 'sample', 'cn')
   
   # Change the order of chromosomes and samples (natural sort order)
-  chromosome_sorted <- unique(mixedsort(CN_data$chromosome))
+  chromosome_sorted <- as.vector(unique(CN_data$chromosome))
+  chromosome_sorted <- mixedsort(chromosome_sorted)
   CN_data$chromosome <- factor(CN_data$chromosome, levels=chromosome_sorted)
-  sample_sorted <- unique(mixedsort(CN_data$sample))
+  sample_sorted <- as.vector(unique(CN_data$sample))
+  sample_sorted <- mixedsort(sample_sorted)
   CN_data$sample <- factor(CN_data$sample, levels=sample_sorted)
   
   # Construct the plot

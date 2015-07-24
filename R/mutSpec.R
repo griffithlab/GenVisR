@@ -7,7 +7,7 @@
 #' @param clin.legend.col an integer specifying the number of columns to plot in the clinical data legend
 #' @param clin.var.colour a named character vector specifying the mapping between colors and variables in the clinical data
 #' @param clin.var.order a character vector of variables to order the clinical legend by
-#' @param mutBurden an optional data frame containing columns sample, mut_burden
+#' @param mutBurden an optional data frame containing columns sample, mut_burden with sample levels matching those supplied in x
 #' @param main.recurrence_cutoff an integer value to remove genes that do not have x number of mutations
 #' @param main.grid a boolean value to overlay a grid on the primary plot
 #' @param main.label_x a boolean value to plot samples on the x axis
