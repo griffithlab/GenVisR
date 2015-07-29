@@ -5,7 +5,6 @@
 #' @param counts list of readcount tables
 #' @param sample_names list of names associated with each sample in counts list
 #' @return gridExtra object
-#' @export 
 #' @import ggplot2
 #' @import gridExtra
 #' @import gtable
@@ -46,7 +45,7 @@ compare_identities_plot <- function(count_tables, sample_names)
   # they are moved above the graph.
   plotVAF <- ggplot(vaf.long, aes(x=id,y=value))+geom_point(aes(colour=factor(variable)), size=5, position=position_dodge(width=0.5))+ggtitle("Variant Base")
   # y-axis: label as "VAF". Set major breaks at 0, 0.5, and 1.0.
-  plotVAF <- plotVAF + ylab("VAF") + scale_y_continuous(breaks=c(0,0.50,1.00))
+  plotVAF <- plotVAF + ylab("VAF") + scale_y_continuous(limits=c(0,1), breaks=c(0,0.50,1.00))
   # x-axis: Show the variant allele at each locus as x-axis tick labels. 
   plotVAF <- plotVAF + scale_x_continuous(limits=c(0.5,24.5), breaks=1:24, labels=as.list(var))
   # theme: Change panel to white. Remove the legend (it will below the lower graph). 
