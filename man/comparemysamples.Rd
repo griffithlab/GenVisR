@@ -4,10 +4,12 @@
 \alias{comparemysamples}
 \title{Compare the identities of multiple samples}
 \usage{
-comparemysamples(x)
+comparemysamples(x, genome)
 }
 \arguments{
-\item{x}{data frame of bam files and associated sample names}
+\item{x}{data frame with colnames sample_name, bamfile}
+
+\item{genome}{Object of class BSgenome specifying the genome}
 }
 \value{
 gridExtra object
