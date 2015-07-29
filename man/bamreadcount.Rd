@@ -8,11 +8,15 @@ bamreadcount(bamfile, genome, targetbed = NULL)
 }
 \arguments{
 \item{bamfile}{Path to the bam file}
+
+\item{genome}{Object of class BSgenome corresponding to a genome of interest}
+
+\item{targetbed}{Object of class data frame containing target locations in .bed format and containing columns chr, start, end}
 }
 \value{
-data frame
+object of class data frame containing readcount information
 }
 \description{
-Given the bam file path, count the number of reads at the 24 SNP locations
+Given the bam file path, count the number of reads at specified snp locations
 }
 

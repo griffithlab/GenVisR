@@ -1,20 +1,28 @@
 #' Count nucleotide reads at SNP locations
 #' 
-#' Given the bam file path, count the number of reads at the 24 SNP locations
+#' Given the bam file path, count the number of reads at specified snp locations
 #' @name bamreadcount
 #' @param bamfile Path to the bam file
-#' @return data frame
+#' @param genome Object of class BSgenome corresponding to a genome of interest
+#' @param targetbed Object of class data frame containing target locations in .bed format and containing columns chr, start, end
+#' @return object of class data frame containing readcount information
 #' @export 
 #' @import GenomicRanges
 #' @import Rsamtools
 #' @importFrom "IRanges" IRanges
 #' @import reshape2
 #' @import Biostrings
-bamreadcount <- function(bamfile, genome, targetbed = NULL){
-    ## Need index file
-    bai <- paste(bamfile,".bai", sep='')
+
+bamreadcount <- function(bamfile, genome, targetbed = NULL)
+{   
+    # obtain the bam index file
+    bai <- paste0(bamfile,".bai")
     
-    bamreadcount.qual(bai, genome, targetbed)
+    # Perform basic quality checks on input data
+    list <- bamreadcount.qual(bai, genome, targetbed)
+    bai <- list[[1]]
+    genome <- list[[2]]
+    targetbed <- list[[3]]
     
     ## Read in the target bed locations. If none specified, read in 24 Pengelly loci.
     if(!is.null(targetbed)){

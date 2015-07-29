@@ -7,12 +7,12 @@
 comparemysamples(x, genome)
 }
 \arguments{
-\item{x}{data frame with colnames sample_name, bamfile}
+\item{x}{data frame with column names sample_name, bamfile}
 
 \item{genome}{Object of class BSgenome specifying the genome}
 }
 \value{
-gridExtra object
+grid object
 }
 \description{
 Given the bam file path, count the number of reads at the 24 SNP locations
