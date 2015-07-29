@@ -14,6 +14,8 @@ bamreadcount <- function(bamfile, genome, targetbed = NULL){
     ## Need index file
     bai <- paste(bamfile,".bai", sep='')
     
+    bamreadcount.qual(bai, genome, targetbed)
+    
     ## Read in the target bed locations. If none specified, read in 24 Pengelly loci.
     if(!is.null(targetbed)){
         pengelly <- read.table(file=targetbed, sep='\t', header = TRUE)
