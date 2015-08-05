@@ -59,12 +59,16 @@ extrCDS <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
     cds <- lapply(cds, function(x) x[strand(x) == as.character(strand(gr))])
   }
   
-  keys <- names(cds)
-  f3 <- function(gr, name){
-    mcols(gr)$txname <- name
-    return(gr)
+  if(reduce==FALSE){
+      keys <- names(cds)
+      f3 <- function(gr, name){
+          mcols(gr)$txname <- name
+          return(gr)
+      }
+      cds <- mapply(f3, cds[keys], txnames[keys], SIMPLIFY=FALSE)
+  }else{
+      mcols(cds[[1]])$txname <- 'merged'
+      names(cds) <- 'merged'
   }
-  cds <- mapply(f3, cds[keys], txnames[keys], SIMPLIFY=FALSE)
-
   return(cds)
 }
