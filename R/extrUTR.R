@@ -89,12 +89,16 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
     UTR <- lapply(UTR, function(x) x[strand(x) == as.character(strand(gr))])
   }
   
-  keys <- names(UTR)
-  f5 <- function(gr, name){
-    mcols(gr)$txname <- name
-    return(gr)
+  if (reduce==FALSE){
+      keys <- names(UTR)
+      f5 <- function(gr, name){
+        mcols(gr)$txname <- name
+        return(gr)
+      }
+      UTR <- mapply(f5, UTR[keys], txnames[keys], SIMPLIFY=FALSE)
+  }else{
+      mcols(UTR[[1]])$txname <- 'merged'
+      names(UTR) <- 'merged'
   }
-  UTR <- mapply(f5, UTR[keys], txnames[keys], SIMPLIFY=FALSE)
-  
   return(UTR)
 }

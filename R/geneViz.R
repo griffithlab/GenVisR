@@ -57,16 +57,23 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,
     gene_features <- lapply(gene_features, na.omit)
     if(reduce){
         gene_features <- lapply(gene_features, mergeTypes)
+        gene_features[[1]] <- gene_features[[1]][gene_features[[1]]$width > 0,]
         chr <- as.character(seqnames(gr))
         x <- gene_features[[1]][,c('start','end')]
         x$chr <- chr
         gc <- function(chr, s, e){
-        gr.temp <- GRanges(seqnames=c(chr), ranges=IRanges(start=c(as.integer(s)), end=c(as.integer(e))), strand=strand(c("+")))
-        return(calcGC(gr=gr.temp, genome=genome))
+            gr.temp <- GRanges(seqnames=c(chr), ranges=IRanges(start=c(as.integer(s)), end=c(as.integer(e))), strand=strand(c("+")))
+            return(calcGC(gr=gr.temp, genome=genome))
         }
-    l <- apply(x,1,function(x) gc(chr=x[3], s=x[1], e=x[2]))
-    l <- lapply(l, Granges2dataframe)
-    gene_features[[1]]$GC <- rbind.fill(l)$GC
+        l <- apply(x,1,function(x) gc(chr=x[3], s=x[1], e=x[2]))
+        # AHW: Ugh. A for loop. I know. If you want to make this better, I would welcome it.
+        l.new <- l[[1]]
+        for (i in 2:length(l)){
+            l.new <- c(l.new, l[[i]])
+        }
+        l <- l.new
+        gc <- as.data.frame(mcols(l))
+        gene_features[[1]]$GC <- rbind.fill(gc)$GC
     }
   
     # obtain xlimits for gene plot, this is overwritten if transform.
