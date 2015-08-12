@@ -17,7 +17,7 @@ cnView.qual <- function(x, y, genome)
     x <- droplevels(x)
   }
   
-  if(!all(c('chromosome', 'coordinate', 'cn', 'p_value') %in% colnames(x)))
+  if(!all(c('chromosome', 'coordinate', 'cn') %in% colnames(x)))
   {
     stop("Did not detect correct columns in x, missing one of chromosome, coordinate, cn, p_value")
   }
