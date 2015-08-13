@@ -9,57 +9,74 @@ mutSpec(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
   clin.var.order = NULL, mutBurden = NULL, main.recurrence_cutoff = 0,
   main.grid = TRUE, main.label_x = FALSE, main.gene_label_size = 8,
   coverageSpace = 44100000, file_type = "MAF", main.genes = NULL,
-  drop_mutation = FALSE, rmv_silent = FALSE, main.label_col = NULL,
-  main.plot_label_size = 4, main.palette = NULL, sampRecur.layers = NULL,
-  clin.layers = NULL, main.layers = NULL, mutRecur.layers = NULL,
-  main.plot_label_angle = 0)
+  main.samples = NULL, drop_mutation = FALSE, rmv_silent = FALSE,
+  main.label_col = NULL, main.plot_label_size = 4, main.palette = NULL,
+  sampRecur.layers = NULL, clin.layers = NULL, main.layers = NULL,
+  mutRecur.layers = NULL, main.plot_label_angle = 0)
 }
 \arguments{
 \item{x}{a data frame in annotation format}
 
-\item{clinDat}{an optional data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"}
+\item{clinDat}{an optional data frame in "long" format giving additional
+information to be plotted, requires columns "sample", "variable", and "value"}
 
-\item{clin.legend.col}{an integer specifying the number of columns to plot in the clinical data legend}
+\item{clin.legend.col}{an integer specifying the number of columns to plot in
+the clinical data legend}
 
-\item{clin.var.colour}{a named character vector specifying the mapping between colors and variables in the clinical data}
+\item{clin.var.colour}{a named character vector specifying the mapping
+between colors and variables in the clinical data}
 
-\item{clin.var.order}{a character vector of variables to order the clinical legend by}
+\item{clin.var.order}{a character vector of variables to order the clinical
+legend by}
 
-\item{mutBurden}{an optional data frame containing columns sample, mut_burden with sample levels matching those supplied in x}
+\item{mutBurden}{an optional data frame containing columns sample, mut_burden
+with sample levels matching those supplied in x}
 
-\item{main.recurrence_cutoff}{an integer value to remove genes that do not have x number of mutations}
+\item{main.recurrence_cutoff}{an integer value to remove genes that do not
+have x number of mutations}
 
 \item{main.grid}{a boolean value to overlay a grid on the primary plot}
 
 \item{main.label_x}{a boolean value to plot samples on the x axis}
 
-\item{main.gene_label_size}{an integer specifying the size of labels on Y axis}
+\item{main.gene_label_size}{an integer specifying the size of labels on Y
+axis}
 
-\item{coverageSpace}{an integer specifying the size in bp of the genome covered from which mutations could be called}
+\item{coverageSpace}{an integer specifying the size in bp of the genome
+covered from which mutations could be called}
 
-\item{file_type}{a character string specifying the file format of the data frame, one of "MGI", "MAF"}
+\item{file_type}{a character string specifying the file format of the data
+frame, one of "MGI", "MAF"}
 
 \item{main.genes}{a character vector specifying genes to plot}
 
-\item{drop_mutation}{Boolean specifying whether to drop unused "mutation type" levels from the legend}
+\item{drop_mutation}{Boolean specifying whether to drop unused
+"mutation type" levels from the legend}
 
-\item{rmv_silent}{Boolean specifying wheter to remove silent mutations from the left side and main plot}
+\item{rmv_silent}{Boolean specifying wheter to remove silent mutations from
+the left side and main plot}
 
-\item{main.label_col}{Character string specifying an optional column name from which to derive cell labels from}
+\item{main.label_col}{Character string specifying an optional column name
+from which to derive cell labels from}
 
-\item{main.plot_label_size}{Integer specifying the size of labels for cells in the main panel}
+\item{main.plot_label_size}{Integer specifying the size of labels for cells
+in the main panel}
 
-\item{main.palette}{Character vector specifying colors to fill on mutation type}
+\item{main.palette}{Character vector specifying colors to fill on mutation
+type}
 
-\item{sampRecur.layers}{Additional ggplot2 layers to plot on the sample recurence chart}
+\item{sampRecur.layers}{Additional ggplot2 layers to plot on the sample
+recurence chart}
 
 \item{clin.layers}{Additional ggplot2 layers to plot on the clinical data}
 
 \item{main.layers}{Additional ggplot2 layers to plot on the main panel}
 
-\item{mutRecur.layers}{Additional ggplot2 layers to plot on the mutation burden data}
+\item{mutRecur.layers}{Additional ggplot2 layers to plot on the mutation
+burden data}
 
-\item{main.plot_label_angle}{Integer specifying the degree of rotation for text if mian.label_col is specified}
+\item{main.plot_label_angle}{Integer specifying the degree of rotation for
+text if mian.label_col is specified}
 }
 \value{
 a grob for plotting

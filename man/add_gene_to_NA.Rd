@@ -2,7 +2,7 @@
 % Please edit documentation in R/add_gene_to_NA.R
 \name{add_gene_to_NA}
 \alias{add_gene_to_NA}
-\title{replace NA}
+\title{Assign NA samples gene}
 \usage{
 add_gene_to_NA(data_frame)
 }
@@ -10,7 +10,8 @@ add_gene_to_NA(data_frame)
 \item{data_frame}{a data frame in MAF format}
 }
 \value{
-a data frame with NA values in a gene column coerced to the top gene name
+a data frame with NA values in a gene column coerced to the top gene
+name
 }
 \description{
 Replace NA values in a gene column to the top gene name
