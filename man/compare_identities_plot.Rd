@@ -12,9 +12,10 @@ compare_identities_plot(count_tables, sample_names)
 \item{counts}{list of readcount tables}
 }
 \value{
-gridExtra object
+none
 }
 \description{
-Produce an identity SNP plot displaying VAFs of 24 SNP locations and coverage information to compare multiple sample identities
+Produce an identity SNP plot displaying VAFs of 24 SNP locations and coverage
+information to compare multiple sample identities
 }
 

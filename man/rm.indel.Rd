@@ -13,6 +13,7 @@ rm.indel(x)
 Object of class data frame with indels removed
 }
 \description{
-Given a data frame with columns reference and variants remove all indels from data
+Given a data frame with columns reference and variants remove all indels
+from data
 }
 

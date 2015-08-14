@@ -5,13 +5,11 @@
 #' @param plot_list list of ggplot objects
 #' @param axis character string to specify the axis to align plotting space on, one of both, width, height
 #' @return ggplotGrob object
-#' @import gridExtra
-#' @import gtable
 
 align_plot <- function(plot_list, axis='both')
 {
     # convert all ggplot objects to grob obects
-    plots <- lapply(plot_list, ggplotGrob)
+    plots <- lapply(plot_list, ggplot2::ggplotGrob)
   
     # if specified align the plot widths
     if(axis == 'width' | axis == 'both')
@@ -34,7 +32,7 @@ align_plot <- function(plot_list, axis='both')
     }
   
     # Combine the plots of now equal widths/heights
-    plots <- do.call(arrangeGrob, plots)
+    plots <- do.call(gridExtra::arrangeGrob, plots)
   
     return(plots)	
 }

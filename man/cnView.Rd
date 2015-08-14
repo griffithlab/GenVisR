@@ -9,21 +9,29 @@ cnView(x, y = NULL, z = NULL, genome = "hg19", chr = "chr1",
   main.layers = NULL, ideo.layers = NULL)
 }
 \arguments{
-\item{x}{object of class data frame with columns "chromosome", "coordinate", "cn", "p_value" consisting of raw cn calls from a single sample}
+\item{x}{object of class data frame with columns "chromosome", "coordinate",
+"cn", "p_value" consisting of raw cn calls from a single sample}
 
-\item{y}{object of class data frame with columns "chrom", "chromStart", "chromEnd", "name", "gieStain" for plotting the ideogram (optional)}
+\item{y}{object of class data frame with columns "chrom", "chromStart",
+"chromEnd", "name", "gieStain" for plotting the ideogram (optional)}
 
-\item{z}{object of class data frame with columns "chromosome", "start", "end", "segmean" consisting of cn segment calls (optional)}
+\item{z}{object of class data frame with columns "chromosome", "start",
+"end", "segmean" consisting of cn segment calls (optional)}
 
-\item{genome}{character string specifying UCSC genome to use, uneccessary if y is supplied, defaults to "hg19"}
+\item{genome}{character string specifying UCSC genome to use, uneccessary if
+y is supplied, defaults to "hg19"}
 
-\item{chr}{character string specifying UCSC chromosome to plot one of "chr..." or "all"}
+\item{chr}{character string specifying UCSC chromosome to plot one of
+"chr..." or "all"}
 
-\item{main.cnDiff}{Boolean specifying whether values in cn are copy number differences or actual copy numbers}
+\item{main.cnDiff}{Boolean specifying whether values in cn are copy number
+differences or actual copy numbers}
 
-\item{ideo.chr_txt_angle}{integer specifying angle of text when plotting chromosome band text}
+\item{ideo.chr_txt_angle}{integer specifying angle of text when plotting
+chromosome band text}
 
-\item{ideo.chr_txt_size}{integer specifying size of text when plotting chromosome band text}
+\item{ideo.chr_txt_size}{integer specifying size of text when plotting
+chromosome band text}
 
 \item{main.layers}{additional ggplot2 layers for the main cn plot}
 
@@ -33,7 +41,8 @@ cnView(x, y = NULL, z = NULL, genome = "hg19", chr = "chr1",
 ggplot object
 }
 \description{
-given data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value plot raw copy number calls
+given data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value plot
+raw copy number calls
 }
 \examples{
 cnView(Luc2CNraw, chr='chr14', genome='hg19', ideo.chr_txt_size=4)

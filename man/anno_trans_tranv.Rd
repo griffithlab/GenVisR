@@ -10,9 +10,11 @@ anno_trans_tranv(x)
 \item{x}{Object of class data frame containing columns 'reference', 'variant'}
 }
 \value{
-Object of class data frame with transition/transversion annotations appended
+Object of class data frame with transition/transversion annotations
+appended
 }
 \description{
-Given a data frame with columns reference and variant annotate the base change occurring
+Given a data frame with columns reference and variant annotate the base
+change occurring
 }
 

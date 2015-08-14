@@ -14,7 +14,8 @@ build_track_name(name, bg_fill = "black", text_fill = "white",
 
 \item{text_fill}{character string giving the colour to fill the text}
 
-\item{border}{character string specifying the colour to fill the border of the label}
+\item{border}{character string specifying the colour to fill the border of
+the label}
 
 \item{size}{integer specifying the size of the text within the label}
 }

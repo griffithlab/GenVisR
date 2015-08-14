@@ -9,12 +9,14 @@ MAF_to_anno(x, label_col)
 \arguments{
 \item{x}{a data frame in MAF format}
 
-\item{label_col}{Character string specifying the column name of a label column}
+\item{label_col}{Character string specifying the column name of a
+label column}
 }
 \value{
 a data frame coerced from MAF to TGI format
 }
 \description{
-Convert columns of a mutation annotation file "MAF" into a format recognizable by internal functions
+Convert columns of a mutation annotation file "MAF" into a format
+recognizable by internal functions
 }
 

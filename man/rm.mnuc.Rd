@@ -13,6 +13,7 @@ rm.mnuc(x)
 Object of class data frame with multi nucleotide codes removed
 }
 \description{
-Given a data frame with columns reference and variants remove all multinucleotides from data
+Given a data frame with columns reference and variants remove all
+multinucleotides from data
 }
 

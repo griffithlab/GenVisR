@@ -2,8 +2,10 @@
 #' 
 #' Perform quality check for input to function TvTi
 #' @name TvTi.qual
-#' @param x Object of class data frame containing columns 'sample', reference', 'variant' for 'MGI' file or 'Tumor_Sample_Barcode', 'Reference_Allele' 'Tumor_Seq_Allele1', 'Tumor_Seq_Allele2' for 'MAF' file
-#' @param y Object of class data frame containing
+#' @param x Object of class data frame containing columns 'sample', reference',
+#' 'variant' for 'MGI' file or 'Tumor_Sample_Barcode', 'Reference_Allele',
+#' 'Tumor_Seq_Allele1', 'Tumor_Seq_Allele2' for 'MAF' file
+#' @param y Object of class data frame containing columns "Prop", "trans_tranv"
 #' @param file_type Character string spedifying th input file type expected
 #' @return a data frame, or list of data frames passing quality checks
 
@@ -31,7 +33,8 @@ TvTi.qual <- function(x, y=NULL, file_type='MAF')
     {
       if(colnames(y) %in% c('Prop', 'trans_tranv'))
       {
-        stop("Did not detect correct column names in y input, missing one of Prop, trans_tranv")
+        stop("Did not detect correct column names in y input, missing one of
+             Prop, trans_tranv")
       }
     }
     if(is.vector(y))
@@ -55,20 +58,28 @@ TvTi.qual <- function(x, y=NULL, file_type='MAF')
   if(file_type == 'MGI')
   {
     # Check that columns are named appropriatley, if not print error
-    if(any(grepl('^reference$', colnames(x))) && any(grepl('^variant$', colnames(x))) && any(grepl('^sample$', colnames(x))))
+    if(any(grepl('^reference$', colnames(x))) &&
+           any(grepl('^variant$', colnames(x))) &&
+           any(grepl('^sample$', colnames(x))))
     {
       message("Found appropriate columns")
     } else {
-      stop("Could not find all columns requested, missing one of reference, variant, sample")
+      stop("Could not find all columns requested, missing one of reference,
+           variant, sample")
     } 
     x <- x[,c('reference', 'variant', 'sample')]
   } else if(file_type == 'MAF')
   {
-    if(any(grepl('^Tumor_Sample_Barcode$', colnames(x))) && any(grepl('^Reference_Allele$', colnames(x))) && any(grepl('^Tumor_Seq_Allele1$', colnames(x))) && any(grepl('^Tumor_Seq_Allele2$', colnames(x))))
+    if(any(grepl('^Tumor_Sample_Barcode$', colnames(x))) &&
+           any(grepl('^Reference_Allele$', colnames(x))) &&
+           any(grepl('^Tumor_Seq_Allele1$', colnames(x))) &&
+           any(grepl('^Tumor_Seq_Allele2$', colnames(x))))
     {
       message("Found appropriate columns")
     } else {
-      stop("Could not find all columns requested, missing one of 'Tumor_Sample_Barcode', 'Reference_Allele', 'Tumor_Seq_Allele1', 'Tumor_Seq_Allele2'")
+      stop("Could not find all columns requested, missing one of
+           'Tumor_Sample_Barcode', 'Reference_Allele', 'Tumor_Seq_Allele1',
+           'Tumor_Seq_Allele2'")
     }
       # Convert MAF file to internal format
       x <- TvTi.convMaf(x)
@@ -93,7 +104,8 @@ TvTi.qual <- function(x, y=NULL, file_type='MAF')
   # check y input for proper row names
   if(!is.null(y))  
   {
-    trans.tranv.names <- c("A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G", "G->T or C->A")
+    trans.tranv.names <- c("A->C or T->G", "A->G or T->C", "A->T or T->A",
+                           "G->A or C->T", "G->C or C->G", "G->T or C->A")
     if(!all(rownames(y) %in% trans.tranv.names))
     {
       stop("Did not detect correct names in y")

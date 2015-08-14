@@ -7,9 +7,11 @@
 TvTi.qual(x, y = NULL, file_type = "MAF")
 }
 \arguments{
-\item{x}{Object of class data frame containing columns 'sample', reference', 'variant' for 'MGI' file or 'Tumor_Sample_Barcode', 'Reference_Allele' 'Tumor_Seq_Allele1', 'Tumor_Seq_Allele2' for 'MAF' file}
+\item{x}{Object of class data frame containing columns 'sample', reference',
+'variant' for 'MGI' file or 'Tumor_Sample_Barcode', 'Reference_Allele',
+'Tumor_Seq_Allele1', 'Tumor_Seq_Allele2' for 'MAF' file}
 
-\item{y}{Object of class data frame containing}
+\item{y}{Object of class data frame containing columns "Prop", "trans_tranv"}
 
 \item{file_type}{Character string spedifying th input file type expected}
 }

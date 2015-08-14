@@ -8,11 +8,14 @@ build.clin.mutSpec(x, clin.legend.col = 1, clin.var.colour = NULL,
   clin.var.order = NULL, clin.layers = NULL)
 }
 \arguments{
-\item{x}{a data frame in "long" format giving additional information to be plotted, requires columns "sample", "variable", and "value"}
+\item{x}{a data frame in "long" format giving additional information to be
+plotted, requires columns "sample", "variable", and "value"}
 
-\item{clin.legend.col}{an integer specifying the number of columns to plot in the legend}
+\item{clin.legend.col}{an integer specifying the number of columns to plot in
+the legend}
 
-\item{clin.var.colour}{a named character vector specifying the mapping between colors and variables}
+\item{clin.var.colour}{a named character vector specifying the mapping
+between colors and variables}
 
 \item{clin.var.order}{a character vector of variables to order the legend by}
 
@@ -22,6 +25,7 @@ build.clin.mutSpec(x, clin.legend.col = 1, clin.var.colour = NULL,
 a grob object
 }
 \description{
-given a data frame with columns names sample, variable, and value create a ggplot2 object
+given a data frame with columns names sample, variable, and value create a
+ggplot2 object
 }
 

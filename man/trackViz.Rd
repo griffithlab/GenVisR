@@ -14,15 +14,19 @@ trackViz(..., bgFill = "black", textFill = "white", border = "black",
 
 \item{textFill}{character string giving the colour to fill the text}
 
-\item{border}{character string specifying the colour to fill the border of the label}
+\item{border}{character string specifying the colour to fill the border of
+the label}
 
 \item{size}{integer specifying the size of the text within the label}
 
-\item{axis_align}{character string specifying axis to align plotting space on, one of 'both', 'height', 'width', 'none'}
+\item{axis_align}{character string specifying axis to align plotting space
+on, one of 'both', 'height', 'width', 'none'}
 
-\item{widthRatio}{vector of length 2 giving the ratio of track labels to plots}
+\item{widthRatio}{vector of length 2 giving the ratio of track labels to
+plots}
 
-\item{list}{boolean specifying whether plots are in a named list or specified individually via ...}
+\item{list}{boolean specifying whether plots are in a named list or specified
+individually via ...}
 }
 \value{
 ggplotGrob object

@@ -15,7 +15,8 @@ mutSpec.qual(x, y, z, file_type, label_col)
 
 \item{file_type}{Character string specifying the input format to expect in x}
 
-\item{label_col}{Character string specifying the column name of a label column}
+\item{label_col}{Character string specifying the column name of a label
+column}
 }
 \value{
 a list of data frames passing quality checks
