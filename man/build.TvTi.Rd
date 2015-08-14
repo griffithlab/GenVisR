@@ -10,19 +10,24 @@ build.TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
   tvti.layers = NULL, expec.layers = NULL)
 }
 \arguments{
-\item{x}{Object of class data frame containing columns 'trans_tranv', 'sample', 'Freq', and 'Prop'}
+\item{x}{Object of class data frame containing columns 'trans_tranv',
+'sample', 'Freq', and 'Prop'}
 
-\item{y}{Object of class data frame containing columns 'Prop', 'trans_tranv' for display of expected results}
+\item{y}{Object of class data frame containing columns 'Prop', 'trans_tranv'
+for display of expected results}
 
-\item{type}{Object of class character specifying whether to plot the Proportion or Frequency, one of "Prop"}
+\item{type}{Object of class character specifying whether to plot the
+Proportion or Frequency, one of "Prop"}
 
 \item{label_x_axis}{boolean specifying wheter to label x axis}
 
 \item{x_axis_text_angle}{Integer specifying the angle to labels on x_axis}
 
-\item{palette}{Character vector of length 6 specifying colors for trans/tranv type}
+\item{palette}{Character vector of length 6 specifying colors for
+trans/tranv type}
 
-\item{plot_expected}{Boolean specifying if this is the main TvTi plot or a sub plot for expected values}
+\item{plot_expected}{Boolean specifying if this is the main TvTi plot or a
+sub plot for expected values}
 
 \item{tvti.layers}{Additional ggplot2 layers for the main plot}
 
@@ -32,6 +37,7 @@ build.TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
 GGplot Object
 }
 \description{
-Given a data frame with columns 'trans_tranv', 'sample', 'Freq', and 'Prop', build a transition/transversion plot
+Given a data frame with columns 'trans_tranv', 'sample', 'Freq', and 'Prop',
+build a transition/transversion plot
 }
 

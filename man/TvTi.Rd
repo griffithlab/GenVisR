@@ -10,23 +10,33 @@ TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
   expec.layers = NULL, name_sort = FALSE)
 }
 \arguments{
-\item{x}{Object of class data frame containing columns 'sample', reference', 'variant'}
+\item{x}{Object of class data frame containing columns 'sample', reference',
+'variant'}
 
-\item{y}{named vector containing expected transition/transversion proportions with names "A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G", "G->T or C->A" or a data frame with column names "Prop", "trans_tranv" and levels of trans_tranv matching "A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G", "G->T or C->A"}
+\item{y}{named vector containing expected transition/transversion proportions
+with names "A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T",
+"G->C or C->G", "G->T or C->A" or a data frame with column names "Prop",
+"trans_tranv" and levels of trans_tranv matching "A->C or T->G",
+"A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G",
+"G->T or C->A"}
 
-\item{type}{Object of class character specifying whether to plot the Proportion or Frequency, one of "Proportion", "Frequency"}
+\item{type}{Object of class character specifying whether to plot the
+Proportion or Frequency, one of "Proportion", "Frequency"}
 
 \item{label_x_axis}{boolean specifying wheter to label x axis}
 
 \item{x_axis_text_angle}{Integer specifying the angle of labels on the x_axis}
 
-\item{palette}{Character vector of length 6 specifying colors for each trans/tranv type}
+\item{palette}{Character vector of length 6 specifying colors for each
+trans/tranv type}
 
-\item{file_type}{Character string specifying the format the input is in, one of 'MAF', 'MGI'}
+\item{file_type}{Character string specifying the format the input is in,
+one of 'MAF', 'MGI'}
 
 \item{tvti.layers}{Additional ggplot2 layers to add to the main panel plot}
 
-\item{expec.layers}{Additional ggplot2 layers to add to the expected values plot}
+\item{expec.layers}{Additional ggplot2 layers to add to the expected
+values plot}
 
 \item{name_sort}{Boolean specifying whether to sort samples by name}
 }
@@ -34,10 +44,12 @@ TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
 ggplot2 object
 }
 \description{
-Given a data frame with columns reference, variant, and sample construct a transition/transversion plot
+Given a data frame with columns reference, variant, and sample construct a
+transition/transversion plot
 }
 \examples{
 TvTi(brcaMAF, type='Frequency',
-palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"), x_axis_text_angle=60)
+palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"),
+x_axis_text_angle=60)
 }
 

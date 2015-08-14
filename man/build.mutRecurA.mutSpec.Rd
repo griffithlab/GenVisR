@@ -9,7 +9,8 @@ build.mutRecurA.mutSpec(data_frame, coverage_space, layers = NULL)
 \arguments{
 \item{data_frame}{a data frame in MAF format}
 
-\item{coverage_space}{an integer specifying the coverage space in base pairs from which a mutation could occur}
+\item{coverage_space}{an integer specifying the coverage space in base pairs
+from which a mutation could occur}
 
 \item{layers}{Additional ggplot2 layers to plot}
 }

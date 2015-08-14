@@ -1,6 +1,7 @@
 #' Remove indels
 #' 
-#' Given a data frame with columns reference and variants remove all indels from data
+#' Given a data frame with columns reference and variants remove all indels
+#' from data
 #' @name rm.indel
 #' @param x Object of class data frame containing columns 'reference', 'variant'
 #' @return Object of class data frame with indels removed

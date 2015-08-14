@@ -16,11 +16,14 @@ build.main.mutSpec(data_frame, grid = TRUE, label_x = FALSE,
 
 \item{label_x}{boolean value whether to label the x axis}
 
-\item{gene_label_size}{numeric value indicating the size of the gene labels on the y-axis}
+\item{gene_label_size}{numeric value indicating the size of the gene labels
+on the y-axis}
 
-\item{file_type}{character string specifying the file type, one of 'MAF' or 'MGI'}
+\item{file_type}{character string specifying the file type, one of 'MAF' or
+'MGI'}
 
-\item{drop_mutation}{Boolean specifying whether to drop unused "mutation type" levels from the legend}
+\item{drop_mutation}{Boolean specifying whether to drop unused
+"mutation type" levels from the legend}
 
 \item{plot_x_title}{Boolean specifying whether to plot the x_axis title}
 
@@ -28,11 +31,13 @@ build.main.mutSpec(data_frame, grid = TRUE, label_x = FALSE,
 
 \item{plot_label_size}{Integer specifying text size of cell labels}
 
-\item{plot_palette}{Character vector specifying colors to fill on mutation type}
+\item{plot_palette}{Character vector specifying colors to fill on mutation
+type}
 
 \item{layers}{additional ggplot2 layers to plot}
 
-\item{plot_label_angle}{angle at which to plot label text if plot_label is true}
+\item{plot_label_angle}{angle at which to plot label text if plot_label is
+true}
 }
 \value{
 a ggplot2 object

@@ -5,14 +5,12 @@
 #' @param p1 ggplot object of chromosome
 #' @param p2 ggplot object of CN
 #' @return ggplot object
-#' @import gtable
-#' @import gridExtra
 
 align_y_cn <- function(p1, p2)
 {
   # define the ggplot's as grobs and create a blank plot
-  gA <- ggplotGrob(p1)
-  gB <- ggplotGrob(p2)
+  gA <- ggplot2::ggplotGrob(p1)
+  gB <- ggplot2::ggplotGrob(p2)
   
   # Adjust the grob heights so p1, and p2 plots line up
   maxwidth = grid::unit.pmax(gA$widths[2:5,], gB$widths[2:5,])
@@ -20,7 +18,7 @@ align_y_cn <- function(p1, p2)
   gB$widths[2:5] <- as.list(maxwidth)
   
   # plot the grobs with grid.arrange
-  p1 <- arrangeGrob(gA, gB, ncol=1, nrow=2, heights=c(1,2))
+  p1 <- gridExtra::arrangeGrob(gA, gB, ncol=1, nrow=2, heights=c(1,2))
   
   return(p1)
 }

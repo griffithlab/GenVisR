@@ -6,7 +6,8 @@
 #' @param y a data frame containing clinical data or a null object
 #' @param z a data frame containing mutation burden information or a null object
 #' @param file_type Character string specifying the input format to expect in x
-#' @param label_col Character string specifying the column name of a label column
+#' @param label_col Character string specifying the column name of a label
+#' column
 #' @return a list of data frames passing quality checks
 
 mutSpec.qual <- function(x, y, z, file_type, label_col)

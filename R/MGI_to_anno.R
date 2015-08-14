@@ -1,9 +1,11 @@
 #' Convert MGI File
 #' 
-#' Convert columns of a mutation annotation file "MGI" into a format recognizable by internal functions
+#' Convert columns of a mutation annotation file "MGI" into a format
+#' recognizable by internal functions
 #' @name MGI_to_anno
 #' @param x a data frame in MGI internal format
-#' @param label_col Character string specifying the column name of a label column
+#' @param label_col Character string specifying the column name of a label
+#' column
 #' @return a data frame coerced from MGI to internal annotation format
 
 MGI_to_anno <- function(x, label_col)
