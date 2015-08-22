@@ -33,8 +33,8 @@
 
 TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
                  x_axis_text_angle=45,
-                 palette=c("#2A2650", "#95fE52", "#F9C59B", "#0F722C",
-                           "#D7C7E9", "#FFB93F"),
+                 palette=c('#D53E4F', '#FC8D59', '#FEE08B', '#E6F598',
+                           '#99D594', '#3288BD'),
                  file_type='MAF', tvti.layers=NULL, expec.layers=NULL,
                  name_sort=FALSE)
 { 

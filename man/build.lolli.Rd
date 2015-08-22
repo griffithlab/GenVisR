@@ -9,19 +9,25 @@ build.lolli(gene_data, length, mutation_observed, mutation_observed2,
   gene_colour, sequence_data, plot_sidechain = FALSE, layers = NULL)
 }
 \arguments{
-\item{gene_data}{object of class dataframe giving protien domain and gene information}
+\item{gene_data}{object of class dataframe giving protien domain and gene
+information}
 
 \item{length}{integer specifying the length of the protien in amino acids}
 
-\item{mutation_observed}{object of class data frame specifying mutations observed in input file}
+\item{mutation_observed}{object of class data frame specifying mutations
+observed in input file}
 
-\item{mutation_observed2}{optional object of class data frame specifying additional mutations for bottom track}
+\item{mutation_observed2}{optional object of class data frame specifying
+additional mutations for bottom track}
 
-\item{fill_value}{character string specifying the column on which to colour mutation points}
+\item{fill_value}{character string specifying the column on which to colour
+mutation points}
 
-\item{label_column}{character string specifying the column containing the labels to attach to mutation points}
+\item{label_column}{character string specifying the column containing the
+labels to attach to mutation points}
 
-\item{plot_text_angle}{numeric value specifying the angle of text to be plotted}
+\item{plot_text_angle}{numeric value specifying the angle of text to be
+plotted}
 
 \item{plot_text_size}{numeric value specifying the size of text to be plotted}
 
@@ -29,9 +35,11 @@ build.lolli(gene_data, length, mutation_observed, mutation_observed2,
 
 \item{gene_colour}{color to shade plotted gene}
 
-\item{sequence_data}{object of class dataframe giving AA sequence, sidechain, and coord required if plot_sidechain is true}
+\item{sequence_data}{object of class dataframe giving AA sequence, sidechain,
+and coord required if plot_sidechain is true}
 
-\item{plot_sidechain}{boolean specifying whether to plot the AA sidechain instead of domain information}
+\item{plot_sidechain}{boolean specifying whether to plot the AA sidechain
+instead of domain information}
 
 \item{layers}{additional ggplot2 layers to plot}
 }
