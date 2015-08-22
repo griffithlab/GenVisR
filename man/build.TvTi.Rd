@@ -5,8 +5,8 @@
 \title{build transitions/transversions}
 \usage{
 build.TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
-  x_axis_text_angle = 45, palette = c("#7BC374", "#EFCD8D", "#8763A0",
-  "#6677A0", "#EDEE8D", "#EF8D8D"), plot_expected = FALSE,
+  x_axis_text_angle = 45, palette = c("#D53E4F", "#FC8D59", "#FEE08B",
+  "#E6F598", "#99D594", "#3288BD"), plot_expected = FALSE,
   tvti.layers = NULL, expec.layers = NULL)
 }
 \arguments{

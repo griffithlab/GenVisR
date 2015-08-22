@@ -7,9 +7,11 @@
 lolliplot.qual(x, y)
 }
 \arguments{
-\item{x}{object of class data frame containing columns transcript_name, gene, and amino_acid_change and rows denoting mutations}
+\item{x}{object of class data frame containing columns transcript_name, gene,
+and amino_acid_change and rows denoting mutations}
 
-\item{y}{object of class data frame containing columns transcript_name, and amino_acid_change and rows denoting mutations}
+\item{y}{object of class data frame containing columns transcript_name, and
+amino_acid_change and rows denoting mutations}
 }
 \value{
 character string specifying input passed quality check

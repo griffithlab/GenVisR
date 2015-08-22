@@ -14,17 +14,23 @@ lolliplot(x, y = NULL, fillCol = NULL, labelCol = NULL,
   layers = NULL)
 }
 \arguments{
-\item{x}{object of class data frame containing column names "transcript_name", "gene", and "amino_acid_change" with rows denoting mutations for top track}
+\item{x}{object of class data frame containing column names "transcript_name"
+, "gene", and "amino_acid_change" with rows denoting mutations for top track}
 
-\item{y}{object of class data frame containing columns "transcript_name", and "amino_acid_change" with rows denoting mutations for bottom track (optional)}
+\item{y}{object of class data frame containing columns "transcript_name", and
+"amino_acid_change" with rows denoting mutations for bottom track (optional)}
 
-\item{fillCol}{character string giving the name of the column to shade variants on, required}
+\item{fillCol}{character string giving the name of the column to shade
+variants on, required}
 
-\item{labelCol}{character string specifying column containing text information to be plotted, (optional) defaults to NULL}
+\item{labelCol}{character string specifying column containing text
+information to be plotted, (optional) defaults to NULL}
 
-\item{plot_text_angle}{integer specifying angle of text to be plotted if labelCol is specified}
+\item{plot_text_angle}{integer specifying angle of text to be plotted if
+labelCol is specified}
 
-\item{plot_text_size}{integer specifying the size of the text plotted if labelCol is specified}
+\item{plot_text_size}{integer specifying the size of the text plotted if
+labelCol is specified}
 
 \item{point_size}{integer specifying the size of points plotted}
 
@@ -32,31 +38,39 @@ lolliplot(x, y = NULL, fillCol = NULL, labelCol = NULL,
 
 \item{obsA.rep.fact}{repulsive factor for plotted mutations observed track}
 
-\item{obsA.rep.dist.lmt}{repulsive distance limit for plotted mutations observed track}
+\item{obsA.rep.dist.lmt}{repulsive distance limit for plotted mutations
+observed track}
 
 \item{obsA.attr.fact}{attraction factor for plotted mutations observed track}
 
 \item{obsA.adj.max}{maximum position change for each iteration observed track}
 
-\item{obsA.adj.lmt}{position adjustment limit which simulation stops observed track}
+\item{obsA.adj.lmt}{position adjustment limit which simulation stops observed
+track}
 
-\item{obsA.iter.max}{maximum iterations beyond which to stop the simulation observed track}
+\item{obsA.iter.max}{maximum iterations beyond which to stop the simulation
+observed track}
 
 \item{obsB.rep.fact}{repulsive factor for plotted mutations cosmic track}
 
-\item{obsB.rep.dist.lmt}{repulsive distance limit for plotted mutations cosmic track}
+\item{obsB.rep.dist.lmt}{repulsive distance limit for plotted mutations
+cosmic track}
 
 \item{obsB.attr.fact}{attraction factor for plotted mutations cosmic track}
 
 \item{obsB.adj.max}{maximum position change for each iteration cosmic track}
 
-\item{obsB.adj.lmt}{position adjustment limit which simulation stops cosmic track}
+\item{obsB.adj.lmt}{position adjustment limit which simulation stops cosmic
+track}
 
-\item{obsB.iter.max}{maximum iterations beyond which to stop the simulation cosmic track}
+\item{obsB.iter.max}{maximum iterations beyond which to stop the simulation
+cosmic track}
 
-\item{plot_sidechain}{boolean value whether to plot the amino acid sidechains instead of protein domains}
+\item{plot_sidechain}{boolean value whether to plot the amino acid sidechains
+instead of protein domains}
 
-\item{taxId}{integer specifying the uniprot taxonomy id for the species of interest}
+\item{taxId}{integer specifying the uniprot taxonomy id for the species of
+interest}
 
 \item{layers}{additional ggplot2 layers to plot}
 }
@@ -64,7 +78,8 @@ lolliplot(x, y = NULL, fillCol = NULL, labelCol = NULL,
 object of class ggplot2
 }
 \description{
-Construct a Lolliplot from object of class data frame giving observed mutations and an ensembl transcript id
+Construct a Lolliplot from object of class data frame giving observed
+mutations and an ensembl transcript id
 }
 \examples{
 # Create input data
