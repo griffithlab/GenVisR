@@ -33,7 +33,7 @@
 #' @param main.plot_label_size Integer specifying the size of labels for cells
 #' in the main panel
 #' @param main.plot_label_angle Integer specifying the degree of rotation for
-#' text if mian.label_col is specified
+#' text if main.label_col is specified
 #' @param main.palette Character vector specifying colors to fill on mutation
 #' type
 #' @param sampRecur.layers Additional ggplot2 layers to plot on the sample
