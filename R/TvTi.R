@@ -22,7 +22,9 @@
 #' @param tvti.layers Additional ggplot2 layers to add to the main panel plot
 #' @param expec.layers Additional ggplot2 layers to add to the expected
 #' values plot
-#' @param name_sort Boolean specifying whether to sort samples by name
+#' @param sort character specifying one of "sample", "tvti", "none" for
+#' plotting samples based on a sample name, transition/transversion freq, or no
+#' order
 #' @examples
 #' TvTi(brcaMAF, type='Frequency', 
 #' palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"),
@@ -36,7 +38,7 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
                  palette=c('#D53E4F', '#FC8D59', '#FEE08B', '#E6F598',
                            '#99D594', '#3288BD'),
                  file_type='MAF', tvti.layers=NULL, expec.layers=NULL,
-                 name_sort=FALSE)
+                 sort='none')
 { 
   # Perform quality checks
     out <- TvTi.qual(x, y, file_type=file_type)
@@ -50,17 +52,22 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
   # Calculate the proportion of transitions/transversions
   x <- calc_trans_tranv_freq(x)
   
-  # re-level based on proportion values or via a smart sort if requested
-  if(name_sort == TRUE)
+  # re-level based on proportion values or via a smart sort or not at all
+  if(toupper(sort) == toupper('sample'))
   {
       sample_order <- as.vector(unique(x$sample))
       sample_order <- gtools::mixedsort(sample_order)
       x$sample <- factor(x$sample, levels=sample_order)
-  } else {
+  } else if(toupper(sort) == toupper('tvti')) {
       sample_order <- x[order(x$trans_tranv, -x$Prop),]
       sample_order <- sample_order[sample_order$Prop != 0,]
       sample_order <- unique(sample_order$sample)
       x$sample <- factor(x$sample, levels=sample_order)
+  } else if(toupper(sort) == toupper('none')){
+      # do nothing
+  } else {
+      stop(sort, " is not a valid parameter for sort, please specify one of
+           \"sample\", \"tvti\", \"none\"")
   }
   
   # Perform a quality control on y to ensure fill levels match x
@@ -87,7 +94,6 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
     
     return(grid::grid.draw(p3))
   }
-
   
   return(p1)
 }
