@@ -99,10 +99,6 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     gene_sorted <- mutSpec.gene_sort(data_frame)
     data_frame$gene <- factor(data_frame$gene, levels=gene_sorted)
     
-    # reorder the samples based on hiearchial sort on ordered gene list
-    sample_order <- mutSpec.sample_sort(data_frame)
-    data_frame$sample <- factor(data_frame$sample, levels=sample_order)
-    
     # Subset the data based on the recurrence of mutations at the gene level
     data_frame <- mutSpec.mutation_recurrence_subset(data_frame,
                                                      main.recurrence_cutoff)
@@ -112,6 +108,10 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     {
         data_frame <- mutSpec.mutation_gene_subset(data_frame, main.genes)
     }
+    
+    # reorder the samples based on hiearchial sort on ordered gene list
+    sample_order <- mutSpec.sample_sort(data_frame)
+    data_frame$sample <- factor(data_frame$sample, levels=sample_order)
     
     # Reorder the sample levels in data_frame2 to match the main plot's levels,
     # and then plot the top margin plot

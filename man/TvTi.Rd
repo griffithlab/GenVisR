@@ -7,7 +7,7 @@
 TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
   x_axis_text_angle = 45, palette = c("#D53E4F", "#FC8D59", "#FEE08B",
   "#E6F598", "#99D594", "#3288BD"), file_type = "MAF", tvti.layers = NULL,
-  expec.layers = NULL, name_sort = FALSE)
+  expec.layers = NULL, sort = "none")
 }
 \arguments{
 \item{x}{Object of class data frame containing columns 'sample', reference',
@@ -38,7 +38,9 @@ one of 'MAF', 'MGI'}
 \item{expec.layers}{Additional ggplot2 layers to add to the expected
 values plot}
 
-\item{name_sort}{Boolean specifying whether to sort samples by name}
+\item{sort}{character specifying one of "sample", "tvti", "none" for
+plotting samples based on a sample name, transition/transversion freq, or no
+order}
 }
 \value{
 ggplot2 object
