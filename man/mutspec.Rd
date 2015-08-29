@@ -76,7 +76,7 @@ recurence chart}
 burden data}
 
 \item{main.plot_label_angle}{Integer specifying the degree of rotation for
-text if mian.label_col is specified}
+text if main.label_col is specified}
 }
 \value{
 a grob for plotting
