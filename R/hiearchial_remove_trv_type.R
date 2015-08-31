@@ -17,7 +17,7 @@ hiearchial_remove_trv_type <- function(data_frame, file_type)
   if(toupper(file_type) == toupper('MGI'))
   {
     mutation_order <- c("nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent")
-    mutation_order <- c("nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent", "negative", "positive", "unknown")    
+    mutation_order <- c("nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent", "negative", "positive", "unknown", "negative ", "positive ")    
   } else if (toupper(file_type) == toupper('MAF'))
   {
     mutation_order <- c("Nonsense_Mutation", "Frame_Shift_Ins", "Frame_Shift_Del", "In_Frame_Ins", "In_Frame_Del", "Nonstop_Mutation", "Splice_Site", "Missense_Mutation", "5\'Flank", "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron", "IGR", "Silent", "Targeted_Region")

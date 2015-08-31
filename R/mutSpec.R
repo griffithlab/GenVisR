@@ -58,7 +58,7 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL, cl
   
   # reorder the genes based on frequency of mutations in the gene
   gene_sorted <- gene_sort(data_frame)
-  gene_sorted <- c('PTEN stain', 'PIK3CA', 'PTEN', 'AKT1', 'AKT2', 'MTOR', 'MAGI3', 'RELN', 'ERBB2', 'ERBB3', 'PDGFRA', 'NOTCH4', 'MAP2K4', 'MAP3K1', 'CAV1', 'FBXW7', 'ARID1A', 'MLL2', 'MLL3', 'SMARCD1', 'ATM', 'BRCA2', 'RB1CC1', 'TP53', 'XBP1', 'MED12', 'TAB1', 'TBX3', 'CBFB', 'ESR1', 'FOXA1', 'GATA3', 'NCOR1', 'NCOR2', 'RUNX1', 'MALAT1', 'CDH1')
+  gene_sorted <- c('PgR','PTEN stain', 'PIK3CA', 'PTEN', 'AKT1', 'AKT2', 'MTOR', 'MAGI3', 'RELN', 'ERBB2', 'ERBB3', 'PDGFRA', 'NOTCH4', 'MAP2K4', 'MAP3K1', 'CAV1', 'FBXW7', 'ARID1A', 'MLL2', 'MLL3', 'SMARCD1', 'ATM', 'BRCA2', 'RB1CC1', 'TP53', 'XBP1', 'MED12', 'TAB1', 'TBX3', 'CBFB', 'ESR1', 'FOXA1', 'GATA3', 'NCOR1', 'NCOR2', 'RUNX1', 'MALAT1', 'CDH1')
   data_frame$gene <- factor(data_frame$gene, levels=gene_sorted)
   
   # reorder the samples based on hiearchial sort on ordered gene list

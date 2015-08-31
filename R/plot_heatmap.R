@@ -54,8 +54,8 @@ plot_heatmap <- function(data_frame, grid=TRUE, label_x=FALSE, gene_label_size=8
   if(toupper(file_type) == toupper('MGI'))
   {
     # Create Legend labels
-    breaks <- c("nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent", "positive", "negative", "unknown")
-    labels <- c("Nonsense", "Frame Shift Deletion", "Frame Shift Insertion", "Splice Site Deletion", "Splice Site Insertion", "Splice Site", "Stop Loss", "In Frame Deletion", "In Frame Insertion", "Missense", "Splice Region", "5' Flank", "3' Flank", "3' UTR", "5' UTR", "RNA", "Intronic", "Silent", "Positive", "Negative", "Unknown")
+    breaks <- c("nonsense", "frame_shift_del", "frame_shift_ins", "splice_site_del", "splice_site_ins", "splice_site", "nonstop", "in_frame_del", "in_frame_ins", "missense", "splice_region", "5_prime_flanking_region", "3_prime_flanking_region", "3_prime_untranslated_region", "5_prime_untranslated_region", "rna", "intronic", "silent", "positive", "negative", "unknown", "positive ", "negative ")
+    labels <- c("Nonsense", "Frame Shift Deletion", "Frame Shift Insertion", "Splice Site Deletion", "Splice Site Insertion", "Splice Site", "Stop Loss", "In Frame Deletion", "In Frame Insertion", "Missense", "Splice Region", "5' Flank", "3' Flank", "3' UTR", "5' UTR", "RNA", "Intronic", "Silent", "Positive", "Negative", "Unknown", "Positive ", "Negative ")
   } else if(toupper(file_type) == toupper('MAF'))
   {
     # Create Legend Labels

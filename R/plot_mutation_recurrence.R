@@ -27,7 +27,7 @@ plot_mutation_recurrence <- function(data_frame, coverage_space)
   y_label <- ylab('Mutations per MB')
   
   # ggplot2 call
-  p1 <- ggplot(data_frame, aes(x=sample, y=mutation_per_MB, fill=trv_type)) + geom_bar(stat='identity', alpha=.75, width=1) + theme + y_label + legend
+  p1 <- ggplot(data_frame, aes(x=sample, y=mutation_per_MB, fill=trv_type)) + geom_bar(stat='identity', alpha=.75, width=1) + theme_bw() + theme + y_label + legend
   
   return(p1)
 }

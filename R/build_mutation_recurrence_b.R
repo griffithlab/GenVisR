@@ -21,7 +21,7 @@ build_mutation_recurrence_b <- function(x)
   guide <- guides(fill=guide_legend(override.aes=list(fill="white")))
   
   # ggplot2 call
-  p1 <- ggplot(x, aes(x=sample, y=mut_burden, fill=Type)) + geom_bar(stat='identity', alpha=.75, width=1) + theme + y_label + legend + guide
+  p1 <- ggplot(x, aes(x=sample, y=mut_burden, fill=Type)) + geom_bar(stat='identity', alpha=.75, width=1) + theme_bw() + theme + y_label + legend + guide
   
   return(p1)
 }
