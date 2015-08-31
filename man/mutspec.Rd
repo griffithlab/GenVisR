@@ -32,8 +32,8 @@ legend by}
 \item{mutBurden}{an optional data frame containing columns sample, mut_burden
 with sample levels matching those supplied in x}
 
-\item{main.recurrence_cutoff}{an integer value to remove genes that do not
-have x number of mutations}
+\item{main.recurrence_cutoff}{integer specifying removal of entries not seen
+in at least "x" percent of samples}
 
 \item{main.grid}{a boolean value to overlay a grid on the primary plot}
 

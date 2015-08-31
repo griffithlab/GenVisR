@@ -4,13 +4,13 @@
 \alias{mutSpec.mutation_recurrence_subset}
 \title{Mutation Recurrence Cutoff}
 \usage{
-mutSpec.mutation_recurrence_subset(data_frame, recurrence_cutoff)
+mutSpec.mutation_recurrence_subset(x, recurrence_cutoff)
 }
 \arguments{
-\item{data_frame}{a data frame in long format with columns 'gene', 'trv_type'}
+\item{x}{a data frame in long format with columns 'gene', 'trv_type', sample}
 
-\item{recurrence_cutoff}{an integer, remove genes whose total mutations are
-less than this amount}
+\item{recurrence_cutoff}{integer specifying removal of entries not seen
+in at least "x" percent of samples}
 }
 \value{
 a subset data frame
