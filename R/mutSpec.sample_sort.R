@@ -17,32 +17,31 @@ mutSpec.sample_sort <- function(x)
     wide_data[,-1] <- t(apply(wide_data[,-1], 1, mutSpec.convert_to_boolean))
     wide_boolean <- wide_data
     
-    # move the first column (sample names) to row names
-    wide_boolean_format <- data.frame(wide_boolean[,-1],
-                                      row.names=wide_boolean[,1])
-    
     # reverse the columns so that genes with highest mutation's are listed first
-    # (assuming gene_sort has been run on the data frame)
-    test <- wide_boolean_format[,rev(1:ncol(wide_boolean_format))]
+    # (assumes gene_sort has been run on the data frame)
+    wide_boolean <- wide_boolean[,c(1, rev(2:ncol(wide_boolean)))]
     
     # if there are any NA values present in a sample at the gene put that
     # NA gene last so samples with NA are plotted last
     
-    if(any(colnames(test) == 'NA.'))
+    if(any(grepl("^NA$", colnames(wide_boolean))))
     {
         # Find which column has the NA header
-        NA_index <- which(colnames(test) == 'NA.')
+        NA_index <- which(grepl("^NA$", colnames(wide_boolean)))
         
         # Append NA column to end of data frame
-        NA_gene <- test[,NA_index]
-        test <- test[,-NA_index]
-        test <- cbind(test, NA_gene)
+        NA_gene <- wide_boolean[,NA_index]
+        wide_boolean <- wide_boolean[,-NA_index]
+        wide_boolean <- cbind(wide_boolean, NA_gene)
     }
     
     # hiearchial sort on all column's (i.e. genes) such that samples are
     # rearranged if there is a mutation in that gene
+    sample_order <- wide_boolean[do.call(order, as.list(-wide_boolean[2:ncol(wide_boolean)])),]$sample
     
-    sample_order <- rownames(test[do.call(order, as.list(-test)),])
+    # Put those samples not in sample order in from the original levels of the data
+    not_in <- as.character(levels(sample_order)[which(!levels(sample_order) %in% sample_order)])
+    sample_order <- c(as.character(sample_order), not_in)
     
     return(sample_order)
 }

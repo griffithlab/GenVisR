@@ -91,9 +91,19 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
         data_frame <- mutSpec.mutation_silent_rmv(data_frame)
     }
     
+    # Subset the data based on a vector of genes if supplied
+    if(!is.null(main.genes))
+    {
+        data_frame <- mutSpec.mutation_gene_subset(data_frame, main.genes)
+    }
+    
     # Remove trv_type that are not the most deleterious for a given gene/sample
     data_frame <- mutSpec.hiearchial_remove_trv_type(data_frame,
                                                      file_type=file_type)
+    
+    # Subset the data based on the recurrence of mutations at the gene level
+    data_frame <- mutSpec.mutation_recurrence_subset(data_frame,
+                                                     main.recurrence_cutoff)
     
     # reorder the genes based on frequency of mutations in the gene
     gene_sorted <- mutSpec.gene_sort(data_frame)
@@ -102,16 +112,6 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     # reorder the samples based on hiearchial sort on ordered gene list
     sample_order <- mutSpec.sample_sort(data_frame)
     data_frame$sample <- factor(data_frame$sample, levels=sample_order)
-    
-    # Subset the data based on the recurrence of mutations at the gene level
-    data_frame <- mutSpec.mutation_recurrence_subset(data_frame,
-                                                     main.recurrence_cutoff)
-    
-    # Subset the data based on a vector of genes if supplied
-    if(!is.null(main.genes))
-    {
-        data_frame <- mutSpec.mutation_gene_subset(data_frame, main.genes)
-    }
     
     # Reorder the sample levels in data_frame2 to match the main plot's levels,
     # and then plot the top margin plot
