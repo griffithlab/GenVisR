@@ -1,12 +1,12 @@
 #' mutation sample subset sample based
 #' 
 #' Alter a mutSpec input file keeping/adding entries in a selection of samples
-#' @name mutSpec.mutation_sample_subset
+#' @name waterfall_sampAlt
 #' @param x a data frame in long format with columns 'sample', 'trv_type'
 #' @param samples character vector giving samples to plot
 #' @return a subset data frame
 
-mutSpec.mutation_sample_subset <- function(x, samples)
+waterfall_sampAlt <- function(x, samples)
 {
     # Perform quality check
     if(typeof(samples) != 'character' & class(samples) != 'character')
@@ -30,6 +30,7 @@ mutSpec.mutation_sample_subset <- function(x, samples)
     # Subset the data based on the arguments supplied in main.samples,
     # then relevel the data frame
     x <- x[(toupper(x$sample) %in% toupper(samples)), ]
+    x <- droplevels(x)
     x$sample <- factor(x$sample, levels=samples)
     
     return(x)

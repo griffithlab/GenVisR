@@ -24,10 +24,10 @@ waterfall_qual <- function(x, y, z, file_type, label_col)
   # Convert file type to internal format
   if(toupper(file_type) == toupper("MAF"))
   {
-    x <- MAF_to_anno(x, label_col)
+    x <- waterfall_MAF2anno(x, label_col)
   } else if(toupper(file_type) == toupper("MGI"))
   {
-    x <- MGI_to_anno(x, label_col)
+    x <- waterfall_MGI2anno(x, label_col)
   } else {
     stop("Unrecognized file_type: ", file_type)
   }
