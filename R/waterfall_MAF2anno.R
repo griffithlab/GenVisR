@@ -2,13 +2,13 @@
 #' 
 #' Convert columns of a mutation annotation file "MAF" into a format
 #' recognizable by internal functions
-#' @name MAF_to_anno
+#' @name waterfall_MAF2anno
 #' @param x a data frame in MAF format
 #' @param label_col Character string specifying the column name of a
 #' label column
 #' @return a data frame coerced from MAF to TGI format
 
-MAF_to_anno <- function(x, label_col)
+waterfall_MAF2anno <- function(x, label_col)
 {
   # Check that correct column names are present and convert to internal format
   expec_col <- c('Tumor_Sample_Barcode', 'Hugo_Symbol',

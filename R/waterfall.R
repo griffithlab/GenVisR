@@ -76,19 +76,19 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     # If it is requested subset the input data on a sample list
     if(!is.null(main.samples))
     {
-        data_frame <- mutSpec.mutation_sample_subset(data_frame, main.samples)
+        data_frame <- waterfall_sampAlt(data_frame, main.samples)
     }
     
     # add in a count of mutations at the sample level before anything is
     # stripped out and save for mutation recurrence plot
-    data_frame2 <- mutSpec.add_mutation_counts(data_frame[,c('sample',
+    data_frame2 <- waterfall_calcMutFreq(data_frame[,c('sample',
                                                              'gene',
                                                              'trv_type')])
     
     # Subset the data to remove silent mutations if specified
     if(rmv_silent==TRUE)
     {
-        data_frame <- mutSpec.mutation_silent_rmv(data_frame)
+        data_frame <- waterfall_rmvSilent(data_frame)
     }
     
     # Subset the data based on a vector of genes if supplied
