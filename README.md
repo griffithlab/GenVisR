@@ -27,3 +27,8 @@ install.packages(c("rmarkdown", "knitr"))
 ```R
 devtools::install_github("griffithlab/GenVisR")
 ```
+
+[![Coverage Status](https://coveralls.io/repos/griffithlab/GenVisR/badge.svg?branch=master&service=github)](https://coveralls.io/github/griffithlab/GenVisR?branch=master)
+
+
+
