@@ -1,7 +1,7 @@
 #' Plot a mutation landscape
 #' 
 #' Plot a mutation landscape plot for a cohort in an annotation file
-#' @name mutspec
+#' @name waterfall
 #' @param x a data frame in annotation format
 #' @param clinDat an optional data frame in "long" format giving additional
 #' information to be plotted, requires columns "sample", "variable", and "value"
@@ -43,11 +43,11 @@
 #' @param mutRecur.layers Additional ggplot2 layers to plot on the mutation
 #' burden data
 #' @examples
-#' mutSpec(brcaMAF)
+#' waterfall(brcaMAF)
 #' @return a grob for plotting
 #' @export
 
-mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
+waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
                     clin.var.order=NULL, mutBurden=NULL,
                     main.recurrence_cutoff=0, main.grid=TRUE,
                     main.label_x=FALSE, main.gene_label_size=8, 
@@ -58,8 +58,8 @@ mutSpec <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
                     main.layers=NULL, mutRecur.layers=NULL,
                     main.plot_label_angle=0)
 { 
-    # Perform data quality checks and coversions
-    inputDat <- mutSpec.qual(x, clinDat, mutBurden, file_type=file_type,
+    # Perform data quality checks and conversions
+    inputDat <- waterfall_qual(x, clinDat, mutBurden, file_type=file_type,
                              label_col=main.label_col)
     data_frame <- inputDat[[1]]
     clinDat <- inputDat[[2]]
