@@ -15,31 +15,31 @@ Intuitively visualizing and interpreting data from high-throughput genomic techn
 
 ## Functions
 
-### mutSpec
-`mutSpec` provides a method of visualizing the mutational landscape of a cohort. The input to `mutSpec` consists of a data frame derived from either a .maf (version 2.4) file or a file in MGI annotation format (obtained from The [Genome Modeling System](https://github.com/genome/gms)). `mutspec` will display the mutation occurrence and type in the main panel while showing the mutation rate and the percentage of samples with a mutation in the side panels. Conflicts arising from multiple mutations in the same gene/sample cell are resolved by a hierarchical removal of mutations keeping the most deleterious as defined by the order of the "mutation type" legend.
+### waterfall
+`waterfall` provides a method of visualizing the mutational landscape of a cohort. The input to `waterfall` consists of a data frame derived from either a .maf (version 2.4) file or a file in MGI annotation format (obtained from The [Genome Modeling System](https://github.com/genome/gms)). `waterfall` will display the mutation occurrence and type in the main panel while showing the mutation rate and the percentage of samples with a mutation in the side panels. Conflicts arising from multiple mutations in the same gene/sample cell are resolved by a hierarchical removal of mutations keeping the most deleterious as defined by the order of the "mutation type" legend.
 
-`BRCA_MAF` is a truncated MAF file consisting of 50 samples from the TCGA project corresponding to [Breast invasive carcinoma](https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files#TCGAMAFFiles-BRCA:Breastinvasivecarcinoma) [(complete data)](https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf). Using this dataset we can view the default behavior of `mutSpec`:
+`BRCA_MAF` is a truncated MAF file consisting of 50 samples from the TCGA project corresponding to [Breast invasive carcinoma](https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files#TCGAMAFFiles-BRCA:Breastinvasivecarcinoma) [(complete data)](https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf). Using this dataset we can view the default behavior of `waterfall`:
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Load GenVisR and set seed
 library(GenVisR)
 
 # Plot the mutation landscape
-mutSpec(brcaMAF)
+waterfall(brcaMAF)
 ```
 
 This type of view is of limited use without expanding the graphic device given the large number of genes. Often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to accomplish this, the `main.recurrence_cutoff` parameter accepts an integer and will remove genes from the data which do not have at least x number of samples mutated. For example the `brcaMAF` data set contains 50 samples, to plot genes with mutations present in at least 3 (6%) of samples one would specify the following.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Plot only genes with mutations in 6% or more of samples
-mutSpec(brcaMAF, main.recurrence_cutoff=3)
+waterfall(brcaMAF, main.recurrence_cutoff=3)
 ```
 
 Alternatively one can select genes of interest using the `main.genes` parameter. This parameter accepts a case insensitive character vector of genes present in the data. For example, if it was desirable to plot only the following genes "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Plot only the specified genes
-mutSpec(brcaMAF, main.genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
+waterfall(brcaMAF, main.genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
 ```
 
 It is important to note that the mutation burden sub plot does not change during these subsets, this is calculated directly from the input via the formula: $mutations\ in\ sample/coverage\ space * 1000000$. The coverage space defaults to the size in base pairs of the "SeqCap EZ Human Exome Library v2.0". This default can be changed via the parameter `coverageSpace`. This calculation is only meant to be a rough estimate as actual coverage space can vary from sample to sample, for a more accurate calculation the user has the option to supply an optional argument `mutBurden` giving the users own calculation for each sample, this should be a data frame with column names 'sample', 'mut_burden' taking the following form:
@@ -64,8 +64,8 @@ clinical <- as.data.frame(cbind(sample, subtype, age))
 library(reshape2)
 clinical <- melt(clinical, id.vars=c('sample'))
 
-# Run mutSpec
-mutSpec(brcaMAF, clinDat=clinical, clin.var.colour=c('lumA'='blue4', 'lumB'='deepskyblue',
+# Run waterfall
+waterfall(brcaMAF, clinDat=clinical, clin.var.colour=c('lumA'='blue4', 'lumB'='deepskyblue',
 'her2'='hotpink2', 'basal'='firebrick2', 'normal'='green4', '20-30'='#ddd1e7',
 '31-50'='#bba3d0', '51-60'='#9975b9', '61+'='#7647a2'),
 main.genes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"), clin.legend.col=2, clin.var.order=
@@ -295,7 +295,7 @@ Due to the complex nature and variability of the graphics produced by GenVisR it
 ```{r, eval=FALSE}
 pdf(file="plot.pdf", height=8, width=14)
 # Call a GenVisR function
-mutSpec(brcaMAF)
+waterfall(brcaMAF)
 dev.off()
 ```
 
