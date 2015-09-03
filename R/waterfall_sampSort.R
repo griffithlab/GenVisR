@@ -2,19 +2,28 @@
 #' 
 #' perform a hiearchial sort on samples based on the presence of mutations in
 #' an ordered list of genes
-#' @name mutSpec.sample_sort
+#' @name waterfall_sampSort
 #' @param x a data frame in long format with column names "sample", 
 #' "gene", "trv_type"
 #' @return a vector of samples in a sorted order
 
-mutSpec.sample_sort <- function(x)
+waterfall_sampSort <- function(x)
 {
     # recast the data going from long format to wide format, values in this data are counts of a mutation call
     wide_data <- reshape2::dcast(x, sample ~ gene, fun.aggregate = length,
                                  value.var="trv_type")
     
+    # Declare anonymous function convert_to_boolean
+    convert_to_boolean <- function(x)
+    {
+        # if greater than 1 return 1
+        i = which(x > 1)
+        x[i] = 1
+        return(x)
+    }
+    
     # apply a boolean function to convert the data frame values to 1's and 0's
-    wide_data[,-1] <- t(apply(wide_data[,-1], 1, mutSpec.convert_to_boolean))
+    wide_data[,-1] <- t(apply(wide_data[,-1], 1, convert_to_boolean))
     wide_boolean <- wide_data
     
     # reverse the columns so that genes with highest mutation's are listed first
@@ -23,7 +32,6 @@ mutSpec.sample_sort <- function(x)
     
     # if there are any NA values present in a sample at the gene put that
     # NA gene last so samples with NA are plotted last
-    
     if(any(grepl("^NA$", colnames(wide_boolean))))
     {
         # Find which column has the NA header

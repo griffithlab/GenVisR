@@ -1,12 +1,12 @@
 #' plot mutation recurrence in genes
 #' 
 #' plot a bar graph displaying the percentage of samples with a mutation
-#' @name build.mutOccur.mutSpec
+#' @name waterfall_buildGenePrevelance
 #' @param data_frame a data frame in MAF format
 #' @param layers additional ggplot2 layers
 #' @return a ggplot object
 
-build.mutOccur.mutSpec <- function(data_frame, layers=NULL)
+waterfall_buildGenePrevelance <- function(data_frame, layers=NULL)
 {
     # Convert all silent mutations to Synonymous, and all else to non-synonymous
     data_frame$trv_type <- as.character(data_frame$trv_type)

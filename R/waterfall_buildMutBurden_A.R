@@ -1,18 +1,18 @@
 #' plot mutation burden
 #' 
 #' plot a barchart showing mutations per MB
-#' @name build.mutRecurA.mutSpec
-#' @param data_frame a data frame in MAF format
+#' @name waterfall_buildMutBurden_A
+#' @param x a data frame in MAF format
 #' @param coverage_space an integer specifying the coverage space in base pairs
 #' from which a mutation could occur
 #' @param layers Additional ggplot2 layers to plot
 #' @return a ggplot object
 
-build.mutRecurA.mutSpec <- function(data_frame, coverage_space, layers=NULL)
+waterfall_buildMutBurden_A <- function(x, coverage_space, layers=NULL)
 {
     # Add in mutations per MB calculation
-    data_frame$mutation_per_MB <-
-    data_frame$mutation_total/coverage_space * 1000000
+    x$mutation_per_MB <-
+    x$mutation_total/coverage_space * 1000000
     
     # Alter GGplot2 Theme 
     theme <- theme(axis.ticks.x=element_blank(),
@@ -38,7 +38,7 @@ build.mutRecurA.mutSpec <- function(data_frame, coverage_space, layers=NULL)
     }
     
     # ggplot2 call
-    p1 <- ggplot(data_frame, aes_string(x='sample',
+    p1 <- ggplot(x, aes_string(x='sample',
                                         y='mutation_per_MB', fill='trv_type')) +
         geom_bar(stat='identity', alpha=.75, width=1) +
         theme_bw() + theme + y_label + legend + layers

@@ -1,18 +1,18 @@
 #' Assign NA samples a gene
 #' 
 #' Replace NA values in a gene column with the top gene name
-#' @name mutSpec.add_gene_to_NA
-#' @param data_frame a data frame in MAF format
+#' @name waterfall_NA2gene
+#' @param x a data frame in anno format
 #' @return a data frame with NA values in a gene column coerced to the top gene
 #' name
 
-mutSpec.add_gene_to_NA <- function(data_frame)
+waterfall_NA2gene <- function(x)
 {
     # Get The gene with the most Mutations and add the NA samples to that gene
     # (ensures that the NA's are added in as gene with most mutations will always
     # be plotted)
-    top_gene <- na.omit(rev(data_frame$gene))[1]
-    data_frame$gene <- replace(data_frame$gene, is.na(data_frame$gene),
+    top_gene <- na.omit(rev(x$gene))[1]
+    x$gene <- replace(x$gene, is.na(x$gene),
                                top_gene)
-    return(data_frame)
+    return(x)
 }

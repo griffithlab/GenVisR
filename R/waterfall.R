@@ -94,23 +94,21 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     # Subset the data based on a vector of genes if supplied
     if(!is.null(main.genes))
     {
-        data_frame <- mutSpec.mutation_gene_subset(data_frame, main.genes)
+        data_frame <- waterfall_geneAlt(data_frame, main.genes)
     }
     
     # Remove trv_type that are not the most deleterious for a given gene/sample
-    data_frame <- mutSpec.hiearchial_remove_trv_type(data_frame,
-                                                     file_type=file_type)
+    data_frame <- waterfall_hierarchyTRV(data_frame, file_type=file_type)
     
     # Subset the data based on the recurrence of mutations at the gene level
-    data_frame <- mutSpec.mutation_recurrence_subset(data_frame,
-                                                     main.recurrence_cutoff)
+    data_frame <- waterfall_geneRecurCutoff(data_frame, main.recurrence_cutoff)
     
     # reorder the genes based on frequency of mutations in the gene
-    gene_sorted <- mutSpec.gene_sort(data_frame)
+    gene_sorted <- waterfall_geneSort(data_frame)
     data_frame$gene <- factor(data_frame$gene, levels=gene_sorted)
     
     # reorder the samples based on hiearchial sort on ordered gene list
-    sample_order <- mutSpec.sample_sort(data_frame)
+    sample_order <- waterfall_sampSort(data_frame)
     data_frame$sample <- factor(data_frame$sample, levels=sample_order)
     
     # Reorder the sample levels in data_frame2 to match the main plot's levels,
@@ -124,25 +122,25 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
         }
         
         mutBurden$sample <- factor(mutBurden$sample, levels=sample_order)
-        p3 <- build.mutRecurB.mutSpec(mutBurden, layers=mutRecur.layers)
+        p3 <- waterfall_buildMutBurden_B(mutBurden, layers=mutRecur.layers)
         } else {
             data_frame2$sample <- factor(data_frame2$sample,
                                          levels=sample_order)
-            p3 <- build.mutRecurA.mutSpec(data_frame2, coverageSpace,
+            p3 <- waterfall_buildMutBurden_A(data_frame2, coverageSpace,
                                           layers=mutRecur.layers)
         }
     
     # Plot the Left Bar Chart
-    p2 <- build.mutOccur.mutSpec(data_frame, layers=sampRecur.layers)
+    p2 <- waterfall_buildGenePrevelance(data_frame, layers=sampRecur.layers)
     
     # if there are any NA values in the data frame for a gene, give these NA
     # values a gene name so they are plotted properly
-    data_frame <- mutSpec.add_gene_to_NA(data_frame)
+    data_frame <- waterfall_NA2gene(data_frame)
     
     # Plot the Heatmap
     if(is.null(clinDat))
     {
-        p1 <- build.main.mutSpec(data_frame, grid=main.grid,
+        p1 <- waterfall_buildMain(data_frame, grid=main.grid,
                                  label_x=main.label_x,
                                  gene_label_size=main.gene_label_size,
                                  file_type=file_type,
@@ -153,7 +151,7 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
                                  plot_palette=main.palette, layers=main.layers,
                                  plot_label_angle=main.plot_label_angle)
     } else if(!is.null(clinDat)) {
-        p1 <- build.main.mutSpec(data_frame, grid=main.grid,
+        p1 <- waterfall_buildMain(data_frame, grid=main.grid,
                                  label_x=main.label_x, 
                                  gene_label_size=main.gene_label_size,
                                  file_type=file_type,
@@ -170,18 +168,18 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     {
         # match the levels of sample in y to conform to the main plot
         clinDat$sample <- factor(clinDat$sample, levels=sample_order)
-        p4 <- build.clin.mutSpec(clinDat, clin.legend.col=clin.legend.col, 
+        p4 <- waterfall_buildClin(clinDat, clin.legend.col=clin.legend.col, 
                                  clin.var.colour=clin.var.colour, 
                                  clin.var.order=clin.var.order,
                                  clin.layers=clin.layers)
         
         # Align all plots and return as 1 plot
-        pA <- mutSpec.align_waterfall(p2, p1, p3, p4)
+        pA <- waterfallAlign(p2, p1, p3, p4)
         return(grid::grid.draw(pA))
     }
     
     # Align the Plots and return as 1 plot
-    pA <- mutSpec.align_waterfall(p2, p1, p3)
+    pA <- waterfallAlign(p2, p1, p3)
     
     return(grid::grid.draw(pA))
 }

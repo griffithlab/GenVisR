@@ -2,14 +2,14 @@
 #' 
 #' Remove MAF entries with the same gene/sample in an ordered fashion such that
 #' the most deleterious are retained
-#' @name mutSpec.hiearchial_remove_trv_type
-#' @param data_frame a data frame in long format with columns sample, gene,
+#' @name waterfall_hierarchyTRV
+#' @param x a data frame in long format with columns sample, gene,
 #' trv_type
 #' @param file_type The type of file to act on one of 'MAF" or 'TGI'
 #' @return a data frame with multiple mutations in the same sample/gene
 #' collapsed on the most deleterious 
 
-mutSpec.hiearchial_remove_trv_type <- function(data_frame, file_type)
+waterfall_hierarchyTRV <- function(x, file_type)
 {
     # reorder the trv_type in terms of deleterious effect and refactor
     # the data frame
@@ -33,15 +33,20 @@ mutSpec.hiearchial_remove_trv_type <- function(data_frame, file_type)
                             "Silent", "Targeted_Region")
     }
     
-    data_frame$trv_type <- factor(data_frame$trv_type, levels=mutation_order)
+    # Check that elements in trv_type are in the mutation order
+    if(any(!x$trv_type %in% mutation_order))
+    {
+        stop("Detected an invalid mutation type, valid values for ", file_type,
+             " are ", mutation_order)
+    }
+    x$trv_type <- factor(x$trv_type, levels=mutation_order)
     
     # sort the data frame so that the duplicated call will remove the
     # proper trv_type
-    data_frame <- data_frame[order(data_frame$sample, data_frame$gene,
-                                   data_frame$trv_type),]
+    x <- x[order(x$sample, x$gene, x$trv_type),]
     
     # collapse the data on sample/gene
-    data_frame <- data_frame[!duplicated(data_frame[, c("sample", "gene")]), ]
+    x <- x[!duplicated(x[, c("sample", "gene")]), ]
   
-  return(data_frame)
+  return(x)
 }

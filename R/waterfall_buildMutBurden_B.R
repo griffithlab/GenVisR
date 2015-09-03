@@ -1,13 +1,13 @@
 #' plot mutation burden
 #' 
 #' plot a barchart showing mutation burden given by data frame
-#' @name build.mutRecurB.mutSpec
+#' @name waterfall_buildMutBurden_B
 #' @param x a data frame containing columns sample, mut_burden
 #' @param layers additional ggplot2 layers to plot
 #' @return a ggplot object
 #' @import ggplot2
 
-build.mutRecurB.mutSpec <- function(x, layers=NULL)
+waterfall_buildMutBurden_B <- function(x, layers=NULL)
 {
     # add in fake column for legend
     # (necessary to have legend for proper plot alignment)
