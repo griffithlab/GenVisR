@@ -2,7 +2,7 @@
 #' 
 #' Subset a MAF file keeping only samples that meet a mutation recurrence cutoff
 #' @name waterfall_geneRecurCutoff
-#' @param x a data frame in long format with columns 'gene', 'trv_type', 'sample'
+#' @param x data frame in long format with columns 'gene', 'trv_type', 'sample'
 #' @param recurrence_cutoff integer specifying removal of entries not seen
 #' in at least "x" percent of samples
 #' @return a subset data frame

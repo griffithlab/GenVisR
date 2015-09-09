@@ -9,10 +9,9 @@
 waterfall_NA2gene <- function(x)
 {
     # Get The gene with the most Mutations and add the NA samples to that gene
-    # (ensures that the NA's are added in as gene with most mutations will always
+    # (ensures that the NAs are added in as gene with most mutations will always
     # be plotted)
     top_gene <- na.omit(rev(x$gene))[1]
-    x$gene <- replace(x$gene, is.na(x$gene),
-                               top_gene)
+    x$gene <- replace(x$gene, is.na(x$gene), top_gene)
     return(x)
 }
