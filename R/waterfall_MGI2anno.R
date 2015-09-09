@@ -10,25 +10,25 @@
 
 waterfall_MGI2anno <- function(x, label_col)
 {
-  # Check that correct column names are present and convert to internal format
-  expec_col <- c('sample', 'gene_name', 'trv_type')
-  if(!is.null(label_col))
-  {
-    expec_col <- c(expec_col, label_col)
-  }
-  
-  if(!all(expec_col %in% colnames(x)))
-  {
-    stop("Did not detect correct column names, check file_type flag?")
-  }
-  
-  x <- x[,c('sample', 'gene_name', 'trv_type', label_col)]
-  if(!is.null(label_col))
-  {
-    colnames(x) <- c('sample', 'gene', 'trv_type', 'label')
-  } else {
-    colnames(x) <- c('sample', 'gene', 'trv_type')
-  }
-  
-  return(x)
+    # Check that correct column names are present and convert to internal format
+    expec_col <- c('sample', 'gene_name', 'trv_type')
+    if(!is.null(label_col))
+    {
+        expec_col <- c(expec_col, label_col)
+    }
+    
+    if(!all(expec_col %in% colnames(x)))
+    {
+        stop("Did not detect correct column names, check file_type flag?")
+    }
+    
+    x <- x[,c('sample', 'gene_name', 'trv_type', label_col)]
+    if(!is.null(label_col))
+    {
+        colnames(x) <- c('sample', 'gene', 'trv_type', 'label')
+    } else {
+        colnames(x) <- c('sample', 'gene', 'trv_type')
+    }
+    
+    return(x)
 }

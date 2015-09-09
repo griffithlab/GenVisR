@@ -10,29 +10,28 @@
 
 waterfall_MAF2anno <- function(x, label_col)
 {
-  # Check that correct column names are present and convert to internal format
-  expec_col <- c('Tumor_Sample_Barcode', 'Hugo_Symbol',
-                 'Variant_Classification')
-  
-  if(!is.null(label_col))
-  {
-    expec_col <- c(expec_col, label_col)
-  }
-  if(!all(expec_col %in% colnames(x)))
-  {
-    stop("Did not detect correct column names, check file_type flag?")
-  }
-
-  x <- x[,c('Tumor_Sample_Barcode', 'Hugo_Symbol', 'Variant_Classification',
-            label_col)]
-  
-  if(!is.null(label_col))
-  {
-    colnames(x) <- c('sample', 'gene', 'trv_type', 'label')
-  } else {
-    colnames(x) <- c('sample', 'gene', 'trv_type')
-  }
-  
-  
-  return(x)
+    # Check that correct column names are present and convert to internal format
+    expec_col <- c('Tumor_Sample_Barcode', 'Hugo_Symbol',
+                   'Variant_Classification')
+    
+    if(!is.null(label_col))
+    {
+        expec_col <- c(expec_col, label_col)
+    }
+    
+    if(!all(expec_col %in% colnames(x)))
+    {
+        stop("Did not detect correct column names, check file_type flag?")
+    }
+    
+    x <- x[,c('Tumor_Sample_Barcode', 'Hugo_Symbol', 'Variant_Classification',
+              label_col)]
+    
+    if(!is.null(label_col))
+    {
+        colnames(x) <- c('sample', 'gene', 'trv_type', 'label')
+    } else {
+        colnames(x) <- c('sample', 'gene', 'trv_type')
+    }
+    return(x)
 }
