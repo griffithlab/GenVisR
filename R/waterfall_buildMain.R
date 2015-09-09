@@ -41,7 +41,7 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
     
     if(length(unique(data_frame$gene)) == 1)
     {
-        horizontal_grid <- geom_hline()
+        horizontal_grid <- geom_blank()
     } else {
         horizontal_grid <- geom_hline(yintercept = seq(1.5, length(unique(data_frame$gene)),
                                                        by=1),
