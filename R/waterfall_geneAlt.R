@@ -2,12 +2,12 @@
 #' 
 #' Subset a internal mutSpec file keeping only samples within the specified gene
 #'  list
-#' @name mutSpec.mutation_sample_subset
+#' @name waterfall_geneAlt
 #' @param x a data frame in long format with columns 'gene', 'trv_type'
 #' @param genes character vector listing genes to plot
 #' @return a subset data frame
 
-mutSpec.mutation_gene_subset <- function(x, genes)
+waterfall_geneAlt <- function(x, genes)
 {
   # Perform quality checks
   if(typeof(genes) != 'character' & class(genes) != 'character')

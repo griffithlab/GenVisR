@@ -1,13 +1,13 @@
 #' Mutation Recurrence Cutoff
 #' 
 #' Subset a MAF file keeping only samples that meet a mutation recurrence cutoff
-#' @name mutSpec.mutation_recurrence_subset
-#' @param x a data frame in long format with columns 'gene', 'trv_type', sample
+#' @name waterfall_geneRecurCutoff
+#' @param x a data frame in long format with columns 'gene', 'trv_type', 'sample'
 #' @param recurrence_cutoff integer specifying removal of entries not seen
 #' in at least "x" percent of samples
 #' @return a subset data frame
 
-mutSpec.mutation_recurrence_subset <- function(x, recurrence_cutoff)
+waterfall_geneRecurCutoff <- function(x, recurrence_cutoff)
 {
     mutRecur <- plyr::count(unique(x), vars=c("gene"))
     mutRecur <- na.omit(mutRecur)

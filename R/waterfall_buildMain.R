@@ -1,7 +1,7 @@
 #' Plot a mutation heatmap
 #' 
 #' Plot a Mutation Landscape with variables sample, gene, mutation
-#' @name build.main.mutSpec
+#' @name waterfall_buildMain
 #' @param data_frame a data frame in MAF format
 #' @param grid boolean value whether to overlay a grid on the plot
 #' @param label_x boolean value whether to label the x axis
@@ -22,7 +22,7 @@
 #' @return a ggplot2 object
 #' @import ggplot2
 
-build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE,
+waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
                                gene_label_size=8, file_type='MGI',
                                drop_mutation=FALSE, plot_x_title=TRUE,
                                plot_label=FALSE, plot_label_size=4,
@@ -41,7 +41,7 @@ build.main.mutSpec <- function(data_frame, grid=TRUE, label_x=FALSE,
     
     if(length(unique(data_frame$gene)) == 1)
     {
-        horizontal_grid <- geom_hline()
+        horizontal_grid <- geom_blank()
     } else {
         horizontal_grid <- geom_hline(yintercept = seq(1.5, length(unique(data_frame$gene)),
                                                        by=1),
