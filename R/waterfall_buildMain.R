@@ -56,8 +56,8 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
     } else if(toupper(file_type) == toupper('MGI')) {
         palette <- c('#4f00A8', '#A80100', '#CF5A59', '#A80079', '#BC2D94',
                      '#CF59AE', '#000000', '#006666', '#00A8A8', '#009933',
-                     '#59CF74', '#002AA8', '#5977CF', '#F37812', '#F2B079',
-                     '#888811', '#FDF31C', '#8C8C8C')
+                     '#ace7b9', '#cdf0d5', '#59CF74', '#002AA8', '#5977CF',
+                     '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
     } else if(toupper(file_type) == toupper('MAF')) {
         palette <- c('#A80100', '#CF5A59', '#A80079', '#CF59AE', '#4f00A8',
                      '#9159CF', '#000000', '#59CF74', '#00A8A8', '#79F2F2',
@@ -72,13 +72,15 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
         breaks <- c("nonsense", "frame_shift_del", "frame_shift_ins",
                     "splice_site_del", "splice_site_ins", "splice_site",
                     "nonstop", "in_frame_del", "in_frame_ins", "missense",
+                    "splice_region_del", "splice_region_ins",
                     "splice_region", "5_prime_flanking_region",
                     "3_prime_flanking_region", "3_prime_untranslated_region",
                     "5_prime_untranslated_region", "rna", "intronic", "silent")
         labels <- c("Nonsense", "Frame Shift Deletion", "Frame Shift Insertion",
                     "Splice Site Deletion", "Splice Site Insertion",
                     "Splice Site", "Stop Loss", "In Frame Deletion",
-                    "In Frame Insertion", "Missense", "Splice Region",
+                    "In Frame Insertion", "Missense", "Splice Region Insertion",
+                    "Splice Region Deletion", "Splice Region",
                     "5' Flank", "3' Flank", "3' UTR", "5' UTR", "RNA",
                     "Intronic", "Silent")
     } else if(toupper(file_type) == toupper('MAF')) {

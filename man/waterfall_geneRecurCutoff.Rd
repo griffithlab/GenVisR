@@ -7,7 +7,7 @@
 waterfall_geneRecurCutoff(x, recurrence_cutoff)
 }
 \arguments{
-\item{x}{a data frame in long format with columns 'gene', 'trv_type', 'sample'}
+\item{x}{data frame in long format with columns 'gene', 'trv_type', 'sample'}
 
 \item{recurrence_cutoff}{integer specifying removal of entries not seen
 in at least "x" percent of samples}
