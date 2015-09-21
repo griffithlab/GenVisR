@@ -59,7 +59,7 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
                      '#ace7b9', '#cdf0d5', '#59CF74', '#002AA8', '#5977CF',
                      '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
     } else if(toupper(file_type) == toupper('MAF')) {
-        palette <- c('#A80100', '#CF5A59', '#A80079', '#CF59AE', '#4f00A8',
+        palette <- c("grey", '#A80100', '#CF5A59', '#A80079', '#CF59AE', '#4f00A8',
                      '#9159CF', '#000000', '#59CF74', '#00A8A8', '#79F2F2',
                      '#006666', '#002AA8', '#5977CF', '#F37812', '#F2B079',
                      '#888811', '#FDF31C')
@@ -87,14 +87,14 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
         # Create Legend Labels
         breaks <- c("Nonsense_Mutation", "Frame_Shift_Ins", "Frame_Shift_Del",
                     "In_Frame_Ins", "In_Frame_Del", "Nonstop_Mutation",
-                    "Splice_Site", "Missense_Mutation", "5\'Flank", "3\'Flank",
-                    "5\'UTR", "3\'UTR", "RNA", "Intron", "IGR", "Silent",
-                    "Targeted_Region")
+                    "Translation_Start_Site", "Splice_Site", "Missense_Mutation",
+                    "5\'Flank", "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron",
+                    "IGR", "Silent", "Targeted_Region")
         labels <- c("Nonsense", "Frame Shift Insertion", "Frame Shift Deletion",
                     "In Frame Insertion", "In Frame Deletion", "Nonstop",
-                    "Splice Site", "Missense", "5' Flank", "3' Flank", "5' UTR",
-                    "3' UTR", "RNA", "Intron", "Intergenic Region", "Silent",
-                    "Targeted Region")
+                    "Translation Start Site", "Splice Site", "Missense",
+                    "5' Flank", "3' Flank", "5' UTR", "3' UTR", "RNA", "Intron",
+                    "Intergenic Region", "Silent", "Targeted Region")
     }
     
     if(drop_mutation == TRUE)

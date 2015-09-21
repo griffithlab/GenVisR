@@ -27,11 +27,11 @@ waterfall_hierarchyTRV <- function(x, file_type)
                             "silent", NA)
     } else if (toupper(file_type) == toupper('MAF')) {
         mutation_order <- c("Nonsense_Mutation", "Frame_Shift_Ins",
-                            "Frame_Shift_Del", "In_Frame_Ins", "In_Frame_Del",
-                            "Nonstop_Mutation", "Splice_Site",
-                            "Missense_Mutation", "5\'Flank", "3\'Flank",
-                            "5\'UTR", "3\'UTR", "RNA", "Intron", "IGR",
-                            "Silent", "Targeted_Region", NA)
+                            "Frame_Shift_Del", "Translation_Start_Site",
+                            "Splice_Site", "Nonstop_Mutation", "In_Frame_Ins",
+                            "In_Frame_Del", "Missense_Mutation", "5\'Flank",
+                            "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron",
+                            "IGR", "Silent", "Targeted_Region", NA)
     }
     
     # Check that elements in trv_type are in the mutation order
