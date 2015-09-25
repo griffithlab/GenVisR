@@ -11,7 +11,8 @@ waterfall(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
   main.samples = NULL, drop_mutation = FALSE, rmv_silent = FALSE,
   main.label_col = NULL, main.plot_label_size = 4, main.palette = NULL,
   sampRecur.layers = NULL, clin.layers = NULL, main.layers = NULL,
-  mutRecur.layers = NULL, main.plot_label_angle = 0)
+  mutRecur.layers = NULL, main.plot_label_angle = 0,
+  variant_class_order = NULL)
 }
 \arguments{
 \item{x}{a data frame in annotation format}
@@ -45,7 +46,7 @@ axis}
 covered from which mutations could be called}
 
 \item{file_type}{a character string specifying the file format of the data
-frame, one of "MGI", "MAF"}
+frame, one of "MGI", "MAF", "Custom"}
 
 \item{main.genes}{a character vector specifying genes to plot}
 
@@ -76,6 +77,9 @@ burden data}
 
 \item{main.plot_label_angle}{Integer specifying the degree of rotation for
 text if main.label_col is specified}
+
+\item{variant_class_order}{character vector giving the hierarchical order of
+mutation types to plot (required if file_type="Custom")}
 }
 \value{
 a grob for plotting

@@ -9,18 +9,21 @@
 
 waterfall_geneAlt <- function(x, genes)
 {
+    message("Removing genes not in: ", toString(genes))
     # Perform quality checks
     if(typeof(genes) != 'character' & class(genes) != 'character')
     {
-        warning("argument supplied to main.genes is not a character vector,
-                attempting to coerce")
+        memo <- paste0("argument supplied to main.genes is not a character ",
+                       "vector, attempting to coerce")
+        warning(memo)
         genes <- as.character(genes)
     }
     
     if(!all(toupper(genes) %in% toupper(x$gene)))
     {
-        warning("genes supplied in main.genes contains an element not found in x
-                or it's subsequent subsets")
+        memo <- paste0("genes supplied in main.genes contains an element not ",
+                       "found in x or it's subsequent subsets")
+        warning(memo)
     }
     genes <- c(genes, NA)
     x <- x[(toupper(x$gene) %in% toupper(genes)), ]

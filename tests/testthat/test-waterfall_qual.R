@@ -17,8 +17,7 @@ test_that("waterfall_qual checks input to file_type is valid", {
     file_type <- 'TGI'
     label_col <- NULL
     
-    expect_error(waterfall_qual(x, y, z, file_type, label_col),
-                 "Unrecognized")
+    expect_error(waterfall_qual(x, y, z, file_type, label_col), "Unrecognized")
 })
 
 test_that("waterfall_qual verifies input is of proper class", {

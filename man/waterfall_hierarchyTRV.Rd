@@ -4,13 +4,16 @@
 \alias{waterfall_hierarchyTRV}
 \title{Hiearchical removal of MAF entries}
 \usage{
-waterfall_hierarchyTRV(x, file_type)
+waterfall_hierarchyTRV(x, file_type, variant_class_order)
 }
 \arguments{
 \item{x}{a data frame in long format with columns sample, gene,
 trv_type}
 
-\item{file_type}{The type of file to act on one of 'MAF" or 'TGI'}
+\item{file_type}{The type of file to act on one of 'MAF", "MGI", "Custom"}
+
+\item{variant_class_order}{character vector giving the hierarchical order of
+mutation types to plot}
 }
 \value{
 a data frame with multiple mutations in the same sample/gene
