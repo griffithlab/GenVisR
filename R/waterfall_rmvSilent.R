@@ -8,9 +8,10 @@
 
 waterfall_rmvSilent <- function(x)
 {
-  # Index and remove those rows which contain silent mutations
-  x[which(toupper(x$trv_type) == toupper('silent')), c('gene')] <- NA
-  x[which(toupper(x$trv_type) == toupper('silent')), c('trv_type')] <- NA
-  
-  return(x)
+    message("Removing silent mutations...")
+    # Index and remove those rows which contain silent mutations
+    x[which(toupper(x$trv_type) == toupper('silent')), c('gene')] <- NA
+    x[which(toupper(x$trv_type) == toupper('silent')), c('trv_type')] <- NA
+    
+    return(x)
 }

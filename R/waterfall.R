@@ -22,7 +22,7 @@
 #' @param coverageSpace an integer specifying the size in bp of the genome
 #' covered from which mutations could be called
 #' @param file_type a character string specifying the file format of the data
-#' frame, one of "MGI", "MAF"
+#' frame, one of "MGI", "MAF", "Custom"
 #' @param main.genes a character vector specifying genes to plot
 #' @param drop_mutation Boolean specifying whether to drop unused
 #' "mutation type" levels from the legend
@@ -42,6 +42,8 @@
 #' @param main.layers Additional ggplot2 layers to plot on the main panel
 #' @param mutRecur.layers Additional ggplot2 layers to plot on the mutation
 #' burden data
+#' @param variant_class_order character vector giving the hierarchical order of
+#' mutation types to plot (required if file_type="Custom")
 #' @examples
 #' waterfall(brcaMAF)
 #' @return a grob for plotting
@@ -56,7 +58,7 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
                       main.label_col=NULL, main.plot_label_size=4,
                       main.palette=NULL, sampRecur.layers=NULL,
                       clin.layers=NULL, main.layers=NULL, mutRecur.layers=NULL,
-                      main.plot_label_angle=0)
+                      main.plot_label_angle=0, variant_class_order=NULL)
 { 
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinDat, mutBurden, file_type=file_type,
@@ -97,7 +99,8 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     }
     
     # Remove trv_type that are not the most deleterious for a given gene/sample
-    data_frame <- waterfall_hierarchyTRV(data_frame, file_type=file_type)
+    data_frame <- waterfall_hierarchyTRV(data_frame, file_type,
+                                         variant_class_order)
     
     # Subset the data based on the recurrence of mutations at the gene level
     data_frame <- waterfall_geneRecurCutoff(data_frame, main.recurrence_cutoff)

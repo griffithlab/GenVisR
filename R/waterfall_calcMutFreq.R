@@ -7,6 +7,7 @@
 
 waterfall_calcMutFreq <- function(x)
 {
+    message("Calculating frequency of mutations...")
     # Change trv_type calls to either synonymous or non synonymous,
     # for use in the mutation per Mb plot
     x$trv_type <- as.character(x$trv_type)

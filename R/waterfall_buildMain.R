@@ -63,6 +63,15 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
                      '#9159CF', '#000000', '#59CF74', '#00A8A8', '#79F2F2',
                      '#006666', '#002AA8', '#5977CF', '#F37812', '#F2B079',
                      '#888811', '#FDF31C')
+    } else if(toupper(file_type) == toupper('Custom')) {
+        memo <- paste0("Defining a palette in main.pallete is recommended ",
+                       "when file_type is set to \"Custom\", defaulting to ",
+                       "a predefined palette with 20 levels")
+        warning(memo)
+        palette <- c('#4f00A8', '#A80100', '#CF5A59', '#A80079', '#BC2D94',
+                     '#CF59AE', '#000000', '#006666', '#00A8A8', '#009933',
+                     '#ace7b9', '#cdf0d5', '#59CF74', '#002AA8', '#5977CF',
+                     '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')        
     }
     
     # Create breaks specific and labels for specified file type
@@ -95,6 +104,9 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
                     "Translation Start Site", "Splice Site", "Missense",
                     "5' Flank", "3' Flank", "5' UTR", "3' UTR", "RNA", "Intron",
                     "Intergenic Region", "Silent", "Targeted Region")
+    } else if(toupper(file_type) == toupper('Custom')) {
+        breaks <- levels(data_frame$trv_type)
+        labels <- breaks
     }
     
     if(drop_mutation == TRUE)

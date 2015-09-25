@@ -8,19 +8,22 @@
 
 waterfall_sampAlt <- function(x, samples)
 {
+    message("Retrieving requested samples from supplied data...")
     # Perform quality check
     if(typeof(samples) != 'character' & class(samples) != 'character')
     {
-        warning("argument supplied to main.samples is not a character vector,
-                attempting to coerce")
+        memo <- paste0("argument supplied to main.samples is not a ",
+                       "character vector, attempting to coerce")
+        warning(memo)
         samples <- as.character(samples)
     }
     
     # add in samples not in the original data frame x
     if(!all(toupper(samples) %in% toupper(x$sample)))
     {
-        message("Detected one or more samples supplied to main.samples not
-                found in x ... adding samples to plot")
+        memo <- paste0("Detected one or more samples supplied to main.samples ",
+                       "not found in x ... adding samples to plot")
+        message(memo)
         
         samp_not_in_x <- as.data.frame(samples[which(!(samples %in% x$sample))])
         colnames(samp_not_in_x) <- "sample"

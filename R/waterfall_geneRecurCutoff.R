@@ -9,6 +9,10 @@
 
 waterfall_geneRecurCutoff <- function(x, recurrence_cutoff)
 {
+    if(recurrence_cutoff != 0)
+    {
+        message("Performing recurrence cutoff...")        
+    }
     mutRecur <- plyr::count(unique(x), vars=c("gene"))
     mutRecur <- na.omit(mutRecur)
     mutRecur$prop <- mutRecur$freq/nlevels(x$sample)
@@ -18,9 +22,10 @@ waterfall_geneRecurCutoff <- function(x, recurrence_cutoff)
     maxRecur <- max(mutRecur$prop)
     if(maxRecur < recurrence_cutoff)
     {
-        warning('The recurrence cutoff specified exceeds the
-                          recurrence seen in the data, resetting this value
-                          to equal max recurrence:', maxRecur)
+        memo <- paste0("The recurrence cutoff specified exceeds the recurrence",
+                       " seen in the data, resetting this value to equal max ",
+                       "recurrence:", maxRecur)
+        warning(memo)
         recurrence_cutoff <- maxRecur
     }
     
