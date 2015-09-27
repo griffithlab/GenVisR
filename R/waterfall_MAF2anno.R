@@ -21,7 +21,9 @@ waterfall_MAF2anno <- function(x, label_col)
     
     if(!all(expec_col %in% colnames(x)))
     {
-        stop("Did not detect correct column names, check file_type flag?")
+        memo <- paste0("Did not detect correct column names, column names
+                       should be: ", toString(expec_col))
+        stop(memo)
     }
     
     x <- x[,c('Tumor_Sample_Barcode', 'Hugo_Symbol', 'Variant_Classification',

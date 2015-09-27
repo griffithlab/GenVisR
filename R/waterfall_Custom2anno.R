@@ -26,7 +26,9 @@ waterfall_Custom2anno <- function(x, label_col)
     # check expected columns are present
     if(!all(expec_col %in% colnames(x)))
     {
-        stop("Did not detect correct column names, check file_type flag?")
+        memo <- paste0("Did not detect correct column names, column names
+                       should be: ", toString(expec_col))
+        stop(memo)
     }
     
     x <- x[,c('sample', 'gene', 'variant_class', label_col)]
