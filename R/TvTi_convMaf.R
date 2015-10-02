@@ -20,8 +20,28 @@ TvTi_convMaf <- function(x)
                     'Tumor_Seq_Allele2')]
     colnames(allele2) <- c('sample', 'reference', 'variant')
     
-    # bind the data together
-    x <- unique(rbind(allele1, allele2))
+    #!!!Developer note: The if's are here because subsetting when there is
+    #!!! nothing to subset (integer0) causes problems
+    
+    # if the tumor allele 1 matchest tumor allele2 remove that information from
+    # one of the alleles
+    if(any(as.character(allele1$variant) == as.character(allele2$variant)))
+    {
+        allele1 <- allele1[-which(as.character(allele1$variant) == as.character(allele2$variant)),]        
+    }
+    
+    # if the allele matches the reference remove it from the data
+    if(any(as.character(allele1$reference) == as.character(allele1$variant)))
+    {
+        allele1 <- allele1[-which(as.character(allele1$reference) == as.character(allele1$variant)),]        
+    }
+    if(any(as.character(allele2$reference) == as.character(allele2$variant)))
+    {
+        allele2 <- allele2[-which(as.character(allele2$reference) == as.character(allele2$variant)),]
+    }
+    
+    # bind the data from both alleles together
+    x <- rbind(allele1, allele2)
     
     return(x)
 }
