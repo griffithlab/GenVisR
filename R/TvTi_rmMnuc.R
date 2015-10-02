@@ -2,11 +2,11 @@
 #' 
 #' Given a data frame with columns reference and variants remove all
 #' multinucleotides from data
-#' @name rm.mnuc
+#' @name TvTi_rmMnuc
 #' @param x Object of class data frame containing columns 'reference', 'variant'
 #' @return Object of class data frame with multi nucleotide codes removed
 
-rm.mnuc <- function(x)
+TvTi_rmMnuc <- function(x)
 {
   original_size <- nrow(x)
   
@@ -18,8 +18,10 @@ rm.mnuc <- function(x)
   
   if(new_size != original_size)
   {
-      warning("Multi Nucleotide codes are not currently supported, removed: ",
-              original_size - new_size, " multi nucleotides present in data") 
+      memo <- paste0("Multi Nucleotide codes are not currently supported, ", 
+                     "removed: ", original_size - new_size,
+                     "multi-nucleotides present in the data")
+      warning(memo) 
   }
   
   return(x)
