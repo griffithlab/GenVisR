@@ -14,9 +14,10 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
     # Check if x input is a data frame
     if(!is.data.frame(x))
     {
-        warning(x, "is not an object of class data frame, attempting to coerce")
+        memo <- paste0("argument supplied to x is not an object of class", 
+                       " data frame, attempting to coerce")
+        warning(memo)
         x <- as.data.frame(x)
-        x <- relevel(x)
     }
     
     # check for duplicate elements in x
@@ -28,18 +29,19 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
     # Check if y input is a data frame 
     if(!is.null(y))
     {
-        # Check y input
+        # Check y input if data frame
         if(is.data.frame(y))
         {
-            if(colnames(y) %in% c('Prop', 'trans_tranv'))
+            if(!all(colnames(y) %in% c('Prop', 'trans_tranv')))
             {
-                memo <- paste0("Did not detect correct columns names in",
+                memo <- paste0("Did not detect correct column names in",
                                "input to y, missing one of \"Prop\",",
                                "\"trans_tranv\"")
                 stop(memo)
             }
         }
         
+        # Check y input if vector
         if(is.vector(y))
         {
             y <- as.data.frame(y)
@@ -48,16 +50,15 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
             
             if(typeof(y$Prop) != "double" & typeof(y$Prop) != "numeric")
             {
-                stop("values in", y, "are not of type double or numeric")
+                stop("values found in y are not of type double or numeric")
             }
         }
         
         if(!is.data.frame(y))
         {
-            memo <- paste0(y, " is not an object of class data frame",
-                           " attempting to coerce")
-            warning(memo)
-            y <- as.data.frame(y)
+            memo <- paste0("input to y is not an object of class data frame", 
+                           " or named vector")
+            stop(memo)
         }
     }
     
@@ -65,9 +66,8 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
     if(file_type == 'MGI')
     {
         # Check that columns are named appropriatley, if not print error
-        if(any(grepl('^reference$', colnames(x))) &&
-               any(grepl('^variant$', colnames(x))) &&
-               any(grepl('^sample$', colnames(x))))
+        proper_names <- c("reference", "variant", "sample")
+        if(all(proper_names %in% colnames(x)))
         {
             message("Found appropriate columns")
         } else {
@@ -79,14 +79,13 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
         x <- x[,c('reference', 'variant', 'sample')]
         
     } else if(file_type == 'MAF') {
-        if(any(grepl('^Tumor_Sample_Barcode$', colnames(x))) &&
-               any(grepl('^Reference_Allele$', colnames(x))) &&
-               any(grepl('^Tumor_Seq_Allele1$', colnames(x))) &&
-               any(grepl('^Tumor_Seq_Allele2$', colnames(x))))
+        proper_names <- c("Tumor_Sample_Barcode", "Reference_Allele",
+                          "Tumor_Seq_Allele1", "Tumor_Seq_Allele2")
+        if(all(proper_names %in% colnames(x)))
         {
             message("Found appropriate columns")
         } else {
-            memo <- paste0("Could not find all columns requeste, missing one ",
+            memo <- paste0("Could not find all columns requested, missing one ",
                            "of \"Tumor_Sample_Barcode\", \"Reference_Allele\",",
                            " \"Tumor_Seq_Allele1\", \"Tumor_Seq_Allele2\"")
             stop(memo)
@@ -104,9 +103,13 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
     ref_codes <- c('A', 'C', 'G', 'T', '-', 0)
     if(!all(toupper(x$reference) %in% toupper(ref_codes)))
     {
-        stop("Unrecognized Base Detected in reference column")
+        memo <- paste0("Unrecognized Base Detected in reference column, ",
+                       "expected values are: ", toString(ref_codes))
+        stop(memo)
     } else if(!all(toupper(x$variant) %in% toupper(ref_codes))) {
-        stop("Unrecognized Base Detected in variant column")
+        memo <- paste0("Unrecognized Base Detected in reference column, ",
+                       "expected values are: ", toString(ref_codes))
+        stop(memo)
     }
     
     # check y input for proper row names
@@ -116,7 +119,11 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
                                "G->A or C->T", "G->C or C->G", "G->T or C->A")
         if(!all(rownames(y) %in% trans_tranv_names))
         {
-            stop("Did not detect correct names in y")
+            memo <- paste0("Did not detect a value for all combinations of ",
+                           "transitions/transversions, please specify input ",
+                           "for each of the following levels: ",
+                           toString(trans_tranv_names))
+            stop(memo)
         }
         
         # check that y sums to 1 (i.e. its a true proportion among all elements)
