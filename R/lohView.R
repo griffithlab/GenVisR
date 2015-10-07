@@ -44,9 +44,5 @@ lohView <- function(x, y=NULL, genome='hg19')
               specify this information via y")
      }
      
-     test <- function(x){
-         mean(x)
-     }
-     
-     zoo::rollapply(x, 1, test, by=500)
+
 }
