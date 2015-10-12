@@ -16,3 +16,5 @@
 #Mac specific files
 .DS_Store
 inst/doc
+#Helper scripts
+*.ipynb
