@@ -13,21 +13,21 @@ waterfall_buildMutBurden_B <- function(x, layers=NULL)
     # (necessary to have legend for proper plot alignment)
     x$Type <- c("Undefined")
     x$Type <- factor(x$Type,
-    levels=c("Synonymous", "Non Synonymous", "Undefined"))
+                     levels=c("Synonymous", "Non Synonymous", "Undefined"))
 
     # Define Theme
     theme <- theme(axis.ticks.x=element_blank(),
-    axis.text.x=element_blank(),
-    axis.title.x=element_blank(),
-    legend.title=element_text(size=14))
+                   axis.text.x=element_blank(),
+                   axis.title.x=element_blank(),
+                   legend.title=element_text(size=14))
 
     # Define additional parameters
     y_label <- ylab("Mutation Burden")
     legend <- scale_fill_manual(name="Translational Effect",
-    values=c("Non Synonymous"="blue",
-    "Synonymous"="red",
-    "Undefined"="black"),
-    drop=FALSE)
+                                values=c("Non Synonymous"="blue",
+             "Synonymous"="red",
+             "Undefined"="black"),
+                                drop=FALSE)
 
     if(!is.null(layers))
     {

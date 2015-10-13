@@ -19,13 +19,13 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
 
   # extract UTR from transcript database given transcript ID
     r <- select(txdb, as.character(txid),
-    c("CDSSTART","CDSEND","TXCHROM","TXSTRAND","CDSID","TXID","EXONRANK","TXNAME","EXONSTART","EXONEND"), "TXID")
+                c("CDSSTART","CDSEND","TXCHROM","TXSTRAND","CDSID","TXID","EXONRANK","TXNAME","EXONSTART","EXONEND"), "TXID")
     idx <- as.vector(r['CDSSTART'] != r['EXONSTART'] | r['CDSEND'] != r['EXONEND'] | is.na(r['CDSSTART']))
     if (!any(idx)){
         return(NA)
     }
     r <- r[idx,]
-  n <- function(x){return(as.numeric(x))}
+n <- function(x){return(as.numeric(x))}
     f1 <- function(r){
         if (is.na(r['CDSSTART'])){
             r['UTRSTART'] <- n(r['EXONSTART'])
@@ -45,15 +45,15 @@ extrUTR <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
     r <- split(r, r['TXID'])
     f2 <- function(r){
         g <- GRanges(seqnames = unlist(r['TXCHROM']),
-        ranges = IRanges(start = as.numeric(unlist(r['UTRSTART'])), end = as.numeric(unlist(r['UTREND']))),
-        strand = unlist(r['TXSTRAND']),
-        txname=unlist(r['TXNAME']),
-        exonrank=unlist(r['EXONRANK']))
+                     ranges = IRanges(start = as.numeric(unlist(r['UTRSTART'])), end = as.numeric(unlist(r['UTREND']))),
+                     strand = unlist(r['TXSTRAND']),
+                     txname=unlist(r['TXNAME']),
+                     exonrank=unlist(r['EXONRANK']))
         return(g)
     }
     UTR <- GRangesList(unlist(lapply(r, f2)))
 
-  f3 <- function(x){x$txname[[1]]}
+f3 <- function(x){x$txname[[1]]}
     txnames <- lapply(UTR, f3)
 
   # reduce isoforms into one if set to true and convert to GRanges list

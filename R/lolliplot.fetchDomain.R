@@ -17,12 +17,12 @@ lolliplot.fetchDomain <- function(uniprotID)
 
     # Apply various filters using vector of values
     filters <- c("entry_type", "protein_accession", "fragment",
-    "method_database_name")
+                 "method_database_name")
     values <- as.list(c("Domain", uniprotID, "N", "Pfam"))
 
     # Retrieve data
     domains <- biomaRt::getBM(attributes=attributes, filters=filters,
-    values=values, mart=interpro_mart)
+                              values=values, mart=interpro_mart)
 
     return(domains)
 }

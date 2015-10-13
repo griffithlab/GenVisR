@@ -24,8 +24,8 @@ lolliplot.dodge_coord_x <- function(x, rep.fact=5000, rep.dist.lmt=500,
 
     # take the data frame and apply a repulsive force to coordiantes
     x <- FField::FFieldPtRep(x, rep.fact=rep.fact, rep.dist.lmt=rep.dist.lmt,
-    attr.fact=attr.fact, adj.max=adj.max,
-    adj.lmt=adj.lmt, iter.max=iter.max)
+                             attr.fact=attr.fact, adj.max=adj.max,
+                             adj.lmt=adj.lmt, iter.max=iter.max)
 
     return(x$x)
 }

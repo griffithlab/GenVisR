@@ -15,7 +15,7 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
     if(!is.data.frame(x))
     {
         memo <- paste0("argument supplied to x is not an object of class",
-        " data frame, attempting to coerce")
+                       " data frame, attempting to coerce")
         warning(memo)
         x <- as.data.frame(x)
     }
@@ -35,8 +35,8 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
             if(!all(colnames(y) %in% c('Prop', 'trans_tranv')))
             {
                 memo <- paste0("Did not detect correct column names in",
-                "input to y, missing one of \"Prop\",",
-                "\"trans_tranv\"")
+                               "input to y, missing one of \"Prop\",",
+                               "\"trans_tranv\"")
                 stop(memo)
             }
         }
@@ -57,7 +57,7 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
         if(!is.data.frame(y))
         {
             memo <- paste0("input to y is not an object of class data frame",
-            " or named vector")
+                           " or named vector")
             stop(memo)
         }
     }
@@ -72,7 +72,7 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
             message("Found appropriate columns")
         } else {
             memo <- paste0("Could not find all columns requested, missing ",
-            "one of \"reference\", \"variant\", \"sample\"")
+                           "one of \"reference\", \"variant\", \"sample\"")
             stop(memo)
         }
 
@@ -80,14 +80,14 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
 
     } else if(file_type == 'MAF') {
         proper_names <- c("Tumor_Sample_Barcode", "Reference_Allele",
-        "Tumor_Seq_Allele1", "Tumor_Seq_Allele2")
+                          "Tumor_Seq_Allele1", "Tumor_Seq_Allele2")
         if(all(proper_names %in% colnames(x)))
         {
             message("Found appropriate columns")
         } else {
             memo <- paste0("Could not find all columns requested, missing one ",
-            "of \"Tumor_Sample_Barcode\", \"Reference_Allele\",",
-            " \"Tumor_Seq_Allele1\", \"Tumor_Seq_Allele2\"")
+                           "of \"Tumor_Sample_Barcode\", \"Reference_Allele\",",
+                           " \"Tumor_Seq_Allele1\", \"Tumor_Seq_Allele2\"")
             stop(memo)
         }
         # Convert MAF file to internal format
@@ -104,11 +104,11 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
     if(!all(toupper(x$reference) %in% toupper(ref_codes)))
     {
         memo <- paste0("Unrecognized Base Detected in reference column, ",
-        "expected values are: ", toString(ref_codes))
+                       "expected values are: ", toString(ref_codes))
         stop(memo)
     } else if(!all(toupper(x$variant) %in% toupper(ref_codes))) {
         memo <- paste0("Unrecognized Base Detected in reference column, ",
-        "expected values are: ", toString(ref_codes))
+                       "expected values are: ", toString(ref_codes))
         stop(memo)
     }
 
@@ -116,13 +116,13 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
     if(!is.null(y))
     {
         trans_tranv_names <- c("A->C or T->G", "A->G or T->C", "A->T or T->A",
-        "G->A or C->T", "G->C or C->G", "G->T or C->A")
+                               "G->A or C->T", "G->C or C->G", "G->T or C->A")
         if(!all(rownames(y) %in% trans_tranv_names))
         {
             memo <- paste0("Did not detect a value for all combinations of ",
-            "transitions/transversions, please specify input ",
-            "for each of the following levels: ",
-            toString(trans_tranv_names))
+                           "transitions/transversions, please specify input ",
+                           "for each of the following levels: ",
+                           toString(trans_tranv_names))
             stop(memo)
         }
 

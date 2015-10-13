@@ -22,7 +22,7 @@ lohView <- function(x, y=NULL, genome='hg19')
     if(!is.null(y))
     {
         message("detected input to y, using supplied positions for chromosome
-        boundaries")
+                boundaries")
         chr_pos <- y
     } else if(is.null(y) && any(genome == preloaded)) {
         message("genome specified is preloaded, retrieving data...")
@@ -31,7 +31,7 @@ lohView <- function(x, y=NULL, genome='hg19')
         message("developer note: this means you Zach, rename function above")
     } else {
         message("attempting to query UCSC sql database for chromosome
-        positions")
+                positions")
         cyto_data <- suppresswarnings(get_cytobands(genome))
         chr_pos <- CN_dummy_data(cyto_data)
         message("developer note: this means you Zach, rename function above")
@@ -41,7 +41,7 @@ lohView <- function(x, y=NULL, genome='hg19')
     if(nrow(chr_pos) < 1)
     {
         stop("Could not retrieve chromosome boundaries from UCSC, please
-        specify this information via y")
+             specify this information via y")
     }
 
 

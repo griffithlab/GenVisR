@@ -103,28 +103,28 @@ lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL,
 
     # construct data frame of observed mutations for top track
     observed_mutation <- lolliplot.mutationObs(x, 'top', fillCol, labelCol,
-    obsA.rep.fact, obsA.rep.dist.lmt,
-    obsA.attr.fact, obsA.adj.max,
-    obsA.adj.lmt, obsA.iter.max)
+                                               obsA.rep.fact, obsA.rep.dist.lmt,
+                                               obsA.attr.fact, obsA.adj.max,
+                                               obsA.adj.lmt, obsA.iter.max)
 
     # construct data frame of observed mutations for bottom track
     if(!is.null(y))
     {
         observed_mutation2 <- lolliplot.mutationObs(y, 'bottom', fillCol,
-        labelCol, obsB.rep.fact,
-        obsB.rep.dist.lmt,
-        obsB.attr.fact,
-        obsB.adj.max, obsB.adj.lmt,
-        obsB.iter.max)
+                                                    labelCol, obsB.rep.fact,
+                                                    obsB.rep.dist.lmt,
+                                                    obsB.attr.fact,
+                                                    obsB.adj.max, obsB.adj.lmt,
+                                                    obsB.iter.max)
     } else {
         observed_mutation2 <- NULL
     }
 
     # construct the lolliplot
     plot <- build.lolli(geneData, length, observed_mutation, observed_mutation2,
-    fillCol, labelCol, plot_text_angle, plot_text_size,
-    point_size, gene_colour, AAsequence,
-    plot_sidechain=plot_sidechain, layers=layers)
+                        fillCol, labelCol, plot_text_angle, plot_text_size,
+                        point_size, gene_colour, AAsequence,
+                        plot_sidechain=plot_sidechain, layers=layers)
 
     return(plot)
 }

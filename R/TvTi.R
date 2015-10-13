@@ -36,7 +36,7 @@
 TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
                  x_axis_text_angle=45,
                  palette=c('#D53E4F', '#FC8D59', '#FEE08B', '#E6F598',
-                           '#99D594', '#3288BD'),
+          '#99D594', '#3288BD'),
                  file_type='MAF', tvti.layers=NULL, expec.layers=NULL,
                  sort='none')
 {
@@ -67,7 +67,7 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
         # do nothing
     } else {
         memo <- paset0(sort, " is not a valid parameter for sort, please",
-        " specify one of \"sample\", \"tvti\", \"none\"")
+                       " specify one of \"sample\", \"tvti\", \"none\"")
         stop(memo)
     }
 
@@ -79,17 +79,17 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
 
     # Build the Transition/Transversion Plot
     p1 <- TvTi_buildMain(x, y, type=type, x_axis_text_angle=x_axis_text_angle,
-    palette=palette, label_x_axis=label_x_axis,
-    tvti.layers=tvti.layers, expec.layers=NULL)
+                         palette=palette, label_x_axis=label_x_axis,
+                         tvti.layers=tvti.layers, expec.layers=NULL)
 
     if(!is.null(y))
     {
         # If y is input plot the expected values
         p2 <- TvTi_buildMain(y, y, type=type,
-        x_axis_text_angle=x_axis_text_angle,
-        palette=palette, label_x_axis=label_x_axis,
-        plot_expected=TRUE, tvti.layers=NULL,
-        expec.layers=expec.layers)
+                             x_axis_text_angle=x_axis_text_angle,
+                             palette=palette, label_x_axis=label_x_axis,
+                             plot_expected=TRUE, tvti.layers=NULL,
+                             expec.layers=expec.layers)
 
         # Align the plots
         p3 <- TvTi_alignPlot(p1, p2)

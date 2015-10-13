@@ -13,7 +13,7 @@ waterfall_sampAlt <- function(x, samples)
     if(typeof(samples) != 'character' & class(samples) != 'character')
     {
         memo <- paste0("argument supplied to main.samples is not a ",
-        "character vector, attempting to coerce")
+                       "character vector, attempting to coerce")
         warning(memo)
         samples <- as.character(samples)
     }
@@ -22,7 +22,7 @@ waterfall_sampAlt <- function(x, samples)
     if(!all(toupper(samples) %in% toupper(x$sample)))
     {
         memo <- paste0("Detected one or more samples supplied to main.samples ",
-        "not found in x ... adding samples to plot")
+                       "not found in x ... adding samples to plot")
         message(memo)
 
         samp_not_in_x <- as.data.frame(samples[which(!(samples %in% x$sample))])

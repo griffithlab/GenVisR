@@ -19,7 +19,7 @@ lohView_qual <- function(x)
     if(!all(x_col %in% colnames(x)))
     {
         stop('Did not detect required column names in x, required columns are: '
-        , paste0(x_col, sep="\t"))
+             , paste0(x_col, sep="\t"))
     }
 
     return(list(x))

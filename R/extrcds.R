@@ -19,7 +19,7 @@ extrCDS <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
 
   # extract CDS from transcript database given transcript ID
     cds <- cdsFromTXID(txdb, txid)
-  f1 <- function(x){x$txname[[1]]}
+f1 <- function(x){x$txname[[1]]}
     txnames <- lapply(cds, f1)
 
     if(typeof(cds) != 'S4'){

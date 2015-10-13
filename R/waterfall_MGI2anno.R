@@ -20,7 +20,7 @@ waterfall_MGI2anno <- function(x, label_col)
     if(!all(expec_col %in% colnames(x)))
     {
         memo <- paste0("Did not detect correct column names, column names
-        should be: ", toString(expec_col))
+                       should be: ", toString(expec_col))
         stop(memo)
     }
 

@@ -62,7 +62,7 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
 {
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinDat, mutBurden, file_type=file_type,
-    label_col=main.label_col)
+                               label_col=main.label_col)
     data_frame <- inputDat[[1]]
     clinDat <- inputDat[[2]]
     mutBurden <- inputDat[[3]]
@@ -84,7 +84,7 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     # add in a count of mutations at the sample level before anything is
     # stripped out and save for mutation recurrence plot
     data_frame2 <- waterfall_calcMutFreq(data_frame[,c('sample', 'gene',
-    'trv_type')])
+                                                       'trv_type')])
 
     # Subset the data to remove silent mutations if specified
     if(rmv_silent==TRUE)
@@ -100,7 +100,7 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
 
     # Remove trv_type that are not the most deleterious for a given gene/sample
     data_frame <- waterfall_hierarchyTRV(data_frame, file_type,
-    variant_class_order)
+                                         variant_class_order)
 
     # Subset the data based on the recurrence of mutations at the gene level
     data_frame <- waterfall_geneRecurCutoff(data_frame, main.recurrence_cutoff)
@@ -120,16 +120,16 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
         if(!setequal(sample_order, mutBurden$sample))
         {
             stop("levels in the sample column of mutBurden does not match
-            either: the samples given in x, or main.samples")
+                 either: the samples given in x, or main.samples")
         }
 
         mutBurden$sample <- factor(mutBurden$sample, levels=sample_order)
         p3 <- waterfall_buildMutBurden_B(mutBurden, layers=mutRecur.layers)
     } else {
         data_frame2$sample <- factor(data_frame2$sample,
-        levels=sample_order)
+                                     levels=sample_order)
         p3 <- waterfall_buildMutBurden_A(data_frame2, coverageSpace,
-        layers=mutRecur.layers)
+                                         layers=mutRecur.layers)
     }
 
     # Plot the Left Bar Chart
@@ -143,26 +143,26 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     if(is.null(clinDat))
     {
         p1 <- waterfall_buildMain(data_frame, grid=main.grid,
-        label_x=main.label_x,
-        gene_label_size=main.gene_label_size,
-        file_type=file_type,
-        drop_mutation=drop_mutation,
-        plot_x_title=TRUE,
-        plot_label=main.plot_label_flag,
-        plot_label_size=main.plot_label_size,
-        plot_palette=main.palette, layers=main.layers,
-        plot_label_angle=main.plot_label_angle)
+                                  label_x=main.label_x,
+                                  gene_label_size=main.gene_label_size,
+                                  file_type=file_type,
+                                  drop_mutation=drop_mutation,
+                                  plot_x_title=TRUE,
+                                  plot_label=main.plot_label_flag,
+                                  plot_label_size=main.plot_label_size,
+                                  plot_palette=main.palette, layers=main.layers,
+                                  plot_label_angle=main.plot_label_angle)
     } else if(!is.null(clinDat)) {
         p1 <- waterfall_buildMain(data_frame, grid=main.grid,
-        label_x=main.label_x,
-        gene_label_size=main.gene_label_size,
-        file_type=file_type,
-        drop_mutation=drop_mutation,
-        plot_x_title=FALSE,
-        plot_label=main.plot_label_flag,
-        plot_label_size=main.plot_label_size,
-        plot_palette=main.palette, layers=main.layers,
-        plot_label_angle=main.plot_label_angle)
+                                  label_x=main.label_x,
+                                  gene_label_size=main.gene_label_size,
+                                  file_type=file_type,
+                                  drop_mutation=drop_mutation,
+                                  plot_x_title=FALSE,
+                                  plot_label=main.plot_label_flag,
+                                  plot_label_size=main.plot_label_size,
+                                  plot_palette=main.palette, layers=main.layers,
+                                  plot_label_angle=main.plot_label_angle)
     }
 
     # Plot any clinical data if it is specified
@@ -171,9 +171,9 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
         # match the levels of sample in y to conform to the main plot
         clinDat$sample <- factor(clinDat$sample, levels=sample_order)
         p4 <- waterfall_buildClin(clinDat, clin.legend.col=clin.legend.col,
-        clin.var.colour=clin.var.colour,
-        clin.var.order=clin.var.order,
-        clin.layers=clin.layers)
+                                  clin.var.colour=clin.var.colour,
+                                  clin.var.order=clin.var.order,
+                                  clin.layers=clin.layers)
 
         # Align all plots and return as 1 plot
         pA <- waterfallAlign(p2, p1, p3, p4)

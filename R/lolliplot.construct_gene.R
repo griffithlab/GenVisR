@@ -24,7 +24,7 @@ lolliplot.construct_gene <- function(gene, domain_data, length)
 
     # relabel column names
     colnames(gene) <- c("Domain", "pos_from", "pos_to", "height_min",
-    "height_max")
+                        "height_max")
 
     return(gene)
 }

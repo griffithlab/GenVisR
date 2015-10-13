@@ -32,14 +32,14 @@ lolliplot.qual <- function(x, y)
     if(!is.character(getURL("www.google.com")))
     {
         stop("Did not detect an internet connection,
-        check internet connectivity")
+             check internet connectivity")
     }
 
     # Check for correct columns in x
     if(!all(c('transcript_name', 'gene', 'amino_acid_change') %in% colnames(x)))
     {
         stop("Did not detect correct columns in x,
-        missing one of transcript_name, gene, amino_acid_change")
+             missing one of transcript_name, gene, amino_acid_change")
     }
 
     # Check that "transcript_name" in x contains only 1 transcript
@@ -54,7 +54,7 @@ lolliplot.qual <- function(x, y)
         if(!all(c('transcript_name', 'amino_acid_change') %in% colnames(y)))
         {
             stop("Did not detect correct columns in y, missing one of
-            transcript_name, amino_acid_change")
+                 transcript_name, amino_acid_change")
         }
     }
 

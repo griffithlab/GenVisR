@@ -46,7 +46,7 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
     } else if(is.null(y)){
     # obtain the cytogenetic band information for the requested reference
         message("attempting to query UCSC sql database for cytogenic band
-        information")
+                information")
         cytobands <- suppressWarnings(get_cytobands(genome=genome))
     } else {
         message("using y for cytogenic band information...")
@@ -71,16 +71,16 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
 
   # plot chromosome
     chromosome_plot <- ideoView(cytobands, chromosome=chr,
-    chr_txt_angle=ideo.chr_txt_angle,
-    chr_txt_size=ideo.chr_txt_size,
-    layers=ideo.layers)
+                                chr_txt_angle=ideo.chr_txt_angle,
+                                chr_txt_size=ideo.chr_txt_size,
+                                layers=ideo.layers)
 
   # if requested plot only selected chromosome
     x <- subset_chr(x, chr)
 
   # build the cn plot
     CN_plot <- build.cnView.main(x, dummyData, z=z, chr=chr, cnDiff=main.cnDiff,
-    layers=main.layers)
+                                 layers=main.layers)
 
     p1 <- align_y_cn(chromosome_plot, CN_plot)
 

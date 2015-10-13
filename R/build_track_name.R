@@ -17,18 +17,18 @@ build_track_name <- function(name, bg_fill="black", text_fill="white",
   # Define various parameters of the plot
     background <- geom_rect(colour=border, fill=bg_fill)
     label <- geom_text(aes(x=.5, y=.5), label=name, colour=text_fill, angle=90,
-    size=size)
+                       size=size)
     scale_x <- scale_x_continuous(expand=c(0,0))
     scale_y <- scale_y_continuous(expand=c(0,0))
     labels <- labs(x=NULL, y=NULL)
 
   # Define theme of plot
     theme <- theme(axis.title.x=element_blank(), axis.text.x=element_blank(),
-    axis.ticks.x=element_blank(), axis.title.y=element_blank(),
-    axis.text.y=element_blank(), axis.ticks.y=element_blank(),
-    plot.margin=unit(c(0, 0, 0, 0), "null"),
-    axis.ticks.length=unit(0,"null"),
-    axis.ticks.margin=unit(0, "null"), panel.margin=unit(0,"null"))
+                   axis.ticks.x=element_blank(), axis.title.y=element_blank(),
+                   axis.text.y=element_blank(), axis.ticks.y=element_blank(),
+                   plot.margin=unit(c(0, 0, 0, 0), "null"),
+                   axis.ticks.length=unit(0,"null"),
+                   axis.ticks.margin=unit(0, "null"), panel.margin=unit(0,"null"))
 
   # Define the main plot
     label <- ggplot(mapping=aes(xmin=0, xmax=1, ymin=0, ymax=1)) +

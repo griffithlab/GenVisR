@@ -13,7 +13,7 @@ waterfall_Custom2anno <- function(x, label_col)
 {
     # message statement
     memo <- paste0("Detected \"Custom\" file_type flag, ",
-    "looking for correct column names...")
+                   "looking for correct column names...")
     message(memo)
 
     # define expected columns
@@ -27,7 +27,7 @@ waterfall_Custom2anno <- function(x, label_col)
     if(!all(expec_col %in% colnames(x)))
     {
         memo <- paste0("Did not detect correct column names, column names
-        should be: ", toString(expec_col))
+                       should be: ", toString(expec_col))
         stop(memo)
     }
 

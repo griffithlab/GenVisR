@@ -23,8 +23,8 @@ waterfall_geneRecurCutoff <- function(x, recurrence_cutoff)
     if(maxRecur < recurrence_cutoff)
     {
         memo <- paste0("The recurrence cutoff specified exceeds the recurrence",
-        " seen in the data, resetting this value to equal max ",
-        "recurrence:", maxRecur)
+                       " seen in the data, resetting this value to equal max ",
+                       "recurrence:", maxRecur)
         warning(memo)
         recurrence_cutoff <- maxRecur
     }

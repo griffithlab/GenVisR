@@ -28,7 +28,7 @@ bamreadcount <- function(bamfile, genome, targetbed = NULL)
     if(!is.null(targetbed)){
         pengelly <- read.table(file=targetbed, sep='\t', header = TRUE)
     }
-    else{pengelly <- SNPloci}
+else{pengelly <- SNPloci}
     pengelly.chr <- pengelly
 
     ## Check if pengelly bed file has 'chr' associated with chromosome number in chr column.

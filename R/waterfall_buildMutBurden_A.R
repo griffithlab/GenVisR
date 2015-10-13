@@ -16,15 +16,15 @@ waterfall_buildMutBurden_A <- function(x, coverage_space, layers=NULL)
 
     # Alter GGplot2 Theme
     theme <- theme(axis.ticks.x=element_blank(),
-    axis.text.x=element_blank(),
-    axis.title.x=element_blank(),
-    legend.title=element_text(size=14))
+                   axis.text.x=element_blank(),
+                   axis.title.x=element_blank(),
+                   legend.title=element_text(size=14))
 
     # Add Legend
     legend <- scale_fill_manual(name="Translational Effect",
-    values=c("red", "blue"),
-    breaks=c("Synonymous", "Non Synonymous"),
-    drop=FALSE)
+                                values=c("red", "blue"),
+                                breaks=c("Synonymous", "Non Synonymous"),
+                                drop=FALSE)
 
     # add y label
     y_label <- ylab('Mutations per MB')
@@ -39,7 +39,7 @@ waterfall_buildMutBurden_A <- function(x, coverage_space, layers=NULL)
 
     # ggplot2 call
     p1 <- ggplot(x, aes_string(x='sample', y='mutation_per_MB',
-    fill='trv_type')) +
+                               fill='trv_type')) +
     geom_bar(stat='identity', alpha=.75, width=1) +
     theme_bw() + theme + y_label + legend + layers
 

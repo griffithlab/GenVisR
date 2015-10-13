@@ -21,10 +21,10 @@
 #' @import ggplot2
 
 TvTi_buildMain <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
-                       x_axis_text_angle=45,
-                       palette=c('#D53E4F', '#FC8D59', '#FEE08B', '#E6F598',
-                                 '#99D594', '#3288BD'),
-                       plot_expected=FALSE, tvti.layers=NULL, expec.layers=NULL)
+                           x_axis_text_angle=45,
+                           palette=c('#D53E4F', '#FC8D59', '#FEE08B', '#E6F598',
+          '#99D594', '#3288BD'),
+                           plot_expected=FALSE, tvti.layers=NULL, expec.layers=NULL)
 {
 
     if(!is.null(y))
@@ -32,7 +32,7 @@ TvTi_buildMain <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
         # cumulativley sum the expected values and plot
         y$cumsum <- cumsum(y$Prop)
         expected <- geom_hline(data=y, mapping=aes_string(yintercept='cumsum'),
-        linetype="longdash", size=.5)
+                               linetype="longdash", size=.5)
     } else {
         expected <- geom_blank()
     }
@@ -41,25 +41,25 @@ TvTi_buildMain <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
     if(plot_expected == TRUE)
     {
         bar <- geom_bar(data=x, mapping=aes_string(x=shQuote('Expected'),
-        y='Prop',
-        fill='trans_tranv'),
-        stat='identity', width=1)
+                                                   y='Prop',
+                                                   fill='trans_tranv'),
+                        stat='identity', width=1)
     } else if(toupper(type) == 'PROPORTION') {
         bar <- geom_bar(data=x,
-        mapping=aes_string(x='sample', y='Prop',
-        fill='trans_tranv'),
-        stat='identity', width=1)
+                        mapping=aes_string(x='sample', y='Prop',
+                           fill='trans_tranv'),
+                        stat='identity', width=1)
     } else if(toupper(type) == 'FREQUENCY') {
         bar <- geom_bar(data=x,
-        mapping=aes_string(x='sample', y='Freq',
-        fill='trans_tranv'),
-        stat='identity', width=1)
+                        mapping=aes_string(x='sample', y='Freq',
+                           fill='trans_tranv'),
+                        stat='identity', width=1)
     }
 
     ylabel <- ylab(type)
     xlabel <- xlab(paste0("Sample: n=", length(unique(x$sample))))
     fill_palette <- scale_fill_manual(name='Transistion/Transversion',
-    values=palette)
+                                      values=palette)
     if(!is.null(tvti.layers))
     {
         layers <- tvti.layers
@@ -71,12 +71,12 @@ TvTi_buildMain <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
     if(plot_expected == TRUE)
     {
         theme <- theme(axis.title.y=element_blank(),
-        axis.text.y=element_blank(),
-        axis.ticks.y=element_blank(),
-        legend.position='none',
-        axis.title.x=element_blank(),
-        axis.text.x=element_text(angle=x_axis_text_angle,
-        hjust=1, vjust=1))
+                       axis.text.y=element_blank(),
+                       axis.ticks.y=element_blank(),
+                       legend.position='none',
+                       axis.title.x=element_blank(),
+                       axis.text.x=element_text(angle=x_axis_text_angle,
+                                 hjust=1, vjust=1))
         if(!is.null(expec.layers))
         {
             layers <- expec.layers
@@ -85,10 +85,10 @@ TvTi_buildMain <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
         }
     } else if(label_x_axis == TRUE) {
         theme <- theme(axis.text.x=element_text(angle=x_axis_text_angle,
-        hjust=1, vjust=1))
+                                                hjust=1, vjust=1))
     } else {
         theme <- theme(axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())
+                       axis.ticks.x=element_blank())
     }
 
     # Define plot

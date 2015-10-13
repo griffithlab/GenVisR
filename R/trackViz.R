@@ -44,16 +44,16 @@ trackViz <- function(..., bgFill="black", textFill="white", border="black",
   # Build Track labels and store as a list containing grob objects, then convert
   # to a single grob
     labels <- lapply(names(data), build_track_name, bg_fill=bgFill,
-    text_fill=textFill, border=border, size=size)
+                     text_fill=textFill, border=border, size=size)
     label_plot <- do.call(gridExtra::arrangeGrob,
-    lapply(labels, ggplot2::ggplotGrob))
+                          lapply(labels, ggplot2::ggplotGrob))
 
   # Convert the plots corresponding to track labels to a single grob
     data_plot <- align_plot(data, axis=axis_align)
 
   # arrange the label and data plot
     p1 <- gridExtra::grid.arrange(label_plot, data_plot, ncol=2,
-    widths=widthRatio)
+                                  widths=widthRatio)
 
     return(p1)
 }

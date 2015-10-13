@@ -12,13 +12,13 @@ waterfall_sampSort <- function(x)
     # recast the data going from long format to wide format, values in this data
     # are counts of a mutation call
     wide_data <- reshape2::dcast(x, sample ~ gene, fun.aggregate = length,
-    value.var="trv_type")
+                                 value.var="trv_type")
 
     # apply a boolean function to convert the data frame values to 1's and 0's
     values <- wide_data[,-1, drop=FALSE]
     sample <- wide_data[,1]
     values <- data.frame(apply(values, 2,
-    function(x) as.numeric(as.logical(x))))
+                               function(x) as.numeric(as.logical(x))))
     wide_boolean <- cbind(sample, values)
 
     # reverse the columns so that genes with highest mutation's are listed first

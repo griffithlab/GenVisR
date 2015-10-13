@@ -20,28 +20,28 @@ waterfall_hierarchyTRV <- function(x, file_type, variant_class_order)
         if(toupper(file_type) == toupper('MGI'))
         {
             mutation_order <- c("nonsense", "frame_shift_del",
-            "frame_shift_ins", "splice_site_del",
-            "splice_site_ins", "splice_site",
-            "nonstop", "in_frame_del", "in_frame_ins",
-            "missense", "splice_region_del",
-            "splice_region_ins", "splice_region",
-            "5_prime_flanking_region",
-            "3_prime_flanking_region",
-            "3_prime_untranslated_region",
-            "5_prime_untranslated_region", "rna",
-            "intronic", "silent", NA)
+                                "frame_shift_ins", "splice_site_del",
+                                "splice_site_ins", "splice_site",
+                                "nonstop", "in_frame_del", "in_frame_ins",
+                                "missense", "splice_region_del",
+                                "splice_region_ins", "splice_region",
+                                "5_prime_flanking_region",
+                                "3_prime_flanking_region",
+                                "3_prime_untranslated_region",
+                                "5_prime_untranslated_region", "rna",
+                                "intronic", "silent", NA)
         } else if(toupper(file_type) == toupper('MAF')) {
             mutation_order <- c("Nonsense_Mutation", "Frame_Shift_Ins",
-            "Frame_Shift_Del", "Translation_Start_Site",
-            "Splice_Site", "Nonstop_Mutation",
-            "In_Frame_Ins", "In_Frame_Del",
-            "Missense_Mutation", "5\'Flank",
-            "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron",
-            "IGR", "Silent", "Targeted_Region", NA)
+                                "Frame_Shift_Del", "Translation_Start_Site",
+                                "Splice_Site", "Nonstop_Mutation",
+                                "In_Frame_Ins", "In_Frame_Del",
+                                "Missense_Mutation", "5\'Flank",
+                                "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron",
+                                "IGR", "Silent", "Targeted_Region", NA)
         } else if(toupper(file_type) == toupper('Custom')) {
             memo <- paste0("Detected NULL in variant_class_order, ",
-            "this parameter is required if file_type is set ",
-            "to \"Custom\"")
+                           "this parameter is required if file_type is set ",
+                           "to \"Custom\"")
             stop(memo)
         }
     } else {
@@ -52,7 +52,7 @@ waterfall_hierarchyTRV <- function(x, file_type, variant_class_order)
     if(any(!x$trv_type %in% mutation_order))
     {
         memo <- paste0("Detected an invalid mutation type, valid values for ",
-        file_type, " are: ", toString(mutation_order))
+                       file_type, " are: ", toString(mutation_order))
         stop(memo)
     }
     # refactor the data frame

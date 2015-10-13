@@ -33,7 +33,7 @@ covBars <- function(x, col=NULL, plot_title=NULL, background='grey90', x_lab_siz
     x <- x[order(as.numeric(rownames(x))),]
 
   # normalize each sample (each sample should sum to 1)
-  xnorm <- apply(x, 2, function(y){y/sum(as.numeric(y))})
+xnorm <- apply(x, 2, function(y){y/sum(as.numeric(y))})
 
   # get the cumulative sum of each sample
     xcs <- apply(xnorm, 2, cumsum)

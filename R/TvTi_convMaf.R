@@ -11,13 +11,13 @@ TvTi_convMaf <- function(x)
 {
     # Take out the appropriate columns and format for each allele
     x <- x[,c('Tumor_Sample_Barcode', 'Reference_Allele', 'Tumor_Seq_Allele1',
-    'Tumor_Seq_Allele2')]
+              'Tumor_Seq_Allele2')]
 
     allele1 <- x[,c('Tumor_Sample_Barcode', 'Reference_Allele',
-    'Tumor_Seq_Allele1')]
+                    'Tumor_Seq_Allele1')]
     colnames(allele1) <- c('sample', 'reference', 'variant')
     allele2 <- x[,c('Tumor_Sample_Barcode', 'Reference_Allele',
-    'Tumor_Seq_Allele2')]
+                    'Tumor_Seq_Allele2')]
     colnames(allele2) <- c('sample', 'reference', 'variant')
 
     #!!!Developer note: The if's are here because subsetting when there is

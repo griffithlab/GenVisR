@@ -25,8 +25,8 @@ waterfallAlign <- function(p2, p1, p3, p4)
     if(!missing(p4))
     {
         maxwidth = grid::unit.pmax(gB$widths[2:5,],
-        gC$widths[2:5,],
-        gD$widths[2:5,])
+                                   gC$widths[2:5,],
+                                   gD$widths[2:5,])
         gC$widths[2:5] <- as.list(maxwidth)
         gB$widths[2:5] <- as.list(maxwidth)
         gD$widths[2:5] <- as.list(maxwidth)
@@ -45,11 +45,11 @@ waterfallAlign <- function(p2, p1, p3, p4)
     if(!missing(p4))
     {
         p1 <- gridExtra::arrangeGrob(blankPanel, gC, gA, gB, blankPanel, gD,
-        ncol=2, nrow=3, widths=c(.8,4),
-        heights=c(1,4,1.2))
+                                     ncol=2, nrow=3, widths=c(.8,4),
+                                     heights=c(1,4,1.2))
     } else {
         p1 <- gridExtra::arrangeGrob(blankPanel, gC, gA, gB, ncol=2, nrow=2,
-        widths=c(1,4), heights=c(1,4))
+                                     widths=c(1,4), heights=c(1,4))
     }
 
     return(p1)

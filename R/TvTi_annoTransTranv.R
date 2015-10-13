@@ -14,12 +14,12 @@ TvTi_annoTransTranv <- function(x)
 
     # annotate the grouping of the base change
     x$trans_tranv <- switch(x$base_change, A2C="A->C or T->G",
-    T2G="A->C or T->G", A2G="A->G or T->C",
-    T2C="A->G or T->C", A2T="A->T or T->A",
-    T2A="A->T or T->A", G2A="G->A or C->T",
-    C2T="G->A or C->T", G2C="G->C or C->G",
-    C2G="G->C or C->G", G2T="G->T or C->A",
-    C2A="G->T or C->A")
+                            T2G="A->C or T->G", A2G="A->G or T->C",
+                            T2C="A->G or T->C", A2T="A->T or T->A",
+                            T2A="A->T or T->A", G2A="G->A or C->T",
+                            C2T="G->A or C->T", G2C="G->C or C->G",
+                            C2G="G->C or C->G", G2T="G->T or C->A",
+                            C2A="G->T or C->A")
 
     # remove the temp base change column
     x$base_change <- NULL

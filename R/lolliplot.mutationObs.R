@@ -40,13 +40,13 @@ lolliplot.mutationObs <- function(data, track, fill_value, label_column,
     {
         message("Detected p. notation for amino_acid_change")
         mutation_coord <- as.numeric(gsub("p\\.[a-zA-z]*(\\d+).*?$", "\\1",
-        mutation_coord, perl=TRUE))
+                                          mutation_coord, perl=TRUE))
     } else if(all(grepl("c\\.", mutation_coord))) {
         stop("C. notation is not currently supported please specify amino acid
-        change in P. notation")
+             change in P. notation")
     } else {
         stop("Could not determine notation type for amino_acid_change,
-        check input")
+             check input")
     }
 
     # combine mutation type and mutation coord into a data frame
@@ -90,9 +90,9 @@ lolliplot.mutationObs <- function(data, track, fill_value, label_column,
     mutation_data <- mutation_data[order(mutation_coord),]
     mutation_data$lolliplot.coord_x_dodge <-
     lolliplot.dodge_coord_x(as.vector(mutation_data$mutation_coord),
-    rep.fact=rep.fact, rep.dist.lmt=rep.dist.lmt,
-    attr.fact=attr.fact, adj.max=adj.max,
-    adj.lmt=adj.lmt, iter.max=iter.max)
+                            rep.fact=rep.fact, rep.dist.lmt=rep.dist.lmt,
+                            attr.fact=attr.fact, adj.max=adj.max,
+                            adj.lmt=adj.lmt, iter.max=iter.max)
 
     # Redefine and return grouping information and then dodge y coordinates
     mutation_data$group <-
@@ -100,10 +100,10 @@ lolliplot.mutationObs <- function(data, track, fill_value, label_column,
     if(track == 'top')
     {
         mutation_data$coord_y_dodge <- lolliplot.dodge_coord_y(mutation_data,
-        track='top')
+                                                               track='top')
     } else if(track == 'bottom') {
         mutation_data$coord_y_dodge <- lolliplot.dodge_coord_y(mutation_data,
-        track='bottom')
+                                                               track='bottom')
     }
 
     return(mutation_data)

@@ -15,7 +15,7 @@
 #' @import ggplot2
 
 waterfall_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
-                               clin.var.order=NULL, clin.layers=NULL)
+                                clin.var.order=NULL, clin.layers=NULL)
 {
     # Define parameters
     x_label <- xlab(paste0("Sample n=", length(unique(x$sample))))
@@ -24,14 +24,14 @@ waterfall_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
     if(!is.null(clin.var.colour) & is.null(clin.var.order))
     {
         clin_fill_colour <- scale_fill_manual(name="Clinical Data",
-        values=clin.var.colour)
+                                              values=clin.var.colour)
     } else if(!is.null(clin.var.colour) & !is.null(clin.var.order)) {
         clin_fill_colour <- scale_fill_manual(name="Clinical Data",
-        breaks=clin.var.order,
-        values=clin.var.colour)
+                                              breaks=clin.var.order,
+                                              values=clin.var.colour)
     } else if(is.null(clin.var.colour) & !is.null(clin.var.order)) {
         clin_fill_colour <- scale_fill_manual(name="Clinical Data",
-        breaks=clin.var.order)
+                                              breaks=clin.var.order)
     }
 
     if(!is.null(clin.layers))
@@ -43,17 +43,17 @@ waterfall_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
 
     # Define the theme
     theme <- theme(panel.grid.major = element_blank(),
-    panel.grid.minor=element_blank(),
-    panel.background=element_rect(fill='white',
-    colour='white'),
-    axis.ticks.x=element_blank(),
-    axis.ticks.y=element_blank(),
-    axis.text.x=element_blank(),
-    axis.title.x=element_text(size=16),
-    legend.title=element_text(size=14),
-    axis.title.y=element_blank(),
-    axis.text.y=element_text(size=14, colour='black'),
-    legend.position='right')
+                   panel.grid.minor=element_blank(),
+                   panel.background=element_rect(fill='white',
+                                  colour='white'),
+                   axis.ticks.x=element_blank(),
+                   axis.ticks.y=element_blank(),
+                   axis.text.x=element_blank(),
+                   axis.title.x=element_text(size=16),
+                   legend.title=element_text(size=14),
+                   axis.title.y=element_blank(),
+                   axis.text.y=element_text(size=14, colour='black'),
+                   legend.position='right')
 
     # Define the main plot
     if(!is.null(clin.var.colour))
