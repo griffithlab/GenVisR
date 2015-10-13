@@ -1,5 +1,5 @@
 #' Check input to lolliplot
-#' 
+#'
 #' Perform Basic quality checks for lolliplot input
 #' @name lolliplot.qual
 #' @param x object of class data frame containing columns transcript_name, gene,
@@ -17,7 +17,7 @@ lolliplot.qual <- function(x, y)
         x <- as.data.frame(x)
         x <- droplevels(x)
     }
-    
+
     if(!is.null(y))
     {
         if(!is.data.frame(y))
@@ -27,27 +27,27 @@ lolliplot.qual <- function(x, y)
             y <- droplevels(y)
         }
     }
-    
+
     # Check for internet connectivity
     if(!is.character(getURL("www.google.com")))
     {
         stop("Did not detect an internet connection,
              check internet connectivity")
     }
-    
+
     # Check for correct columns in x
     if(!all(c('transcript_name', 'gene', 'amino_acid_change') %in% colnames(x)))
     {
         stop("Did not detect correct columns in x,
              missing one of transcript_name, gene, amino_acid_change")
     }
-    
+
     # Check that "transcript_name" in x contains only 1 transcript
     if(length(unique(x$transcript_name)) != 1)
     {
         stop("Detected more than 1 transcript in ", x)
     }
-    
+
     # Check for correct columns in y
     if(!is.null(y))
     {

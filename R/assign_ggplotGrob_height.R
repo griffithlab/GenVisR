@@ -1,5 +1,5 @@
 #' assign ggplotGrob height
-#' 
+#'
 #' assign height of ggplotGrob object
 #' @name assign_ggplotGrob_height
 #' @param x ggplotGrob object
@@ -9,6 +9,6 @@
 assign_ggplotGrob_height <- function(x, max_height)
 {
   # Assign a max width to ggplotGrob
-  x$heights[2:5] <- as.list(max_height)
-  return(x)
+    x$heights[2:5] <- as.list(max_height)
+    return(x)
 }

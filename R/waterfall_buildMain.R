@@ -1,5 +1,5 @@
 #' Plot a mutation heatmap
-#' 
+#'
 #' Plot a Mutation Landscape with variables sample, gene, mutation
 #' @name waterfall_buildMain
 #' @param data_frame a data frame in MAF format
@@ -23,22 +23,22 @@
 #' @import ggplot2
 
 waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
-                               gene_label_size=8, file_type='MGI',
-                               drop_mutation=FALSE, plot_x_title=TRUE,
-                               plot_label=FALSE, plot_label_size=4,
-                               plot_palette=NULL, layers=NULL,
-                               plot_label_angle=0)
+                                gene_label_size=8, file_type='MGI',
+                                drop_mutation=FALSE, plot_x_title=TRUE,
+                                plot_label=FALSE, plot_label_size=4,
+                                plot_palette=NULL, layers=NULL,
+                                plot_label_angle=0)
 {
     # NOTE: scale_x_discret(drop=FALSE), added to ggplot2 call to ensure samples
     # remove by 'mutation_recurrence_subset' are still plotted as empty tiles
-    
+
     # Define layers
-    
+
     # grid overlay
     vertical_grid <- geom_vline(xintercept = seq(.5, nlevels(data_frame$sample),
                                                  by=1),
                                 linetype='solid', colour='grey80', size=.01)
-    
+
     if(length(unique(data_frame$gene)) == 1)
     {
         horizontal_grid <- geom_blank()
@@ -48,7 +48,7 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
                                       linetype='solid', colour='grey80',
                                       size=.01)
     }
-    
+
     # Declare the appropriate palette
     if(!is.null(plot_palette))
     {
@@ -71,9 +71,9 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
         palette <- c('#4f00A8', '#A80100', '#CF5A59', '#A80079', '#BC2D94',
                      '#CF59AE', '#000000', '#006666', '#00A8A8', '#009933',
                      '#ace7b9', '#cdf0d5', '#59CF74', '#002AA8', '#5977CF',
-                     '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')        
+                     '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
     }
-    
+
     # Create breaks specific and labels for specified file type
     if(toupper(file_type) == toupper('MGI'))
     {
@@ -108,7 +108,7 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
         breaks <- levels(data_frame$trv_type)
         labels <- breaks
     }
-    
+
     if(drop_mutation == TRUE)
     {
         # Create Legend
@@ -119,10 +119,10 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
         legend <- scale_fill_manual(name="Mutation Type", values=palette,
                                     breaks=breaks, labels=labels, drop=FALSE)
     }
-    
+
     # X Label
     x_label <- xlab(paste0('Sample (n=', nlevels(data_frame$sample), ')'))
-    
+
     if(plot_label == TRUE)
     {
         label <- geom_text(data=data_frame,
@@ -133,7 +133,7 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
     } else {
         label <- geom_blank()
     }
-    
+
     # Theme, Boolean, if specified to plot x labels, define theme such that
     # labels are plotted
     if(label_x == TRUE & plot_x_title == TRUE)
@@ -196,7 +196,7 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
                                                   size=.1),
                         legend.position=("right"))
     }
-    
+
     # additional parameters
     if(!is.null(layers))
     {
@@ -204,21 +204,21 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
     } else {
         layers <- geom_blank()
     }
-    
+
     # ggplot call
     if(grid == TRUE)
     {
         p1 <- ggplot(data_frame, aes_string('sample', 'gene')) +
-            geom_tile(aes_string(fill='trv_type'), position="identity") +
-            theme + legend + ggtitle(title) + x_label + vertical_grid +
-            horizontal_grid + scale_x_discrete(drop=FALSE) + label +
-            layers
+        geom_tile(aes_string(fill='trv_type'), position="identity") +
+        theme + legend + ggtitle(title) + x_label + vertical_grid +
+        horizontal_grid + scale_x_discrete(drop=FALSE) + label +
+        layers
     } else {
         p1 <- ggplot(data_frame, aes_string('sample', 'gene')) +
-            geom_tile(aes_string(fill='trv_type'), position="identity") +
-            theme + legend + ggtitle(title) + x_label +
-            scale_x_discrete(drop=FALSE) + label + layers
+        geom_tile(aes_string(fill='trv_type'), position="identity") +
+        theme + legend + ggtitle(title) + x_label +
+        scale_x_discrete(drop=FALSE) + label + layers
     }
-    
+
     return(p1)
 }

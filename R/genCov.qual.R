@@ -1,5 +1,5 @@
 #' Perform quality control on genCov data
-#' 
+#'
 #' Ensure data input into genCov is of the proper type and format
 #' @name genCov.qual
 #' @param x named list containing data frames with columns end and cov
@@ -11,43 +11,43 @@
 genCov.qual <- function(x, txdb, gr, genome)
 {
   # Check input to x
-  if(!is.list(x))
-  {
-    warning("x does not appear to be a list, attempting to coerce")
-    x <- as.list(x)
-  }
-  
-  if(!all(as.logical(lapply(x, is.data.frame))))
-  {
-    warning("all arguments in x are not of type data frame, attempting to coerce")
-    x <- lapply(x, as.data.frame)
-  }
-  
-  if(!all(as.logical(lapply(x, function(x) all(c('end', 'cov') %in% colnames(x))))))
-  {
-    stop("one or more elements of x are missing the columns end or cov")
-  }
-  
+    if(!is.list(x))
+    {
+        warning("x does not appear to be a list, attempting to coerce")
+        x <- as.list(x)
+    }
+
+    if(!all(as.logical(lapply(x, is.data.frame))))
+    {
+        warning("all arguments in x are not of type data frame, attempting to coerce")
+        x <- lapply(x, as.data.frame)
+    }
+
+    if(!all(as.logical(lapply(x, function(x) all(c('end', 'cov') %in% colnames(x))))))
+    {
+        stop("one or more elements of x are missing the columns end or cov")
+    }
+
   # Check the TxDb object
-  if(class(txdb)[1] != 'TxDb')
-  {
-    message("txdb does not appear to be an object of class TxDb, if you believe this message is in error press [enter]")
-    line <- readline()
-  }
-  
+    if(class(txdb)[1] != 'TxDb')
+    {
+        message("txdb does not appear to be an object of class TxDb, if you believe this message is in error press [enter]")
+        line <- readline()
+    }
+
   # Check the Genomic ranges object
-  if(class(gr)[1] != 'GRanges')
-  {
-    message("gr does not appear to be an object of class GRanges, if you believe this message is in error press [enter]")
-    line <- readline()
-  }
-  
+    if(class(gr)[1] != 'GRanges')
+    {
+        message("gr does not appear to be an object of class GRanges, if you believe this message is in error press [enter]")
+        line <- readline()
+    }
+
   # Check the biostrings object
-  if(class(genome)[1] != 'BSgenome')
-  {
-    message("genome does not appear to be an object of class BSgenome, if you believe this message is in error press [enter]")
-    line <- readline()
-  }
-  
-  return(list(x, txdb, gr, genome))
+    if(class(genome)[1] != 'BSgenome')
+    {
+        message("genome does not appear to be an object of class BSgenome, if you believe this message is in error press [enter]")
+        line <- readline()
+    }
+
+    return(list(x, txdb, gr, genome))
 }

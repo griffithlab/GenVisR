@@ -1,5 +1,5 @@
 #' format mutation observations
-#' 
+#'
 #' Create a data frame of mutation observations
 #' @name lolliplot.mutationObs
 #' @param data object of class data frame with columns trv_type and amino acid
@@ -33,7 +33,7 @@ lolliplot.mutationObs <- function(data, track, fill_value, label_column,
     } else {
         fill_value_flag <- FALSE
     }
-    
+
     # extract the mutation coordinates
     mutation_coord <- data$amino_acid_change
     if(all(grepl("p\\.", mutation_coord)))
@@ -48,7 +48,7 @@ lolliplot.mutationObs <- function(data, track, fill_value, label_column,
         stop("Could not determine notation type for amino_acid_change,
              check input")
     }
-  
+
     # combine mutation type and mutation coord into a data frame
     if(fill_value_flag)
     {
@@ -59,8 +59,8 @@ lolliplot.mutationObs <- function(data, track, fill_value, label_column,
         colnames(mutation_data) <- c('mutation_coord')
     }
     mutation_data$mutation_coord <-
-        as.numeric(as.character(mutation_data$mutation_coord))
-  
+    as.numeric(as.character(mutation_data$mutation_coord))
+
     # add extra column giving height of Y axis for points to be plotted
     if(track == 'top')
     {
@@ -70,7 +70,7 @@ lolliplot.mutationObs <- function(data, track, fill_value, label_column,
     } else {
         stop("Fatal error: incorrect track type specified in mutationObs")
     }
-    
+
     # extract the mutation types and set a flag specifying they are present
     if(any(colnames(data) %in% label_column))
     {
@@ -85,26 +85,26 @@ lolliplot.mutationObs <- function(data, track, fill_value, label_column,
     {
         message("applying force field to observed mutations for top track")
     } else if (track == 'bottom') {
-        message("applying force field to observed mutations for bottom track")    
+        message("applying force field to observed mutations for bottom track")
     }
-    mutation_data <- mutation_data[order(mutation_coord),] 
-    mutation_data$lolliplot.coord_x_dodge <- 
-        lolliplot.dodge_coord_x(as.vector(mutation_data$mutation_coord),
-                                rep.fact=rep.fact, rep.dist.lmt=rep.dist.lmt,
-                                attr.fact=attr.fact, adj.max=adj.max,
-                                adj.lmt=adj.lmt, iter.max=iter.max)
-    
+    mutation_data <- mutation_data[order(mutation_coord),]
+    mutation_data$lolliplot.coord_x_dodge <-
+    lolliplot.dodge_coord_x(as.vector(mutation_data$mutation_coord),
+                            rep.fact=rep.fact, rep.dist.lmt=rep.dist.lmt,
+                            attr.fact=attr.fact, adj.max=adj.max,
+                            adj.lmt=adj.lmt, iter.max=iter.max)
+
     # Redefine and return grouping information and then dodge y coordinates
     mutation_data$group <-
-        group_mutation_coord(as.vector(mutation_data$mutation_coord))
+    group_mutation_coord(as.vector(mutation_data$mutation_coord))
     if(track == 'top')
     {
         mutation_data$coord_y_dodge <- lolliplot.dodge_coord_y(mutation_data,
                                                                track='top')
     } else if(track == 'bottom') {
-        mutation_data$coord_y_dodge <- lolliplot.dodge_coord_y(mutation_data, 
+        mutation_data$coord_y_dodge <- lolliplot.dodge_coord_y(mutation_data,
                                                                track='bottom')
     }
-    
+
     return(mutation_data)
 }

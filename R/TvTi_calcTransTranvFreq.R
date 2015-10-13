@@ -1,11 +1,11 @@
 #' Calculate Transition/Transversion Frequency
-#' 
-#' Given a data frame with columns reference, variant, and sample construct 
+#'
+#' Given a data frame with columns reference, variant, and sample construct
 #' a transition/transversion plot
 #' @name TvTi_calcTransTranvFreq
-#' @param x Object of class data frame containing columns 'reference', 
+#' @param x Object of class data frame containing columns 'reference',
 #' 'variant', 'sample', 'trans_tranv'
-#' @return Object of class data frame with Frequency and Proportion of 
+#' @return Object of class data frame with Frequency and Proportion of
 #' Transistions/Transversions appended on a sample level
 
 TvTi_calcTransTranvFreq <- function(x)
@@ -18,19 +18,19 @@ TvTi_calcTransTranvFreq <- function(x)
     variant <- c('T')
     dummy_data <- data.frame(reference, variant, sample, trans_tranv)
     x <- rbind(dummy_data, x)
-    
+
     # calculate the frequency of transitions/transversions on a sample basis
     x_freq <-  table(x$trans_tranv, x$sample)
-    
+
     # calculate the proportion of transitions/transversions on a sample basis
     x_prop <-  prop.table(x_freq, 2)
-    
+
     # format and remove the dummy data introduced above
     x_freq <- as.data.frame(x_freq)
     x_prop <- as.data.frame(x_prop)
     x <- cbind(x_freq, x_prop$Freq)
     colnames(x) <- c('trans_tranv', 'sample', 'Freq', 'Prop')
     x <- x[which(x$sample != "dummy_sample"),]
-    
+
     return(x)
 }

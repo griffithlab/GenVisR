@@ -1,5 +1,5 @@
 #' mutation sample cutoff gene based
-#' 
+#'
 #' Subset a internal mutSpec file keeping only samples within the specified gene
 #'  list
 #' @name waterfall_geneAlt
@@ -18,7 +18,7 @@ waterfall_geneAlt <- function(x, genes)
         warning(memo)
         genes <- as.character(genes)
     }
-    
+
     if(!all(toupper(genes) %in% toupper(x$gene)))
     {
         memo <- paste0("genes supplied in main.genes contains an element not ",
@@ -27,6 +27,6 @@ waterfall_geneAlt <- function(x, genes)
     }
     genes <- c(genes, NA)
     x <- x[(toupper(x$gene) %in% toupper(genes)), ]
-    
+
     return(x)
 }

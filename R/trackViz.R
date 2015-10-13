@@ -1,8 +1,8 @@
 #' Overlay tracks with plots
-#' 
+#'
 #' given a named list of plots, display them on tracks
 #' @name trackViz
-#' @param ... named list of ggplot2 plots 
+#' @param ... named list of ggplot2 plots
 #' @param bgFill character string giving the colour to fill the label
 #' @param textFill character string giving the colour to fill the text
 #' @param border character string specifying the colour to fill the border of
@@ -33,27 +33,27 @@ trackViz <- function(..., bgFill="black", textFill="white", border="black",
 {
   # Grab all the tracks/data to be plotted as a named list, check and correct if
   # list is within a list
-  if(list==TRUE)
-  {
-    data <- list(...)
-    data <- data[[1]]
-  } else {
-    data <- list(...)
-  }
-  
+    if(list==TRUE)
+    {
+        data <- list(...)
+        data <- data[[1]]
+    } else {
+        data <- list(...)
+    }
+
   # Build Track labels and store as a list containing grob objects, then convert
   # to a single grob
-  labels <- lapply(names(data), build_track_name, bg_fill=bgFill,
-                   text_fill=textFill, border=border, size=size)
-  label_plot <- do.call(gridExtra::arrangeGrob,
-                        lapply(labels, ggplot2::ggplotGrob))
-  
+    labels <- lapply(names(data), build_track_name, bg_fill=bgFill,
+                     text_fill=textFill, border=border, size=size)
+    label_plot <- do.call(gridExtra::arrangeGrob,
+                          lapply(labels, ggplot2::ggplotGrob))
+
   # Convert the plots corresponding to track labels to a single grob
-  data_plot <- align_plot(data, axis=axis_align)
-  
-  # arrange the label and data plot 
-  p1 <- gridExtra::grid.arrange(label_plot, data_plot, ncol=2,
-                                widths=widthRatio)
-  
-  return(p1)
+    data_plot <- align_plot(data, axis=axis_align)
+
+  # arrange the label and data plot
+    p1 <- gridExtra::grid.arrange(label_plot, data_plot, ncol=2,
+                                  widths=widthRatio)
+
+    return(p1)
 }

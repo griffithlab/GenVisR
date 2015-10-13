@@ -1,5 +1,5 @@
 #' Plot a mutation landscape
-#' 
+#'
 #' Plot a mutation landscape plot for a cohort in an annotation file
 #' @name waterfall
 #' @param x a data frame in annotation format
@@ -38,7 +38,7 @@
 #' type
 #' @param sampRecur.layers Additional ggplot2 layers to plot on the sample
 #' recurence chart
-#' @param clin.layers Additional ggplot2 layers to plot on the clinical data 
+#' @param clin.layers Additional ggplot2 layers to plot on the clinical data
 #' @param main.layers Additional ggplot2 layers to plot on the main panel
 #' @param mutRecur.layers Additional ggplot2 layers to plot on the mutation
 #' burden data
@@ -59,14 +59,14 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
                       main.palette=NULL, sampRecur.layers=NULL,
                       clin.layers=NULL, main.layers=NULL, mutRecur.layers=NULL,
                       main.plot_label_angle=0, variant_class_order=NULL)
-{ 
+{
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinDat, mutBurden, file_type=file_type,
                                label_col=main.label_col)
     data_frame <- inputDat[[1]]
     clinDat <- inputDat[[2]]
     mutBurden <- inputDat[[3]]
-    
+
     # Set flag if it is desirable to plot cell text
     if(!is.null(main.label_col))
     {
@@ -74,45 +74,45 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     } else {
         main.plot_label_flag <- FALSE
     }
-    
+
     # If it is requested subset the input data on a sample list
     if(!is.null(main.samples))
     {
         data_frame <- waterfall_sampAlt(data_frame, main.samples)
     }
-    
+
     # add in a count of mutations at the sample level before anything is
     # stripped out and save for mutation recurrence plot
     data_frame2 <- waterfall_calcMutFreq(data_frame[,c('sample', 'gene',
                                                        'trv_type')])
-    
+
     # Subset the data to remove silent mutations if specified
     if(rmv_silent==TRUE)
     {
         data_frame <- waterfall_rmvSilent(data_frame)
     }
-    
+
     # Subset the data based on a vector of genes if supplied
     if(!is.null(main.genes))
     {
         data_frame <- waterfall_geneAlt(data_frame, main.genes)
     }
-    
+
     # Remove trv_type that are not the most deleterious for a given gene/sample
     data_frame <- waterfall_hierarchyTRV(data_frame, file_type,
                                          variant_class_order)
-    
+
     # Subset the data based on the recurrence of mutations at the gene level
     data_frame <- waterfall_geneRecurCutoff(data_frame, main.recurrence_cutoff)
-    
+
     # reorder the genes based on frequency of mutations in the gene
     gene_sorted <- waterfall_geneSort(data_frame)
     data_frame$gene <- factor(data_frame$gene, levels=gene_sorted)
-    
+
     # reorder the samples based on hiearchial sort on ordered gene list
     sample_order <- waterfall_sampSort(data_frame)
     data_frame$sample <- factor(data_frame$sample, levels=sample_order)
-    
+
     # Reorder the sample levels in data_frame2 to match the main plot's levels,
     # and then plot the top margin plot
     if(!is.null(mutBurden))
@@ -122,23 +122,23 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
             stop("levels in the sample column of mutBurden does not match
                  either: the samples given in x, or main.samples")
         }
-        
+
         mutBurden$sample <- factor(mutBurden$sample, levels=sample_order)
         p3 <- waterfall_buildMutBurden_B(mutBurden, layers=mutRecur.layers)
-        } else {
-            data_frame2$sample <- factor(data_frame2$sample,
-                                         levels=sample_order)
-            p3 <- waterfall_buildMutBurden_A(data_frame2, coverageSpace,
-                                             layers=mutRecur.layers)
-        }
-    
+    } else {
+        data_frame2$sample <- factor(data_frame2$sample,
+                                     levels=sample_order)
+        p3 <- waterfall_buildMutBurden_A(data_frame2, coverageSpace,
+                                         layers=mutRecur.layers)
+    }
+
     # Plot the Left Bar Chart
     p2 <- waterfall_buildGenePrevelance(data_frame, layers=sampRecur.layers)
-    
+
     # if there are any NA values in the data frame for a gene, give these NA
     # values a gene name so they are plotted properly
     data_frame <- waterfall_NA2gene(data_frame)
-    
+
     # Plot the Heatmap
     if(is.null(clinDat))
     {
@@ -164,7 +164,7 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
                                   plot_palette=main.palette, layers=main.layers,
                                   plot_label_angle=main.plot_label_angle)
     }
-    
+
     # Plot any clinical data if it is specified
     if(!is.null(clinDat))
     {
@@ -174,14 +174,14 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
                                   clin.var.colour=clin.var.colour,
                                   clin.var.order=clin.var.order,
                                   clin.layers=clin.layers)
-        
+
         # Align all plots and return as 1 plot
         pA <- waterfallAlign(p2, p1, p3, p4)
         return(grid::grid.draw(pA))
     }
-    
+
     # Align the Plots and return as 1 plot
     pA <- waterfallAlign(p2, p1, p3)
-    
+
     return(grid::grid.draw(pA))
 }

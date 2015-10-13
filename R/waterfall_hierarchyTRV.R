@@ -1,5 +1,5 @@
 #' Hiearchical removal of MAF entries
-#' 
+#'
 #' Remove MAF entries with the same gene/sample in an ordered fashion such that
 #' the most deleterious are retained
 #' @name waterfall_hierarchyTRV
@@ -9,7 +9,7 @@
 #' @param variant_class_order character vector giving the hierarchical order of
 #' mutation types to plot
 #' @return a data frame with multiple mutations in the same sample/gene
-#' collapsed on the most deleterious 
+#' collapsed on the most deleterious
 
 waterfall_hierarchyTRV <- function(x, file_type, variant_class_order)
 {
@@ -47,7 +47,7 @@ waterfall_hierarchyTRV <- function(x, file_type, variant_class_order)
     } else {
         mutation_order <- variant_class_order
     }
-  
+
     # Check that elements in trv_type are in the mutation order
     if(any(!x$trv_type %in% mutation_order))
     {
@@ -57,13 +57,13 @@ waterfall_hierarchyTRV <- function(x, file_type, variant_class_order)
     }
     # refactor the data frame
     x$trv_type <- factor(x$trv_type, levels=mutation_order)
-    
+
     # sort the data frame so that the duplicated call will remove the
     # proper trv_type
     x <- x[order(x$sample, x$gene, x$trv_type),]
-    
+
     # collapse the data on sample/gene
     x <- x[!duplicated(x[, c("sample", "gene")]), ]
-  
-  return(x)
+
+    return(x)
 }

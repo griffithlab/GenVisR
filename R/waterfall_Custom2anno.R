@@ -1,5 +1,5 @@
 #' Convert Custom File
-#' 
+#'
 #' Convert columns of a Custom annotation file into a format
 #' recognizable by internal functions
 #' @name waterfall_Custom2anno
@@ -15,14 +15,14 @@ waterfall_Custom2anno <- function(x, label_col)
     memo <- paste0("Detected \"Custom\" file_type flag, ",
                    "looking for correct column names...")
     message(memo)
-    
+
     # define expected columns
     expec_col <- c("sample", "gene", "variant_class")
     if(!is.null(label_col))
     {
         expec_col <- c(expec_col, label_col)
     }
-    
+
     # check expected columns are present
     if(!all(expec_col %in% colnames(x)))
     {
@@ -30,16 +30,16 @@ waterfall_Custom2anno <- function(x, label_col)
                        should be: ", toString(expec_col))
         stop(memo)
     }
-    
+
     x <- x[,c('sample', 'gene', 'variant_class', label_col)]
-    
+
     if(!is.null(label_col))
     {
         colnames(x) <- c('sample', 'gene', 'trv_type', 'label')
     } else {
         colnames(x) <- c('sample', 'gene', 'trv_type')
     }
-    
+
     # if no silent mutations are present warn the user
     if(all(!toupper(x$trv_type) %in% toupper("silent")))
     {

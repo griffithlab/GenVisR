@@ -1,5 +1,5 @@
 #' format cds
-#' 
+#'
 #' given a Granges object specifying a region of interest, format into a form recognizable by ggplot2
 #' @name formatCDS
 #' @param txdb A TxDb object for a genome
@@ -11,20 +11,20 @@
 formatCDS <- function(txdb, gr, genome, reduce=FALSE)
 {
   # Extract the CDS for each isoform overlapping GRanges object
-  cds <- extrCDS(txdb, gr, reduce=reduce)
-  
-  if(is.null(cds)){
-    return(NA)
-  }
+    cds <- extrCDS(txdb, gr, reduce=reduce)
+
+    if(is.null(cds)){
+        return(NA)
+    }
   # Calculate GC content for retrieved data
-  cds <- sapply(cds, calcGC, genome=genome)
-  
+    cds <- sapply(cds, calcGC, genome=genome)
+
   # Coerce the relevant data in the Granges object to a data frame
-  cds <- lapply(cds, Granges2dataframe)
-  
+    cds <- lapply(cds, Granges2dataframe)
+
   # if the data frame has a size format, else return a list of NA dataframes
-  if(nrow(cds[[1]]) != 0)
-  {
+    if(nrow(cds[[1]]) != 0)
+    {
     # Format the CDS list
     cds <- lapply(cds, function(x){cbind(x, Type = c("CDS"))})
     cds <- lapply(cds, function(x){cbind(x, Upper = c(1))})
@@ -32,10 +32,10 @@ formatCDS <- function(txdb, gr, genome, reduce=FALSE)
     cds <- lapply(cds, function(x){cbind(x, Mid = c(0))})
     cds <- lapply(cds, function(x){cbind(x, segStart = c(min(x$start)))})
     cds <- lapply(cds, function(x){cbind(x, segEnd = c(max(x$end)))})
-    
-  } else {
-    cds <- mapply(rbind, cds, NA)
-  }
-  
-  return(cds)
+
+    } else {
+        cds <- mapply(rbind, cds, NA)
+    }
+
+    return(cds)
 }

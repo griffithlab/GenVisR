@@ -15,7 +15,7 @@ covBars.qual <- function(x, col)
         x <- as.matrix(x)
     }
     if(nrow(x) < 1)
-        stop("x needs at least one row")
+    stop("x needs at least one row")
 
     # Check that col is the same length as the number of rows in x
     if(length(col)==0)
@@ -31,9 +31,9 @@ covBars.qual <- function(x, col)
     #  message("col is longer than the number of rows in x, col will be truncated")
     #  col <- col[1:nrow(x)]
     #}
-  
+
     # Check that rownames of x can be converted to integers
-    if(is.null(rownames(x))) 
+    if(is.null(rownames(x)))
     {
         message("all rownames of x are missing, they will be converted to integers starting at 0")
         rownames(x) = as.character(0:(nrow(x)-1))
@@ -42,12 +42,12 @@ covBars.qual <- function(x, col)
         if(length(naind)==nrow(x)) {
             message("no rownames of x can be interpreted as integers, they will be converted to integers starting at 0")
             rownames(x) = as.character(0:(nrow(x)-1))
-    } else if(length(naind) > 0) {
+        } else if(length(naind) > 0) {
             message("some rownames of x cannot be interpreted as integers, they will be removed")
             x <- x[-naind,]
             #col <- col[-naind]
         }
     }
-  
+
     return(list(x, col))
 }

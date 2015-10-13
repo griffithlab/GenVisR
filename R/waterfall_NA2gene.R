@@ -1,5 +1,5 @@
 #' Assign NA samples a gene
-#' 
+#'
 #' Replace NA values in a gene column with the top gene name
 #' @name waterfall_NA2gene
 #' @param x a data frame in anno format

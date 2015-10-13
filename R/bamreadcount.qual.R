@@ -1,5 +1,5 @@
 #' Count nucleotide reads at SNP locations
-#' 
+#'
 #' Given the bam file path, count the number of reads at the 24 SNP locations
 #' @name bamreadcount.qual
 #' @param bai Path to the bam index file
@@ -14,13 +14,13 @@ bamreadcount.qual<-function(bai, genome, targetbed)
     {
         stop("Could not find bam index file for: ", gsub(".bai$", "bam", bai))
     }
-    
+
     # Check to see if genome is of class BSgenome
     if(!class(genome)[1]=="BSgenome")
     {
         stop("Genome must be of class BSgenome")
     }
-    
+
     # Check bed file input
     if(!is.null(targetbed))
     {
@@ -30,12 +30,12 @@ bamreadcount.qual<-function(bai, genome, targetbed)
             targetbed <- as.data.frame(targetbed)
             colnames(targetbed) <- c("chr", "start", "end")
         }
-        
+
         if(!all(c('chr', 'start', 'end') %in% colnames(targetbed)))
         {
             stop("Did not detect correct columns in targetbed, missing one of chr, start, end")
         }
     }
-    
+
     return(list(bai, genome, targetbed))
 }

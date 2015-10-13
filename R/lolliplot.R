@@ -1,5 +1,5 @@
 #' Construct Lolliplot from data
-#' 
+#'
 #' Construct a Lolliplot from object of class data frame giving observed
 #' mutations and an ensembl transcript id
 #' @name lolliplot
@@ -64,27 +64,27 @@ lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL,
     input <- lolliplot.qual(x, y)
     x <- input[[1]]
     y <- input[[2]]
-    
+
     # Define a taxonomy ID for use in the "transcriptID2" function family for
     # use with UniProt.ws
     up <- UniProt.ws::UniProt.ws(taxId=taxId)
-    
+
     # extract transcript id and subset data y on that id if it exists
     transcriptID <- as.character(x$transcript_name[1])
     if(!is.null(y))
     {
         y <- y[y$transcript_name == transcriptID,]
     }
-  
+
     # extract HUGO gene name
     gene <- as.character(x$gene[1])
-    
+
     # obtain uniprot id
     uniprot_id <- lolliplot.transcriptID2uniprotID(transcriptID, up)
-    
+
     # obtain transcript length
     length <- lolliplot.transcriptID2length(transcriptID, up)
-    
+
     # obtain amino acid sequence and format if it is requested to plot the
     # sidechain
     if(plot_sidechain==TRUE)
@@ -94,19 +94,19 @@ lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL,
     } else {
         AAsequence <- NULL
     }
-    
+
     # extract protien domain data
     protien_domain <- lolliplot.fetchDomain(uniprot_id)
-    
+
     # construct gene from data collected
     geneData <- lolliplot.construct_gene(gene, protien_domain, length)
-    
+
     # construct data frame of observed mutations for top track
     observed_mutation <- lolliplot.mutationObs(x, 'top', fillCol, labelCol,
                                                obsA.rep.fact, obsA.rep.dist.lmt,
                                                obsA.attr.fact, obsA.adj.max,
                                                obsA.adj.lmt, obsA.iter.max)
-    
+
     # construct data frame of observed mutations for bottom track
     if(!is.null(y))
     {
@@ -119,12 +119,12 @@ lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL,
     } else {
         observed_mutation2 <- NULL
     }
-      
+
     # construct the lolliplot
     plot <- build.lolli(geneData, length, observed_mutation, observed_mutation2,
                         fillCol, labelCol, plot_text_angle, plot_text_size,
                         point_size, gene_colour, AAsequence,
                         plot_sidechain=plot_sidechain, layers=layers)
-    
+
     return(plot)
 }
