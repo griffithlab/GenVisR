@@ -28,7 +28,7 @@ compare_identities_plot <- function(count_tables, sample_names)
   ## Extract VAF based upon variant allele
     calcVAF <- function(x){
         apply(x,1,function(y){
-                  return(as.numeric(y[as.character(y["var"])]))
+              return(as.numeric(y[as.character(y["var"])]))
               })
     }
     calcVAFs <- lapply(freqs_withvarcol, calcVAF)
@@ -107,7 +107,7 @@ compare_identities_plot <- function(count_tables, sample_names)
   # Create a data frame containing only total readcounts
     totalcounts <- function(y){
         apply(y,1,function(z){
-                  return(as.vector(z["total_reads"]))
+              return(as.vector(z["total_reads"]))
               })
     }
     readcounts <- lapply(count_tables, totalcounts)

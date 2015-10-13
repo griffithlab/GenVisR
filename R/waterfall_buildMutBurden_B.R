@@ -25,8 +25,8 @@ waterfall_buildMutBurden_B <- function(x, layers=NULL)
     y_label <- ylab("Mutation Burden")
     legend <- scale_fill_manual(name="Translational Effect",
                                 values=c("Non Synonymous"="blue",
-             "Synonymous"="red",
-             "Undefined"="black"),
+                                         "Synonymous"="red",
+                                         "Undefined"="black"),
                                 drop=FALSE)
 
     if(!is.null(layers))
