@@ -1,5 +1,5 @@
 #' extract ggplotGrob width
-#' 
+#'
 #' extract plot width of ggplotGrob object
 #' @name extr_ggplotGrob_width
 #' @param x ggplotGrob object
@@ -8,6 +8,6 @@
 extr_ggplotGrob_width <- function(x)
 {
   # Extract ggplotGrob width
-  x <- x$widths[2:5,]
-  return(x)
+    x <- x$widths[2:5,]
+    return(x)
 }

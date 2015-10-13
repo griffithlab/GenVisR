@@ -1,5 +1,5 @@
 #' plot transitions/transversions
-#' 
+#'
 #' Given a data frame with columns reference, variant, and sample construct a
 #' transition/transversion plot
 #' @name TvTi
@@ -26,7 +26,7 @@
 #' plotting samples based on a sample name, transition/transversion freq, or no
 #' order
 #' @examples
-#' TvTi(brcaMAF, type='Frequency', 
+#' TvTi(brcaMAF, type='Frequency',
 #' palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"),
 #' x_axis_text_angle=60)
 #' @return ggplot2 object
@@ -39,19 +39,19 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
                            '#99D594', '#3288BD'),
                  file_type='MAF', tvti.layers=NULL, expec.layers=NULL,
                  sort='none')
-{ 
+{
     # Perform quality checks
     out <- TvTi_qual(x, y, file_type=file_type)
     x <- out$input1
     y <- out$input2
-    
+
     # add transition/transversion info
     message("annotating transitions and transversions")
     x <- plyr::adply(x, 1, TvTi_annoTransTranv, .progress='text')
-    
+
     # Calculate the proportion of transitions/transversions
     x <- TvTi_calcTransTranvFreq(x)
-    
+
     # re-level based on proportion values or via a smart sort or not at all
     if(toupper(sort) == toupper('sample'))
     {
@@ -66,35 +66,35 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
     } else if(toupper(sort) == toupper('none')){
         # do nothing
     } else {
-        memo <- paset0(sort, " is not a valid parameter for sort, please", 
-                       " specify one of \"sample\", \"tvti\", \"none\"")
+        memo <- paset0(sort, " is not a valid parameter for sort, please",
+        " specify one of \"sample\", \"tvti\", \"none\"")
         stop(memo)
     }
-    
+
     # Perform a quality control on y to ensure fill levels match x
     if(!is.null(y))
     {
         y$trans_tranv <- factor(y$trans_tranv, levels=levels(x$trans_tranv))
     }
-    
+
     # Build the Transition/Transversion Plot
-    p1 <- TvTi_buildMain(x, y, type=type, x_axis_text_angle=x_axis_text_angle, 
-                         palette=palette, label_x_axis=label_x_axis, 
-                         tvti.layers=tvti.layers, expec.layers=NULL)
-    
+    p1 <- TvTi_buildMain(x, y, type=type, x_axis_text_angle=x_axis_text_angle,
+    palette=palette, label_x_axis=label_x_axis,
+    tvti.layers=tvti.layers, expec.layers=NULL)
+
     if(!is.null(y))
     {
         # If y is input plot the expected values
         p2 <- TvTi_buildMain(y, y, type=type,
-                             x_axis_text_angle=x_axis_text_angle,
-                             palette=palette, label_x_axis=label_x_axis, 
-                             plot_expected=TRUE, tvti.layers=NULL, 
-                             expec.layers=expec.layers)
-        
+        x_axis_text_angle=x_axis_text_angle,
+        palette=palette, label_x_axis=label_x_axis,
+        plot_expected=TRUE, tvti.layers=NULL,
+        expec.layers=expec.layers)
+
         # Align the plots
         p3 <- TvTi_alignPlot(p1, p2)
         return(grid::grid.draw(p3))
     }
-    
+
     return(p1)
 }

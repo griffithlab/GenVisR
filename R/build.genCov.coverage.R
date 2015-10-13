@@ -1,5 +1,5 @@
 #' build coverage plot
-#' 
+#'
 #' given data build a coverage plot to represent the data
 #' @name build.genCov.coverage
 #' @param data_frame an object of class data frame containing columns stop and cov
@@ -12,49 +12,49 @@
 #' @import ggplot2
 
 build.genCov.coverage <- function(data_frame, x_limits=NULL, display_x_axis=TRUE, colour="blue", plot_type="line", layers=NULL)
-{ 
+{
   # Specify various parameters of the plot
-  line <- geom_line(colour=colour)
-  area <- geom_area(colour=colour)
-  bar <- geom_bar(fill=colour, width=1, stat="identity")
-  
-  if(is.null(x_limits))
-  {
-    x_limits <- xlim(c(min(data_frame$end), max(data_frame$end)))
-  } else {
-    x_limits <- xlim(x_limits)
-  }
-  
-  if(!is.null(layers))
-  {
-    layers <- layers
-  } else {
-    layers <- geom_blank()
-  }
-  
+    line <- geom_line(colour=colour)
+    area <- geom_area(colour=colour)
+    bar <- geom_bar(fill=colour, width=1, stat="identity")
+
+    if(is.null(x_limits))
+    {
+        x_limits <- xlim(c(min(data_frame$end), max(data_frame$end)))
+    } else {
+        x_limits <- xlim(x_limits)
+    }
+
+    if(!is.null(layers))
+    {
+        layers <- layers
+    } else {
+        layers <- geom_blank()
+    }
+
   # Define the theme
-  if(display_x_axis == TRUE)
-  {
-    theme <- theme(axis.title.x=element_blank(), axis.title.y=element_blank())
-  } else {
-    theme <- theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank())
-  }
-  
+    if(display_x_axis == TRUE)
+    {
+        theme <- theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+    } else {
+        theme <- theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank())
+    }
+
   # Define the main plot
-  cov_plot <- ggplot(data_frame, aes_string(x='end', y='cov')) + x_limits + theme_bw() + theme + layers
-  
+    cov_plot <- ggplot(data_frame, aes_string(x='end', y='cov')) + x_limits + theme_bw() + theme + layers
+
   # Define Control structure for plot type
-  if(toupper(plot_type) == "LINE")
-  {
-    cov_plot <- cov_plot + line
-  } else if(toupper(plot_type) == "AREA") {
-    cov_plot <- cov_plot + area
-  } else if(toupper(plot_type) == "BAR"){
-    cov_plot <- cov_plot + bar
-  } else {
-    message <- paste0("Do not recoginze: ", plot_type, ", please specify 'line', 'area' or 'bar'")
-    stop(message)
-  }
-  
-  return(cov_plot)
+    if(toupper(plot_type) == "LINE")
+    {
+        cov_plot <- cov_plot + line
+    } else if(toupper(plot_type) == "AREA") {
+        cov_plot <- cov_plot + area
+    } else if(toupper(plot_type) == "BAR"){
+        cov_plot <- cov_plot + bar
+    } else {
+        message <- paste0("Do not recoginze: ", plot_type, ", please specify 'line', 'area' or 'bar'")
+        stop(message)
+    }
+
+    return(cov_plot)
 }

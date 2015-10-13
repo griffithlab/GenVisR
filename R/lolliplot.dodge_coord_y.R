@@ -1,5 +1,5 @@
 #' dodge coordinates
-#' 
+#'
 #' given amino acid position coordinates on, before grouping and dodge on y axis
 #' @name lolliplot.dodge_coord_y
 #' @param x data frame containing columns coord_x_dodge and group
@@ -21,7 +21,7 @@ lolliplot.dodge_coord_y <- function(x, track='top')
             orig_pos <- -2
             pos_change <- -.5
         }
-    
+
         if(i == 1)
         {
             y_axis_vec <- c(pos)
@@ -30,7 +30,7 @@ lolliplot.dodge_coord_y <- function(x, track='top')
             x_coord_a <- x$coord_x_dodge[i-1]
             x_coord_b <- x$coord_x_dodge[i]
         }
-    
+
         if(x_coord_b == x_coord_a)
         {
             new_pos <- pos + pos_change
@@ -43,6 +43,6 @@ lolliplot.dodge_coord_y <- function(x, track='top')
             y_axis_vec <- c(y_axis_vec, pos)
         }
     }
- 
-return(y_axis_vec)
+
+    return(y_axis_vec)
 }

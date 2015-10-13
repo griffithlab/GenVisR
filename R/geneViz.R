@@ -1,12 +1,12 @@
-#' Gene Plot 
-#' 
+#' Gene Plot
+#'
 #' given a Granges object plot genomic features within the Granges object
 #' @name geneViz
 #' @param txdb A TxDb object for a genome
 #' @param gr A Granges object specifying a region of interest
 #' @param genome Object of class BSgenome specifying the genome
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
-#' @param base  base A vector of log bases to transform the data, corresponding to the elements of transform 
+#' @param base  base A vector of log bases to transform the data, corresponding to the elements of transform
 #' @param transform A vector of strings designating what objects to log transform
 #' @param plot_transcript_name Boolean specifying whether to plot the transcript name
 #' @param transcript_name_size Integer specifying the size of the transcript name text
@@ -22,10 +22,10 @@
 #' library(BSgenome.Hsapiens.UCSC.hg19)
 #' genome <- BSgenome.Hsapiens.UCSC.hg19
 #'
-#' # need Granges object 
-#' gr <- GRanges(seqnames=c("chr10"), 
+#' # need Granges object
+#' gr <- GRanges(seqnames=c("chr10"),
 #' ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
-#' 
+#'
 #' # Plot the graphic
 #' geneViz(txdb, gr, genome)
 #' @export
@@ -40,7 +40,7 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,
     # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
     cds <- formatCDS(txdb, gr, genome=genome, reduce=reduce)
     UTR <- formatUTR(txdb, gr, genome=genome, reduce=reduce)
-  
+
     # bind together a data frame of gene features as a list and remove erroneous NA values
     if(is.null(cds)){
         if(is.null(UTR)){
@@ -75,25 +75,25 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,
         gc <- as.data.frame(mcols(l))
         gene_features[[1]]$GC <- rbind.fill(gc)$GC
     }
-  
+
     # obtain xlimits for gene plot, this is overwritten if transform.
     xlimits <- c(start(gr), end(gr))
-  
+
     # Create a master table based on log transform(s) then use the master table as a map for mapping coordinates to transformed space
     if(!is.null(transform) && length(transform) > 0)
     {
         # status message
         message("Calculating transform")
-    
+
         # Create Master table and return it instead of plot if requested
         master <- mergeRegions(gene_features, gr, transform=transform, base=base)
-    
+
         # Map the original coordinates into transformed space
         gene_features <- lapply(gene_features, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
     } else {
         master <- NULL
     }
-  
+
     # Adjust the Y axis gene locations based on the presense of isoforms
     increment <- 0
     for(i in 1:length(gene_features))
@@ -107,22 +107,22 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,
             gene_features[[i]]$trans_segEnd <- max(gene_features[[i]]$trans_end)
         }
         increment <- increment + 2.2
-    }	
-  
+    }
+
     # Convert the list object of gene_features into a single data frame and set flag to display x axis in plot (this flag is overwritten if space is transformed)
     gene_features <- as.data.frame(do.call("rbind", gene_features))
     display_x_axis <- TRUE
-  
+
     # Replace the original coordinates with the transformed coordinates
     if(length(transform) > 0)
-    { 
+    {
         # replace original coordinates with transformed coordinates
         gene_features <- gene_features[,c('trans_start', 'trans_end', 'GC', 'width', 'Type', 'Upper', 'Lower', 'Mid', 'trans_segStart', 'trans_segEnd', 'txname')]
         colnames(gene_features) <- c('start', 'end', 'GC', 'width', 'Type', 'Upper', 'Lower', 'Mid', 'segStart', 'segEnd', 'txname')
 
         # set flag to not display x axis values if plot is transformed
         display_x_axis <- FALSE
-    
+
         # Obtain x limits for gene plot based on granges object
         start <- cbind(start(gr), start(gr))
         end <- cbind(end(gr), end(gr))
@@ -131,7 +131,7 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,
         temp <- adply(temp, 1, map_coord_space, master=master)
         xlimits <- c(min(temp$trans_start), max(temp$trans_end))
     }
-  
+
     # construct the gene in gplot
     if(reduce == TRUE || plot_transcript_name == FALSE)
     {
@@ -140,7 +140,7 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,
     {
         gene_plot <- build.gene(gene_features, display_x_axis=display_x_axis, x_limits=xlimits, gene_colour=gene_colour, transcript_name=TRUE, transcript_name_size=transcript_name_size, layers=layers)
     }
-  
+
     out <- list('plot' = gene_plot, 'features' = gene_features, 'master' = master)
     return(out)
 }

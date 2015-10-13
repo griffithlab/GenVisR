@@ -1,5 +1,5 @@
 #' align cn plots on x axis
-#' 
+#'
 #' given a chromosome and cn plot align plot widths
 #' @name align_y_cn
 #' @param p1 ggplot object of chromosome
@@ -9,16 +9,16 @@
 align_y_cn <- function(p1, p2)
 {
   # define the ggplot's as grobs and create a blank plot
-  gA <- ggplot2::ggplotGrob(p1)
-  gB <- ggplot2::ggplotGrob(p2)
-  
+    gA <- ggplot2::ggplotGrob(p1)
+    gB <- ggplot2::ggplotGrob(p2)
+
   # Adjust the grob heights so p1, and p2 plots line up
-  maxwidth = grid::unit.pmax(gA$widths[2:5,], gB$widths[2:5,])
-  gA$widths[2:5] <- as.list(maxwidth)
-  gB$widths[2:5] <- as.list(maxwidth)
-  
+    maxwidth = grid::unit.pmax(gA$widths[2:5,], gB$widths[2:5,])
+    gA$widths[2:5] <- as.list(maxwidth)
+    gB$widths[2:5] <- as.list(maxwidth)
+
   # plot the grobs with grid.arrange
-  p1 <- gridExtra::arrangeGrob(gA, gB, ncol=1, nrow=2, heights=c(1,2))
-  
-  return(p1)
+    p1 <- gridExtra::arrangeGrob(gA, gB, ncol=1, nrow=2, heights=c(1,2))
+
+    return(p1)
 }
