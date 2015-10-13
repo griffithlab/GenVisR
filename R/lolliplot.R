@@ -37,8 +37,8 @@
 #' cosmic track
 #' @param plot_sidechain boolean value whether to plot the amino acid sidechains
 #' instead of protein domains
-#' @param taxId integer specifying the uniprot taxonomy id for the species of
-#' interest
+#' @param species Character string specifying the species corresponding to the
+#' given ensembl transcript id
 #' @param layers additional ggplot2 layers to plot
 #' @examples
 #' # Create input data
@@ -58,16 +58,12 @@ lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL,
                       obsA.adj.lmt=.5, obsA.iter.max=50000, obsB.rep.fact=5000,
                       obsB.rep.dist.lmt=500, obsB.attr.fact=.1, obsB.adj.max=.1,
                       obsB.adj.lmt=.5, obsB.iter.max=50000,
-                      plot_sidechain=FALSE, taxId=9606, layers=NULL)
+                      plot_sidechain=FALSE, species="hsapiens", layers=NULL)
 {
     # Perform quality check
     input <- lolliplot.qual(x, y)
     x <- input[[1]]
     y <- input[[2]]
-    
-    # Define a taxonomy ID for use in the "transcriptID2" function family for
-    # use with UniProt.ws
-    up <- UniProt.ws::UniProt.ws(taxId=taxId)
     
     # extract transcript id and subset data y on that id if it exists
     transcriptID <- as.character(x$transcript_name[1])
@@ -79,24 +75,28 @@ lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL,
     # extract HUGO gene name
     gene <- as.character(x$gene[1])
     
-    # obtain uniprot id
-    uniprot_id <- lolliplot.transcriptID2uniprotID(transcriptID, up)
-    
-    # obtain transcript length
-    length <- lolliplot.transcriptID2length(transcriptID, up)
+    # Obtain length of protein
+    codingSeq <- lolliplot_transcriptID2codingSeq(transcriptID, species=species)
+    length <- nchar(codingSeq)/3
+    if(nchar(codingSeq)%%3 != 0)
+    {
+        memo <- paste0("Coding sequence retrieved for given ensembl transctipt",
+                       ", is not a multiple of three. output may not be,",
+                       " accurate!")
+        warning(memo)
+    }
     
     # obtain amino acid sequence and format if it is requested to plot the
     # sidechain
     if(plot_sidechain==TRUE)
     {
-        AAsequence <- lolliplot.transcriptID2sequence(transcriptID, up)
-        AAsequence$sidechain <- sapply(AAsequence[,1], AA2sidechain)
+        AAsequence <- lolliplot_DNAconv(codingSeq, to="sidechain")
     } else {
         AAsequence <- NULL
     }
     
     # extract protien domain data
-    protien_domain <- lolliplot.fetchDomain(uniprot_id)
+    protien_domain <- lolliplot_fetchDomain(transcriptID, species=species)
     
     # construct gene from data collected
     geneData <- lolliplot.construct_gene(gene, protien_domain, length)

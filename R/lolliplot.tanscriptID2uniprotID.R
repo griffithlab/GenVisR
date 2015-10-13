@@ -15,7 +15,7 @@ lolliplot.transcriptID2uniprotID <- function(transcriptID, up)
     keys <- c(transcriptID)
     
     # Select data to retrieve back (uniprot ID)
-    columns <- c("UNIPROTKB")
+    columns <- c("UNIPROTKB", "ENSEMBL_TRANSCRIPT")
     
     # submit the query to return the uniprot ID
     result <- UniProt.ws::select(up, keys, columns, kt)

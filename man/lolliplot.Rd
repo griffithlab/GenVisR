@@ -10,7 +10,7 @@ lolliplot(x, y = NULL, fillCol = NULL, labelCol = NULL,
   obsA.attr.fact = 0.1, obsA.adj.max = 0.1, obsA.adj.lmt = 0.5,
   obsA.iter.max = 50000, obsB.rep.fact = 5000, obsB.rep.dist.lmt = 500,
   obsB.attr.fact = 0.1, obsB.adj.max = 0.1, obsB.adj.lmt = 0.5,
-  obsB.iter.max = 50000, plot_sidechain = FALSE, taxId = 9606,
+  obsB.iter.max = 50000, plot_sidechain = FALSE, species = "hsapiens",
   layers = NULL)
 }
 \arguments{
@@ -69,8 +69,8 @@ cosmic track}
 \item{plot_sidechain}{boolean value whether to plot the amino acid sidechains
 instead of protein domains}
 
-\item{taxId}{integer specifying the uniprot taxonomy id for the species of
-interest}
+\item{species}{Character string specifying the species corresponding to the
+given ensembl transcript id}
 
 \item{layers}{additional ggplot2 layers to plot}
 }
