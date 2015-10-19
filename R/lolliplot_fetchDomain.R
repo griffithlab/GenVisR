@@ -5,7 +5,6 @@
 #' @param transcriptID String specifying ensembl transcript id
 #' @param species character string to use when searching for ensemblMart dataset
 #' @return data frame of protien domains and start/stop coordinates
-#' @import biomaRt
 
 lolliplot_fetchDomain <- function(transcriptID, species="hsapiens")
 {
@@ -26,7 +25,7 @@ lolliplot_fetchDomain <- function(transcriptID, species="hsapiens")
                        "you're input to to conform to this format: hsapiens")
         stop(memo)
     }
-    ensembl_mart <- biomaRt::useDataset(biomaRt::listDatasets(ensembl_mart)$dataset[index],
+    ensembl_mart <- biomaRt::useDataset(as.character(biomaRt::listDatasets(ensembl_mart)$dataset[index]),
                                         mart=ensembl_mart)
     
     # Apply various filters using vector of values

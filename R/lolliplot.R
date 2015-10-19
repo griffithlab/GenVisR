@@ -76,7 +76,10 @@ lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL,
     gene <- as.character(x$gene[1])
     
     # Obtain length of protein
-    codingSeq <- lolliplot_transcriptID2codingSeq(transcriptID, species=species)
+    codingSeq <- lolliplot_transcriptID2codingSeq(transcriptID,
+                                                  species=species)$coding
+    
+    stop("Zach pick back up here!")
     length <- nchar(codingSeq)/3
     if(nchar(codingSeq)%%3 != 0)
     {

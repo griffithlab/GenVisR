@@ -30,14 +30,14 @@ lolliplot_transcriptID2codingSeq <- function(transcriptID, species="hsapiens")
     
     # Apply various filters using vector of values
     filters <- c("ensembl_transcript_id")
-    values <- as.character(transcriptID)
+    ensg_id <- as.character(transcriptID)
     
     # Select attributes to retrieve coding dna sequence
-    attributes <- as.list(c("coding"))
+    attributes <- as.list(c("coding","transcript_length"))
     
     # Retrieve data
     result <- biomaRt::getBM(attributes=attributes, filters=filters,
-                              values=values, mart=ensembl_mart)
+                              values=ensg_id, mart=ensembl_mart)
     
-    return(result)
+    return(as.list(result))
 }
