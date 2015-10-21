@@ -11,8 +11,9 @@
 TvTi_calcTransTranvFreq <- function(x)
 {
     # Ensure all possible combinations of trans/tranv are represented
-    trans_tranv <- c("A->C or T->G", "A->G or T->C", "A->T or T->A",
-                     "G->A or C->T", "G->C or C->G", "G->T or C->A")
+    trans_tranv <- c("A->C or T->G (TV)", "A->G or T->C (TI)",
+                     "A->T or T->A (TV)", "G->A or C->T (TI)",
+                     "G->C or C->G (TV)", "G->T or C->A (TV)")
     sample <- c('dummy_sample')
     reference <- c('A')
     variant <- c('T')

@@ -115,8 +115,9 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
     # check y input for proper row names
     if(!is.null(y))
     {
-        trans_tranv_names <- c("A->C or T->G", "A->G or T->C", "A->T or T->A",
-                               "G->A or C->T", "G->C or C->G", "G->T or C->A")
+        trans_tranv_names <- c("A->C or T->G (TV)", "A->G or T->C (TI)",
+                               "A->T or T->A (TV)", "G->A or C->T (TI)",
+                               "G->C or C->G (TV)", "G->T or C->A (TV)")
         if(!all(rownames(y) %in% trans_tranv_names))
         {
             memo <- paste0("Did not detect a value for all combinations of ",
