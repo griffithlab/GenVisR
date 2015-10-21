@@ -59,7 +59,7 @@ build.lolli <- function(gene_data, length, mutation_observed,
                                                     ymin='height_min',
                                                     ymax='height_max',
                                                     fill='Domain'),
-                                 alpha=0.75, colour='black')
+                                 alpha=1, colour='black')
     }
 
 

@@ -4,13 +4,13 @@
 \alias{lolliplot}
 \title{Construct Lolliplot from data}
 \usage{
-lolliplot(x, y = NULL, fillCol = NULL, labelCol = NULL,
+lolliplot(x, y = NULL, z = NULL, fillCol = NULL, labelCol = NULL,
   plot_text_angle = 45, plot_text_size = 5, point_size = 4,
   gene_colour = "#999999", obsA.rep.fact = 5000, obsA.rep.dist.lmt = 500,
   obsA.attr.fact = 0.1, obsA.adj.max = 0.1, obsA.adj.lmt = 0.5,
   obsA.iter.max = 50000, obsB.rep.fact = 5000, obsB.rep.dist.lmt = 500,
   obsB.attr.fact = 0.1, obsB.adj.max = 0.1, obsB.adj.lmt = 0.5,
-  obsB.iter.max = 50000, plot_sidechain = FALSE, taxId = 9606,
+  obsB.iter.max = 50000, plot_sidechain = FALSE, species = "hsapiens",
   layers = NULL)
 }
 \arguments{
@@ -19,6 +19,9 @@ lolliplot(x, y = NULL, fillCol = NULL, labelCol = NULL,
 
 \item{y}{object of class data frame containing columns "transcript_name", and
 "amino_acid_change" with rows denoting mutations for bottom track (optional)}
+
+\item{z}{Object of class data frame containing columns "description",
+"start", "stop" for manual denotation of regions of interest}
 
 \item{fillCol}{character string giving the name of the column to shade
 variants on, required}
@@ -69,8 +72,8 @@ cosmic track}
 \item{plot_sidechain}{boolean value whether to plot the amino acid sidechains
 instead of protein domains}
 
-\item{taxId}{integer specifying the uniprot taxonomy id for the species of
-interest}
+\item{species}{Character string specifying the species corresponding to the
+given ensembl transcript id}
 
 \item{layers}{additional ggplot2 layers to plot}
 }

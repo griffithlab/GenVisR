@@ -87,12 +87,12 @@ lolliplot.mutationObs <- function(data, track, fill_value, label_column,
     } else if (track == 'bottom') {
         message("applying force field to observed mutations for bottom track")
     }
-    mutation_data <- mutation_data[order(mutation_coord),]
-    mutation_data$lolliplot.coord_x_dodge <-
-    lolliplot.dodge_coord_x(as.vector(mutation_data$mutation_coord),
-                            rep.fact=rep.fact, rep.dist.lmt=rep.dist.lmt,
-                            attr.fact=attr.fact, adj.max=adj.max,
-                            adj.lmt=adj.lmt, iter.max=iter.max)
+    mutation_data <- mutation_data[order(mutation_coord),] 
+    mutation_data$coord_x_dodge <- 
+        lolliplot.dodge_coord_x(as.vector(mutation_data$mutation_coord),
+                                rep.fact=rep.fact, rep.dist.lmt=rep.dist.lmt,
+                                attr.fact=attr.fact, adj.max=adj.max,
+                                adj.lmt=adj.lmt, iter.max=iter.max)
 
     # Redefine and return grouping information and then dodge y coordinates
     mutation_data$group <-
