@@ -33,7 +33,7 @@ lolliplot_fetchDomain <- function(transcriptID, species="hsapiens")
     values <- as.list(c(transcriptID))
     
     # Select attributes to retrieve (protein domain, start, stop)
-    attributes <- c("interpro_short_description",
+    attributes <- c("interpro_description",
                     "interpro_start",
                     "interpro_end")
     

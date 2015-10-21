@@ -6,11 +6,11 @@
 #' @param x Object of class data frame containing columns 'sample', reference',
 #' 'variant'
 #' @param y named vector containing expected transition/transversion proportions
-#' with names "A->C or T->G", "A->G or T->C", "A->T or T->A", "G->A or C->T",
-#' "G->C or C->G", "G->T or C->A" or a data frame with column names "Prop",
-#' "trans_tranv" and levels of trans_tranv matching "A->C or T->G",
-#' "A->G or T->C", "A->T or T->A", "G->A or C->T", "G->C or C->G",
-#' "G->T or C->A"
+#' with names "A->C or T->G (TV)", "A->G or T->C (TI)", "A->T or T->A (TV)",
+#'  "G->A or C->T (TI)", "G->C or C->G (TV)", "G->T or C->A (TV)" or a data
+#' frame with column names "Prop", "trans_tranv" and levels of trans_tranv
+#'  matching "A->C or T->G (TV)", "A->G or T->C (TI)", "A->T or T->A (TV)",
+#'  "G->A or C->T (TI)", "G->C or C->G (TV)", "G->T or C->A (TV)"
 #' @param type Object of class character specifying whether to plot the
 #' Proportion or Frequency, one of "Proportion", "Frequency"
 #' @param label_x_axis boolean specifying wheter to label x axis
@@ -25,11 +25,13 @@
 #' @param sort character specifying one of "sample", "tvti", "none" for
 #' plotting samples based on a sample name, transition/transversion freq, or no
 #' order
+#' @param dataOut Boolean Specifying whether to output the data to be passed
+#'  instead of plotting it
 #' @examples
 #' TvTi(brcaMAF, type='Frequency', 
 #' palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"),
 #' x_axis_text_angle=60)
-#' @return ggplot2 object
+#' @return ggplot2 object or data frame if dataOut is set to TRUE
 #' @export
 
 
@@ -38,7 +40,7 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
                  palette=c('#D53E4F', '#FC8D59', '#FEE08B', '#E6F598',
                            '#99D594', '#3288BD'),
                  file_type='MAF', tvti.layers=NULL, expec.layers=NULL,
-                 sort='none')
+                 sort='none', dataOut=FALSE)
 { 
     # Perform quality checks
     out <- TvTi_qual(x, y, file_type=file_type)
@@ -69,6 +71,12 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
         memo <- paset0(sort, " is not a valid parameter for sort, please", 
                        " specify one of \"sample\", \"tvti\", \"none\"")
         stop(memo)
+    }
+    
+    # if requested output the data instead of ploting
+    if(isTRUE(dataOut))
+    {
+        return(x)
     }
     
     # Perform a quality control on y to ensure fill levels match x

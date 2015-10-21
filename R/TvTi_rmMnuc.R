@@ -20,7 +20,7 @@ TvTi_rmMnuc <- function(x)
   {
       memo <- paste0("Multi Nucleotide codes are not currently supported, ", 
                      "removed: ", original_size - new_size,
-                     "multi-nucleotides present in the data")
+                     " multi-nucleotides present in the data")
       warning(memo) 
   }
   

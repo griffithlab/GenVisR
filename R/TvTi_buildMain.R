@@ -60,6 +60,8 @@ TvTi_buildMain <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
     xlabel <- xlab(paste0("Sample: n=", length(unique(x$sample))))
     fill_palette <- scale_fill_manual(name='Transistion/Transversion', 
                                       values=palette)
+    
+    # additional layers to plot?
     if(!is.null(tvti.layers))
     {
         layers <- tvti.layers
@@ -83,6 +85,7 @@ TvTi_buildMain <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
         } else {
             layers <- geom_blank()
         }
+        
     } else if(label_x_axis == TRUE) {
         theme <- theme(axis.text.x=element_text(angle=x_axis_text_angle,
                                                 hjust=1, vjust=1))

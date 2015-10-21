@@ -88,7 +88,7 @@ lolliplot.mutationObs <- function(data, track, fill_value, label_column,
         message("applying force field to observed mutations for bottom track")    
     }
     mutation_data <- mutation_data[order(mutation_coord),] 
-    mutation_data$lolliplot.coord_x_dodge <- 
+    mutation_data$coord_x_dodge <- 
         lolliplot.dodge_coord_x(as.vector(mutation_data$mutation_coord),
                                 rep.fact=rep.fact, rep.dist.lmt=rep.dist.lmt,
                                 attr.fact=attr.fact, adj.max=adj.max,

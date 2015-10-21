@@ -14,7 +14,7 @@ lolliplot_Codon2AA <- function(x)
                 "ATA"="I", "ATG"="M", "GTT"="V", "GTC"="V", "GTA"="V",
                 "GTG"="V", "TCT"="S", "TCC"="S", "TCA"="S", "TCG"="S",
                 "CCT"="P", "CCC"="P", "CCA"="P", "CCG"="P", "ACT"="T",
-                "ACC"="T", "ACA"="T", "ACG"="T", "GTC"="A", "GCC"="A",
+                "ACC"="T", "ACA"="T", "ACG"="T", "GCT"="A", "GCC"="A",
                 "GCA"="A", "GCG"="A", "TAT"="Y", "TAC"="Y", "TAA"="OCHRE",
                 "TAG"="AMBER", "CAT"="H", "CAC"="H", "CAA"="Q", "CAG"="Q",
                 "AAT"="N", "AAC"="N", "AAA"="K", "AAG"="K", "GAT"="D",

@@ -7,6 +7,8 @@
 #', "gene", and "amino_acid_change" with rows denoting mutations for top track
 #' @param y object of class data frame containing columns "transcript_name", and
 #' "amino_acid_change" with rows denoting mutations for bottom track (optional)
+#' @param z Object of class data frame containing columns "description",
+#' "start", "stop" for manual denotation of regions of interest
 #' @param fillCol character string giving the name of the column to shade
 #' variants on, required
 #' @param labelCol character string specifying column containing text
@@ -51,7 +53,7 @@
 #' @return object of class ggplot2
 #' @export
 
-lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL,
+lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                       plot_text_angle=45, plot_text_size=5, point_size=4,
                       gene_colour='#999999', obsA.rep.fact=5000,
                       obsA.rep.dist.lmt=500, obsA.attr.fact=.1, obsA.adj.max=.1,
@@ -79,16 +81,12 @@ lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL,
     codingSeq <- lolliplot_transcriptID2codingSeq(transcriptID,
                                                   species=species)$coding
     
-    stop("Zach pick back up here!")
-    length <- nchar(codingSeq)/3
-    if(nchar(codingSeq)%%3 != 0)
-    {
-        memo <- paste0("Coding sequence retrieved for given ensembl transctipt",
-                       ", is not a multiple of three. output may not be,",
-                       " accurate!")
-        warning(memo)
-    }
-    
+    # Get the sequence length in AA, perform quality checks along the way
+    residueSeq <- lolliplot_DNAconv(codingSeq, to="residue")
+    residueSeq <- residueSeq[-which(residueSeq %in% c("OPAL",
+                                                      "OCHRE",
+                                                      "AMBER"))]
+    proteinLength <- length(residueSeq)    
     # obtain amino acid sequence and format if it is requested to plot the
     # sidechain
     if(plot_sidechain==TRUE)
@@ -98,12 +96,18 @@ lolliplot <- function(x, y=NULL, fillCol=NULL, labelCol=NULL,
         AAsequence <- NULL
     }
     
-    # extract protien domain data
-    protien_domain <- lolliplot_fetchDomain(transcriptID, species=species)
-    
-    # construct gene from data collected
-    geneData <- lolliplot.construct_gene(gene, protien_domain, length)
-    
+    # if z is specified plot that instead of fetching the domain information
+    if(!is.null(z))
+    {
+        geneData <- lolliplot_constructGene(gene, z, proteinLength)
+    } else {
+        # extract protien domain data
+        protien_domain <- lolliplot_fetchDomain(transcriptID, species=species)
+        
+        # construct gene from data collected
+        geneData <- lolliplot_constructGene(gene, protien_domain, proteinLength)
+    }
+ 
     # construct data frame of observed mutations for top track
     observed_mutation <- lolliplot.mutationObs(x, 'top', fillCol, labelCol,
                                                obsA.rep.fact, obsA.rep.dist.lmt,
