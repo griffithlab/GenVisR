@@ -1,7 +1,7 @@
 #' Construct Lolliplot
 #'
 #' Construct Lolliplot given gene and mutation data
-#' @name build.lolli
+#' @name lolliplot_buildMain
 #' @param gene_data object of class dataframe giving protien domain and gene
 #' information
 #' @param length integer specifying the length of the protien in amino acids
@@ -26,11 +26,11 @@
 #' @return a ggplot2 object
 #' @import ggplot2
 
-build.lolli <- function(gene_data, length, mutation_observed,
-                        mutation_observed2, fill_value, label_column,
-                        plot_text_angle, plot_text_size, point_size,
-                        gene_colour, sequence_data, plot_sidechain=FALSE,
-                        layers=NULL)
+lolliplot_buildMain <- function(gene_data, length, mutation_observed,
+                                mutation_observed2, fill_value, label_column,
+                                plot_text_angle, plot_text_size, point_size,
+                                gene_colour, sequence_data,
+                                plot_sidechain=FALSE,layers=NULL)
 {
     # build the various features of the lolliplot
 

@@ -1,7 +1,7 @@
 #' dodge coordinates
 #'
 #' given amino acid position coordinates on, before grouping and dodge on x axis
-#' @name lolliplot.dodge_coord_x
+#' @name lolliplot_dodgeCoordX
 #' @param x numeric vector of position coordinates on x axis
 #' @param rep.fact repulsive factor for plotted mutations observed track
 #' @param rep.dist.lmt repulsive distance limit for plotted mutations observed
@@ -14,7 +14,7 @@
 #' observed track
 #' @return numeric vector of dodged position coordinates on x axis
 
-lolliplot.dodge_coord_x <- function(x, rep.fact=5000, rep.dist.lmt=500,
+lolliplot_dodgeCoordX <- function(x, rep.fact=5000, rep.dist.lmt=500,
                                     attr.fact=.1, adj.max=.1, adj.lmt=.5,
                                     iter.max=50000)
 {

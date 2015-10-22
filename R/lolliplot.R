@@ -63,9 +63,10 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                       plot_sidechain=FALSE, species="hsapiens", layers=NULL)
 {
     # Perform quality check
-    input <- lolliplot.qual(x, y)
+    input <- lolliplot_qual(x, y, z)
     x <- input[[1]]
     y <- input[[2]]
+    z <- input[[3]]
 
     # extract transcript id and subset data y on that id if it exists
     transcriptID <- as.character(x$transcript_name[1])
@@ -78,8 +79,10 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
     gene <- as.character(x$gene[1])
 
     # Obtain length of protein
-    codingSeq <- lolliplot_transcriptID2codingSeq(transcriptID,
-                                                  species=species)$coding
+    result <- lolliplot_transcriptID2codingSeq(transcriptID, species=species)
+    codingSeq <- result$coding
+    cdsLen <- result$cds_length
+        
     
     # Get the sequence length in AA, perform quality checks along the way
     residueSeq <- lolliplot_DNAconv(codingSeq, to="residue")
@@ -110,7 +113,7 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
     }
  
     # construct data frame of observed mutations for top track
-    observed_mutation <- lolliplot.mutationObs(x, 'top', fillCol, labelCol,
+    observed_mutation <- lolliplot_mutationObs(x, 'top', fillCol, labelCol,
                                                obsA.rep.fact, obsA.rep.dist.lmt,
                                                obsA.attr.fact, obsA.adj.max,
                                                obsA.adj.lmt, obsA.iter.max)
@@ -118,7 +121,7 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
     # construct data frame of observed mutations for bottom track
     if(!is.null(y))
     {
-        observed_mutation2 <- lolliplot.mutationObs(y, 'bottom', fillCol,
+        observed_mutation2 <- lolliplot_mutationObs(y, 'bottom', fillCol,
                                                     labelCol, obsB.rep.fact,
                                                     obsB.rep.dist.lmt,
                                                     obsB.attr.fact,
@@ -129,10 +132,11 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
     }
 
     # construct the lolliplot
-    plot <- build.lolli(geneData, length, observed_mutation, observed_mutation2,
-                        fillCol, labelCol, plot_text_angle, plot_text_size,
-                        point_size, gene_colour, AAsequence,
-                        plot_sidechain=plot_sidechain, layers=layers)
+    plot <- lolliplot_buildMain(geneData, length, observed_mutation,
+                                observed_mutation2,fillCol, labelCol,
+                                plot_text_angle, plot_text_size,point_size,
+                                gene_colour, AAsequence,
+                                plot_sidechain=plot_sidechain, layers=layers)
 
     return(plot)
 }

@@ -8,6 +8,9 @@
 
 lolliplot_fetchDomain <- function(transcriptID, species="hsapiens")
 {
+    # display message
+    message("Querying biomaRt for protein domains")
+    
     # Load in mart
     ensembl_mart <- biomaRt::useMart("ensembl")
     
