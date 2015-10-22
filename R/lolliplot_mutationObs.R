@@ -64,9 +64,9 @@ lolliplot_mutationObs <- function(data, track, fill_value, label_column,
     # add extra column giving height of Y axis for points to be plotted
     if(track == 'top')
     {
-        mutation_data$height_max <- 2
+        mutation_data$height_max <- .3
     } else if (track == 'bottom') {
-        mutation_data$height_min <- -2
+        mutation_data$height_min <- -.3
     } else {
         stop("Fatal error: incorrect track type specified in mutationObs")
     }

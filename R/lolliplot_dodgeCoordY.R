@@ -13,13 +13,13 @@ lolliplot_dodgeCoordY <- function(x, track='top')
     {
         if(track == 'top' & i == 1)
         {
-            pos <- 2
-            orig_pos <- 2
-            pos_change <- .5
+            pos <- .3
+            orig_pos <- .3
+            pos_change <- .1
         } else if(track == 'bottom' & i == 1) {
-            pos <- -2
-            orig_pos <- -2
-            pos_change <- -.5
+            pos <- -.3
+            orig_pos <- -.3
+            pos_change <- -.1
         }
 
         if(i == 1)

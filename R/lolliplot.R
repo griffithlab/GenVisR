@@ -41,6 +41,7 @@
 #' instead of protein domains
 #' @param species Character string specifying the species corresponding to the
 #' given ensembl transcript id
+#' @param max_VerticalLolli Integer specifying the upper limit of lolli points to allow to be stacked vertically
 #' @param layers additional ggplot2 layers to plot
 #' @examples
 #' # Create input data
@@ -60,7 +61,8 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                       obsA.adj.lmt=.5, obsA.iter.max=50000, obsB.rep.fact=5000,
                       obsB.rep.dist.lmt=500, obsB.attr.fact=.1, obsB.adj.max=.1,
                       obsB.adj.lmt=.5, obsB.iter.max=50000,
-                      plot_sidechain=FALSE, species="hsapiens", layers=NULL)
+                      plot_sidechain=FALSE, species="hsapiens",
+                      max_VerticalLolli=NULL, layers=NULL)
 {
     # Perform quality check
     input <- lolliplot_qual(x, y, z)
@@ -117,6 +119,8 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                                                obsA.rep.fact, obsA.rep.dist.lmt,
                                                obsA.attr.fact, obsA.adj.max,
                                                obsA.adj.lmt, obsA.iter.max)
+    observed_mutation <- lolliplot_reduceLolli(observed_mutation,
+                                               max_VerticalLolli)
 
     # construct data frame of observed mutations for bottom track
     if(!is.null(y))
@@ -127,10 +131,14 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                                                     obsB.attr.fact,
                                                     obsB.adj.max, obsB.adj.lmt,
                                                     obsB.iter.max)
+        observed_mutation2 <- lolliplot_reduceLolli(observed_mutation2,
+                                                   max_VerticalLolli)
     } else {
         observed_mutation2 <- NULL
     }
 
+
+    
     # construct the lolliplot
     plot <- lolliplot_buildMain(geneData, length, observed_mutation,
                                 observed_mutation2,fillCol, labelCol,
