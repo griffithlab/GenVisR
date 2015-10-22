@@ -8,6 +8,9 @@
 
 lolliplot_transcriptID2codingSeq <- function(transcriptID, species="hsapiens")
 {
+    # display mesage
+    message("Querying biomaRt for transcript sequence")
+    
     # Load in mart
     ensembl_mart <- biomaRt::useMart("ensembl")
     
@@ -33,7 +36,7 @@ lolliplot_transcriptID2codingSeq <- function(transcriptID, species="hsapiens")
     ensg_id <- as.character(transcriptID)
     
     # Select attributes to retrieve coding dna sequence
-    attributes <- as.list(c("coding","transcript_length"))
+    attributes <- as.list(c("coding","cds_length"))
     
     # Retrieve data
     result <- biomaRt::getBM(attributes=attributes, filters=filters,

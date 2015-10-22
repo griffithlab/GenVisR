@@ -1,6 +1,6 @@
 #' Construct gene information
 #' 
-#' Build gene for input into build_lolli
+#' Build gene for input into lolliplot_buildMain
 #' @name lolliplot_constructGene
 #' @param gene character string specifying gene name
 #' @param domain_data object of class data frame specifying protien domain
@@ -11,41 +11,59 @@
 
 lolliplot_constructGene <- function(gene, domain_data, length)
 {
+    # message
+    message("Constructing gene track")
+    
     # rename columns for domain_data
     colnames(domain_data) <- c("description", "start", "end")
     
-    # construct gene row for data frame
-    gene <- c(gene, 1, length)
+    # quality check of domain data
+    if(max(domain_data$end) > length)
+    {
+        memo <- paste0("The end position of a domain:",  max(domain_data$end),
+                       "is exceeding the length of the protein:", length)
+        warning(memo)
+    } else if(min(domain_data$start) < 1) {
+        memo <- paste0("The start position of a domain:",
+                       min(domain_data$start),
+                       "is less than the start of the protein", 1)
+        warning(memo)
+    }
     
-    # combine gene and domain information
-    gene <- rbind(gene, domain_data)
+    # determine which regions are overlapping and annotate which nest domain is
+    # sort on start
+    domain_data$start <- as.numeric(domain_data$start)
+    domain_data$end <- as.numeric(domain_data$end)
+    domain_data <- domain_data[order(domain_data$start),]
     
-    # add in heights for gene display and convert positions to numeric class
-    gene$start <- as.numeric(gene$start)
-    gene$end <- as.numeric(gene$end)
-    
-    # change order of positions so plot will plot largest first and determine
-    # which domains are nested within other domains
-    gene <- gene[order(gene$start),]
+    # annotate nests
     nest <- vector('numeric')
     end <- vector('numeric')
-    for(i in 1:nrow(gene))
+    for(i in 1:nrow(domain_data))
     {
-        # Remove from end any values <= gene[i]$start
-        idx <- gene$start[i] < end
+        # Remove from end any values <= gene$start[i]
+        idx <- domain_data$start[i] < end
         end <- end[idx]
         
         nest <- c(nest, length(end))
-        end <- c(end, gene$end[i])
+        end <- c(end, domain_data$end[i])
     }
     
-    gene$nest <- nest + 1
+    # add this nest information to the data frame
+    domain_data$nest <- nest + 1
     
-    gene$height_min <- .5/(gene$nest)
-    gene$height_max <- -.5/(gene$nest)
-    # relabel column names
-    colnames(gene) <- c("Domain", "pos_from", "pos_to", "nest", "height_min",
-                        "height_max")
+    # add in the actual transcript track to the domain information
+    gene <- c(gene, 1, length, 1)
+    
+    # combine gene and domain information
+    gene <- rbind(gene, domain_data)
+    colnames(gene) <- c("Domain", "pos_from", "pos_to", "nest")
+    
+    # annotate display heights based on nesting and make sure coord are numeric
+    gene$height_min <- .5/(as.numeric(gene$nest))
+    gene$height_max <- -.5/(as.numeric(gene$nest))
+    gene$pos_from <- as.numeric(gene$pos_from)
+    gene$pos_to <- as.numeric(gene$pos_to)
     
     return(gene)
 }

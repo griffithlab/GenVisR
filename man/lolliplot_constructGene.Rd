@@ -19,6 +19,6 @@ giving "description", "start", "end"}
 object of class data frame giving gene and domain information
 }
 \description{
-Build gene for input into build_lolli
+Build gene for input into lolliplot_buildMain
 }
 
