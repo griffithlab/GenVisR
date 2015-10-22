@@ -60,8 +60,8 @@ lolliplot_constructGene <- function(gene, domain_data, length)
     colnames(gene) <- c("Domain", "pos_from", "pos_to", "nest")
     
     # annotate display heights based on nesting and make sure coord are numeric
-    gene$height_min <- .5/(as.numeric(gene$nest))
-    gene$height_max <- -.5/(as.numeric(gene$nest))
+    gene$height_min <- .1/(as.numeric(gene$nest))
+    gene$height_max <- -.1/(as.numeric(gene$nest))
     gene$pos_from <- as.numeric(gene$pos_from)
     gene$pos_to <- as.numeric(gene$pos_to)
     

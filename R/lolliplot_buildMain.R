@@ -71,10 +71,10 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
                                 size=point_size)
     observed_line <- geom_segment(data=mutation_observed,
                                   mapping=aes_string(x='mutation_coord',
-                                                     y=.5, xend='coord_x_dodge',
-                                                     yend=1.5))
+                                                     y=.1, xend='coord_x_dodge',
+                                                     yend=.3))
     observed_line_2 <- geom_segment(data=mutation_observed,
-                                    mapping=aes_string(x='coord_x_dodge', y=1.5,
+                                    mapping=aes_string(x='coord_x_dodge', y=.3,
                                                        xend='coord_x_dodge',
                                                        yend='coord_y_dodge'))
 
@@ -93,14 +93,14 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
     # construct the plot with or without 2nd observed track
     if(is.null(mutation_observed2))
     {
-        y_limits <- ylim(c(-1, max(mutation_observed$coord_y_dodge) + 1))
+        y_limits <- ylim(c(-.1, max(mutation_observed$coord_y_dodge) + .1))
         y_label <- ylab('Observed')
         p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 +
         observed_line + observed_plot + x_label + y_label + title +
         y_limits + theme_bw() + theme + guide + layers
     } else {
-        y_limits <- ylim(c(min(mutation_observed2$coord_y_dodge) - 1,
-                           max(mutation_observed$coord_y_dodge) + 1))
+        y_limits <- ylim(c(min(mutation_observed2$coord_y_dodge) - .1,
+                           max(mutation_observed$coord_y_dodge) + .1))
         y_label <- ylab('Observed')
         if(any(colnames(mutation_observed2) %in% fill_value))
         {
@@ -117,12 +117,12 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
         }
         observed2_line <- geom_segment(data=mutation_observed2,
                                        mapping=aes_string(x='mutation_coord',
-                                                          y=-.5,
+                                                          y=-.1,
                                                           xend='coord_x_dodge',
-                                                          yend=-1.5))
+                                                          yend=-.3))
         observed2_line_2 <- geom_segment(data=mutation_observed2,
                                          mapping=aes_string(x='coord_x_dodge',
-                                                            y=-1.5,
+                                                            y=-.3,
                                                             xend='coord_x_dodge',
                                                             yend='coord_y_dodge'))
 
