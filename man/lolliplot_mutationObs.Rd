@@ -4,11 +4,11 @@
 \alias{lolliplot_mutationObs}
 \title{format mutation observations}
 \usage{
-lolliplot_mutationObs(data, track, fill_value, label_column, rep.fact,
+lolliplot_mutationObs(x, track, fill_value, label_column, rep.fact,
   rep.dist.lmt, attr.fact, adj.max, adj.lmt, iter.max)
 }
 \arguments{
-\item{data}{object of class data frame with columns trv_type and amino acid
+\item{x}{object of class data frame with columns trv_type and amino acid
 change}
 
 \item{track}{character string specifying one to 'top', 'bottom' to specify

@@ -2,7 +2,7 @@
 #'
 #' Create a data frame of mutation observations
 #' @name lolliplot_mutationObs
-#' @param data object of class data frame with columns trv_type and amino acid
+#' @param x object of class data frame with columns trv_type and amino acid
 #' change
 #' @param track character string specifying one to 'top', 'bottom' to specify
 #' proper track
@@ -21,32 +21,51 @@
 #' observed track
 #' @return object of class data frame giving mutation observations
 
-lolliplot_mutationObs <- function(data, track, fill_value, label_column,
+lolliplot_mutationObs <- function(x, track, fill_value, label_column,
                                   rep.fact, rep.dist.lmt, attr.fact, adj.max,
                                   adj.lmt, iter.max)
 {
     # extract the mutation types and set a flag specifying they are present
-    if(any(colnames(data) %in% fill_value))
+    if(any(colnames(x) %in% fill_value))
     {
         fill_value_flag <- TRUE
-        fill <- as.character(data[,eval(fill_value)])
+        fill <- as.character(x[,eval(fill_value)])
     } else {
         fill_value_flag <- FALSE
     }
+   
+    if(any(grepl("^e", x$amino_acid_change, ignore.case=TRUE, perl=TRUE)))
+    {
+        # save original data frame size before subset for message
+        origDim <- nrow(x)
+        
+        # remove regions with AA change starting with e (i.e. intronic/splice)
+        x <- x[-which(grepl("^e", x$amino_acid_change,
+                                  ignore.case=TRUE, perl=TRUE)),]
+        
+        newDim <- nrow(x)
+        
+        # print update message
+        memo <- paste0("Removed ", origDim - newDim,
+                       " variants not within a residue")
+        message(memo)
+    }
 
     # extract the mutation coordinates
-    mutation_coord <- data$amino_acid_change
+    mutation_coord <- x$amino_acid_change
     if(all(grepl("p\\.", mutation_coord)))
     {
         message("Detected p. notation for amino_acid_change")
         mutation_coord <- as.numeric(gsub("p\\.[a-zA-z]*(\\d+).*?$", "\\1",
                                           mutation_coord, perl=TRUE))
     } else if(all(grepl("c\\.", mutation_coord))) {
-        stop("C. notation is not currently supported please specify amino acid
-             change in P. notation")
+        memo <- paste0("c. notation is not currently supported",
+                       " please specify amino acid change in p. notation")
+        stop(memo)
     } else {
-        stop("Could not determine notation type for amino_acid_change,
-             check input")
+        memo <- paste0("Could not determine notation type for ",
+                       "column \"amino_acid_change\", please check input")
+        stop(memo)
     }
 
     # combine mutation type and mutation coord into a data frame
@@ -68,11 +87,11 @@ lolliplot_mutationObs <- function(data, track, fill_value, label_column,
     } else if (track == 'bottom') {
         mutation_data$height_min <- -.3
     } else {
-        stop("Fatal error: incorrect track type specified in mutationObs")
+        stop("Fatal error: incorrect track type specified")
     }
 
     # extract the mutation types and set a flag specifying they are present
-    if(any(colnames(data) %in% label_column))
+    if(any(colnames(x) %in% label_column))
     {
         label_column_flag <- TRUE
         mutation_data$labels <- as.character(data[,eval(label_column)])
