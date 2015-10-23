@@ -136,7 +136,7 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
     if(any(colnames(mutation_observed) %in% "labels"))
     {
         mutation_observed$y_label_offset <-
-        mutation_observed$coord_y_dodge + .06
+        mutation_observed$coord_y_dodge + .01
         p1 <- p1 + geom_text(data=mutation_observed,
                              mapping=aes_string(x='coord_x_dodge',
                                                 y='y_label_offset',
@@ -147,7 +147,7 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
     if(any(colnames(mutation_observed2) %in% "labels"))
     {
         mutation_observed2$y_label_offset <-
-        mutation_observed2$coord_y_dodge - .06
+        mutation_observed2$coord_y_dodge - .01
         p1 <- p1 + geom_text(data=mutation_observed2,
                              mapping=aes_string(x='coord_x_dodge',
                                                 y='y_label_offset',

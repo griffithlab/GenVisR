@@ -25,15 +25,6 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
                                   rep.fact, rep.dist.lmt, attr.fact, adj.max,
                                   adj.lmt, iter.max)
 {
-    # extract the mutation types and set a flag specifying they are present
-    if(any(colnames(x) %in% fill_value))
-    {
-        fill_value_flag <- TRUE
-        fill <- as.character(x[,eval(fill_value)])
-    } else {
-        fill_value_flag <- FALSE
-    }
-   
     if(any(grepl("^e", x$amino_acid_change, ignore.case=TRUE, perl=TRUE)))
     {
         # save original data frame size before subset for message
@@ -41,7 +32,7 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
         
         # remove regions with AA change starting with e (i.e. intronic/splice)
         x <- x[-which(grepl("^e", x$amino_acid_change,
-                                  ignore.case=TRUE, perl=TRUE)),]
+                            ignore.case=TRUE, perl=TRUE)),]
         
         newDim <- nrow(x)
         
@@ -49,6 +40,15 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
         memo <- paste0("Removed ", origDim - newDim,
                        " variants not within a residue")
         message(memo)
+    }
+    
+    # extract the mutation types and set a flag specifying they are present
+    if(any(colnames(x) %in% fill_value))
+    {
+        fill_value_flag <- TRUE
+        fill <- as.character(x[,eval(fill_value)])
+    } else {
+        fill_value_flag <- FALSE
     }
 
     # extract the mutation coordinates
@@ -94,7 +94,7 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
     if(any(colnames(x) %in% label_column))
     {
         label_column_flag <- TRUE
-        mutation_data$labels <- as.character(data[,eval(label_column)])
+        mutation_data$labels <- as.character(x[,eval(label_column)])
     } else {
         label_column_flag <- FALSE
     }
