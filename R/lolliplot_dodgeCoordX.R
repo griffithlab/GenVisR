@@ -21,8 +21,14 @@ lolliplot_dodgeCoordX <- function(x, rep.fact=5000, rep.dist.lmt=500,
     # Format into data frame with columns as x and y
     x <- as.data.frame(cbind(x, 0))
     colnames(x) <- c('x', 'y')
+    
+    # Forcefield does not work with only 1 point, check for this first
+    if(nrow(x) < 2)
+    {
+        return(x$x)
+    }
 
-    # take the data frame and apply a repulsive force to coordiantes
+    # take the data frame and apply a repulsive force to coordinates
     x <- FField::FFieldPtRep(x, rep.fact=rep.fact, rep.dist.lmt=rep.dist.lmt,
                              attr.fact=attr.fact, adj.max=adj.max,
                              adj.lmt=adj.lmt, iter.max=iter.max)

@@ -87,21 +87,20 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
                    legend.direction='vertical',
                    legend.box='horizontal',
                    axis.text.y=element_blank(),
-                   axis.ticks.y=element_blank())
-    guide <- guides(colour=guide_legend(ncol=2))
+                   axis.ticks.y=element_blank(),
+                   axis.title.y=element_blank())
+    guide <- guides(colour=guide_legend(ncol=2), fill=guide_legend(ncol=2))
 
     # construct the plot with or without 2nd observed track
     if(is.null(mutation_observed2))
     {
         y_limits <- ylim(c(-.1, max(mutation_observed$coord_y_dodge) + .1))
-        y_label <- ylab('Observed')
         p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 +
         observed_line + observed_plot + x_label + y_label + title +
         y_limits + theme_bw() + theme + guide + layers
     } else {
         y_limits <- ylim(c(min(mutation_observed2$coord_y_dodge) - .1,
                            max(mutation_observed$coord_y_dodge) + .1))
-        y_label <- ylab('Observed')
         if(any(colnames(mutation_observed2) %in% fill_value))
         {
             observed2_plot <- geom_point(data=mutation_observed2,
@@ -128,7 +127,7 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
 
         p1 <- ggplot() + gene_plot + domain_plot + observed_line + observed_line_2 +
         observed_plot + observed2_line + observed2_line_2 + observed2_plot +
-        x_label + y_label + title + y_limits + theme_bw() + theme + guide +
+        x_label + title + y_limits + theme_bw() + theme + guide +
         layers
     }
 
