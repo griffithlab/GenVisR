@@ -64,7 +64,8 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
         stop(memo)
     } else {
         memo <- paste0("Could not determine notation type for ",
-                       "column \"amino_acid_change\", please check input")
+                       "column \"amino_acid_change\", please check input.", 
+                       "Expecting p. notation: ex. p.R383A")
         stop(memo)
     }
 
@@ -102,9 +103,15 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
     # Dodge mutation coordinates on the x axis
     if(track == 'top')
     {
-        message("applying force field to observed mutations for top track")
+        memo <- paste0("applying force filed to observed mutations for",
+                       " top track. This will take time if n is large",
+                       ", see vignette for tips")
+        message(memo)
     } else if (track == 'bottom') {
-        message("applying force field to observed mutations for bottom track")
+        memo <- paste0("applying force filed to observed mutations for",
+                       " bottom track. This will take time if n is large",
+                       ", see vignette for tips")        
+        message(memo)
     }
     mutation_data <- mutation_data[order(mutation_coord),] 
     mutation_data$coord_x_dodge <- 
