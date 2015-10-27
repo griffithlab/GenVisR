@@ -43,6 +43,8 @@
 #' given ensembl transcript id
 #' @param max_VerticalLolli Integer specifying the upper limit of lolli points to allow to be stacked vertically
 #' @param layers additional ggplot2 layers to plot
+#' @param paletteA Character vector specifying colours for gene features
+#' @param paletteB Character vector specifying colours for lolli features
 #' @examples
 #' # Create input data
 #' data <- brcaMAF[brcaMAF$Hugo_Symbol == 'TP53',c('Hugo_Symbol', 'amino_acid_change_WU')]
@@ -62,7 +64,7 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                       obsB.rep.dist.lmt=500, obsB.attr.fact=.1, obsB.adj.max=.1,
                       obsB.adj.lmt=.5, obsB.iter.max=50000,
                       plot_sidechain=FALSE, species="hsapiens",
-                      max_VerticalLolli=NULL, layers=NULL)
+                      max_VerticalLolli=NULL, layers=NULL, paletteA=NULL, paletteB=NULL)
 {
     # Perform quality check
     input <- lolliplot_qual(x, y, z)
@@ -144,7 +146,8 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                                 observed_mutation2,fillCol, labelCol,
                                 plot_text_angle, plot_text_size,point_size,
                                 gene_colour, AAsequence,
-                                plot_sidechain=plot_sidechain, layers=layers)
+                                plot_sidechain=plot_sidechain, layers=layers,
+                                paletteA=paletteA, paletteB=paletteB)
 
     return(plot)
 }

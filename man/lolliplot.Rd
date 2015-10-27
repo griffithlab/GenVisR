@@ -11,7 +11,8 @@ lolliplot(x, y = NULL, z = NULL, fillCol = NULL, labelCol = NULL,
   obsA.iter.max = 50000, obsB.rep.fact = 5000, obsB.rep.dist.lmt = 500,
   obsB.attr.fact = 0.1, obsB.adj.max = 0.1, obsB.adj.lmt = 0.5,
   obsB.iter.max = 50000, plot_sidechain = FALSE, species = "hsapiens",
-  max_VerticalLolli = NULL, layers = NULL)
+  max_VerticalLolli = NULL, layers = NULL, paletteA = NULL,
+  paletteB = NULL)
 }
 \arguments{
 \item{x}{object of class data frame containing column names "transcript_name"
@@ -78,6 +79,10 @@ given ensembl transcript id}
 \item{max_VerticalLolli}{Integer specifying the upper limit of lolli points to allow to be stacked vertically}
 
 \item{layers}{additional ggplot2 layers to plot}
+
+\item{paletteA}{Character vector specifying colours for gene features}
+
+\item{paletteB}{Character vector specifying colours for lolli features}
 }
 \value{
 object of class ggplot2
