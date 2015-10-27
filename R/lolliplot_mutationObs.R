@@ -103,12 +103,12 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
     # Dodge mutation coordinates on the x axis
     if(track == 'top')
     {
-        memo <- paste0("applying force filed to observed mutations for",
+        memo <- paste0("applying force field to observed mutations for",
                        " top track. This will take time if n is large",
                        ", see vignette for tips")
         message(memo)
     } else if (track == 'bottom') {
-        memo <- paste0("applying force filed to observed mutations for",
+        memo <- paste0("applying force field to observed mutations for",
                        " bottom track. This will take time if n is large",
                        ", see vignette for tips")        
         message(memo)

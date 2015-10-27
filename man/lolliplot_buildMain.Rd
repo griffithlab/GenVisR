@@ -6,7 +6,8 @@
 \usage{
 lolliplot_buildMain(gene_data, length, mutation_observed, mutation_observed2,
   fill_value, label_column, plot_text_angle, plot_text_size, point_size,
-  gene_colour, sequence_data, plot_sidechain = FALSE, layers = NULL)
+  gene_colour, sequence_data, plot_sidechain = FALSE, layers = NULL,
+  paletteA = NULL, paletteB = NULL)
 }
 \arguments{
 \item{gene_data}{object of class dataframe giving protien domain and gene
@@ -42,6 +43,10 @@ and coord required if plot_sidechain is true}
 instead of domain information}
 
 \item{layers}{additional ggplot2 layers to plot}
+
+\item{paletteA}{Character vector specifying colours for gene features}
+
+\item{paletteB}{Character vector specifying colours for lolli features}
 }
 \value{
 a ggplot2 object

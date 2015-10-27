@@ -23,6 +23,8 @@
 #' @param plot_sidechain boolean specifying whether to plot the AA sidechain
 #' instead of domain information
 #' @param layers additional ggplot2 layers to plot
+#' @param paletteA Character vector specifying colours for gene features
+#' @param paletteB Character vector specifying colours for lolli features
 #' @return a ggplot2 object
 #' @import ggplot2
 
@@ -30,7 +32,8 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
                                 mutation_observed2, fill_value, label_column,
                                 plot_text_angle, plot_text_size, point_size,
                                 gene_colour, sequence_data,
-                                plot_sidechain=FALSE,layers=NULL)
+                                plot_sidechain=FALSE,layers=NULL,
+                                paletteA=NULL, paletteB=NULL)
 {
     # build the various features of the lolliplot
 
@@ -90,6 +93,21 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
                    axis.ticks.y=element_blank(),
                    axis.title.y=element_blank())
     guide <- guides(colour=guide_legend(ncol=2), fill=guide_legend(ncol=2))
+    
+    # set colours manually if these are specified
+    if(!is.null(paletteA))
+    {
+        gene_features_fill <- scale_fill_manual(values=paletteA)
+    } else {
+        gene_features_fill <- geom_blank()
+    }
+    
+    if(!is.null(paletteB))
+    {
+        lolli_features_fill <- scale_colour_manual(values=paletteB)
+    } else {
+        lolli_features_fill <- geom_blank()
+    }
 
     # construct the plot with or without 2nd observed track
     if(is.null(mutation_observed2))
@@ -97,7 +115,8 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
         y_limits <- ylim(c(-.1, max(mutation_observed$coord_y_dodge) + .1))
         p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 +
         observed_line + observed_plot + x_label + y_label + title +
-        y_limits + theme_bw() + theme + guide + layers
+        y_limits + theme_bw() + theme + guide + layers + gene_features_fill +
+        lolli_features_fill
     } else {
         y_limits <- ylim(c(min(mutation_observed2$coord_y_dodge) - .1,
                            max(mutation_observed$coord_y_dodge) + .1))
@@ -125,10 +144,10 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
                                                             xend='coord_x_dodge',
                                                             yend='coord_y_dodge'))
 
-        p1 <- ggplot() + gene_plot + domain_plot + observed_line + observed_line_2 +
-        observed_plot + observed2_line + observed2_line_2 + observed2_plot +
-        x_label + title + y_limits + theme_bw() + theme + guide +
-        layers
+        p1 <- ggplot() + gene_plot + domain_plot + observed_line +
+        observed_line_2 + observed_plot + observed2_line + observed2_line_2 +
+        observed2_plot + x_label + title + y_limits + theme_bw() + theme +
+        guide + layers + gene_features_fill + lolli_features_fill
     }
 
     # If a label column is specified plot labels
