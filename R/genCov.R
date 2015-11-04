@@ -93,7 +93,7 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene.colour=NULL, gene_nam
         }
         coverage_data <- lapply(coverage_data, test)
         message("Mapping coverage data onto transformed gene-space")
-        coverage_data <- lapply(coverage_data, function(x, master) adply(x, 1, map_coord_space, master=master), master=master)
+        coverage_data <- lapply(coverage_data, function(x, master) adply(x, 1, map_coord_space, master=master, .progress='text'), master=master)
 
     # Replace original coordinates with transformed coordinates
         for(i in 1:length(coverage_data))

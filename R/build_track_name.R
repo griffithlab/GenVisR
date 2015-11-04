@@ -10,6 +10,7 @@
 #' @param size integer specifying the size of the text within the label
 #' @return ggplot object
 #' @import ggplot2
+#' @import grid
 
 build_track_name <- function(name, bg_fill="black", text_fill="white",
                              border="black", size=10)
