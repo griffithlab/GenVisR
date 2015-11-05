@@ -114,7 +114,7 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
     {
         y_limits <- ylim(c(-.1, max(mutation_observed$coord_y_dodge) + .1))
         p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 +
-        observed_line + observed_plot + x_label + y_label + title +
+        observed_line + observed_plot + x_label + title +
         y_limits + theme_bw() + theme + guide + layers + gene_features_fill +
         lolli_features_fill
     } else {
