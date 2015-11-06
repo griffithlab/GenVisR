@@ -5,8 +5,8 @@
 \title{Gene Plot}
 \usage{
 geneViz(txdb, gr, genome, reduce = FALSE, gene_colour = NULL, base = c(10,
-  2, 2), transform = c("Intron", "CDS", "UTR"), plot_transcript_name = TRUE,
-  transcript_name_size = 4, layers = NULL)
+  2, 2), transform = c("Intron", "CDS", "UTR"), isoformSel = NULL,
+  plot_transcript_name = TRUE, transcript_name_size = 4, layers = NULL)
 }
 \arguments{
 \item{txdb}{A TxDb object for a genome}
@@ -22,6 +22,8 @@ geneViz(txdb, gr, genome, reduce = FALSE, gene_colour = NULL, base = c(10,
 \item{base}{base A vector of log bases to transform the data, corresponding to the elements of transform}
 
 \item{transform}{A vector of strings designating what objects to log transform}
+
+\item{isoformSel}{Character vector giving the names (from the txdb object) of isoforms within the region of interest to display}
 
 \item{plot_transcript_name}{Boolean specifying whether to plot the transcript name}
 
