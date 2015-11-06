@@ -10,7 +10,7 @@ genCov(x, txdb, gr, genome, reduce = FALSE, gene.colour = NULL,
   label.width_ratio = c(1, 10), cov.colour = "blue",
   cov.plot_type = "line", cov.layers = NULL, base = c(10, 2, 2),
   transform = c("Intron", "CDS", "UTR"), gene.plot_transcript_name = TRUE,
-  gene.transcript_name_size = 4)
+  gene.transcript_name_size = 4, isoformSel = NULL)
 }
 \arguments{
 \item{x}{named list containing data frames with columns "end" and "cov" consisting of read pileups at bases of interest}
@@ -52,6 +52,8 @@ genCov(x, txdb, gr, genome, reduce = FALSE, gene.colour = NULL,
 \item{gene.plot_transcript_name}{Boolean specifying whether to plot the transcript name}
 
 \item{gene.transcript_name_size}{Integer specifying the size of the transcript name text}
+
+\item{isoformSel}{Character vector giving the names (from the txdb object) of isoforms within the region of interest to display}
 }
 \value{
 ggplot object

@@ -8,6 +8,7 @@
 #' @param reduce Boolean specifying whether to collapse isoforms in the ROI
 #' @param base  base A vector of log bases to transform the data, corresponding to the elements of transform
 #' @param transform A vector of strings designating what objects to log transform
+#' @param isoformSel Character vector giving the names (from the txdb object) of isoforms within the region of interest to display 
 #' @param plot_transcript_name Boolean specifying whether to plot the transcript name
 #' @param transcript_name_size Integer specifying the size of the transcript name text
 #' @param gene_colour character string specifying the colour of genomic features plotted
@@ -34,7 +35,7 @@
 #' @import GenomicFeatures
 #' @importFrom "IRanges" IRanges
 
-geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'), plot_transcript_name=TRUE, transcript_name_size=4, layers=NULL)
+geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'), isoformSel=NULL, plot_transcript_name=TRUE, transcript_name_size=4, layers=NULL)
 {
 
     # extract a data frame for each type of gene feature given a transcript database and Granges object as a list
@@ -55,6 +56,18 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL, base=c(10,
         gene_features <- setNames(mapply(rbind, cds[keys], UTR[keys], SIMPLIFY=FALSE), keys)
     }
     gene_features <- lapply(gene_features, na.omit)
+    
+    # give the user the ability to select specific isoforms
+    if(!is.null(isoformSel))
+    {
+        # rename list with isoform identifications
+        isoformNames <- lapply(gene_features, function(x) unique(x$txname))
+        names(gene_features) <- isoformNames
+        
+        # extract the isoforms specified
+        gene_features <- gene_features[which(names(gene_features) %in% isoformSel)]
+    }
+    
     if(reduce){
         gene_features <- lapply(gene_features, mergeTypes)
         gene_features[[1]] <- gene_features[[1]][gene_features[[1]]$width > 0,]

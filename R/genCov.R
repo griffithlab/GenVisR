@@ -22,6 +22,7 @@
 #' @param transform A vector of strings designating what objects to log transform accepts "Intron", "CDS", and "UTR"
 #' @param gene.plot_transcript_name Boolean specifying whether to plot the transcript name
 #' @param gene.transcript_name_size Integer specifying the size of the transcript name text
+#' @param isoformSel Character vector giving the names (from the txdb object) of isoforms within the region of interest to display 
 #' @return ggplot object
 #' @examples
 #' # Load transcript meta data
@@ -48,7 +49,7 @@
 genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene.colour=NULL, gene_name='Gene', gene.layers=NULL, label.bg_fill="black",
                    label.text_fill="white", label.border="black", label.size=10, label.width_ratio=c(1, 10), cov.colour="blue",
                    cov.plot_type="line", cov.layers=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'),
-                   gene.plot_transcript_name=TRUE, gene.transcript_name_size=4){
+                   gene.plot_transcript_name=TRUE, gene.transcript_name_size=4, isoformSel=NULL){
 
   # Perform data quality checks
     data <- genCov.qual(x, txdb, gr, genome)
@@ -59,7 +60,7 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene.colour=NULL, gene_nam
 
   # Obtain a plot for the gene overlapping the Granges object and covert to a named list
     gp_result <- geneViz(txdb, gr, genome, reduce=reduce, gene_colour=gene.colour,
-                         base=base, transform=transform, transcript_name_size=gene.transcript_name_size,
+                         base=base, transform=transform, isoformSel=isoformSel, transcript_name_size=gene.transcript_name_size,
                          plot_transcript_name=gene.plot_transcript_name, layers=gene.layers)
     gene <- gp_result$plot
     gene_list <- list()
