@@ -19,7 +19,7 @@ extrCDS <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
 
   # extract CDS from transcript database given transcript ID
     cds <- cdsFromTXID(txdb, txid)
-f1 <- function(x){x$txname[[1]]}
+    f1 <- function(x){x$txname[[1]]}
     txnames <- lapply(cds, f1)
 
     if(typeof(cds) != 'S4'){
@@ -34,6 +34,7 @@ f1 <- function(x){x$txname[[1]]}
     }
 
   # If Granges object is not an entire gene zoom in to the region specified
+    message("TODO: Figure out the non-intersecting strandedness with gr and '*'")
     cds <- lapply(cds, intersect, gr)
     f2 <- function(x){
         return(length(x) > 0)
