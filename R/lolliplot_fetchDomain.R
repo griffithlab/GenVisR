@@ -12,7 +12,7 @@ lolliplot_fetchDomain <- function(transcriptID, species="hsapiens")
     message("Querying biomaRt for protein domains")
     
     # Load in mart
-    ensembl_mart <- biomaRt::useMart("ensembl")
+    ensembl_mart <- biomaRt::useMart("ENSEMBL_MART_ENSEMBL", host="www.ensembl.org")
     
     # select proper data set given regexp print warnings if unexpected out occur
     index <- which(grepl(species, biomaRt::listDatasets(ensembl_mart)$dataset))
