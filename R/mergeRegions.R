@@ -44,7 +44,7 @@ if(length(base) != length(transform)){stop("Base vector shorter than transform v
             r.start <- master[i,2] + 1
             r.stop <- master[i+1, 1] - 1
             width <- r.stop - r.start + 1
-        if(width < 1){next}
+            if(width < 1){next}
             row <- master[1,]
             row[c(1:3,5)] <- c(r.start, r.stop, width, width)
             row[4] <- 'Intron'
@@ -63,7 +63,7 @@ if(length(base) != length(transform)){stop("Base vector shorter than transform v
   #downstream intron / intergenic
 
     if (gr.stop > master[n, 2]){
-        r.start <- master[n, 2] + 1
+        r.start <- master[n, 2]
         row <- master[1,]
         width <- gr.stop - r.start
         row[c(1:3,5)] <- c(r.start, gr.stop, width, width)

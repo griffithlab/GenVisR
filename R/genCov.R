@@ -69,7 +69,10 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene.colour=NULL, gene_nam
   # Remove entries in coverage data file that are not within the GRanges object specified
     test2 <- function(x, min, max)
     {
-        x <- x[-which(x$end <= min | x$end >= max),]
+        idx <- -which(x$end <= min | x$end >= max)
+        if(length(idx)){
+          x <- x[idx,]
+        }
         return(x)
     }
     coverage_data <- lapply(x, test2, min(ranges(gr)), max(ranges(gr)))

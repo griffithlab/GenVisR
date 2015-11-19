@@ -11,10 +11,13 @@
 genCov.qual <- function(x, txdb, gr, genome)
 {
   # Check input to x
-    if(!is.list(x))
+    if(!is.data.frame(x) && !is.list(x))
     {
         warning("x does not appear to be a list, attempting to coerce")
         x <- as.list(x)
+    }else if(is.data.frame(x)){
+      x<-list(c(x))
+      names(x)<-c('Sample 1')
     }
 
     if(!all(as.logical(lapply(x, is.data.frame))))
