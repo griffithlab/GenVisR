@@ -7,7 +7,7 @@
 TvTi_buildMain(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
   x_axis_text_angle = 45, palette = c("#D53E4F", "#FC8D59", "#FEE08B",
   "#E6F598", "#99D594", "#3288BD"), plot_expected = FALSE,
-  tvti.layers = NULL, expec.layers = NULL)
+  tvti.layers = NULL, expec.layers = NULL, title_x_axis = TRUE)
 }
 \arguments{
 \item{x}{Object of class data frame containing columns 'trans_tranv',
@@ -32,6 +32,8 @@ sub plot for expected values}
 \item{tvti.layers}{Additional ggplot2 layers for the main plot}
 
 \item{expec.layers}{Additional ggplot2 layers for the expected values plot}
+
+\item{title_x_axis}{boolean specifying whether to display an x axis title}
 }
 \value{
 GGplot Object

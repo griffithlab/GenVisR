@@ -17,6 +17,7 @@
 #' sub plot for expected values
 #' @param tvti.layers Additional ggplot2 layers for the main plot
 #' @param expec.layers Additional ggplot2 layers for the expected values plot
+#' @param title_x_axis boolean specifying whether to display an x axis title
 #' @return GGplot Object
 #' @import ggplot2
 
@@ -24,7 +25,8 @@ TvTi_buildMain <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
                            x_axis_text_angle=45,
                            palette=c('#D53E4F', '#FC8D59', '#FEE08B', '#E6F598',
                                      '#99D594', '#3288BD'),
-                           plot_expected=FALSE, tvti.layers=NULL, expec.layers=NULL)
+                           plot_expected=FALSE, tvti.layers=NULL,
+                           expec.layers=NULL, title_x_axis=TRUE)
 {
 
     if(!is.null(y))
@@ -57,7 +59,14 @@ TvTi_buildMain <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
     }
 
     ylabel <- ylab(type)
-    xlabel <- xlab(paste0("Sample: n=", length(unique(x$sample))))
+    
+    if(title_x_axis == TRUE)
+    {
+        xlabel <- xlab(paste0("Sample: n=", length(unique(x$sample))))
+    } else {
+        xlabel <- xlab('')
+    }
+    
     fill_palette <- scale_fill_manual(name='Transistion/Transversion',
                                       values=palette)
     

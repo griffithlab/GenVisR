@@ -170,10 +170,10 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     {
         # match the levels of sample in y to conform to the main plot
         clinDat$sample <- factor(clinDat$sample, levels=sample_order)
-        p4 <- waterfall_buildClin(clinDat, clin.legend.col=clin.legend.col,
-                                  clin.var.colour=clin.var.colour,
-                                  clin.var.order=clin.var.order,
-                                  clin.layers=clin.layers)
+        p4 <- multi_buildClin(clinDat, clin.legend.col=clin.legend.col, 
+                              clin.var.colour=clin.var.colour, 
+                              clin.var.order=clin.var.order, 
+                              clin.layers=clin.layers)
 
         # Align all plots and return as 1 plot
         pA <- waterfallAlign(p2, p1, p3, p4)

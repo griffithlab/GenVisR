@@ -27,6 +27,13 @@
 #' order
 #' @param dataOut Boolean Specifying whether to output the data to be passed
 #'  instead of plotting it
+#' @param clin.legend.col an integer specifying the number of columns to plot in
+#' the clinical data legend
+#' @param clin.var.colour a named character vector specifying the mapping
+#' between colors and variables in the clinical data
+#' @param clin.var.order a character vector of variables to order the clinical
+#' legend by
+#' @param clin.layer Additional ggplot2 layer to plot on the clinical data
 #' @examples
 #' TvTi(brcaMAF, type='Frequency',
 #' palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"),
@@ -35,12 +42,13 @@
 #' @export
 
 
-TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
+TvTi <- function(x, y=NULL, clinData=NULL, type='Proportion', label_x_axis=TRUE,
                  x_axis_text_angle=45,
                  palette=c('#D53E4F', '#FC8D59', '#FEE08B', '#E6F598',
                            '#99D594', '#3288BD'),
                  file_type='MAF', tvti.layers=NULL, expec.layers=NULL,
-                 sort='none', dataOut=FALSE)
+                 sort='none', dataOut=FALSE, clin.legend.col=NULL,
+                 clin.var.colour=NULL, clin.var.order=NULL, clin.layer=NULL)
 { 
     # Perform quality checks
     out <- TvTi_qual(x, y, file_type=file_type)
@@ -66,7 +74,7 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
         sample_order <- unique(sample_order$sample)
         x$sample <- factor(x$sample, levels=sample_order)
     } else if(toupper(sort) == toupper('none')){
-        # do nothing
+        sample_order <- levels(x$sample)
     } else {
         memo <- paset0(sort, " is not a valid parameter for sort, please",
                        " specify one of \"sample\", \"tvti\", \"none\"")
@@ -85,10 +93,35 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
         y$trans_tranv <- factor(y$trans_tranv, levels=levels(x$trans_tranv))
     }
 
-    # Build the Transition/Transversion Plot
-    p1 <- TvTi_buildMain(x, y, type=type, x_axis_text_angle=x_axis_text_angle,
-                         palette=palette, label_x_axis=label_x_axis,
-                         tvti.layers=tvti.layers, expec.layers=NULL)
+    # Build the Transition/Transversion Plot if clinical data does not exist
+    if(is.null(clinData))
+    {
+        p1 <- TvTi_buildMain(x, y, type=type,
+                             x_axis_text_angle=x_axis_text_angle,
+                             palette=palette, label_x_axis=label_x_axis,
+                             tvti.layers=tvti.layers, expec.layers=NULL,
+                             title_x_axis=TRUE)    
+    }
+   
+    
+    # Plot Clinical Data if Speccified and build modified TvTi main plot
+    if(!is.null(clinData))
+    {
+        clinData$sample <- factor(clinData$sample, levels=sample_order)
+        p3 <- multi_buildClin(clinData, clin.legend.col=clin.legend.col, 
+                              clin.var.colour=clin.var.colour, 
+                              clin.var.order=clin.var.order,
+                              clin.layers=clin.layer)
+        
+        # Build the Transition/Transversion Plot
+        p1 <- TvTi_buildMain(x, y, type=type,
+                             x_axis_text_angle=x_axis_text_angle,
+                             palette=palette, label_x_axis=label_x_axis,
+                             tvti.layers=tvti.layers, expec.layers=NULL,
+                             title_x_axis=FALSE)
+    } else {
+        p3 <- NULL
+    }
 
     if(!is.null(y))
     {
@@ -98,11 +131,10 @@ TvTi <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
                              palette=palette, label_x_axis=label_x_axis,
                              plot_expected=TRUE, tvti.layers=NULL,
                              expec.layers=expec.layers)
-
-        # Align the plots
-        p3 <- TvTi_alignPlot(p1, p2)
-        return(grid::grid.draw(p3))
+    } else {
+        p2 <- NULL
     }
 
-    return(p1)
+    finalPlot <- TvTi_alignPlot(p1=p1, p2=p2, p3=p3)
+    return(grid::grid.draw(finalPlot))
 }
