@@ -4,10 +4,12 @@
 \alias{TvTi}
 \title{plot transitions/transversions}
 \usage{
-TvTi(x, y = NULL, type = "Proportion", label_x_axis = TRUE,
-  x_axis_text_angle = 45, palette = c("#D53E4F", "#FC8D59", "#FEE08B",
-  "#E6F598", "#99D594", "#3288BD"), file_type = "MAF", tvti.layers = NULL,
-  expec.layers = NULL, sort = "none", dataOut = FALSE)
+TvTi(x, y = NULL, clinData = NULL, type = "Proportion",
+  label_x_axis = TRUE, x_axis_text_angle = 45, palette = c("#D53E4F",
+  "#FC8D59", "#FEE08B", "#E6F598", "#99D594", "#3288BD"), file_type = "MAF",
+  tvti.layers = NULL, expec.layers = NULL, sort = "none",
+  dataOut = FALSE, clin.legend.col = NULL, clin.var.colour = NULL,
+  clin.var.order = NULL, clin.layer = NULL)
 }
 \arguments{
 \item{x}{Object of class data frame containing columns 'sample', reference',
@@ -44,6 +46,17 @@ order}
 
 \item{dataOut}{Boolean Specifying whether to output the data to be passed
 instead of plotting it}
+
+\item{clin.legend.col}{an integer specifying the number of columns to plot in
+the clinical data legend}
+
+\item{clin.var.colour}{a named character vector specifying the mapping
+between colors and variables in the clinical data}
+
+\item{clin.var.order}{a character vector of variables to order the clinical
+legend by}
+
+\item{clin.layer}{Additional ggplot2 layer to plot on the clinical data}
 }
 \value{
 ggplot2 object or data frame if dataOut is set to TRUE

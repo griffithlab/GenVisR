@@ -4,12 +4,14 @@
 \alias{TvTi_alignPlot}
 \title{align TvTi plots on y axis}
 \usage{
-TvTi_alignPlot(p1, p2)
+TvTi_alignPlot(p1 = NULL, p2 = NULL, p3 = NULL)
 }
 \arguments{
 \item{p1}{main plot}
 
-\item{p2}{left subplot}
+\item{p2}{left expected value subplot}
+
+\item{p3}{bottom clinical subplot}
 }
 \value{
 ggplot object

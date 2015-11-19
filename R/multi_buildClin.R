@@ -2,7 +2,7 @@
 #'
 #' given a data frame with columns names sample, variable, and value create a
 #' ggplot2 object
-#' @name waterfall_buildClin
+#' @name multi_buildClin
 #' @param x a data frame in "long" format giving additional information to be
 #' plotted, requires columns "sample", "variable", and "value"
 #' @param clin.legend.col an integer specifying the number of columns to plot in
@@ -14,7 +14,7 @@
 #' @return a grob object
 #' @import ggplot2
 
-waterfall_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
+multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
                                 clin.var.order=NULL, clin.layers=NULL)
 {
     # Define parameters
