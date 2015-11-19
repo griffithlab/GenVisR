@@ -5,7 +5,7 @@ Authors@R: c(person("Zachary", "Skidmore", , "zskidmor@genome.wustl.edu", role =
 Maintainer: Zachary Skidmore <zskidmor@genome.wustl.edu>
 Description: Produce highly customizable publication quality graphics for genomic data at the cohort level.
 Depends: R (>= 3.2.0)
-Imports: ggplot2 (>= 0.9.2), plyr (>= 1.8.3), gridExtra, GenomicRanges, gtable, FField, scales, biomaRt, gtools, reshape2, GenomicFeatures, Biostrings, DBI, IRanges, grid, Rsamtools
+Imports: ggplot2 (>= 0.9.2), plyr (>= 1.8.3), gridExtra, GenomicRanges, gtable, FField, scales, biomaRt, gtools, reshape2, GenomicFeatures, Biostrings, DBI, IRanges, grid, Rsamtools, RMySQL
 License: GPL-3 + file LICENSE
 BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification
