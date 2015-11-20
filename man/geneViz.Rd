@@ -17,17 +17,23 @@ geneViz(txdb, gr, genome, reduce = FALSE, gene_colour = NULL, base = c(10,
 
 \item{reduce}{Boolean specifying whether to collapse isoforms in the ROI}
 
-\item{gene_colour}{character string specifying the colour of genomic features plotted}
+\item{gene_colour}{character string specifying the colour of genomic features
+plotted}
 
-\item{base}{base A vector of log bases to transform the data, corresponding to the elements of transform}
+\item{base}{base A vector of log bases to transform the data, corresponding
+to the elements of transform}
 
-\item{transform}{A vector of strings designating what objects to log transform}
+\item{transform}{A vector of strings designating what objects to log
+transform}
 
-\item{isoformSel}{Character vector giving the names (from the txdb object) of isoforms within the region of interest to display}
+\item{isoformSel}{Character vector giving the names (from the txdb object) of
+isoforms within the region of interest to display}
 
-\item{plot_transcript_name}{Boolean specifying whether to plot the transcript name}
+\item{plot_transcript_name}{Boolean specifying whether to plot the transcript
+name}
 
-\item{transcript_name_size}{Integer specifying the size of the transcript name text}
+\item{transcript_name_size}{Integer specifying the size of the transcript
+name text}
 
 \item{layers}{additional ggplot2 layers to plot}
 }

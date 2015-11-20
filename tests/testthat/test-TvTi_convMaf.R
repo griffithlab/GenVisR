@@ -14,5 +14,3 @@ test_that("TvTi_convMaf eliminates calls where the reference allele equals the v
     x <- data.frame(Tumor_Sample_Barcode=c("A"), Reference_Allele="C", Tumor_Seq_Allele1=c("C"), Tumor_Seq_Allele2=c("T"))
     expect_equal(nrow(TvTi_convMaf(x)), 1)
 })
-
-test_that(TvTi_convMaf)

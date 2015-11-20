@@ -46,22 +46,30 @@
 #' @import GenomicRanges
 #' @import plyr
 
-genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene.colour=NULL, gene_name='Gene', gene.layers=NULL, label.bg_fill="black",
-                   label.text_fill="white", label.border="black", label.size=10, label.width_ratio=c(1, 10), cov.colour="blue",
-                   cov.plot_type="line", cov.layers=NULL, base=c(10,2,2), transform=c('Intron','CDS','UTR'),
-                   gene.plot_transcript_name=TRUE, gene.transcript_name_size=4, isoformSel=NULL){
+genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene.colour=NULL,
+                   gene_name='Gene', gene.layers=NULL, label.bg_fill="black",
+                   label.text_fill="white", label.border="black", label.size=10,
+                   label.width_ratio=c(1, 10), cov.colour="blue",
+                   cov.plot_type="line", cov.layers=NULL, base=c(10,2,2),
+                   transform=c('Intron','CDS','UTR'),
+                   gene.plot_transcript_name=TRUE,
+                   gene.transcript_name_size=4, isoformSel=NULL)
+{
+    # Perform data quality checks
+    data <- genCov_qual(x=x, txdb=txdb, gr=gr, genome=genome)
+    x <- data$x
+    txdb <- data$txdb
+    gr <- data$gr
+    genome <- data$genome
 
-  # Perform data quality checks
-    data <- genCov.qual(x, txdb, gr, genome)
-    x <- data[[1]]
-    txdb <- data[[2]]
-    gr <- data[[3]]
-    genome <- data[[4]]
-
-  # Obtain a plot for the gene overlapping the Granges object and covert to a named list
-    gp_result <- geneViz(txdb, gr, genome, reduce=reduce, gene_colour=gene.colour,
-                         base=base, transform=transform, isoformSel=isoformSel, transcript_name_size=gene.transcript_name_size,
-                         plot_transcript_name=gene.plot_transcript_name, layers=gene.layers)
+    # Obtain a plot for the gene overlapping the Granges object and information
+    # Used to make the plot
+    gp_result <- geneViz(txdb, gr, genome, reduce=reduce,
+                         gene_colour=gene.colour, base=base,
+                         transform=transform, isoformSel=isoformSel,
+                         transcript_name_size=gene.transcript_name_size,
+                         plot_transcript_name=gene.plot_transcript_name,
+                         layers=gene.layers)
     gene <- gp_result$plot
     gene_list <- list()
     gene_list[[gene_name]] <- gene
