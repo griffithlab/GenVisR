@@ -4,7 +4,7 @@
 \alias{TvTi_qual}
 \title{Check input to TvTi}
 \usage{
-TvTi_qual(x, y = NULL, file_type = "MAF")
+TvTi_qual(x, y = NULL, z = NULL, file_type = "MAF")
 }
 \arguments{
 \item{x}{Object of class data frame containing columns 'sample', reference',
@@ -12,6 +12,9 @@ TvTi_qual(x, y = NULL, file_type = "MAF")
 'Tumor_Seq_Allele1', 'Tumor_Seq_Allele2' for 'MAF' file}
 
 \item{y}{Object of class data frame containing columns "Prop", "trans_tranv"}
+
+\item{z}{Object of class data frame containing columns "sample", "variable",
+"value" denoting clinical information}
 
 \item{file_type}{Character string spedifying th input file type expected}
 }

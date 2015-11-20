@@ -6,10 +6,12 @@
 #' 'variant' for 'MGI' file or 'Tumor_Sample_Barcode', 'Reference_Allele',
 #' 'Tumor_Seq_Allele1', 'Tumor_Seq_Allele2' for 'MAF' file
 #' @param y Object of class data frame containing columns "Prop", "trans_tranv"
+#' @param z Object of class data frame containing columns "sample", "variable",
+#' "value" denoting clinical information
 #' @param file_type Character string spedifying th input file type expected
 #' @return a data frame, or list of data frames passing quality checks
 
-TvTi_qual <- function(x, y=NULL, file_type='MAF')
+TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
 {
     # Check if x input is a data frame
     if(!is.data.frame(x))
@@ -133,6 +135,28 @@ TvTi_qual <- function(x, y=NULL, file_type='MAF')
             stop("The sum of elements in y should equal 1")
         }
     }
+    
+    # Check input data to clinDat
+    if(!is.null(z))
+    {
+        if(!is.data.frame(z))
+        {
+            stop("Did not detect a data frame for input to clinDat")
+        }
+        y <- droplevels(z)
+        
+        if(!all(c('sample', 'variable', 'value') %in% colnames(z)))
+        {
+            stop("Did not detect correct sample names in clinDat")
+        }
+        
+        if(!all(levels(x$sample) %in% levels(z$sample)))
+        {
+            memo <- paste0("Found a sample supplied to clinData not found",
+                           " in the data frame supplied to x")
+            warning(memo)
+        }
+    }
 
-    return(list('input1'=x, 'input2'=y))
+    return(list('input1'=x, 'input2'=y, 'input3'=z))
 }

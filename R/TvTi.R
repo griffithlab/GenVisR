@@ -51,9 +51,10 @@ TvTi <- function(x, y=NULL, clinData=NULL, type='Proportion', label_x_axis=TRUE,
                  clin.var.colour=NULL, clin.var.order=NULL, clin.layer=NULL)
 { 
     # Perform quality checks
-    out <- TvTi_qual(x, y, file_type=file_type)
+    out <- TvTi_qual(x, y, clinData, file_type=file_type)
     x <- out$input1
     y <- out$input2
+    clinData <- out$input3
 
     # add transition/transversion info
     message("annotating transitions and transversions")
