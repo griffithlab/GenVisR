@@ -143,7 +143,7 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
         {
             stop("Did not detect a data frame for input to clinDat")
         }
-        y <- droplevels(z)
+        z <- droplevels(z)
         
         if(!all(c('sample', 'variable', 'value') %in% colnames(z)))
         {
