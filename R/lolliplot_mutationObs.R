@@ -125,7 +125,7 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
 
     # Redefine and return grouping information and then dodge y coordinates
     mutation_data$group <-
-    group_mutation_coord(as.vector(mutation_data$mutation_coord))
+    lolliplot_groupMutcoord(as.vector(mutation_data$mutation_coord))
     if(track == 'top')
     {
         mutation_data$coord_y_dodge <- lolliplot_dodgeCoordY(mutation_data,

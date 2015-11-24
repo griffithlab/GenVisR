@@ -27,13 +27,13 @@ lohView <- function(x, y=NULL, genome='hg19')
     } else if(is.null(y) && any(genome == preloaded)) {
         message("genome specified is preloaded, retrieving data...")
         chr_pos <- cytoGeno[cytoGeno$genome == genome,]
-        chr_pos <- CN_dummy_data(chr_pos)
+        chr_pos <- multi_chrBound(chr_pos)
         message("developer note: this means you Zach, rename function above")
     } else {
         message("attempting to query UCSC sql database for chromosome
                 positions")
-        cyto_data <- suppresswarnings(get_cytobands(genome))
-        chr_pos <- CN_dummy_data(cyto_data)
+        cyto_data <- suppresswarnings(multi_cytobandRet(genome))
+        chr_pos <- multi_chrBound(cyto_data)
         message("developer note: this means you Zach, rename function above")
     }
 

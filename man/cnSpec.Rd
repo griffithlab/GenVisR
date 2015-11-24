@@ -9,17 +9,23 @@ cnSpec(x, y = NULL, genome = "hg19", title = NULL,
   y_lab_size = 12, facet_lab_size = 10, layers = NULL)
 }
 \arguments{
-\item{x}{object of class data frame containing columns "chromosome", "start", "end", "segmean", "sample" consisting of CN segment calls}
+\item{x}{object of class data frame containing columns "chromosome", "start",
+"end", "segmean", "sample" consisting of CN segment calls}
 
-\item{y}{object of class data frame containing columns "chromosome", "start", "end" specifying chromosome boundary coordinates for all chromosomes in a genome (optional)}
+\item{y}{object of class data frame containing columns "chromosome", "start",
+"end" specifying chromosome boundary coordinates for all chromosomes in a
+genome (optional)}
 
-\item{genome}{character string specifying UCSC genome from which data is derived, defaults to "hg19"}
+\item{genome}{character string specifying UCSC genome from which data is
+derived, defaults to "hg19"}
 
 \item{title}{character string specifying title of plot}
 
-\item{CN_low_colour}{character string specifying low value of colour gradient to plot}
+\item{CN_low_colour}{character string specifying low value of colour gradient
+to plot}
 
-\item{CN_high_colour}{character string specifying high value of colour gradient to plot}
+\item{CN_high_colour}{character string specifying high value of colour
+gradient to plot}
 
 \item{x_lab_size}{integer specifying the size of the x labels on the plot}
 
@@ -33,7 +39,8 @@ cnSpec(x, y = NULL, genome = "hg19", title = NULL,
 ggplot object
 }
 \description{
-given a data frame construct a plot to display CN information for a group of samples
+given a data frame construct a plot to display CN information for a group of
+samples
 }
 \examples{
 cnSpec(LucCNseg, genome="hg19")
