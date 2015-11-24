@@ -21,10 +21,10 @@ geneViz_formatCDS <- function(txdb=NULL, gr=NULL, genome=NULL, reduce=FALSE)
     }
     
   # Calculate GC content for retrieved data
-    cds <- sapply(cds, calcGC, genome=genome)
+    cds <- sapply(cds, geneViz_calcGC, genome=genome)
 
   # Coerce the relevant data in the Granges object to a data frame
-    cds <- lapply(cds, Granges2dataframe)
+    cds <- lapply(cds, geneViz_Granges2dataframe)
 
   # if the data frame has a size format, else return a list of NA dataframes
     if(nrow(cds[[1]]) != 0)

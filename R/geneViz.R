@@ -101,7 +101,7 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
     
     if(reduce)
     {
-        gene_features <- lapply(gene_features, mergeTypes)
+        gene_features <- lapply(gene_features, geneViz_mergeTypes)
         gene_features[[1]] <- gene_features[[1]][gene_features[[1]]$width > 0,]
         chr <- as.character(GenomicRanges::seqnames(gr))
         x <- gene_features[[1]][,c('start','end')]
@@ -113,7 +113,7 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
                                                                end=c(as.integer(e))),
                                        strand=GenomicRanges::strand(c("+")))
             
-            return(calcGC(gr=gr_temp, genome=genome))
+            return(geneViz_calcGC(gr=gr_temp, genome=genome))
         }
         
         l <- apply(x,1,function(x) gc(chr=x[3], s=x[1], e=x[2]))
@@ -125,7 +125,7 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
             l_new <- c(l_new, l[[i]])
         }
         l <- l_new
-        gc <- as.data.frame(mcols(l))
+        gc <- as.data.frame(GenomicRanges::mcols(l))
         gene_features[[1]]$GC <- plyr::rbind.fill(gc)$GC
     }
 
@@ -140,7 +140,7 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
         message("Calculating transform")
 
         # Create Master table and return it instead of plot if requested
-        master <- mergeRegions(gene_features,
+        master <- geneViz_mergeRegions(gene_features,
                                gr,
                                transform=transform,
                                base=base)
@@ -148,7 +148,7 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
         # Map the original coordinates into transformed space
         gene_features <- lapply(gene_features,
                                 function(x, master) plyr::adply(x, 1,
-                                                                map_coord_space,
+                                                                geneViz_mapCoordSpace,
                                                                 master=master),
                                 master=master)
     } else {
@@ -157,11 +157,13 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
 
     # Adjust the Y axis gene locations based on the presense of isoforms
     increment <- 0
+    
     for(i in 1:length(gene_features))
     {
         gene_features[[i]]$Upper <- gene_features[[i]]$Upper + increment
         gene_features[[i]]$Lower <- gene_features[[i]]$Lower + increment
         gene_features[[i]]$Mid <- gene_features[[i]]$Mid + increment
+        
         if(length(transform) > 0)
         {
             gene_features[[i]]$trans_segStart <-
@@ -169,6 +171,7 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
             gene_features[[i]]$trans_segEnd <-
                 max(gene_features[[i]]$trans_end)
         }
+        
         increment <- increment + 2.2
     }
 
@@ -199,23 +202,27 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
         end <- cbind(GenomicRanges::end(gr), GenomicRanges::end(gr))
         temp <- as.data.frame(rbind(start, end))
         colnames(temp) <- c('start', 'end')
-        temp <- plyr::adply(temp, 1, map_coord_space, master=master)
+        temp <- plyr::adply(temp, 1, geneViz_mapCoordSpace, master=master)
         xlimits <- c(min(temp$trans_start), max(temp$trans_end))
     }
 
     # construct the gene in gplot
     if(reduce == TRUE || plot_transcript_name == FALSE)
     {
-        gene_plot <- build.gene(gene_features, display_x_axis=display_x_axis,
-                                x_limits=xlimits, gene_colour=gene_colour,
-                                transcript_name=FALSE, layers=layers)
-    } else if(reduce == FALSE && plot_transcript_name == TRUE)
-    {
-        gene_plot <- build.gene(gene_features, display_x_axis=display_x_axis,
-                                x_limits=xlimits, gene_colour=gene_colour,
-                                transcript_name=TRUE,
-                                transcript_name_size=transcript_name_size,
-                                layers=layers)
+        gene_plot <- geneViz_buildGene(gene_features,
+                                       display_x_axis=display_x_axis,
+                                       x_limits=xlimits,
+                                       gene_colour=gene_colour,
+                                       transcript_name=FALSE, layers=layers)
+    } else if(reduce == FALSE && plot_transcript_name == TRUE) {
+        
+        gene_plot <- geneViz_buildGene(gene_features,
+                                       display_x_axis=display_x_axis,
+                                       x_limits=xlimits,
+                                       gene_colour=gene_colour,
+                                       transcript_name=TRUE,
+                                       transcript_name_size=transcript_name_size,
+                                       layers=layers)
     }
 
     out <- list('plot' = gene_plot,

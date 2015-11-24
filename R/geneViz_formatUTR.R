@@ -20,10 +20,10 @@ geneViz_formatUTR <- function(txdb=NULL, gr=NULL, genome=NULL, reduce=FALSE)
         return(NA)
     }
   # Calculate GC content for retrieved data
-    UTR <- sapply(UTR, calcGC, genome=genome)
+    UTR <- sapply(UTR, geneViz_calcGC, genome=genome)
 
   # Coerce the relevant data in the Granges object to a data frame
-    UTR <- lapply(UTR, Granges2dataframe)
+    UTR <- lapply(UTR, geneViz_Granges2dataframe)
 
   # if the data frame has a size format, else return a list of NA dataframes
     if(nrow(UTR[[1]]) != 0)

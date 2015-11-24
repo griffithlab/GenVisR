@@ -21,7 +21,7 @@ geneViz_extrCDS <- function(txdb=NULL, gr=NULL, reduce=FALSE, gaps=FALSE)
     txid <- GenomicRanges::unlist(map, use.names=FALSE)
 
     # extract CDS from transcript database given transcript ID
-    cds <- cdsFromTXID(txdb, txid)
+    cds <- geneViz_cdsFromTXID(txdb, txid)
     f1 <- function(x){x$txname[[1]]}
     txnames <- lapply(cds, f1)
 

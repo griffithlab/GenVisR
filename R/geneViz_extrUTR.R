@@ -36,11 +36,11 @@ geneViz_extrUTR <- function(txdb=txdb, gr=gr, reduce=FALSE, gaps=FALSE)
     f2 <- function(r)
     {
         g <- GenomicRanges::GRanges(seqnames=GenomicRanges::unlist(r['TXCHROM']),
-                                    ranges=IRanges::IRanges(start = as.numeric(unlist(r['UTRSTART'])),
-                                                            end = as.numeric(unlist(r['UTREND']))),
-                                    strand=unlist(r['TXSTRAND']),
-                                    txname=unlist(r['TXNAME']),
-                                    exonrank=unlist(r['EXONRANK']))
+                                    ranges=IRanges::IRanges(start = as.numeric(GenomicRanges::unlist(r['UTRSTART'])),
+                                                            end = as.numeric(GenomicRanges::unlist(r['UTREND']))),
+                                    strand=GenomicRanges::unlist(r['TXSTRAND']),
+                                    txname=GenomicRanges::unlist(r['TXNAME']),
+                                    exonrank=GenomicRanges::unlist(r['EXONRANK']))
         return(g)
     }
     

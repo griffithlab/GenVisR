@@ -43,8 +43,6 @@
 #' # Call genCov
 #' genCov(data, txdb, gr, genome, gene.transcript_name_size=3)
 #' @export
-#' @import GenomicRanges
-#' @import plyr
 
 genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene.colour=NULL,
                    gene_name='Gene', gene.layers=NULL, label.bg_fill="black",
@@ -74,66 +72,87 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene.colour=NULL,
     gene_list <- list()
     gene_list[[gene_name]] <- gene
 
-  # Remove entries in coverage data file that are not within the GRanges object specified
+    # Remove entries in coverage data file that are not within the GRanges
+    # object specified
     test2 <- function(x, min, max)
     {
         idx <- -which(x$end <= min | x$end >= max)
         if(length(idx)){
           x <- x[idx,]
         }
+        
         return(x)
     }
-    coverage_data <- lapply(x, test2, min(ranges(gr)), max(ranges(gr)))
+    
+    coverage_data <- lapply(x, test2, min(GenomicRanges::ranges(gr)),
+                            max(GenomicRanges::ranges(gr)))
 
-  # obtain xlimits for gene plot, this is overwritten if transforms
-    xlimits <- c(start(gr), end(gr))
+    # obtain xlimits for gene plot, this is overwritten if transforms
+    xlimits <- c(GenomicRanges::start(gr), GenomicRanges::end(gr))
 
-  # set flag to display x axis labels, overwritten if transforms
+    # set flag to display x axis labels, overwritten if transforms
     display_x_axis <- TRUE
 
-  # perform the intronic transform on the coverage data
+    # perform the intronic transform on the coverage data
     if(!is.null(transform) && length(transform) > 0)
     {
-    # Obtain a copy of the master gene file
+        # Obtain a copy of the master gene file
         master <- gp_result$master
 
-    # Format coverage file so that there is a start column, then map coord into transformed intronic space
+        # Format coverage file so that there is a start column, then map coord
+        # into transformed intronic space
         test <- function(x)
         {
             x$start <- x$end
             return(x)
         }
+        
         coverage_data <- lapply(coverage_data, test)
         message("Mapping coverage data onto transformed gene-space")
-        coverage_data <- lapply(coverage_data, function(x, master) adply(x, 1, map_coord_space, master=master, .progress='text'), master=master)
+        coverage_data <- lapply(coverage_data,
+                                function(x, master) plyr::adply(x, 1,
+                                                                geneViz_mapCoordSpace,
+                                                                master=master,
+                                                                .progress='text'),
+                                master=master)
 
-    # Replace original coordinates with transformed coordinates
+        # Replace original coordinates with transformed coordinates
         for(i in 1:length(coverage_data))
         {
-            coverage_data[[i]] <- coverage_data[[i]][,c('trans_start', 'trans_end', 'cov')]
+            coverage_data[[i]] <- coverage_data[[i]][,c('trans_start',
+                                                        'trans_end', 'cov')]
             colnames(coverage_data[[i]]) <- c('start', 'end', 'cov')
         }
 
-    # Obtain x limits for gene plot based on granges object
-        start <- cbind(start(gr), start(gr))
-        end <- cbind(end(gr), end(gr))
+        # Obtain x limits for gene plot based on granges object
+        start <- cbind(GenomicRanges::start(gr), GenomicRanges::start(gr))
+        end <- cbind(GenomicRanges::end(gr), GenomicRanges::end(gr))
         temp <- as.data.frame(rbind(start, end))
         colnames(temp) <- c('start', 'end')
-        temp <- adply(temp, 1, map_coord_space, master=master)
+        temp <- plyr::adply(temp, 1, geneViz_mapCoordSpace, master=master)
         xlimits <- c(min(temp$trans_start), max(temp$trans_end))
 
-    # set flag to not display x axis labels
+        # set flag to not display x axis labels
         display_x_axis <- FALSE
     }
 
-  # obtain coverage plots for the data input as a list
-    coverage_plot <- lapply(coverage_data, build.genCov.coverage, colour=cov.colour, plot_type=cov.plot_type, x_limits=xlimits, display_x_axis=display_x_axis, layers=cov.layers)
-  # Combine both gene and coverage plot lists
+    # obtain coverage plots for the data input as a list
+    coverage_plot <- lapply(coverage_data, genCov_buildCov,
+                            colour=cov.colour, plot_type=cov.plot_type,
+                            x_limits=xlimits, display_x_axis=display_x_axis,
+                            layers=cov.layers)
+    
+    # Combine both gene and coverage plot lists
     merged_data <- c(gene_list, coverage_plot)
 
-  # Plot the data on a track
-    track_coverage_plot <- trackViz(merged_data, gene_name=gene_name, bgFill=label.bg_fill, textFill=label.text_fill,
-                                    border=label.border, size=label.size, axis_align='width', widthRatio=label.width_ratio, list=TRUE)
+    # Plot the data on a track
+    track_coverage_plot <- genCov_trackViz(merged_data, gene_name=gene_name,
+                                           bgFill=label.bg_fill,
+                                           textFill=label.text_fill,
+                                           border=label.border, size=label.size,
+                                           axis_align='width',
+                                           widthRatio=label.width_ratio,
+                                           list=TRUE)
 
     return(track_coverage_plot)
 }
