@@ -90,9 +90,13 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
     
     # Get the sequence length in AA, perform quality checks along the way
     residueSeq <- lolliplot_DNAconv(codingSeq, to="residue")
-    residueSeq <- residueSeq[-which(residueSeq %in% c("OPAL",
-                                                      "OCHRE",
-                                                      "AMBER"))]
+    if(any(residueSeq %in% c("OPAL", "OCHRE", "AMBER")))
+    {
+        residueSeq <- residueSeq[-which(residueSeq %in% c("OPAL",
+                                                          "OCHRE",
+                                                          "AMBER"))]      
+    }
+    
     proteinLength <- length(residueSeq)    
     
     # obtain amino acid sequence and format if it is requested to plot the
