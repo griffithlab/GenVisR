@@ -2,7 +2,7 @@
 title: "GenVisR: An introduction"
 author: "Zachary Skidmore"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: pdf_document
 vignette: >
   %\VignetteIndexEntry{GenVisR: An introduction}
   %\VignetteEngine{knitr::rmarkdown}
@@ -28,11 +28,11 @@ library(GenVisR)
 waterfall(brcaMAF)
 ```
 
-This type of view is of limited use without expanding the graphic device given the large number of genes. Often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to accomplish this, the `main.recurrence_cutoff` parameter accepts an integer and will remove genes from the data which do not have at least x number of samples mutated. For example the `brcaMAF` data set contains 50 samples, to plot genes with mutations present in at least 3 (6%) of samples one would specify the following.
+This type of view is of limited use without expanding the graphic device given the large number of genes. Often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to accomplish this, the `main.recurrence_cutoff` parameter accepts a numeric value and will remove genes from the data which do not have at least x percent of samples mutated.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Plot only genes with mutations in 6% or more of samples
-waterfall(brcaMAF, main.recurrence_cutoff=3)
+waterfall(brcaMAF, main.recurrence_cutoff=.06)
 ```
 
 Alternatively one can select genes of interest using the `main.genes` parameter. This parameter accepts a case insensitive character vector of genes present in the data. For example, if it was desirable to plot only the following genes "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
@@ -138,8 +138,7 @@ By default genCov will perform a log compression of genomic space for each featu
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Turn off feature compression and reduce gene transcripts
-# Need to fix, reduce functionality is broken
-#genCov(data, txdb, gr, genome, transform=NULL, reduce=TRUE)
+genCov(data, txdb, gr, genome, transform=NULL, reduce=TRUE)
 ```
 
 ### TvTi
@@ -164,8 +163,8 @@ If there are prior expectations about the transition/transversion rate the user 
 
 ```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide'}
 # Create a named vector of apriori expectations
-expec <- c("A->C or T->G"=1/6, "A->G or T->C"=1/6, "A->T or T->A"=1/6,
-"G->A or C->T"=1/6, "G->C or C->G"=1/6, "G->T or C->A"=1/6)
+expec <- c("A->C or T->G (TV)"=1/6, "A->G or T->C (TI)"=1/6, "A->T or T->A (TV)"=1/6,
+"G->A or C->T (TI)"=1/6, "G->C or C->G (TV)"=1/6, "G->T or C->A (TV)"=1/6)
 
 # Call TvTi with the additional data
 TvTi(brcaMAF, expec, x_axis_text_angle=60)
@@ -272,21 +271,6 @@ end=c(89729532)), strand=strand(c("+")))
 geneViz(txdb, gr, genome)
 ```
 
-### trackViz
-Often it is useful to plot multiple graphics in the same window. `trackViz` provides a mechanism for accomplishing this using a named list. The names in the list will be displayed as labels. It should be noted that elements within the list should be ggplot2 objects.
-
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
-# Obtain cytogenetic information for the genome of interest
-data <- cytoGeno[cytoGeno$genome == 'hg38',]
-
-chr1 <- ideoView(data, chromosome='chr1', chr_txt_size=4)
-chr2 <- ideoView(data, chromosome='chr2', chr_txt_size=4)
-chr3 <- ideoView(data, chromosome='chr3', chr_txt_size=4)
-
-data <- list("CHR1" = chr1, "CHR2" = chr2, "CHR3" = chr3)
-
-trackViz(data, list=TRUE)
-```
 
 ## Hints
 
@@ -299,7 +283,7 @@ waterfall(brcaMAF)
 dev.off()
 ```
 
-For the majority of plots there is a layer parameter, this allows the user to specify additional ggplot2 layers. Using this parameter one could perform a variety of tasks including modifying the theme to control label text size, adding titles to plots, etc.
+For the majority of plots there is a layer parameter, this allows the user to specify an additional ggplot2 layer. Using this parameter one could perform a variety of tasks including modifying the theme to control label text size, adding titles to plots, etc.
 
 ## Session Info
 

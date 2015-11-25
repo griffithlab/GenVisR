@@ -46,9 +46,9 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
         sequence_data$coord_end <- as.numeric(as.character(sequence_data$coord))
         gene_plot <- geom_rect(data=sequence_data,
                                mapping=aes_string(xmin='coord_start',
-                                                  xmax='coord_end', ymin=-.5,
-                                                  ymax=.5, fill='sidechain'))
-        domain_plot <- NULL
+                                                  xmax='coord_end', ymin=-.1,
+                                                  ymax=.1, fill='sidechain'))
+        domain_plot <- geom_blank()
     } else {
         gene_plot <- geom_rect(data=gene_data[1,],
                                mapping=aes_string(xmin='pos_from',
