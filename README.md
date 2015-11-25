@@ -15,7 +15,7 @@ install.packages("devtools")
 * Install Bioconductor dependencies
 ```R
 source("http://bioconductor.org/biocLite.R")
-biocLite(c("GenomicRanges", "biomaRt", "GenomicFeatures", "UniProt.ws"))
+biocLite(c("AnnotationDbi", "biomaRt", "Biostrings", "GenomicFeatures", "GenomicRanges", "Rsamtools"))
 ```
 
 * It is suggested but not required to install knitr and rmarkdown for vignette creation
