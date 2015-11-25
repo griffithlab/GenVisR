@@ -154,5 +154,5 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene.colour=NULL,
                                            widthRatio=label.width_ratio,
                                            list=TRUE)
 
-    return(track_coverage_plot)
+    return(grid::grid.draw(track_coverage_plot))
 }

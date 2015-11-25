@@ -33,7 +33,7 @@ lolliplot_DNAconv <- function(x, to="residue")
     }
     
     # convert the residues into sidechain classifications
-    sidechain <- sapply(lolliplot_AA2sidechain)
+    sidechain <- sapply(residue, lolliplot_AA2sidechain)
     if(toupper(to)=="SIDECHAIN")
     {
         return(as.character(sidechain))

@@ -41,7 +41,8 @@
 #' instead of protein domains
 #' @param species Character string specifying the species corresponding to the
 #' given ensembl transcript id
-#' @param max_VerticalLolli Integer specifying the upper limit of lolli points to allow to be stacked vertically
+#' @param max_VerticalLolli Integer specifying the upper limit of lolli points
+#' to allow to be stacked vertically
 #' @param layers additional ggplot2 layers to plot
 #' @param paletteA Character vector specifying colours for gene features
 #' @param paletteB Character vector specifying colours for lolli features
@@ -64,7 +65,8 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                       obsB.rep.dist.lmt=500, obsB.attr.fact=.1, obsB.adj.max=.1,
                       obsB.adj.lmt=.5, obsB.iter.max=50000,
                       plot_sidechain=FALSE, species="hsapiens",
-                      max_VerticalLolli=NULL, layers=NULL, paletteA=NULL, paletteB=NULL)
+                      max_VerticalLolli=NULL, layers=NULL, paletteA=NULL,
+                      paletteB=NULL)
 {
     # Perform quality check
     input <- lolliplot_qual(x, y, z)
@@ -89,24 +91,33 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
         
     
     # Get the sequence length in AA, perform quality checks along the way
-    residueSeq <- lolliplot_DNAconv(codingSeq, to="residue")
+    residueSeq <- lolliplot_DNAconv(codingSeq, to="residue")    
+    # If it is requested grab the sidechain information and bind to residues
+    if(plot_sidechain==TRUE)
+    {
+        sidechain <- lolliplot_DNAconv(codingSeq, to="sidechain")
+        AAsequence <- cbind(sidechain, residueSeq)
+        AAsequence <- as.data.frame(AAsequence)
+        AAsequence$coord <- seq(from=1, to=nrow(AAsequence))
+    } else {
+        AAsequence <- NULL
+    }
+    
+    # if there are any stop codons remove them as they are not considered part
+    # of the protein
     if(any(residueSeq %in% c("OPAL", "OCHRE", "AMBER")))
     {
-        residueSeq <- residueSeq[-which(residueSeq %in% c("OPAL",
-                                                          "OCHRE",
-                                                          "AMBER"))]      
+        stopRes <- c("OPAL", "OCHRE", "AMBER")
+        residueSeq <- residueSeq[-which(residueSeq %in% stopRes)]
+        if(!is.null(AAsequence))
+        {
+            AAsequence <- AAsequence[-which(AAsequence$residueSeq %in% stopRes),]
+        }
     }
     
     proteinLength <- length(residueSeq)    
     
-    # obtain amino acid sequence and format if it is requested to plot the
-    # sidechain
-    if(plot_sidechain==TRUE)
-    {
-        AAsequence <- lolliplot_DNAconv(codingSeq, to="sidechain")
-    } else {
-        AAsequence <- NULL
-    }
+
     
     # if z is specified plot that instead of fetching the domain information
     if(!is.null(z))

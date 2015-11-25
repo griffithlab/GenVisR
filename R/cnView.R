@@ -30,59 +30,62 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
                    main.cnDiff=FALSE, ideo.chr_txt_angle=45,
                    ideo.chr_txt_size=5, main.layers=NULL, ideo.layers=NULL)
 {
-  # Perform a basic quality check
-    input <- cnView.qual(x, y, genome)
+    # Perform a basic quality check
+    input <- cnView_qual(x, y, genome)
     x <- input[[1]]
     y <- input[[2]]
 
-  # Obtain Cytogenetic Band information
-  # use y input or query UCSC for the data if it's not preloaded
+    # Obtain Cytogenetic Band information
+    # use y input or query UCSC for the data if it's not preloaded
     preloaded <- c("hg38", "hg19", "mm10", "mm9", "rn5")
     if(is.null(y) && any(genome == preloaded))
     {
         message("genome specified is preloaded, retrieving data...")
         cytobands <- GenVisR::cytoGeno[GenVisR::cytoGeno$genome == genome,]
         cytobands <- cytobands[,-which(colnames(cytobands) == "genome")]
-    } else if(is.null(y)){
-    # obtain the cytogenetic band information for the requested reference
-        message("attempting to query UCSC sql database for cytogenic band
-                information")
-        cytobands <- suppressWarnings(get_cytobands(genome=genome))
+    } else if(is.null(y)) {
+        # Obtain data for UCSC genome and extract relevant columns
+        memo <- paste0("attempting to query UCSC mySQL database for chromosome",
+                       " positions and cytogenetic information")
+        message(memo)
+        cytobands <- suppressWarnings(multi_cytobandRet(genome=genome))
     } else {
-        message("using y for cytogenic band information...")
+        memo <- paste0("Detected argument supplied to y.. using y for", 
+                       "position and cytogenetic information")
+        message(memo)
         cytobands <- y
     }
 
-  # Create Dummy data and add to x for proper plot dimensions
+    # Create Dummy data and add to x for proper plot dimensions
     fakeStart <- aggregate(data=cytobands, FUN=min, chromStart~chrom)
     colnames(fakeStart) <- c("chromosome", "coordinate")
     fakeEnd <- aggregate(data=cytobands, FUN=max, chromEnd~chrom)
     colnames(fakeEnd) <- c("chromosome", "coordinate")
     dummyData <- rbind(fakeStart, fakeEnd)
     dummyData$chromosome <- as.factor(dummyData$chromosome)
-    dummyData <- subset_chr(dummyData, chr)
+    dummyData <- cnView_subsetChr(dummyData, chr)
 
-  # Plot all chromosomes at once if specified
+    # Plot all chromosomes at once if specified
     if(chr == 'all')
     {
-        p1 <- build.cnView.main(x, z=z, dummyData, chr=chr)
+        p1 <- cnView_buildMain(x, z=z, dummyData, chr=chr)
         return(p1)
     }
 
-  # plot chromosome
+    # plot chromosome
     chromosome_plot <- ideoView(cytobands, chromosome=chr,
                                 chr_txt_angle=ideo.chr_txt_angle,
                                 chr_txt_size=ideo.chr_txt_size,
                                 layers=ideo.layers)
 
-  # if requested plot only selected chromosome
-    x <- subset_chr(x, chr)
+    # if requested plot only selected chromosome
+    x <- cnView_subsetChr(x, chr)
 
   # build the cn plot
-    CN_plot <- build.cnView.main(x, dummyData, z=z, chr=chr, cnDiff=main.cnDiff,
-                                 layers=main.layers)
+    CN_plot <- cnView_buildMain(x, dummyData, z=z, chr=chr, cnDiff=main.cnDiff,
+                                layers=main.layers)
 
-    p1 <- align_y_cn(chromosome_plot, CN_plot)
+    p1 <- cnView_align(chromosome_plot, CN_plot)
 
     return(grid::grid.draw(p1))
 }
