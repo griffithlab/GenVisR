@@ -2,7 +2,7 @@
 title: "GenVisR: An introduction"
 author: "Zachary Skidmore"
 date: "`r Sys.Date()`"
-output: pdf_document
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GenVisR: An introduction}
   %\VignetteEngine{knitr::rmarkdown}
@@ -20,7 +20,7 @@ Intuitively visualizing and interpreting data from high-throughput genomic techn
 
 `BRCA_MAF` is a truncated MAF file consisting of 50 samples from the TCGA project corresponding to [Breast invasive carcinoma](https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files#TCGAMAFFiles-BRCA:Breastinvasivecarcinoma) [(complete data)](https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf). Using this dataset we can view the default behavior of `waterfall`:
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+```{r, eval=FALSE}
 # Load GenVisR and set seed
 library(GenVisR)
 
@@ -31,6 +31,9 @@ waterfall(brcaMAF)
 This type of view is of limited use without expanding the graphic device given the large number of genes. Often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to accomplish this, the `main.recurrence_cutoff` parameter accepts a numeric value and will remove genes from the data which do not have at least x percent of samples mutated.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+# Load GenVisR and set seed
+library(GenVisR)
+
 # Plot only genes with mutations in 6% or more of samples
 waterfall(brcaMAF, main.recurrence_cutoff=.06)
 ```
