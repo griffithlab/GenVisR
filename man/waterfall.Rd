@@ -50,6 +50,9 @@ frame, one of "MGI", "MAF", "Custom"}
 
 \item{main.genes}{a character vector specifying genes to plot}
 
+\item{main.samples}{character vector containing sample names to subset the
+input from x on}
+
 \item{drop_mutation}{Boolean specifying whether to drop unused
 "mutation type" levels from the legend}
 

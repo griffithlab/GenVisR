@@ -14,6 +14,7 @@ NULL
 #' @name brcaMAF
 #' @usage data(brcaMAF)
 #' @format a data frame with 2773 observations and 55 variables
+#' @return Object of class data drame
 NULL
 
 #' cytogenetic band information for select genomes
@@ -25,6 +26,7 @@ NULL
 #' @name cytoGeno
 #' @usage data(cytoGeno)
 #' @format a data frame with 3207 observations and 6 variables
+#' @return Object of class data frame
 NULL
 
 #' hg19 chromosome boundaries
@@ -36,6 +38,7 @@ NULL
 #' @name hg19chr
 #' @usage data(hg19chr)
 #' @format a data frame with 24 observations and 3 variables
+#' @return Object of class data frame
 NULL
 
 
@@ -48,6 +51,7 @@ NULL
 #' @name Luc2CNraw
 #' @usage data(Luc2CNraw)
 #' @format a data frame with 10000 observations and 5 variables
+#' @return Object of class data frame
 NULL
 
 #' Truncated CN segments
@@ -59,6 +63,7 @@ NULL
 #' @name LucCNseg
 #' @usage data(LucCNseg)
 #' @format a data frame with 3336 observations and 6 variables
+#' @return Object of class data frame
 NULL
 
 #' Coverage for the pten gene
@@ -70,4 +75,17 @@ NULL
 #' @name ptenCOV
 #' @usage data(ptenCOV)
 #' @format a data frame with 107338 observations and 4 variables
+#' @return Object of class data frame
+NULL
+
+#' Identity snps
+#' 
+#' A data set containing locations of 24 identity snps from: Pengelly et al. Genome Med. 2013, PMID 24070238
+#'  
+#' @docType data
+#' @keywords datasets
+#' @name SNPloci
+#' @usage data(SNPloci)
+#' @format a data frame with 24 observations and 3 variables
+#' @return Object of class data frame
 NULL

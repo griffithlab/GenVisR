@@ -22,6 +22,9 @@ frame with column names "Prop", "trans_tranv" and levels of trans_tranv
  matching "A->C or T->G (TV)", "A->G or T->C (TI)", "A->T or T->A (TV)",
  "G->A or C->T (TI)", "G->C or C->G (TV)", "G->T or C->A (TV)"}
 
+\item{clinData}{object of class data frame in "long format" containing
+columns "sample", "variable", "value"}
+
 \item{type}{Object of class character specifying whether to plot the
 Proportion or Frequency, one of "Proportion", "Frequency"}
 

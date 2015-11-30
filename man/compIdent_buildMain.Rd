@@ -7,12 +7,12 @@
 compIdent_buildMain(count_tables, sample_names)
 }
 \arguments{
-\item{sample_names}{list of names associated with each sample in counts list}
+\item{count_tables}{list of readcount tables}
 
-\item{counts}{list of readcount tables}
+\item{sample_names}{list of names associated with each sample in counts list}
 }
 \value{
-none
+ggplot2 object
 }
 \description{
 Produce an identity SNP plot displaying VAFs of 24 SNP locations and coverage

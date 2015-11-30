@@ -3,9 +3,9 @@
 #' Produce an identity SNP plot displaying VAFs of 24 SNP locations and coverage
 #' information to compare multiple sample identities
 #' @name compIdent_buildMain
-#' @param counts list of readcount tables
+#' @param count_tables list of readcount tables
 #' @param sample_names list of names associated with each sample in counts list
-#' @return none
+#' @return ggplot2 object
 #' @import ggplot2
 
 compIdent_buildMain <- function(count_tables, sample_names)
@@ -41,12 +41,15 @@ compIdent_buildMain <- function(count_tables, sample_names)
     vaf <- cbind(id, as.data.frame(calcVAFs))
     vaf.long <- reshape2::melt(vaf, id.vars='id')
 
+    # factor variable column
+    vaf.long$variable <- factor(vaf.long$variable)
+    
     # Plot VAF
     # The point represents the VAF (y-axis) for each dbSNP (x-axis). The colour of
     # the points represent samples. Title "Variant Base" refers to the x-axis
     # labels when they are moved above the graph.
-    plotVAF <- ggplot(vaf.long, aes(x=id,y=value)) +
-    geom_point(aes(colour=factor(variable)), size=5,
+    plotVAF <- ggplot(vaf.long, aes_string(x='id', y='value')) +
+    geom_point(aes_string(colour='variable'), size=5,
                position=position_dodge(width=0.5)) +
     ggtitle("Variant Base")
     
@@ -128,12 +131,13 @@ compIdent_buildMain <- function(count_tables, sample_names)
     # Plot read counts
     dbSNP_rsID <- c('rs2229546','rs1410592','rs497692','rs10203363','rs2819561',
                     'rs4688963','rs309557','rs2942','rs17548783','rs4735258',
-                    'rs1381532','rs10883099','rs4617548','rs7300444','rs9532292',
-                    'rs2297995','rs4577050','rs2070203','rs1037256','rs9962023',
-                    'rs2228611','rs10373','rs4148973','rs4675')
+                    'rs1381532','rs10883099','rs4617548','rs7300444',
+                    'rs9532292','rs2297995','rs4577050','rs2070203','rs1037256',
+                    'rs9962023','rs2228611','rs10373','rs4148973','rs4675')
 
+    readcounts.long$value <- as.numeric(readcounts.long$value)
     plotRC <- ggplot(readcounts.long,
-                     aes(x=id, y=as.numeric(value), fill=variable)) +
+                     aes_string(x='id', y='value', fill='variable')) +
     geom_bar(stat="identity",position="dodge")
 
     # x-axis: Label as "dbSNP rsID". Label ticks with rsIDs.

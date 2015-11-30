@@ -26,7 +26,7 @@ bamRcnt <- function(bamfile, genome, targetbed = NULL)
     {
         pengelly <- read.table(file=targetbed, sep='\t', header = TRUE)
     } else {
-        pengelly <- SNPloci
+        pengelly <- GenVisR::SNPloci
     }
     
     pengelly.chr <- pengelly
@@ -64,10 +64,10 @@ bamRcnt <- function(bamfile, genome, targetbed = NULL)
     # Pileup generates a table of nucleotide counts at each location by strand
     pileup_table <- Rsamtools::pileup(bamfile, bai, scanBamParam = param)
     # Remove strand and which_label columns
-    pileup_table <- Rsamtools::pileup_table[,c('seqnames',
-                                               'pos',
-                                               'nucleotide',
-                                               'count')]
+    pileup_table <- pileup_table[,c('seqnames',
+                                    'pos',
+                                    'nucleotide',
+                                    'count')]
     
     # Rename columns to match bamreadcount table
     colnames(pileup_table)[1:2] <- c('chr','position')
@@ -82,6 +82,7 @@ bamRcnt <- function(bamfile, genome, targetbed = NULL)
     total_reads <- data.frame(matrix(ncol=1,nrow=24))
     colnames(total_reads) <- 'total_reads'
     x3 <- cbind(x2[,1:2],getref,total_reads,x2[,3:6])
+    
     # total_reads column = sum of A, C, G, and T counts
     x3$total_reads <- x3$A+x3$C+x3$G+x3$T
     return(x3)
