@@ -11,6 +11,8 @@
 #' frame with column names "Prop", "trans_tranv" and levels of trans_tranv
 #'  matching "A->C or T->G (TV)", "A->G or T->C (TI)", "A->T or T->A (TV)",
 #'  "G->A or C->T (TI)", "G->C or C->G (TV)", "G->T or C->A (TV)"
+#' @param clinData object of class data frame in "long format" containing
+#'  columns "sample", "variable", "value"
 #' @param type Object of class character specifying whether to plot the
 #' Proportion or Frequency, one of "Proportion", "Frequency"
 #' @param label_x_axis boolean specifying wheter to label x axis
@@ -77,8 +79,8 @@ TvTi <- function(x, y=NULL, clinData=NULL, type='Proportion', label_x_axis=TRUE,
     } else if(toupper(sort) == toupper('none')){
         sample_order <- levels(x$sample)
     } else {
-        memo <- paset0(sort, " is not a valid parameter for sort, please",
-                       " specify one of \"sample\", \"tvti\", \"none\"")
+        memo <-paste0(sort, " is not a valid parameter for sort, please",
+                      " specify one of \"sample\", \"tvti\", \"none\"")
         stop(memo)
     }
 

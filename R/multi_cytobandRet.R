@@ -8,7 +8,7 @@
 multi_cytobandRet <- function(genome)
 {
     # connect to UCSC mySQL genome database
-    conn <- DBI::dbConnect(MySQL(), user="genome",
+    conn <- DBI::dbConnect(RMySQL::MySQL(), user="genome",
                            host="genome-mysql.cse.ucsc.edu",
                            dbname=genome)
     

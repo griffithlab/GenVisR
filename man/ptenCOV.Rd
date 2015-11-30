@@ -8,6 +8,9 @@
 \usage{
 data(ptenCOV)
 }
+\value{
+Object of class data frame
+}
 \description{
 A data set containing coverage data for pten obtained using "bedtools multicov" from "Convergent loss of PTEN leads to clinical resistance to a PI3K-alpha inhibitor" PMID:25409150
 }
