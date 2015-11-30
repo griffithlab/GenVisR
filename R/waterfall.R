@@ -44,6 +44,8 @@
 #' burden data
 #' @param variant_class_order character vector giving the hierarchical order of
 #' mutation types to plot (required if file_type="Custom")
+#' @param main.samples character vector containing sample names to subset the
+#' input from x on
 #' @examples
 #' waterfall(brcaMAF)
 #' @return a grob for plotting

@@ -8,6 +8,9 @@
 \usage{
 data(Luc2CNraw)
 }
+\value{
+Object of class data frame
+}
 \description{
 Downsampled copy number calls for Luc2 chromosome 14 originating from cnv-hmm "Genomic Landscape of Non-Small Cell Lung Cancer in Smokers and Never-Smokers" PMID:22980976
 }

@@ -8,6 +8,9 @@
 \usage{
 data(LucCNseg)
 }
+\value{
+Object of class data frame
+}
 \description{
 A data set in long format containing Copy Number segments for 4 samples corresponding to "lung cancer" from "Genomic Landscape of Non-Small Cell Lung Cancer in Smokers and Never-Smokers" PMID:22980976
 }

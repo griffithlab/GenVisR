@@ -8,6 +8,9 @@
 \usage{
 data(cytoGeno)
 }
+\value{
+Object of class data frame
+}
 \description{
 A data set containing cytogenetic band information for all chromosomes in the following genomes "hg38", "hg19", "mm10", "mm9", "rn5", obtained from the UCSC sql database at genome-mysql.cse.ucsc.edu
 }

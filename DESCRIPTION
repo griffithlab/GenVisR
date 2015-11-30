@@ -1,6 +1,6 @@
 Package: GenVisR
 Title: Genomic Visualizations in R
-Version: 0.99.1
+Version: 0.99.0
 Authors@R: c(person(given="Zachary", family="Skidmore", email="zskidmor@genome.wustl.edu", role=c("aut", "cre")), person(given="Alex", family="Wagner", role="aut"), person(given="Robert", family="Lesurf", role="aut"), person(given="Katie", family="Campbell", role="aut"), person(given="Jason", family="Kunisaki", email="kunisakijh@gmail.com", role="aut"))
 Maintainer: Zachary Skidmore <zskidmor@genome.wustl.edu>
 Description: Produce highly customizable publication quality graphics for
@@ -23,7 +23,9 @@ Imports:
     IRanges,
     plyr (>= 1.8.3),
     reshape2,
-    Rsamtools
+    RMySQL,
+    Rsamtools,
+    scales
 License: GPL-3 + file LICENSE
 BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification
