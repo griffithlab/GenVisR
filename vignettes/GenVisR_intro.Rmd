@@ -274,7 +274,45 @@ end=c(89729532)), strand=strand(c("+")))
 geneViz(txdb, gr, genome)
 ```
 
+<<<<<<< HEAD
+=======
+### trackViz
+Often it is useful to plot multiple graphics in the same window. `trackViz` provides a mechanism for accomplishing this using a named list. The names in the list will be displayed as labels. It should be noted that elements within the list should be ggplot2 objects.
 
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
+# Obtain cytogenetic information for the genome of interest
+data <- cytoGeno[cytoGeno$genome == 'hg38',]
+
+chr1 <- ideoView(data, chromosome='chr1', chr_txt_size=4)
+chr2 <- ideoView(data, chromosome='chr2', chr_txt_size=4)
+chr3 <- ideoView(data, chromosome='chr3', chr_txt_size=4)
+
+data <- list("CHR1" = chr1, "CHR2" = chr2, "CHR3" = chr3)
+
+trackViz(data, list=TRUE)
+```
+### lohView
+lohView provides a method for visualizing LOH from a multi sample and multi chromosome perspective. Input consists of a data frame with column names "chromosome", "position", "n_freq", "t_freq", and "sample".
+>>>>>>> 434e8905c917dfc30084babeba25c0a6c8562cfd
+
+"cn", and "p_value"(optional) as well as a specification of which chromosome to plot `chr` and which genome assembly should be used for `genome`. The algorithm will produce an ideogram on the top track and plot copy number calls beneath. If a "p_value" column is present in the input data cnView will create a transparency for all calls/observations based on that column. Eliminating the "p_value" column will terminate this behavior. Here we demonstrate `cnView` with raw copy number calls for chromosome 14 from the attached data set Luc2CNraw.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
+# Call cnView with basic input
+cnView(Luc2CNraw, chr='chr14', genome='hg19', ideo.chr_txt_size=4)
+```
+
+`cnView` obtains ideogram information and chromosomal boundaries either via a preloaded genome or the UCSC sql database if it is available. In the interest of flexibility the user also has the option of specifying cytogenetic information to the argument `y`. This input should take the form of a data frame with column names "chrom", "chromStart", "chromEnd", "name", "gieStain". This format mirrors what is retrievable via the afore mentioned database.
+
+If it is desired, `cnView` has the ability to overlay segment calls on the plot. This is achieved by providing a data frame with column names: "chromosome", "start", "end", and "segmean" to the argument `z`.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
+# Obtain CN segments for Luc2 corresponding to chromosome 14
+CNseg <- LucCNseg[LucCNseg$sample == 'Luc2' & LucCNseg$chromosome == 14,]
+
+# call cnView with segment data
+cnView(Luc2CNraw, z=CNseg, chr='chr14', genome='hg19', ideo.chr_txt_size=4)
+```
 ## Hints
 
 Due to the complex nature and variability of the graphics produced by GenVisR it is recommended that the user adjust the graphics device size for all outputs manually. If not given enough space within the graphics device grob objects will start to collide This can be done via the following:
@@ -293,6 +331,7 @@ For the majority of plots there is a layer parameter, this allows the user to sp
 ```{r}
 sessionInfo()
 ```
+
 
 
 
