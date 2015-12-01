@@ -17,8 +17,7 @@ applied}
 }
 \value{
 list containing window start/stop positions for each chromosome 
-from each sample
-to perform LOH calculations
+from each sample to perform LOH calculations
 }
 \description{
 Calculate window positions to perform LOH calculation
