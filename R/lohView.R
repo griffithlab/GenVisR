@@ -109,19 +109,21 @@ lohView <- function(x, y=NULL, genome='hg19', path, step=500000,
               specify this information via y")
      }
 }
+
      loh <- lohView_slidingWindow(path, step, window_size, normal)
      loh$chromosome <- factor(loh$chromosome, 
                                    levels=c(1:22, "X", "Y"))
      samples <- gtools::mixedsort(as.character(unique(loh$sample)))
      loh$sample <- factor(loh$sample, levels=samples)
-     loh_plot <- lohView_ggplot2(data=loh, gradient_midpoint, gradient_low, 
-                                 gradient_mid, 
-                                 gradient_high, y_facet_lab.size, 
-                                 y_facet_lab.angle, 
-                                 x_facet_lab.size, x_facet_lab.angle, 
-                                 background_color, axis.title.size.x, 
-                                 axis.title.size.y, xlabel, ylabel, 
-                                 legend.text.size, legend.title.size, 
-                                 legend.key.size.x, legend.key.size.unit)
+
+     loh_plot <- lohView_buildMain(data=loh, gradient_midpoint, gradient_low,
+                                   gradient_mid, gradient_high,
+                                   y_facet_lab.size, y_facet_lab.angle,
+                                   x_facet_lab.size, x_facet_lab.angle,
+                                   background_color, axis.title.size.x,
+                                   axis.title.size.y, xlabel, ylabel,
+                                   legend.text.size, legend.title.size,
+                                   legend.key.size.x, legend.key.size.unit)
+
      return(loh_plot)
 }

@@ -25,7 +25,4 @@ object of class dataframe containing LOH data
 \description{
 Obtain LOH heatmap on entire chromsomes from samples in a cohort
 }
-\examples{
-lohView_slidingWindow(path, step=500000, window_size=1000000, normal=50)
-}
 
