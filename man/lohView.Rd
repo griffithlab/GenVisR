@@ -4,7 +4,15 @@
 \alias{lohView}
 \title{plot LOH data}
 \usage{
-lohView(x, y = NULL, genome = "hg19")
+lohView(x, y = NULL, genome = "hg19", path, step = 5e+05,
+  window_size = 1e+06, normal = 50, file_name, width = 70, height = 35,
+  gradient_midpoint = 20, gradient_low = "#ffffff",
+  gradient_mid = "#b2b2ff", gradient_high = "#000000",
+  y_facet_lab.size = 50, y_facet_lab.angle = 0, x_facet_lab.size = 40,
+  x_facet_lab.angle = 0, background_color = "Light Grey",
+  axis.title.size.x = 70, axis.title.size.y = 70, xlabel = "Chromosome",
+  ylabel = "Sample", legend.text.size = 45, legend.title.size = 50,
+  legend.key.size.x = 4.5, legend.key.size.unit = "cm")
 }
 \arguments{
 \item{x}{object of class data frame with columns 'chromosome', 'position',
@@ -15,11 +23,88 @@ lohView(x, y = NULL, genome = "hg19")
 
 \item{genome}{character string specifying the genome assembly from which
 input data is based}
-}
-\value{
-ggplot object
+
+\item{path}{character string specifying which directory contains 
+the sample information stored as datasets with columns "chromosome", 
+"position", "n_freq", "t_freq", and "sample"}
+
+\item{step}{integer with the length of divisions (bp) in chromosomes}
+
+\item{window_size}{integer with the size of the sliding window (bp) to be 
+applied}
+
+\item{normal}{integer specifying the normal VAF frequency used in LOH 
+calculations#' @return ggplot object}
+
+\item{file_name}{character string specifying the directory and the name of 
+the loh heatmap plot produced (pdf extension)}
+
+\item{width}{integer specfying the width of the pdf produced}
+
+\item{height}{integer specfying the height of the pdf produced}
+
+\item{output_path}{character string specifying the directory the loh heatmap 
+plot should be exported to}
+
+\item{'data'}{object of class dataframe with loh difference 
+calculations and column names "window_start", "window_stop", "chromosome", 
+"sample", and "loh_diff"}
+
+\item{'gradient_midpoint'}{object of class numeric specifying the midpoint 
+for legend's gradient scale}
+
+\item{'gradient_low'}{object of class character for hex color code for 
+gradient's lower values}
+
+\item{'gradient_mid'}{object of class character for hex color code for 
+gradient's middle values}
+
+\item{'graident_high'}{object of class character for hex color code for 
+gradient's upper values}
+
+\item{'y_facet_lab.size'}{object of class numeric specifying the facet label 
+size of y axis}
+
+\item{'y_facet_lab.angle'}{object of class numeric specifying the facet label
+angle of y axis}
+
+\item{'x_facet_lab.size'}{object of class numeric specifying the facet label 
+size of x axis}
+
+\item{'x_facet_lab.angle'}{object of class numeric specifying the facet label
+angle of x axis}
+
+\item{'background_color'}{object of class character specifying the background
+color of the facet labels}
+
+\item{'axis.title.size.x'}{object of class numeric specifying the x axis 
+label size}
+
+\item{'axis.title.size.y'}{object of class numeric specifying the y axis 
+label size}
+
+\item{'xlabel'}{object of class character specifying the title for the x 
+axis label}
+
+\item{'ylabel'}{object of class character specifying the title for the y 
+axis label}
+
+\item{'legend.text.size'}{object of class numeric specifying the text size 
+for the legend}
+
+\item{'legend.title.size'}{object of class numeric specifying the legend 
+title's size}
+
+\item{'legend.key.size'}{object of class numeric specifying the legend 
+key's size}
+
+\item{'legend.key.size.unit'}{object of class cahracter specifying the units 
+for the legend's parameters}
 }
 \description{
 Produce a graphic visualizing Loss of Heterozygosity in a cohort
+}
+\examples{
+## Insert an example once the first part of this is understood
 }
 

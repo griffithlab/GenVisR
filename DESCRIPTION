@@ -25,7 +25,8 @@ Imports:
     reshape2,
     RMySQL,
     Rsamtools,
-    scales
+    scales,
+    dplyr
 License: GPL-3 + file LICENSE
 BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification
