@@ -93,7 +93,8 @@ lohView_buildMain <- function(data, gradient_midpoint, gradient_low, gradient_mi
                                        guide = "colourbar",
                                        high = gradient_high,
                                        mid = gradient_mid,
-                                       low = gradient_low)
+                                       low = gradient_low,
+                                       space = 'Lab')
     
     # Build the plot
     p1 <- p1 + loh_call + facet + x_scale + y_scale + lab_x + lab_y + BWscheme +
