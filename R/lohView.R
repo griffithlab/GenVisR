@@ -59,13 +59,13 @@
 #' key's size
 #' @param 'legend.key.size.unit' object of class cahracter specifying the units 
 #' for the legend's parameters
-#' @import dplyr, gtools, grid
+#' @import dplyr
+#' @import gtools
+#' @import grid
 #' @examples
 #' ## Insert an example once the first part of this is understood
 #' @export
 
-path <- "/Users/jasonkunisaki/Desktop/Genome Institute/HCC Tasks/HCC_LOH/HCC_LOH_sample/"
-file_name <- "/Users/jasonkunisaki/Desktop/final_HCC.pdf"
 lohView <- function(x, y=NULL, genome='hg19', path, step=500000, 
                     window_size=1000000, normal=50, file_name, 
                     width=70, height=35, gradient_midpoint=20, 
@@ -78,6 +78,7 @@ lohView <- function(x, y=NULL, genome='hg19', path, step=500000,
                     ylabel="Sample",
                     legend.text.size=45, legend.title.size=50, 
                     legend.key.size.x=4.5, legend.key.size.unit="cm") {
+    if(FALSE){
     # Data Quality Check
     input <- lohView_qual(x)
     x <- input[[1]]
@@ -107,6 +108,7 @@ lohView <- function(x, y=NULL, genome='hg19', path, step=500000,
          stop("Could not retrieve chromosome boundaries from UCSC, please
               specify this information via y")
      }
+}
      loh <- lohView_slidingWindow(path, step, window_size, normal)
      loh$chromosome <- factor(loh$chromosome, 
                                    levels=c(1:22, "X", "Y"))
@@ -121,7 +123,5 @@ lohView <- function(x, y=NULL, genome='hg19', path, step=500000,
                                  axis.title.size.y, xlabel, ylabel, 
                                  legend.text.size, legend.title.size, 
                                  legend.key.size.x, legend.key.size.unit)
-     pdf(file_name, width, height)
-     print(loh_plot)
-     dev.off()
+     return(loh_plot)
 }
