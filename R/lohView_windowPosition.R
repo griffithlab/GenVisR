@@ -2,7 +2,7 @@
 #' 
 #' Calculate window positions to perform LOH calculation
 #' @name lohView_windowPosition
-#' @param "out" object of class dataframe with columns 'chromosome', 
+#' @param out object of class dataframe with columns 'chromosome', 
 #' 'position', 'n_freq', 't_freq', and 'sample'
 #' @param step integer with the length of divisions (bp) in chromosomes
 #' @param window_size integer with the size of the sliding window (bp) to be 

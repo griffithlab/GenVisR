@@ -4,67 +4,34 @@
 \alias{lohView_buildMain}
 \title{Plot LOH data}
 \usage{
-lohView_buildMain(data, gradient_midpoint, gradient_low, gradient_mid,
-  gradient_high, y_facet_lab.size, y_facet_lab.angle, x_facet_lab.size,
-  x_facet_lab.angle, background_color, axis.title.size.x, axis.title.size.y,
-  xlabel, ylabel, legend.text.size, legend.title.size, legend.key.size.x,
-  legend.key.size.unit)
+lohView_buildMain(x, dummyData, gradient_midpoint = gradient_midpoint,
+  gradient_low = gradient_low, gradient_mid = gradient_mid,
+  gradient_high = gradient_high, xlabel = xlabel, ylabel = ylabel,
+  theme_layer = theme_layer)
 }
 \arguments{
-\item{'data'}{object of class dataframe with loh difference 
+\item{x}{object of class dataframe with loh difference 
 calculations and column names "window_start", "window_stop", "chromosome", 
 "sample", and "loh_diff"}
 
-\item{'gradient_midpoint'}{object of class numeric specifying the midpoint 
+\item{dummyData}{object of class dataframe with column names "chromosome",
+"start", "end" specifying chromosome boundaries}
+
+\item{gradient_midpoint}{object of class numeric specifying the midpoint 
 for legend's gradient scale}
 
-\item{'gradient_low'}{object of class character for hex color code for 
+\item{gradient_low}{object of class character for hex color code for 
 gradient's lower values}
 
-\item{'gradient_mid'}{object of class character for hex color code for 
+\item{gradient_mid}{object of class character for hex color code for 
 gradient's middle values}
 
-\item{'graident_high'}{object of class character for hex color code for 
-gradient's upper values}
-
-\item{'y_facet_lab.size'}{object of class numeric specifying the facet label 
-size of y axis}
-
-\item{'y_facet_lab.angle'}{object of class numeric specifying the facet label
-angle of y axis}
-
-\item{'x_facet_lab.size'}{object of class numeric specifying the facet label 
-size of x axis}
-
-\item{'x_facet_lab.angle'}{object of class numeric specifying the facet label
-angle of x axis}
-
-\item{'background_color'}{object of class character specifying the background
-color of the facet labels}
-
-\item{'axis.title.size.x'}{object of class numeric specifying the x axis 
-label size}
-
-\item{'axis.title.size.y'}{object of class numeric specifying the y axis 
-label size}
-
-\item{'xlabel'}{object of class character specifying the title for the x 
-axis label}
-
-\item{'ylabel'}{object of class character specifying the title for the y 
-axis label}
-
-\item{'legend.text.size'}{object of class numeric specifying the text size 
-for the legend}
-
-\item{'legend.title.size'}{object of class numeric specifying the legend 
-title's size}
-
-\item{'legend.key.size'}{object of class numeric specifying the legend 
-key's size}
-
-\item{'legend.key.size.unit'}{object of class cahracter specifying the units 
+\item{theme_layer}{ggplot theme object specifying parameters for non data
+elements
 for the legend's parameters}
+
+\item{graident_high}{object of class character for hex color code for 
+gradient's upper values}
 }
 \value{
 object of class ggplot2

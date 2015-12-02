@@ -7,13 +7,13 @@
 lohView_windowPosition(out, step, window_size)
 }
 \arguments{
+\item{out}{object of class dataframe with columns 'chromosome', 
+'position', 'n_freq', 't_freq', and 'sample'}
+
 \item{step}{integer with the length of divisions (bp) in chromosomes}
 
 \item{window_size}{integer with the size of the sliding window (bp) to be 
 applied}
-
-\item{"out"}{object of class dataframe with columns 'chromosome', 
-'position', 'n_freq', 't_freq', and 'sample'}
 }
 \value{
 list containing window start/stop positions for each chromosome 

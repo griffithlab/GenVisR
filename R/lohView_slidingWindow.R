@@ -2,9 +2,8 @@
 #' 
 #' Obtain LOH heatmap on entire chromsomes from samples in a cohort
 #' @name lohView_slidingWindow
-#' @param path character string specifying which directory contains 
-#' the sample information stored as datasets with columns "chromosome", 
-#' "position", "n_freq", "t_freq", and "sample"
+#' @param loh_data data frame with columns "chromosome", "position", "n_freq",
+#' "tfreq", "sample" giving raw vaf calls for germline variants
 #' @param step integer with the length of divisions (bp) in chromosomes
 #' @param window_size integer with the size of the sliding window (bp) to be 
 #' applied
@@ -14,46 +13,8 @@
 #' @importFrom plyr adply
 #' @importFrom plyr ldply
 
-lohView_slidingWindow <- function(path, step, window_size, normal)
-{
-    setwd(path)
-    fileNames <- Sys.glob("*.txt")
-    
-    for (i in 1:length(fileNames))
-    {
-        data <- read.delim(fileNames[i])
-        colnames(data) <- c("chromosome", "position", "n_freq", "tfreq", 
-                            "sample")
-        sample <- as.character(data$sample[i])
-        chromosome <- as.character("Y")
-        levels(data$chromosome) <- c(levels(data$chromosome), "Y")
-        
-        if (data$chromosome[nrow(data)] == "X")
-        {
-            new_data <- c(chromosome,step*.4,50,50,sample)
-            new_data_2 <- c(chromosome,step*1.6,50,50,sample)
-            new_data_3 <- c(chromosome,step*2.8,50,50,sample)
-            new_data_4 <- c(chromosome,step*4,50,50,sample)
-            data <- rbind(data, new_data, new_data_2, new_data_3, new_data_4)
-        }
-        
-        if (!exists("dataset"))
-        {
-            dataset <- data
-        } else if(exists("dataset")) {
-            temp <- data
-            dataset <- rbind(dataset, temp)
-            rm(temp)
-        }
-        
-        rm(data)
-    }
-    
-    loh_data <- dataset
-    rm(dataset)
-    colnames(loh_data) <- c("chromosome", "position", "n_freq", 
-                            "t_freq", "sample")
-    
+lohView_slidingWindow <- function(loh_data, step, window_size, normal)
+{       
     out <- split(loh_data, list(as.character(loh_data$chromosome),
                                       as.character(loh_data$sample)))
 
