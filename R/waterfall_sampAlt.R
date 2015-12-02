@@ -5,6 +5,7 @@
 #' @param x a data frame in long format with columns 'sample', 'trv_type'
 #' @param samples character vector giving samples to plot
 #' @return a subset data frame
+#' @importFrom plyr rbind.fill
 
 waterfall_sampAlt <- function(x, samples)
 {

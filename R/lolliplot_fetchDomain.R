@@ -5,7 +5,11 @@
 #' @param transcriptID String specifying ensembl transcript id
 #' @param species character string to use when searching for ensemblMart dataset
 #' @return data frame of protien domains and start/stop coordinates
-
+#' @importFrom biomaRt useMart
+#' @importFrom biomaRt listDatasets
+#' @importFrom biomaRt useDataset
+#' @importFrom biomaRt getBM
+#' 
 lolliplot_fetchDomain <- function(transcriptID, species="hsapiens")
 {
     # display message

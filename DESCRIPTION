@@ -25,8 +25,7 @@ Imports:
     reshape2,
     RMySQL,
     Rsamtools,
-    scales,
-    dplyr
+    scales
 License: GPL-3 + file LICENSE
 BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification
@@ -35,6 +34,7 @@ Suggests:
     knitr,
     testthat,
     BSgenome.Hsapiens.UCSC.hg19,
-    TxDb.Hsapiens.UCSC.hg19.knownGene
+    TxDb.Hsapiens.UCSC.hg19.knownGene,
+    roxygen2
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1

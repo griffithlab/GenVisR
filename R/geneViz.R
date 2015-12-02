@@ -20,6 +20,15 @@
 #' plotted
 #' @param layers additional ggplot2 layers to plot
 #' @return ggplot object
+#' @importFrom GenomicRanges seqnames
+#' @importFrom GenomicRanges GRanges
+#' @importFrom GenomicRanges strand
+#' @importFrom IRanges IRanges
+#' @importFrom plyr adply
+#' @importFrom GenomicRanges mcols
+#' @importFrom plyr rbind.fill
+#' @importFrom GenomicRanges start
+#' @importFrom GenomicRanges end
 #' @examples
 #' # need transcript data for reference
 #' library(TxDb.Hsapiens.UCSC.hg19.knownGene)

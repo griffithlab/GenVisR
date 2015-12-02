@@ -5,6 +5,10 @@
 #' @param transcriptID character string giving ensembl transcript id
 #' @param species character string to use when searching for ensemblMart dataset
 #' @return length in residues of ensembl transcript id
+#' @importFrom biomaRt useMart
+#' @importFrom biomaRt listDatasets
+#' @importFrom biomaRt useDataset
+#' @importFrom biomaRt getBM
 
 lolliplot_transcriptID2codingSeq <- function(transcriptID, species="hsapiens")
 {

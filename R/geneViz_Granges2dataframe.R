@@ -5,6 +5,8 @@
 #' @name geneViz_Granges2dataframe
 #' @param gr A Granges object to convert to data frame
 #' @return Object of class data frame
+#' @importFrom IRanges ranges
+#' @importFrom GenomicRanges mcols
 
 geneViz_Granges2dataframe <- function(gr)
 {

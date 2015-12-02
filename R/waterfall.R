@@ -178,12 +178,12 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
                               clin.layers=clin.layers)
 
         # Align all plots and return as 1 plot
-        pA <- waterfallAlign(p2, p1, p3, p4)
+        pA <- waterfall_align(p2, p1, p3, p4)
         return(grid::grid.draw(pA))
     }
 
     # Align the Plots and return as 1 plot
-    pA <- waterfallAlign(p2, p1, p3)
+    pA <- waterfall_align(p2, p1, p3)
 
     return(grid::grid.draw(pA))
 }

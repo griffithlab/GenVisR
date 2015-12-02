@@ -41,8 +41,9 @@
 #' palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"),
 #' x_axis_text_angle=60)
 #' @return ggplot2 object or data frame if dataOut is set to TRUE
+#' @importFrom plyr adply
+#' @importFrom gtools mixedsort
 #' @export
-
 
 TvTi <- function(x, y=NULL, clinData=NULL, type='Proportion', label_x_axis=TRUE,
                  x_axis_text_angle=45,

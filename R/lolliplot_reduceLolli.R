@@ -5,6 +5,7 @@
 #' @param x Data frame with column name mutation_coord to reduce lollis on
 #' @param max Integer specifying the maximum number of lollis to allow
 #' @return Object of class data frame taking the reduced form of x
+#' @importFrom plyr count
 
 lolliplot_reduceLolli <- function(x, max=NULL)
 {

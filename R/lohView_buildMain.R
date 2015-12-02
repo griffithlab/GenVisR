@@ -20,7 +20,6 @@
 #' for the legend's parameters
 #' @return object of class ggplot2
 #' @import ggplot2
-#' @export
 
 lohView_buildMain <- function(x, dummyData,
                               gradient_midpoint=gradient_midpoint,

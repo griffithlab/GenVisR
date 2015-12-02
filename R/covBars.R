@@ -14,6 +14,7 @@
 #' @param layers Additional layers to be plotted, can be a theme but must be a
 #' ggplot layer
 #' @return ggplot object
+#' @importFrom reshape2 melt
 #' @examples
 #' # Create data
 #' x <- matrix(sample(100000,500), nrow=50, ncol=10, dimnames=list(0:49,paste0("Sample",1:10)))

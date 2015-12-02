@@ -24,6 +24,9 @@
 #' @param gene.transcript_name_size Integer specifying the size of the transcript name text
 #' @param isoformSel Character vector giving the names (from the txdb object) of isoforms within the region of interest to display 
 #' @return ggplot object
+#' @importFrom GenomicRanges start
+#' @importFrom GenomicRanges end
+#' @importFrom plyr adply
 #' @examples
 #' # Load transcript meta data
 #' library(TxDb.Hsapiens.UCSC.hg19.knownGene)
