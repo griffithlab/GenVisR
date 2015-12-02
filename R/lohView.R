@@ -19,20 +19,13 @@
 #' applied
 #' @param normal integer specifying the normal VAF frequency used in LOH 
 #' calculations#' @return ggplot object
-#' @param output_path character string specifying the directory the loh heatmap 
-#' plot should be exported to
-#' @param width integer specfying the width of the pdf produced
-#' @param height integer specfying the height of the pdf produced
-#' @param data object of class dataframe with loh difference 
-#' calculations and column names "window_start", "window_stop", "chromosome", 
-#' "sample", and "loh_diff"
 #' @param gradient_midpoint object of class numeric specifying the midpoint 
 #' for legend's gradient scale
 #' @param gradient_low object of class character for hex color code for 
 #' gradient's lower values
 #' @param gradient_mid object of class character for hex color code for 
 #' gradient's middle values
-#' @param graident_high object of class character for hex color code for 
+#' @param gradient_high object of class character for hex color code for 
 #' gradient's upper values
 #' @param theme_layer ggplot theme object specifying parameters for non data
 #' elements

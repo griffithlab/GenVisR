@@ -1,7 +1,7 @@
 #' Count nucleotide reads at SNP locations
 #'
 #' Given the bam file path, count the number of reads at specified snp locations
-#' @name bamRcnt
+#' @name comIdent_bamRcnt
 #' @param bamfile Path to the bam file
 #' @param genome Object of class BSgenome corresponding to a genome of interest
 #' @param targetbed Object of class data frame containing target locations in
@@ -15,13 +15,13 @@
 #' @importFrom reshape2 melt
 #' @importFrom reshape2 dcast
 
-bamRcnt <- function(bamfile, genome, targetbed = NULL)
+compIdent_bamRcnt <- function(bamfile, genome, targetbed = NULL)
 {
     # obtain the bam index file
     bai <- paste0(bamfile,".bai")
 
     # Perform basic quality checks on input data
-    list <- bamRcnt_qual(bai, genome, targetbed)
+    list <- compIdent_bamRcnt_qual(bai, genome, targetbed)
     bai <- list[[1]]
     genome <- list[[2]]
     targetbed <- list[[3]]
@@ -92,6 +92,8 @@ bamRcnt <- function(bamfile, genome, targetbed = NULL)
     x3 <- cbind(x2[,1:2],getref,total_reads,x2[,3:6])
     
     # total_reads column = sum of A, C, G, and T counts
-    x3$total_reads <- x3$A+x3$C+x3$G+x3$T
+    #x3$total_reads <- x3$A+x3$C+x3$G+x3$T
+    x3$total_reads <- rowSums(x[c('A', 'C', 'G', 'T')])
+    message('LET ME KNOW IF THIS DOES NOT WORK: compIdent_bamRcnt ln 96')
     return(x3)
 }

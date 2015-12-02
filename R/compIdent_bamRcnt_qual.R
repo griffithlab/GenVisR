@@ -1,13 +1,13 @@
 #' Count nucleotide reads at SNP locations
 #'
 #' Given the bam file path, count the number of reads at the 24 SNP locations
-#' @name bamRcnt_qual
+#' @name compIdent_bamRcnt_qual
 #' @param bai Path to the bam index file
 #' @param genome Object of class BSgenome corresponding to a genome of interest
 #' @param targetbed Object of class data frame containing target locations in .bed format
 #' @return list of data objects passing quality checks
 
-bamRcnt_qual<-function(bai, genome, targetbed)
+compIdent_bamRcnt_qual<-function(bai, genome, targetbed)
 {
     # Check to see if index file is found
     if(!file.exists(bai))

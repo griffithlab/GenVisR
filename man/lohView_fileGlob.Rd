@@ -11,9 +11,9 @@ lohView_fileGlob(path, fileExt, step)
 the sample information stored as datasets with columns "chromosome", 
 "position", "n_freq", "t_freq", and "sample" (required if x is not specified)}
 
-\item{step}{integer with the length of divisions (bp) in chromosomes}
+\item{fileExt}{character string specifying the file extensions of files}
 
-\item{path_fileExt}{character string specifying the file extensions of files}
+\item{step}{integer with the length of divisions (bp) in chromosomes}
 }
 \value{
 object of class data frame from data specified in path for lohView

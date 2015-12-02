@@ -6,7 +6,7 @@
 #' @param path character string specifying which directory contains 
 #' the sample information stored as datasets with columns "chromosome", 
 #' "position", "n_freq", "t_freq", and "sample" (required if x is not specified)
-#' @param path_fileExt character string specifying the file extensions of files
+#' @param fileExt character string specifying the file extensions of files
 #' @param step integer with the length of divisions (bp) in chromosomes
 #' @return object of class data frame from data specified in path for lohView
 
