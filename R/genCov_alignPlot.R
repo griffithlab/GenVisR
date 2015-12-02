@@ -6,6 +6,7 @@
 #' @param axis character string to specify the axis to align plotting space on,
 #' one of both, width, height
 #' @return ggplotGrob object
+#' @importFrom gridExtra arrangeGrob
 
 genCov_alignPlot <- function(plot_list, axis='both')
 {

@@ -5,6 +5,7 @@
 #' @param data_frame a data frame in MAF format
 #' @param layers additional ggplot2 layers
 #' @return a ggplot object
+#' @importFrom plyr count
 
 waterfall_buildGenePrevelance <- function(data_frame, layers=NULL)
 {

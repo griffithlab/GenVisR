@@ -6,6 +6,10 @@
 #' @param genome Object of class BSgenome specifying the genome to calculate GC
 #' content from
 #' @return Object of class GRanges
+#' @importFrom Biostrings alphabetFrequency
+#' @importFrom Biostrings getSeq
+#' @importFrom GenomicRanges values
+#' @importFrom GenomicRanges mcols
 
 geneViz_calcGC <- function(gr, genome)
 {

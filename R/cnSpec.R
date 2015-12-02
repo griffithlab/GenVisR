@@ -20,6 +20,8 @@
 #' @param facet_lab_size integer specifying the size of the faceted labels
 #' @param layers Additional ggplot2 layers to plot
 #' @return ggplot object
+#' @importFrom reshape2 dcast
+#' @importFrom reshape2 melt
 #' @examples
 #' cnSpec(LucCNseg, genome="hg19")
 #' @export

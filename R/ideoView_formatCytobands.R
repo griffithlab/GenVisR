@@ -22,7 +22,10 @@ ideoView_formatCytobands <- function(data_frame, chromosome)
     data_frame$alternate <- alternate
 
     # Get median of band for geom_text
-    band_median <- apply(data_frame[,c("chromStart", "chromEnd")], 1, median)
+    band_median <- apply(data_frame[,c("chromStart", "chromEnd")],
+                         1,
+                         stats::median)
+    
     data_frame$band_center <- band_median
 
     # set up y positions for geom_text call

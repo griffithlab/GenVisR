@@ -6,6 +6,7 @@
 #' @param recurrence_cutoff integer specifying removal of entries not seen
 #' in at least "x" percent of samples
 #' @return a subset data frame
+#' @importFrom plyr count
 
 waterfall_geneRecurCutoff <- function(x, recurrence_cutoff)
 {

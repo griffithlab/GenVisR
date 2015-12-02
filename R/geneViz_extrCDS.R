@@ -9,6 +9,16 @@
 #' @param gaps Boolean specifying whether to report space between CDS instead of
 #' CDS
 #' @return Object of class Granges list
+#' @importFrom GenomicFeatures transcriptsByOverlaps
+#' @importFrom GenomicRanges unlist
+#' @importFrom GenomicRanges reduce
+#' @importFrom GenomicRanges GRangesList
+#' @importFrom GenomicRanges strand
+#' @importFrom GenomicRanges intersect
+#' @importFrom GenomicRanges gaps
+#' @importFrom GenomicRanges seqnames
+#' @importFrom GenomicRanges mcols
+#' @importFrom IRanges relist
 
 geneViz_extrCDS <- function(txdb=NULL, gr=NULL, reduce=FALSE, gaps=FALSE)
 {
@@ -16,8 +26,8 @@ geneViz_extrCDS <- function(txdb=NULL, gr=NULL, reduce=FALSE, gaps=FALSE)
 
     # get a list of transcript id's overlapping the Granges object
     transcripts <- GenomicFeatures::transcriptsByOverlaps(txdb, gr)
-    map <- relist(GenomicRanges::unlist(transcripts, use.names=FALSE)$tx_id,
-                  transcripts)
+    map <- IRanges::relist(GenomicRanges::unlist(transcripts, use.names=FALSE)$tx_id, 
+                           transcripts)
     txid <- GenomicRanges::unlist(map, use.names=FALSE)
 
     # extract CDS from transcript database given transcript ID

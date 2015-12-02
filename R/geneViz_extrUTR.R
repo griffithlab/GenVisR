@@ -7,6 +7,18 @@
 #' @param reduce Boolean specifying whether to collapse isoforms
 #' @param gaps Boolean specifying whether to report space between UTR instead of UTR
 #' @return Object of class Granges list
+#' @importFrom GenomicRanges GRanges
+#' @importFrom GenomicRanges unlist
+#' @importFrom IRanges IRanges
+#' @importFrom GenomicRanges mcols
+#' @importFrom GenomicFeatures transcriptsByOverlaps
+#' @importFrom AnnotationDbi select
+#' @importFrom GenomicRanges GRangesList
+#' @importFrom GenomicRanges reduce
+#' @importFrom GenomicRanges strand
+#' @importFrom GenomicRanges intersect
+#' @importFrom GenomicRanges gaps
+#' @importFrom IRanges relist
 
 geneViz_extrUTR <- function(txdb=txdb, gr=gr, reduce=FALSE, gaps=FALSE)
 {
@@ -64,8 +76,8 @@ geneViz_extrUTR <- function(txdb=txdb, gr=gr, reduce=FALSE, gaps=FALSE)
 
     # get a list of transcript id's overlapping the Granges object
     transcripts <- GenomicFeatures::transcriptsByOverlaps(txdb, gr)
-    map <- relist(GenomicRanges::unlist(transcripts, use.names=FALSE)$tx_id,
-                  transcripts)
+    map <- IRanges::relist(GenomicRanges::unlist(transcripts, use.names=FALSE)$tx_id,
+                           transcripts)
     txid <- GenomicRanges::unlist(map, use.names=FALSE)
 
     # extract UTR from transcript database given transcript ID

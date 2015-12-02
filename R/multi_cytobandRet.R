@@ -4,6 +4,10 @@
 #' @name multi_cytobandRet
 #' @param genome character string giving a UCSC genome
 #' @return object of class data frame
+#' @importFrom DBI dbConnect
+#' @importFrom RMySQL MySQL
+#' @importFrom DBI dbGetQuery
+#' @importFrom DBI dbDisconnect
 
 multi_cytobandRet <- function(genome)
 {

@@ -7,7 +7,13 @@
 #' @param targetbed Object of class data frame containing target locations in
 #' .bed format and containing columns chr, start, end
 #' @return object of class data frame containing readcount information
-#' @export
+#' @importFrom GenomicRanges GRanges
+#' @importFrom IRanges IRanges
+#' @importFrom Rsamtools ScanBamParam
+#' @importFrom Rsamtools scanBam
+#' @importFrom Rsamtools pileup
+#' @importFrom reshape2 melt
+#' @importFrom reshape2 dcast
 
 bamRcnt <- function(bamfile, genome, targetbed = NULL)
 {
@@ -40,13 +46,15 @@ bamRcnt <- function(bamfile, genome, targetbed = NULL)
         pengelly.chr$chr <- paste0("chr",pengelly.chr$chr)
     }
     
-    grange <- with(pengelly,
-                   GenomicRanges::GRanges(chr, IRanges::IRanges(start, end),
-                                          strand=c('+')))
+    grange <- GenomicRanges::GRanges(pengelly$chr,
+                                     IRanges::IRanges(pengelly$start,
+                                                      pengelly$end),
+                                     strand=c('+'))
     
-    grange.chr <- with(pengelly.chr,
-                       GenomicRanges::GRanges(chr, IRanges::IRanges(start, end),
-                                              strand=c('+')))
+    grange.chr <- GenomicRanges::GRanges(pengelly.chr$chr,
+                                         IRanges::IRanges(pengelly.chr$start,
+                                                          pengelly.chr$end),
+                                         strand=c('+'))
 
     # Check using ScanBamHeader to see if 'chr' is included in chromosome names.
     # Read in bam file

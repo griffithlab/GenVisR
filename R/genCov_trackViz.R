@@ -15,6 +15,8 @@
 #' @param list boolean specifying whether plots are in a named list or specified
 #' individually via ...
 #' @return ggplotGrob object
+#' @importFrom gridExtra arrangeGrob
+#' @importFrom gridExtra grid.arrange
 
 genCov_trackViz <- function(..., bgFill="black", textFill="white", border="black",
                      size=10, axis_align='none', widthRatio=c(1, 10), list=TRUE)

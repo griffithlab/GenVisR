@@ -20,6 +20,7 @@
 #' @param facet_lab_size integer specifying the size of the faceted labels
 #' @param layers a valid ggplot layer to over-ride default parameters
 #' @return ggplot object
+#' @importFrom gtools mixedsort
 #' @examples
 #' # Create data
 #' xstart <- seq(0,4990000,length.out=500)

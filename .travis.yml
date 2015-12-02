@@ -1,5 +1,0 @@
-language: r
-sudo: required
-bio_required: true
-warnings_are_errors: true
-

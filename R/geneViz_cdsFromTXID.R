@@ -5,6 +5,11 @@
 #' @param txdb A TxDb object for a genome
 #' @param txid A list of TXIDs
 #' @return Object of class Granges
+#' @importFrom GenomicRanges GRanges
+#' @importFrom GenomicRanges unlist
+#' @importFrom IRanges IRanges
+#' @importFrom AnnotationDbi select
+#' @importFrom GenomicRanges GRangesList
 
 geneViz_cdsFromTXID <- function(txdb, txid)
 {

@@ -2,14 +2,15 @@
 #'
 #' align mutation landscape, mutation burden on sample, and mutation burden on
 #' gene plots
-#' @name waterfallAlign
+#' @name waterfall_align
 #' @param p1 ggplot object displaying a mutation landscape
 #' @param p2 ggplot object displaying mutation burden on gene
 #' @param p3 ggplot object displaying mutation burden on sample
 #' @param p4 ggplot object displaying clinical information "optional"
 #' @return a grob object
+#' @importFrom gridExtra arrangeGrob
 
-waterfallAlign <- function(p2, p1, p3, p4)
+waterfall_align <- function(p2, p1, p3, p4)
 {
     # define the ggplot's as grobs and create a blank plot
     gA <- suppressWarnings(ggplot2::ggplotGrob(p2))

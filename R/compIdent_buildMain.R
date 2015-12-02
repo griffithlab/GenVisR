@@ -7,6 +7,9 @@
 #' @param sample_names list of names associated with each sample in counts list
 #' @return ggplot2 object
 #' @import ggplot2
+#' @importFrom reshape2 melt
+#' @importFrom gtable gtable_add_rows
+#' @importFrom gridExtra arrangeGrob
 
 compIdent_buildMain <- function(count_tables, sample_names)
 {
@@ -73,7 +76,7 @@ compIdent_buildMain <- function(count_tables, sample_names)
 
     ## Move x-axis labels above graph
     plotVAF <- ggplotGrob(plotVAF)
-    panel <- c(subset(plotVAF$layout, name=="panel", se=t:r))
+    panel <- c(subset(plotVAF$layout, `name`=="panel", se=t:r))    
     rn <- which(plotVAF$layout$name == "axis-b")
     axis.grob <- plotVAF$grobs[[rn]]
     axisb <- axis.grob$children[[2]]

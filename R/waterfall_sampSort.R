@@ -6,6 +6,7 @@
 #' @param x a data frame in long format with column names "sample",
 #' "gene", "trv_type"
 #' @return a vector of samples in a sorted order
+#' @importFrom reshape2 dcast
 
 waterfall_sampSort <- function(x)
 {

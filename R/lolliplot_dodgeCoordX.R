@@ -13,6 +13,7 @@
 #' @param iter.max maximum iterations beyond which to stop the simulation
 #' observed track
 #' @return numeric vector of dodged position coordinates on x axis
+#' @importFrom FField FFieldPtRep
 
 lolliplot_dodgeCoordX <- function(x, rep.fact=5000, rep.dist.lmt=500,
                                     attr.fact=.1, adj.max=.1, adj.lmt=.5,

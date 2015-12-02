@@ -9,6 +9,7 @@
 #' @param transform A vector of strings designating what objects to log
 #' transform
 #' @return Master region table data frame
+#' @importFrom IRanges ranges
 
 geneViz_mergeRegions <- function(gene_features, gr, base, transform)
 {
