@@ -4,12 +4,11 @@
 \alias{lohView_slidingWindow}
 \title{obtain LOH data}
 \usage{
-lohView_slidingWindow(path, step, window_size, normal)
+lohView_slidingWindow(loh_data, step, window_size, normal)
 }
 \arguments{
-\item{path}{character string specifying which directory contains 
-the sample information stored as datasets with columns "chromosome", 
-"position", "n_freq", "t_freq", and "sample"}
+\item{loh_data}{data frame with columns "chromosome", "position", "n_freq",
+"tfreq", "sample" giving raw vaf calls for germline variants}
 
 \item{step}{integer with the length of divisions (bp) in chromosomes}
 

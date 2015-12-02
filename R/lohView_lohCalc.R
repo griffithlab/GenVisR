@@ -2,11 +2,11 @@
 #' 
 #' Obtain LOH on an entire chromsomes from samples in a cohort
 #' @name lohView_lohCalc
-#' @param "window_data" object of class data frame with columns 
+#' @param window_data object of class data frame with columns 
 #' 'window_start' and 'window_stop
-#' @param "out" object of class dataframe with columns 'chromosome', 
+#' @param out object of class dataframe with columns 'chromosome', 
 #' 'position', 'n_freq', 't_freq', and 'sample'
-#' @param "normal" integer specifying the subtraction value from tumor VAF
+#' @param normal integer specifying the subtraction value from tumor VAF
 #' @return object of class dataframe containing mean LOH difference calculations
 #' and column names "window_start", "window_stop", "chromosome", "position", 
 #' "n_freq", "t_freq", "sample", "loh_diff"
