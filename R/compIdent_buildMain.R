@@ -76,7 +76,9 @@ compIdent_buildMain <- function(count_tables, sample_names)
 
     ## Move x-axis labels above graph
     plotVAF <- ggplotGrob(plotVAF)
-    panel <- c(subset(plotVAF$layout, `name`=="panel", se=t:r))    
+    #panel <- c(subset(plotVAF$layout, name=="panel", se=t:r)) 
+    panel <- plotVAF$layout[plotVAF$layout$name=='panel',][,c('t', 'l', 'b', 'r')]
+    message("LET ME KNOW IF THIS DOES NOT WORK: compIdent_buildMain ln 80")
     rn <- which(plotVAF$layout$name == "axis-b")
     axis.grob <- plotVAF$grobs[[rn]]
     axisb <- axis.grob$children[[2]]

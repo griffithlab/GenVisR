@@ -6,8 +6,7 @@
 \usage{
 lohView_buildMain(x, dummyData, gradient_midpoint = gradient_midpoint,
   gradient_low = gradient_low, gradient_mid = gradient_mid,
-  gradient_high = gradient_high, xlabel = xlabel, ylabel = ylabel,
-  theme_layer = theme_layer)
+  gradient_high = gradient_high, theme_layer = theme_layer)
 }
 \arguments{
 \item{x}{object of class dataframe with loh difference 
@@ -26,12 +25,12 @@ gradient's lower values}
 \item{gradient_mid}{object of class character for hex color code for 
 gradient's middle values}
 
+\item{gradient_high}{object of class character for hex color code for 
+gradient's upper values}
+
 \item{theme_layer}{ggplot theme object specifying parameters for non data
 elements
 for the legend's parameters}
-
-\item{graident_high}{object of class character for hex color code for 
-gradient's upper values}
 }
 \value{
 object of class ggplot2

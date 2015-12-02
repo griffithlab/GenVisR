@@ -14,7 +14,7 @@ compIdent <- function(x, genome)
     samplenames <- as.character(x$sample_name)
 
     # Readcount the supplied bam files
-    count_tables <- lapply(bams, bamRcnt, genome=genome)
+    count_tables <- lapply(bams, compIdent_bamRcnt, genome=genome)
 
     # make an sample identity plot
     plot <- compIdent_buildMain(count_tables,samplenames)

@@ -13,7 +13,7 @@
 #' gradient's lower values
 #' @param gradient_mid object of class character for hex color code for 
 #' gradient's middle values
-#' @param graident_high object of class character for hex color code for 
+#' @param gradient_high object of class character for hex color code for 
 #' gradient's upper values
 #' @param theme_layer ggplot theme object specifying parameters for non data
 #' elements
@@ -25,8 +25,8 @@ lohView_buildMain <- function(x, dummyData,
                               gradient_midpoint=gradient_midpoint,
                               gradient_low=gradient_low,
                               gradient_mid=gradient_mid,
-                              gradient_high=gradient_high, xlabel=xlabel,
-                              ylabel=ylabel, theme_layer=theme_layer)
+                              gradient_high=gradient_high,
+                              theme_layer=theme_layer)
 {
     # define dummy data which will be chromosome boundaries, these are plotted
     # but are transparent and will not appear in the plot

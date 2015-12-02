@@ -44,22 +44,11 @@ gradient's lower values}
 \item{gradient_mid}{object of class character for hex color code for 
 gradient's middle values}
 
+\item{gradient_high}{object of class character for hex color code for 
+gradient's upper values}
+
 \item{theme_layer}{ggplot theme object specifying parameters for non data
 elements}
-
-\item{output_path}{character string specifying the directory the loh heatmap 
-plot should be exported to}
-
-\item{width}{integer specfying the width of the pdf produced}
-
-\item{height}{integer specfying the height of the pdf produced}
-
-\item{data}{object of class dataframe with loh difference 
-calculations and column names "window_start", "window_stop", "chromosome", 
-"sample", and "loh_diff"}
-
-\item{graident_high}{object of class character for hex color code for 
-gradient's upper values}
 }
 \value{
 grid object
