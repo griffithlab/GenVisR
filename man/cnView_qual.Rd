@@ -4,13 +4,15 @@
 \alias{cnView_qual}
 \title{check input to cnView}
 \usage{
-cnView_qual(x, y, genome)
+cnView_qual(x, y, z, genome)
 }
 \arguments{
 \item{x}{a data frame with columns chromosome, coordinate, cn}
 
 \item{y}{a data frame with columns "chrom", "chromStart", "chromEnd", "name",
 "gieStain"}
+
+\item{z}{a data frame with columns chromosome, start, end , segmean}
 
 \item{genome}{character string specifying UCSC genome to use}
 }

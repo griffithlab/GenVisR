@@ -1,24 +1,39 @@
-#' Construct CN cohort plot
+#' Construct copy-number cohort plot
 #'
-#' given a data frame construct a plot to display CN information for a group of
-#' samples
+#' Given a data frame construct a plot to display copy-number calls for a cohort
+#' of samples
 #' @name cnSpec
-#' @param x object of class data frame containing columns "chromosome", "start",
-#' "end", "segmean", "sample" consisting of CN segment calls
-#' @param y object of class data frame containing columns "chromosome", "start",
-#' "end" specifying chromosome boundary coordinates for all chromosomes in a
-#' genome (optional)
-#' @param genome character string specifying UCSC genome from which data is
-#' derived, defaults to "hg19"
-#' @param title character string specifying title of plot
-#' @param CN_low_colour character string specifying low value of colour gradient
-#' to plot
-#' @param CN_high_colour character string specifying high value of colour
-#' gradient to plot
-#' @param x_lab_size integer specifying the size of the x labels on the plot
-#' @param y_lab_size integer specifying the size of the y label on the plot
-#' @param facet_lab_size integer specifying the size of the faceted labels
-#' @param layers Additional ggplot2 layers to plot
+#' @param x Object of class data frame with rows representing copy-number
+#' segment calls. The data frame must contain columns with the following names
+#' "chromosome", "start", "end", "segmean", "sample".
+#' @param y Object of class data frame with rows representing chromosome
+#' boundaries for a genome assembly. The data frame must contain columns with
+#' the following names "chromosome", "start", "end" (optional: see details).
+#' @param genome Character string specifying a valid UCSC genome (see details).
+#' @param plot_title Character string specifying title to display on the plot.
+#' @param CN_Loss_colour Character string specifying the colour value of copy
+#' number losses.
+#' @param CN_Gain_colour Character string specifying the colour value of copy
+#' number gains.
+#' @param x_title_size Integer specifying the size of the x-axis title.
+#' @param y_title_size Integer specifying the size of the y-axis title.
+#' @param facet_lab_size Integer specifying the size of the faceted labels
+#' plotted.
+#' @param plotLayer Valid ggplot2 layer to be added to the plot.
+#' @details cnSpec requires the location of chromosome boundaries for a given
+#' genome assembly in order to ensure the entire chromosome space is plotted.
+#' As a convenience this information is available to cnSpec for
+#' the following genomes "hg19", "hg38", "mm9", "mm10", "rn5" and can be
+#' retrieved by supplying one of the afore mentioned assemblies via the `genome`
+#' parameter. If a genome assembly is supplied to the `genome` parameter and is
+#' unrecognized cnSpec will attempt to query the UCSC MySQL database for the
+#' required information. If chromosome boundary locations are unavailable for
+#' a given assembly or if it is desireable to plot a specific region
+#' encapsulating the copy number data these boundaries can be supplied to the
+#' `y` paramter which has priority of the parameter `genome`.
+#' 
+#' The `plotLayer` parameter can be used to add an additional layer to the
+#' ggplot2 graphic (see vignette).
 #' @return ggplot object
 #' @importFrom reshape2 dcast
 #' @importFrom reshape2 melt
@@ -26,9 +41,10 @@
 #' cnSpec(LucCNseg, genome="hg19")
 #' @export
 
-cnSpec <- function(x, y=NULL, genome='hg19', title=NULL,
-                   CN_low_colour='#002EB8', CN_high_colour='#A30000',
-                   x_lab_size=12, y_lab_size=12, facet_lab_size=10, layers=NULL)
+cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
+                   CN_Loss_colour='#002EB8', CN_Gain_colour='#A30000',
+                   x_title_size=12, y_title_size=12, facet_lab_size=10,
+                   plotLayer=NULL)
 {
     # Perform quality check on input data
     data <- cnSpec_qual(x, y, genome)
@@ -97,13 +113,13 @@ cnSpec <- function(x, y=NULL, genome='hg19', title=NULL,
     CN_data$sample <- factor(CN_data$sample, levels=sample_sorted)
 
     # Construct the plot
-    p1 <- cnSpec_buildMain(CN_data, plot_title=title,
-                           CN_low_colour=CN_low_colour,
-                           CN_high_colour=CN_high_colour,
-                           x_lab_size=x_lab_size,
-                           y_lab_size=y_lab_size,
+    p1 <- cnSpec_buildMain(CN_data, plot_title=plot_title,
+                           CN_low_colour=CN_Loss_colour,
+                           CN_high_colour=CN_Gain_colour,
+                           x_lab_size=x_title_size,
+                           y_lab_size=y_title_size,
                            facet_lab_size=facet_lab_size,
-                           layers=layers)
+                           layers=plotLayer)
 
     return(p1)
 }

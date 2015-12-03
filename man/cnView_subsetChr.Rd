@@ -7,16 +7,14 @@
 cnView_subsetChr(x, chr)
 }
 \arguments{
-\item{x}{a data frame with columns Chr, Coord, Tumor, Normal, Diff}
+\item{x}{a data frame with columns chromosome}
 
-\item{chr}{character string specifying UCSC chromosome to plot one of chr...
-or all}
+\item{chr}{character string specifying UCSC chromosome to subset on}
 }
 \value{
 object of class data frame
 }
 \description{
-given a data frame with cytogenetic band locations subset out specific
-chromosome
+given a data frame subset out specific a chromosome
 }
 

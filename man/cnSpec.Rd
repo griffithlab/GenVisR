@@ -2,45 +2,63 @@
 % Please edit documentation in R/cnSpec.R
 \name{cnSpec}
 \alias{cnSpec}
-\title{Construct CN cohort plot}
+\title{Construct copy-number cohort plot}
 \usage{
-cnSpec(x, y = NULL, genome = "hg19", title = NULL,
-  CN_low_colour = "#002EB8", CN_high_colour = "#A30000", x_lab_size = 12,
-  y_lab_size = 12, facet_lab_size = 10, layers = NULL)
+cnSpec(x, y = NULL, genome = "hg19", plot_title = NULL,
+  CN_Loss_colour = "#002EB8", CN_Gain_colour = "#A30000",
+  x_title_size = 12, y_title_size = 12, facet_lab_size = 10,
+  plotLayer = NULL)
 }
 \arguments{
-\item{x}{object of class data frame containing columns "chromosome", "start",
-"end", "segmean", "sample" consisting of CN segment calls}
+\item{x}{Object of class data frame with rows representing copy-number
+segment calls. The data frame must contain columns with the following names
+"chromosome", "start", "end", "segmean", "sample".}
 
-\item{y}{object of class data frame containing columns "chromosome", "start",
-"end" specifying chromosome boundary coordinates for all chromosomes in a
-genome (optional)}
+\item{y}{Object of class data frame with rows representing chromosome
+boundaries for a genome assembly. The data frame must contain columns with
+the following names "chromosome", "start", "end" (optional: see details).}
 
-\item{genome}{character string specifying UCSC genome from which data is
-derived, defaults to "hg19"}
+\item{genome}{Character string specifying a valid UCSC genome (see details).}
 
-\item{title}{character string specifying title of plot}
+\item{plot_title}{Character string specifying title to display on the plot.}
 
-\item{CN_low_colour}{character string specifying low value of colour gradient
-to plot}
+\item{CN_Loss_colour}{Character string specifying the colour value of copy
+number losses.}
 
-\item{CN_high_colour}{character string specifying high value of colour
-gradient to plot}
+\item{CN_Gain_colour}{Character string specifying the colour value of copy
+number gains.}
 
-\item{x_lab_size}{integer specifying the size of the x labels on the plot}
+\item{x_title_size}{Integer specifying the size of the x-axis title.}
 
-\item{y_lab_size}{integer specifying the size of the y label on the plot}
+\item{y_title_size}{Integer specifying the size of the y-axis title.}
 
-\item{facet_lab_size}{integer specifying the size of the faceted labels}
+\item{facet_lab_size}{Integer specifying the size of the faceted labels
+plotted.}
 
-\item{layers}{Additional ggplot2 layers to plot}
+\item{plotLayer}{Valid ggplot2 layer to be added to the plot.}
 }
 \value{
 ggplot object
 }
 \description{
-given a data frame construct a plot to display CN information for a group of
-samples
+Given a data frame construct a plot to display copy-number calls for a cohort
+of samples
+}
+\details{
+cnSpec requires the location of chromosome boundaries for a given
+genome assembly in order to ensure the entire chromosome space is plotted.
+As a convenience this information is available to cnSpec for
+the following genomes "hg19", "hg38", "mm9", "mm10", "rn5" and can be
+retrieved by supplying one of the afore mentioned assemblies via the `genome`
+parameter. If a genome assembly is supplied to the `genome` parameter and is
+unrecognized cnSpec will attempt to query the UCSC MySQL database for the
+required information. If chromosome boundary locations are unavailable for
+a given assembly or if it is desireable to plot a specific region
+encapsulating the copy number data these boundaries can be supplied to the
+`y` paramter which has priority of the parameter `genome`.
+
+The `plotLayer` parameter can be used to add an additional layer to the
+ggplot2 graphic (see vignette).
 }
 \examples{
 cnSpec(LucCNseg, genome="hg19")
