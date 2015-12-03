@@ -2,15 +2,15 @@
 % Please edit documentation in R/cnFreq.R
 \name{cnFreq}
 \alias{cnFreq}
-\title{Construct copy number frequency plot}
+\title{Construct copy-number frequency plot}
 \usage{
 cnFreq(x, CN_low_cutoff = 1.5, CN_high_cutoff = 2.5, plot_title = NULL,
   CN_low_colour = "#002EB8", CN_high_colour = "#A30000", x_lab_size = 12,
-  y_lab_size = 12, facet_lab_size = 10, layers = NULL)
+  y_lab_size = 12, facet_lab_size = 10, plotLayer = NULL)
 }
 \arguments{
 \item{x}{object of class data frame with rows representing the proportion of
-CN losses/gains across the genome (default), or actual CN values. The formor
+CN losses/gains across the genome (default), or actual CN values. The former
 option contains columns chromosome, start, end, gain, and loss, and the
 latter option contains columns chromosome, start, end, segmean, and sample}
 
@@ -33,14 +33,21 @@ value of colour gradient}
 
 \item{facet_lab_size}{integer specifying the size of the faceted labels}
 
-\item{layers}{a valid ggplot layer to over-ride default parameters}
+\item{plotLayer}{a valid ggplot layer to over-ride default parameters}
 }
 \value{
 ggplot object
 }
 \description{
-given a matrix construct a plot to display copy number changes across the
+given a data frame construct a plot to display copy number changes across the
 genome for a group of samples
+}
+\details{
+cnFreq will detect the column names present in the data frame
+supplied to x, and will perform one of the following actions. If "gain" and
+"loss" columns are detected the raw data will be plotted, if "segmean" and 
+"sample" columns are detected the frequency of copy-number gains and losses
+present in the cohort will be calculated and plotted.
 }
 \examples{
 # Create data
