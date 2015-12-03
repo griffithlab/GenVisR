@@ -4,8 +4,8 @@
 \alias{covBars_buildMain}
 \title{Construct coverage cohort plot}
 \usage{
-covBars_buildMain(data_frame, col, plot_title = NULL, background = "grey90",
-  x_lab_size = 12, y_lab_size = 12, facet_lab_size = 10, layers = NULL)
+covBars_buildMain(data_frame, col, plot_title = NULL, x_lab_size = 12,
+  y_lab_size = 12, facet_lab_size = 10, layers = NULL)
 }
 \arguments{
 \item{data_frame}{object of class data frame containing columns depth,
@@ -14,8 +14,6 @@ sample, bp}
 \item{col}{vector of colors for the coverage bars}
 
 \item{plot_title}{character string for title of plot}
-
-\item{background}{character string specifying backround color of plot}
 
 \item{x_lab_size}{integer specifying the size of the X label}
 

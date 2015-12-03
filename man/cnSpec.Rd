@@ -42,7 +42,7 @@ ggplot object
 }
 \description{
 Given a data frame construct a plot to display copy-number calls for a cohort
-of samples
+of samples.
 }
 \details{
 cnSpec requires the location of chromosome boundaries for a given

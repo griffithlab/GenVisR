@@ -1,7 +1,7 @@
 #' Construct copy-number cohort plot
 #'
 #' Given a data frame construct a plot to display copy-number calls for a cohort
-#' of samples
+#' of samples.
 #' @name cnSpec
 #' @param x Object of class data frame with rows representing copy-number
 #' segment calls. The data frame must contain columns with the following names
