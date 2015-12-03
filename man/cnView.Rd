@@ -2,49 +2,77 @@
 % Please edit documentation in R/cnView.R
 \name{cnView}
 \alias{cnView}
-\title{plot raw copy number calls for a sample}
+\title{Construct copy-number single sample plot}
 \usage{
 cnView(x, y = NULL, z = NULL, genome = "hg19", chr = "chr1",
-  main.cnDiff = FALSE, ideo.chr_txt_angle = 45, ideo.chr_txt_size = 5,
-  main.layers = NULL, ideo.layers = NULL)
+  CNscale = "absolute", ideogram_txtAngle = 45, ideogram_txtSize = 5,
+  plotLayer = NULL, ideogramLayer = NULL)
 }
 \arguments{
-\item{x}{object of class data frame with columns "chromosome", "coordinate",
-"cn", "p_value" consisting of raw cn calls from a single sample}
+\item{x}{Object of class data frame with rows representing copy number calls
+from a single sample. The data frame must contain columns with the following
+names "chromosome", "coordinate", "cn", and optionally "p_value" 
+(see details).}
 
-\item{y}{object of class data frame with columns "chrom", "chromStart",
-"chromEnd", "name", "gieStain" for plotting the ideogram (optional)}
+\item{y}{Object of class data frame with rows representing cytogenetic bands
+for a chromosome. The data frame must contain columns with the following
+names "chrom", "chromStart", "chromEnd", "name", "gieStain" for plotting the
+ideogram (optional: see details).}
 
-\item{z}{object of class data frame with columns "chromosome", "start",
-"end", "segmean" consisting of cn segment calls (optional)}
+\item{z}{Object of class data frame with row representing copy number segment
+calls. The data frame must contain columns with the following names
+"chromosome", "start", "end", "segmean" (optional: see details)}
 
-\item{genome}{character string specifying UCSC genome to use, uneccessary if
-y is supplied, defaults to "hg19"}
+\item{genome}{Character string specifying a valid UCSC genome (see details).}
 
-\item{chr}{character string specifying UCSC chromosome to plot one of
+\item{chr}{Character string specifying which chromosome to plot one of
 "chr..." or "all"}
 
-\item{main.cnDiff}{Boolean specifying whether values in cn are copy number
-differences or actual copy numbers}
+\item{CNscale}{Character string specifying if copy number calls supplied are
+relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+"relative" or "absolute"}
 
-\item{ideo.chr_txt_angle}{integer specifying angle of text when plotting
-chromosome band text}
+\item{ideogram_txtAngle}{Integer specifying the angle of cytogenetic labels
+on the ideogram subplot.}
 
-\item{ideo.chr_txt_size}{integer specifying size of text when plotting
-chromosome band text}
+\item{ideogram_txtSize}{Integer specifying the size of cytogenetic labels on
+the ideogram subplot.}
 
-\item{main.layers}{additional ggplot2 layers for the main cn plot}
+\item{plotLayer}{Valid ggplot2 layer to be added to the copy number plot.}
 
-\item{ideo.layers}{additional ggplot2 layers for the ideogram}
+\item{ideogramLayer}{Valid ggplot2 layer to be added to the ideogram
+sub-plot.}
 }
 \value{
-ggplot object
+graphical output
 }
 \description{
-given data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value plot
-raw copy number calls
+Given a data frame construct a plot to display raw copy number calls for a
+single sample.
+}
+\details{
+cnView is able to plot in two modes specified via the `chr`
+parameter, these modes are single chromosome view in which an ideogram is
+displayed and genome view where chromosomes are faceted. For the single
+chromosome view cytogenetic band information is required giving the
+coordinate, stain, and name of each band. As a convenience cnView stores this
+information for the following genomes "hg19", "hg38", "mm9", "mm10", and
+"rn5". If the genome assembly supplied to the `genome` parameter is not one
+of the 5 afore mentioned genome assemblies cnView will attempt to query the
+UCSC MySQL database to retrieve this information. Alternatively the user can
+manually supply this information as a data frame to the `y` parameter, input
+to the `y` parameter take precedence of input to `genome`.
+
+cnView is also able to represent p-values for copy-number calls if they are
+supplied via the "p_value" column in the argument supplied to x. The presence
+of this column in x will set a transparency value to copy-number calls with 
+calls of less significance becoming more transparent.
+
+If it is available cnView can plot copy-number segment calls on top of raw
+calls supplied to parameter `x` via the parameter `z`.
 }
 \examples{
-cnView(Luc2CNraw, chr='chr14', genome='hg19', ideo.chr_txt_size=4)
+# Plot raw copy number calls
+cnView(Luc2CNraw, chr='chr14', genome='hg19', ideogram_txtSize=4)
 }
 

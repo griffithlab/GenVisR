@@ -8,20 +8,21 @@
 #' @param z a data frame with columns chromsome, start, end, segmean specifying
 #' segments called from copy number (optional)
 #' @param chr a character string specifying chromosome
-#' @param cnDiff Boolean specifying whether values in cn are copy number
-#' differences or actual copy number
+#' @param CNscale Character string specifying if copy number calls supplied are
+#' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+#' "relative" or "absolute"
 #' @param layers additional ggplot2 layers to add
 #' @return ggplot2 object
 #' @import ggplot2
 
-cnView_buildMain <- function(x, y, z=NULL, chr, cnDiff=FALSE, layers=NULL)
+cnView_buildMain <- function(x, y, z=NULL, chr, CNscale=FALSE, layers=NULL)
 {
     # Define various parameters of the plot
     dummy_data <- geom_point(data=y, mapping=aes_string(x='coordinate', y=2),
                              alpha=0)
 
     theme <- theme(axis.text.x=element_text(angle=30, hjust=1))
-    if(cnDiff == TRUE)
+    if(CNscale == "relative")
     {
         # cn fill colors
         shade_cn <- scale_color_gradient2(midpoint=0,
@@ -30,8 +31,8 @@ cnView_buildMain <- function(x, y, z=NULL, chr, cnDiff=FALSE, layers=NULL)
                                           high='#C82536',
                                           space='Lab')
         # y label
-        ylabel <- ylab('CN Difference')
-    } else if(cnDiff == FALSE) {
+        ylabel <- ylab('Copy Number Difference')
+    } else if(CNscale == "absolute") {
         # cn fill colors
         shade_cn <- scale_color_gradient2(midpoint=2,
                                           low='#009ACD',
@@ -39,7 +40,12 @@ cnView_buildMain <- function(x, y, z=NULL, chr, cnDiff=FALSE, layers=NULL)
                                           high='#C82536',
                                           space='Lab')
         # y label
-        ylabel <- ylab('Copy Number')
+        ylabel <- ylab('Absolute Copy Number')
+    } else {
+        memo <- paste0("Did not recognize input to CNscale... defaulting to", 
+                       "absolute scale, please specify \"relative\"",
+                       "if copy neutral calls == 0")
+        warning(memo)
     }
     
     # provide x label
@@ -61,10 +67,12 @@ cnView_buildMain <- function(x, y, z=NULL, chr, cnDiff=FALSE, layers=NULL)
                                                           y='cn',
                                                           colour='cn',
                                                           alpha='transparency'))
+        transparency <- scale_alpha(guide='none')
     } else {
         cnpoints <- geom_point(data=x, mapping=aes_string(x='coordinate',
                                                           y='cn',
                                                           colour='cn'))
+        transparency <- geom_blank()
     }
 
     # Define segments for main plot
@@ -81,7 +89,7 @@ cnView_buildMain <- function(x, y, z=NULL, chr, cnDiff=FALSE, layers=NULL)
 
     # build the plot
     p1 <- ggplot() + cnpoints + shade_cn + ylabel + xlabel + theme_bw() +
-        theme + cnseg + dummy_data + layers
+        theme + cnseg + dummy_data + transparency + layers
 
     if(chr == 'all')
     {

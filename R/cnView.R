@@ -5,7 +5,8 @@
 #' @name cnView
 #' @param x Object of class data frame with rows representing copy number calls
 #' from a single sample. The data frame must contain columns with the following
-#' names "chromosome", "coordinate", "cn", "p_value".
+#' names "chromosome", "coordinate", "cn", and optionally "p_value" 
+#' (see details).
 #' @param y Object of class data frame with rows representing cytogenetic bands
 #' for a chromosome. The data frame must contain columns with the following
 #' names "chrom", "chromStart", "chromEnd", "name", "gieStain" for plotting the
@@ -13,26 +14,47 @@
 #' @param z Object of class data frame with row representing copy number segment
 #' calls. The data frame must contain columns with the following names
 #' "chromosome", "start", "end", "segmean" (optional: see details)
-#' @param genome character string specifying UCSC genome to use, uneccessary if
-#' y is supplied, defaults to "hg19"
-#' @param chr character string specifying UCSC chromosome to plot one of
+#' @param genome Character string specifying a valid UCSC genome (see details).
+#' @param chr Character string specifying which chromosome to plot one of
 #' "chr..." or "all"
-#' @param main.cnDiff Boolean specifying whether values in cn are copy number
-#' differences or actual copy numbers
-#' @param ideo.chr_txt_angle integer specifying angle of text when plotting
-#' chromosome band text
-#' @param ideo.chr_txt_size integer specifying size of text when plotting
-#' chromosome band text
-#' @param main.layers additional ggplot2 layers for the main cn plot
-#' @param ideo.layers additional ggplot2 layers for the ideogram
-#' @return ggplot object
+#' @param CNscale Character string specifying if copy number calls supplied are
+#' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+#' "relative" or "absolute"
+#' @param ideogram_txtAngle Integer specifying the angle of cytogenetic labels
+#' on the ideogram subplot.
+#' @param ideogram_txtSize Integer specifying the size of cytogenetic labels on
+#' the ideogram subplot.
+#' @param plotLayer Valid ggplot2 layer to be added to the copy number plot.
+#' @param ideogramLayer Valid ggplot2 layer to be added to the ideogram
+#' sub-plot.
+#' @details cnView is able to plot in two modes specified via the `chr`
+#' parameter, these modes are single chromosome view in which an ideogram is
+#' displayed and genome view where chromosomes are faceted. For the single
+#' chromosome view cytogenetic band information is required giving the
+#' coordinate, stain, and name of each band. As a convenience cnView stores this
+#' information for the following genomes "hg19", "hg38", "mm9", "mm10", and
+#' "rn5". If the genome assembly supplied to the `genome` parameter is not one
+#' of the 5 afore mentioned genome assemblies cnView will attempt to query the
+#' UCSC MySQL database to retrieve this information. Alternatively the user can
+#' manually supply this information as a data frame to the `y` parameter, input
+#' to the `y` parameter take precedence of input to `genome`.
+#' 
+#' cnView is also able to represent p-values for copy-number calls if they are
+#' supplied via the "p_value" column in the argument supplied to x. The presence
+#' of this column in x will set a transparency value to copy-number calls with 
+#' calls of less significance becoming more transparent.
+#' 
+#' If it is available cnView can plot copy-number segment calls on top of raw
+#' calls supplied to parameter `x` via the parameter `z`.
 #' @examples
-#' cnView(Luc2CNraw, chr='chr14', genome='hg19', ideo.chr_txt_size=4)
+#' # Plot raw copy number calls
+#' cnView(Luc2CNraw, chr='chr14', genome='hg19', ideogram_txtSize=4)
+#' @return graphical output
 #' @export
 
 cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
-                   main.cnDiff=FALSE, ideo.chr_txt_angle=45,
-                   ideo.chr_txt_size=5, main.layers=NULL, ideo.layers=NULL)
+                   CNscale="absolute", ideogram_txtAngle=45,
+                   ideogram_txtSize=5, plotLayer=NULL, ideogramLayer=NULL)
 {
     # Perform a basic quality check
     input <- cnView_qual(x, y, z, genome)
@@ -79,9 +101,9 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
 
     # plot chromosome
     chromosome_plot <- ideoView(cytobands, chromosome=chr,
-                                chr_txt_angle=ideo.chr_txt_angle,
-                                chr_txt_size=ideo.chr_txt_size,
-                                layers=ideo.layers)
+                                chr_txt_angle=ideogram_txtAngle,
+                                chr_txt_size=ideogram_txtSize,
+                                layers=ideogramLayer)
 
     # if requested plot only selected chromosome
     x <- cnView_subsetChr(x, chr)
@@ -91,8 +113,8 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
     }
 
     # build the cn plot
-    CN_plot <- cnView_buildMain(x, dummyData, z=z, chr=chr, cnDiff=main.cnDiff,
-                                layers=main.layers)
+    CN_plot <- cnView_buildMain(x, dummyData, z=z, chr=chr, CNscale=CNscale,
+                                layers=plotLayer)
 
     p1 <- cnView_align(chromosome_plot, CN_plot)
 
