@@ -6,7 +6,7 @@
 \usage{
 cnFreq_buildMain(data_frame, plotType, plot_title = NULL,
   CN_low_colour = "#002EB8", CN_high_colour = "#A30000", x_lab_size = 12,
-  y_lab_size = 12, facet_lab_size = 10, layers = NULL)
+  y_lab_size = 12, facet_lab_size = 10, plotLayer = NULL)
 }
 \arguments{
 \item{data_frame}{object of class data frame containing columns chromosome,
@@ -28,7 +28,7 @@ gradient}
 
 \item{facet_lab_size}{integer specifying the size of the faceted labels}
 
-\item{layers}{Additional layers to be plotted, can be a theme but must be a
+\item{plotLayer}{Additional layer to be plotted, can be a theme but must be a
 ggplot layer}
 }
 \value{

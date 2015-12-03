@@ -14,7 +14,7 @@
 #' @param x_lab_size integer specifying the size of the X label
 #' @param y_lab_size integer specifying the size of the Y label
 #' @param facet_lab_size integer specifying the size of the faceted labels
-#' @param layers Additional layers to be plotted, can be a theme but must be a
+#' @param plotLayer Additional layer to be plotted, can be a theme but must be a
 #'  ggplot layer
 #' @return ggplot object
 #' @import ggplot2
@@ -22,7 +22,7 @@
 cnFreq_buildMain <- function(data_frame, plotType, plot_title=NULL,
                              CN_low_colour='#002EB8', CN_high_colour='#A30000',
                              x_lab_size=12, y_lab_size=12, facet_lab_size=10,
-                             layers=NULL)
+                             plotLayer=NULL)
 {
     x <- data_frame
 
@@ -73,9 +73,9 @@ cnFreq_buildMain <- function(data_frame, plotType, plot_title=NULL,
     p1 <- p1 + ylabel + xlabel + facet + theme_bw() + theme
 
     # if there are other layers, add them
-    if(!is.null(layers))
+    if(!is.null(plotLayer))
     {
-        p1 <- p1 + layers
+        p1 <- p1 + plotLayer
     }
     
     # if title is supplied plot it
