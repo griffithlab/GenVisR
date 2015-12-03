@@ -1,14 +1,18 @@
-#' plot raw copy number calls for a sample
+#' Construct copy-number single sample plot
 #'
-#' given data frame with columns Chr, Coord, Tumor, Normal, Diff, p_value plot
-#' raw copy number calls
+#' Given a data frame construct a plot to display raw copy number calls for a
+#' single sample.
 #' @name cnView
-#' @param x object of class data frame with columns "chromosome", "coordinate",
-#' "cn", "p_value" consisting of raw cn calls from a single sample
-#' @param y object of class data frame with columns "chrom", "chromStart",
-#' "chromEnd", "name", "gieStain" for plotting the ideogram (optional)
-#' @param z object of class data frame with columns "chromosome", "start",
-#' "end", "segmean" consisting of cn segment calls (optional)
+#' @param x Object of class data frame with rows representing copy number calls
+#' from a single sample. The data frame must contain columns with the following
+#' names "chromosome", "coordinate", "cn", "p_value".
+#' @param y Object of class data frame with rows representing cytogenetic bands
+#' for a chromosome. The data frame must contain columns with the following
+#' names "chrom", "chromStart", "chromEnd", "name", "gieStain" for plotting the
+#' ideogram (optional: see details).
+#' @param z Object of class data frame with row representing copy number segment
+#' calls. The data frame must contain columns with the following names
+#' "chromosome", "start", "end", "segmean" (optional: see details)
 #' @param genome character string specifying UCSC genome to use, uneccessary if
 #' y is supplied, defaults to "hg19"
 #' @param chr character string specifying UCSC chromosome to plot one of
@@ -31,9 +35,10 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
                    ideo.chr_txt_size=5, main.layers=NULL, ideo.layers=NULL)
 {
     # Perform a basic quality check
-    input <- cnView_qual(x, y, genome)
+    input <- cnView_qual(x, y, z, genome)
     x <- input[[1]]
     y <- input[[2]]
+    z <- input[[3]]
 
     # Obtain Cytogenetic Band information
     # use y input or query UCSC for the data if it's not preloaded
@@ -80,8 +85,12 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
 
     # if requested plot only selected chromosome
     x <- cnView_subsetChr(x, chr)
+    if(!is.null(z))
+    {
+        z <- cnView_subsetChr(z, chr)
+    }
 
-  # build the cn plot
+    # build the cn plot
     CN_plot <- cnView_buildMain(x, dummyData, z=z, chr=chr, cnDiff=main.cnDiff,
                                 layers=main.layers)
 

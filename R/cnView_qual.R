@@ -5,12 +5,13 @@
 #' @param x a data frame with columns chromosome, coordinate, cn
 #' @param y a data frame with columns "chrom", "chromStart", "chromEnd", "name",
 #' "gieStain"
+#' @param z a data frame with columns chromosome, start, end , segmean
 #' @param genome character string specifying UCSC genome to use
 #' @return a list of data frames passing quality checks
 
-cnView_qual <- function(x, y, genome)
+cnView_qual <- function(x, y, z, genome)
 {
-    # Check input to x
+    ############################## Check input to x #####################
     if(!is.data.frame(x))
     {
         memo <- paste0("Argument supplied to x does not appear to be a",
@@ -49,7 +50,7 @@ cnView_qual <- function(x, y, genome)
     # make sure the chromosome column is of class factor
     x$chromosome <- as.factor(x$chromosome)
 
-    # Check y data
+    ################### Check input to y ###############################
     preloaded <- c("hg38", "hg19", "mm10", "mm9", "rn5")
     if(!is.null(y))
     {
@@ -84,6 +85,51 @@ cnView_qual <- function(x, y, genome)
             warning(memo)
         }
     }
+    
+    ###################### Check input to Z #########################
+    if(!is.null(z))
+    {
+        if(!is.data.frame(z))
+        {
+            memo <- paste0("Agrument supplied to z does not appear to be a",
+                           "data frame... attempting to coerce")
+            message(memo)
+            z <- as.data.frame(z)
+            z <- droplevels(z)
+        }
+        
+        if(!all(c("chromosome",
+                  "start",
+                  "end",
+                  "segmean") %in% colnames(z)))
+        {
+            memo <- paste0("Did not detect correct columns in z... missing one",
+                           " of \"chromosome\", \"start\", \"end\",",
+                           " \"segmean\"")
+            stop(memo)
+        }
+        
+        # Check chromosome column in z
+        if(!all(grepl("^chr", z$chromosome)))
+        {
+            memo <- paste0("Did not detect the prefix chr in the chromosome",
+                           " column of z... adding prefix")
+            message(memo)
+            z$chromosome <- paste0("chr", z$chromosome)
+        } else if(all(grepl("^chr", z$chromosome))) {
+            memo <- paste0("detected chr in the chromosome column of z...",
+                           "proceeding")
+            message(memo)
+        } else {
+            memo <- paste0("Detected unknown or mixed prefixes in the",
+                           " chromosome column of z... should either be chr or",
+                           "none i.e. chr1 or 1")
+            stop(memo)
+        }
+        
+        # make sure the chromosome column is of class factor
+        z$chromosome <- as.factor(z$chromosome)
+    }
 
-    return(list(x, y))
+    return(list(x, y, z))
 }

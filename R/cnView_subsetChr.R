@@ -1,11 +1,9 @@
 #' subset based on chr
 #'
-#' given a data frame with cytogenetic band locations subset out specific
-#' chromosome
+#' given a data frame subset out specific a chromosome
 #' @name cnView_subsetChr
-#' @param x a data frame with columns Chr, Coord, Tumor, Normal, Diff
-#' @param chr character string specifying UCSC chromosome to plot one of chr...
-#' or all
+#' @param x a data frame with columns chromosome
+#' @param chr character string specifying UCSC chromosome to subset on
 #' @return object of class data frame
 
 cnView_subsetChr <- function(x, chr)
