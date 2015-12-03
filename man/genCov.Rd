@@ -2,64 +2,102 @@
 % Please edit documentation in R/genCov.R
 \name{genCov}
 \alias{genCov}
-\title{produce a coverage plot}
+\title{Construct a region of interest coverage plot}
 \usage{
-genCov(x, txdb, gr, genome, reduce = FALSE, gene.colour = NULL,
-  gene_name = "Gene", gene.layers = NULL, label.bg_fill = "black",
-  label.text_fill = "white", label.border = "black", label.size = 10,
-  label.width_ratio = c(1, 10), cov.colour = "blue",
-  cov.plot_type = "line", cov.layers = NULL, base = c(10, 2, 2),
-  transform = c("Intron", "CDS", "UTR"), gene.plot_transcript_name = TRUE,
-  gene.transcript_name_size = 4, isoformSel = NULL)
+genCov(x, txdb, gr, genome, reduce = FALSE, gene_colour = NULL,
+  gene_name = "Gene", gene_plotLayer = NULL, label_bgFill = "black",
+  label_txtFill = "white", label_borderFill = "black", label_txtSize = 10,
+  lab2plot_ratio = c(1, 10), cov_colour = "blue", cov_plotType = "line",
+  cov_plotLayer = NULL, base = c(10, 2, 2), transform = c("Intron", "CDS",
+  "UTR"), gene_labelTranscript = TRUE, gene_labelTranscriptSize = 4,
+  gene_isoformSel = NULL)
 }
 \arguments{
-\item{x}{named list containing data frames with columns "end" and "cov" consisting of read pileups at bases of interest}
+\item{x}{Named list with list elements containing data frames
+representing samples. Data frame rows should represent read pileups observed
+in sequencing data. Data frame column names must include "end" and "cov"
+corresponding to the base end position and coverage of a pileup respectively.
+Data within data frames must be on the same chromosome as the region of
+interest, see details!}
 
-\item{txdb}{A TxDb object for a genome}
+\item{txdb}{Object of class TxDb giving transcription meta data for a genome
+assembly. See Bioconductor annotation packages.}
 
-\item{gr}{A Granges object specifying a region of interest}
+\item{gr}{Object of class GRanges specifying the region of interest and 
+corresponding to a single gene. See Bioconductor package GRanges.}
 
-\item{genome}{Object of class BSgenome specifying the genome}
+\item{genome}{Object of class BSgenome specifying the genome sequence of
+interest. See Bioconductor annotation packages.}
 
-\item{reduce}{Boolean specifying whether to collapse isoforms in the ROI}
+\item{reduce}{Boolean specifying whether to collapse gene isoforms within the
+region of interest into one representative transcript. Experimental use with
+caution!}
 
-\item{gene.colour}{character string specifying the colour of the gene to be plotted}
+\item{gene_colour}{Character string specifying the colour of the gene to be
+plotted in the gene track.}
 
-\item{gene_name}{character string specifying the name of the gene or ROI}
+\item{gene_name}{Character string specifying the name of the gene or region
+of interest.}
 
-\item{gene.layers}{additional ggplot2 layers for the gene plot}
+\item{gene_plotLayer}{Valid ggplot2 layer to be added to the gene sub-plot.}
 
-\item{label.bg_fill}{character string giving the colour to fill the label}
+\item{label_bgFill}{Character string specifying the desired background colour
+of the track labels.}
 
-\item{label.text_fill}{character string giving the colour to fill label text}
+\item{label_txtFill}{Character string specifying the desired text colour of
+the rack labels.}
 
-\item{label.border}{character string specifying the colour to fill the border of the label}
+\item{label_borderFill}{Character string specifying the desired border colour
+of the track labels.}
 
-\item{label.size}{integer specifying the size of the text within the label}
+\item{label_txtSize}{Integer specifying the size of the text within the track
+labels.}
 
-\item{label.width_ratio}{integer vector of length 2 giving the ratio of track labels to plot}
+\item{lab2plot_ratio}{Numeric vector of length 2 specifying the ratio of
+track labels to plot space.}
 
-\item{cov.colour}{character string specifying the colour of the data in the coverage plot}
+\item{cov_colour}{Character string specifying the colour of the data in the
+coverage plots.}
 
-\item{cov.plot_type}{character string specifying one of line, area or bar for coverage data display}
+\item{cov_plotType}{Character string specifying one of "line", "area" or
+"bar". Changes the ggplot2 geom which constructs the data display.}
 
-\item{cov.layers}{additional ggplot2 layers for the coverage plot}
+\item{cov_plotLayer}{Valid ggplot2 layer to be added to the coverage
+sub-plots.}
 
-\item{base}{A vector of log bases to transform the data, corresponding to the elements of transform}
+\item{base}{Numeric vector of log bases to transform the data,
+corresponding to the elements supplied to the variable transform See details.}
 
-\item{transform}{A vector of strings designating what objects to log transform accepts "Intron", "CDS", and "UTR"}
+\item{transform}{Character vector specifying what objects to log transform,
+accepts "Intron", "CDS", and "UTR" See details.}
 
-\item{gene.plot_transcript_name}{Boolean specifying whether to plot the transcript name}
+\item{gene_labelTranscript}{Boolean specifying whether to plot the transcript
+names in the gene plot.}
 
-\item{gene.transcript_name_size}{Integer specifying the size of the transcript name text}
+\item{gene_labelTranscriptSize}{Integer specifying the size of the transcript
+name text in the gene plot.}
 
-\item{isoformSel}{Character vector giving the names (from the txdb object) of isoforms within the region of interest to display}
+\item{gene_isoformSel}{Character vector specifying the names
+(from the txdb object) of isoforms within the region of interest to display.}
 }
 \value{
-ggplot object
+Graphical object
 }
 \description{
-produce a coverage plot displaying gene and coverage information for a region of interest
+Given a list of data frames construct a sequencing coverage view over a
+region of interest.
+}
+\details{
+genCov is a function designed construct a series of tracks based on 
+a TxDb object giving transcript features, and coverage data supplied to
+parameter `x`. The function will look at a region of interest specified by
+the argument supplied to gr and plot transcript features and the
+corresponding coverage information. The argument supplied to `genome` enables
+gc content within genomic features to be calculated and displayed. The
+argument supplied to x must contain data on the same chromosome as the region
+of interest specified in the parameter `gr`!
+
+GET ALEX TO ADD TRANSFORM DETAILS AND DETAILS ON THE APROX FEATURE.
 }
 \examples{
 # Load transcript meta data

@@ -2,42 +2,42 @@
 % Please edit documentation in R/covBars.R
 \name{covBars}
 \alias{covBars}
-\title{Construct coverage cohort plot}
+\title{Construct an overall coverage cohort plot}
 \usage{
-covBars(x, col = NULL, plot_title = NULL, background = "grey90",
-  x_lab_size = 12, y_lab_size = 12, facet_lab_size = 10, layers = NULL)
+covBars(x, colour = NULL, plot_title = NULL, x_title_size = 12,
+  y_title_size = 12, facet_lab_size = 10, plotLayer = NULL)
 }
 \arguments{
-\item{x}{object of class data frame containing rows for the coverage and
-columns the sample names}
+\item{x}{Object of class matrix with rows representing coverage achieved
+at bases and columns corresponding to each sample in the cohort.}
 
-\item{col}{vector of colors for the coverage bars}
+\item{colour}{Character vector specifying colours to represent sequencing
+depth.}
 
-\item{plot_title}{character string for title of plot}
+\item{plot_title}{Character string specifying the title to display on the
+plot.}
 
-\item{background}{character string specifying backround color of plot}
+\item{x_title_size}{Integer specifying the size of the x-axis title.}
 
-\item{x_lab_size}{integer specifying the size of the X label}
+\item{y_title_size}{Integer specifying the size of the y-axis title.}
 
-\item{y_lab_size}{integer specifying the size of the Y label}
+\item{facet_lab_size}{Integer specifying the size of the faceted labels
+plotted.}
 
-\item{facet_lab_size}{integer specifying the size of the faceted labels}
-
-\item{layers}{Additional layers to be plotted, can be a theme but must be a
-ggplot layer}
+\item{plotLayer}{Valid ggplot2 layer to be added to the plot.}
 }
 \value{
 ggplot object
 }
 \description{
-given a matrix construct a plot to display coverage as percentage bars for a
-group of samples
+Given a matrix construct a plot to display sequencing depth acheived
+as percentage bars for a cohort of samples.
 }
 \examples{
 # Create data
 x <- matrix(sample(100000,500), nrow=50, ncol=10, dimnames=list(0:49,paste0("Sample",1:10)))
 
-# Call function
+# Call plot function
 covBars(x)
 }
 

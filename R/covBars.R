@@ -1,36 +1,36 @@
-#' Construct coverage cohort plot
+#' Construct an overall coverage cohort plot
 #'
-#' given a matrix construct a plot to display coverage as percentage bars for a
-#' group of samples
+#' Given a matrix construct a plot to display sequencing depth acheived
+#' as percentage bars for a cohort of samples.
 #' @name covBars
-#' @param x object of class data frame containing rows for the coverage and
-#' columns the sample names
-#' @param col vector of colors for the coverage bars
-#' @param plot_title character string for title of plot
-#' @param background character string specifying backround color of plot
-#' @param x_lab_size integer specifying the size of the X label
-#' @param y_lab_size integer specifying the size of the Y label
-#' @param facet_lab_size integer specifying the size of the faceted labels
-#' @param layers Additional layers to be plotted, can be a theme but must be a
-#' ggplot layer
+#' @param x Object of class matrix with rows representing coverage achieved
+#' at bases and columns corresponding to each sample in the cohort.
+#' @param colour Character vector specifying colours to represent sequencing
+#' depth.
+#' @param plot_title Character string specifying the title to display on the
+#' plot.
+#' @param x_title_size Integer specifying the size of the x-axis title.
+#' @param y_title_size Integer specifying the size of the y-axis title.
+#' @param facet_lab_size Integer specifying the size of the faceted labels
+#'  plotted.
+#' @param plotLayer Valid ggplot2 layer to be added to the plot.
 #' @return ggplot object
 #' @importFrom reshape2 melt
 #' @examples
 #' # Create data
 #' x <- matrix(sample(100000,500), nrow=50, ncol=10, dimnames=list(0:49,paste0("Sample",1:10)))
 #'
-#' # Call function
+#' # Call plot function
 #' covBars(x)
 #' @export
 
-covBars <- function(x, col=NULL, plot_title=NULL, background='grey90',
-                    x_lab_size=12, y_lab_size=12, facet_lab_size=10,
-                    layers=NULL)
+covBars <- function(x, colour=NULL, plot_title=NULL, x_title_size=12,
+                    y_title_size=12, facet_lab_size=10, plotLayer=NULL)
 {
   # Perform quality check on input data
-    dat <- covBars_qual(x, col)
+    dat <- covBars_qual(x, colour)
     x <- dat[[1]]
-    col <- dat[[2]]
+    colour <- dat[[2]]
 
     # resort the rows (increasing rowname as integer)
     x <- x[order(as.numeric(rownames(x))),]
@@ -58,9 +58,8 @@ covBars <- function(x, col=NULL, plot_title=NULL, background='grey90',
     xmelt$sample <- factor(xmelt$sample, levels=colnames(x))
 
     # Construct the plot
-    p1 <- covBars_buildMain(xmelt, col=col, plot_title=plot_title,
-                            background=background, x_lab_size=x_lab_size,
-                            y_lab_size=y_lab_size,
+    p1 <- covBars_buildMain(xmelt, col=colour, plot_title=plot_title,
+                            x_lab_size=x_title_size, y_lab_size=y_title_size,
                             facet_lab_size=facet_lab_size, layers=layers)
 
     return(p1)

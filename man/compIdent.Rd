@@ -2,7 +2,7 @@
 % Please edit documentation in R/compIdent.R
 \name{compIdent}
 \alias{compIdent}
-\title{Compare the identities of multiple samples}
+\title{Construct identity snp comparison plot}
 \usage{
 compIdent(x, genome)
 }
@@ -12,9 +12,15 @@ compIdent(x, genome)
 \item{genome}{Object of class BSgenome specifying the genome}
 }
 \value{
-grid object
+graphical object
 }
 \description{
 Given the bam file path, count the number of reads at the 24 SNP locations
+}
+\details{
+TODO
+}
+\examples{
+TODO
 }
 

@@ -37,8 +37,8 @@ cnView_qual <- function(x, y, z, genome)
         message(memo)
         x$chromosome <- paste0("chr", x$chromosome)
     } else if(all(grepl("^chr", x$chromosome))) {
-        memo <- paste0("detected chr in the chromosome column of x...",
-                       "proceeding")
+        memo <- paste0("Detected chr in the chromosome column of x...",
+                       " proceeding")
         message(memo)
     } else {
         memo <- paste0("Detected unknown or mixed prefixes in the chromosome",

@@ -7,7 +7,6 @@
 #' sample, bp
 #' @param col vector of colors for the coverage bars
 #' @param plot_title character string for title of plot
-#' @param background character string specifying backround color of plot
 #' @param x_lab_size integer specifying the size of the X label
 #' @param y_lab_size integer specifying the size of the Y label
 #' @param facet_lab_size integer specifying the size of the faceted labels
@@ -16,9 +15,8 @@
 #' @return ggplot object
 #' @import ggplot2
 
-covBars_buildMain <- function(data_frame, col, plot_title=NULL,
-                              background='grey90', x_lab_size=12, y_lab_size=12,
-                              facet_lab_size=10, layers=NULL)
+covBars_buildMain <- function(data_frame, col, plot_title=NULL, x_lab_size=12,
+                              y_lab_size=12, facet_lab_size=10, layers=NULL)
 {
     xmelt <- data_frame
 
@@ -28,7 +26,6 @@ covBars_buildMain <- function(data_frame, col, plot_title=NULL,
                    axis.ticks.y=element_blank(),
                    panel.grid.major=element_blank(),
                    panel.grid.minor=element_blank(),
-                   panel.background=element_rect(fill=background),
                    legend.position='right',
                    axis.title.x=element_text(size=x_lab_size, face='bold'),
                    axis.title.y=element_text(size=y_lab_size, face='bold'))

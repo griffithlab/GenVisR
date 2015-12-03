@@ -1,10 +1,14 @@
-#' Compare the identities of multiple samples
+#' Construct identity snp comparison plot
 #'
 #' Given the bam file path, count the number of reads at the 24 SNP locations
 #' @name compIdent
 #' @param x data frame with column names sample_name, bamfile
 #' @param genome Object of class BSgenome specifying the genome
-#' @return grid object
+#' @details
+#' TODO
+#' @return graphical object
+#' @examples
+#' TODO
 #' @export
 
 compIdent <- function(x, genome)
