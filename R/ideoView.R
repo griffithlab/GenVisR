@@ -1,25 +1,32 @@
-#' Chromosome plot
+#' Construct an ideogram
 #'
-#' plot a chromosome in ggplot using UCSC database
+#' Given a data frame with cytogenetic information, construct an ideogram.
 #' @name ideoView
-#' @param x data frame specifying cytogenetic information for a genome,
-#' should contain columns "chrom", "chromStart", "chromEnd", "name", "gieStain"
-#' @param chromosome character string specifying UCSC chromosome to plot
-#' @param chr_txt_angle integer specifying angle of text when plotting band text
-#' @param chr_txt_size integer specifying size of text when plotting band text
-#' @param layers additional ggplot2 layers for the ideogram
+#' @param x Object of class data frame with rows representing cytogenetic bands.
+#' The data frame must contain the following column names "chrom", "chromStart",
+#' "chromEnd", "name", "gieStain"
+#' @param chromosome Character string specifying which chromosome from the
+#' "chrom" column in the argument supplied to parameter x to plot.
+#' @param txtAngle Integer specifying the angle of text labeling cytogenetic
+#' bands.
+#' @param txtSize Integer specifying the size of text labeling cytogenetic
+#' bands.
+#' @param plotLayer additional ggplot2 layers for the ideogram
+#' @details ideoView is a function designed to plot cytogenetic band
+#' inforamtion. Modifications to the graphic object can be made via the
+#' `plotLayer` parameter, see vignette for details.
 #' @examples
 #' # Obtain cytogenetic information for the genome of interest from attached
 #' # data set cytoGeno
 #' data <- cytoGeno[cytoGeno$genome == 'hg38',]
 #'
 #' # Call ideoView for chromosome 1
-#' ideoView(data, chromosome='chr1', chr_txt_size=4)
+#' ideoView(data, chromosome='chr1', txtSize=4)
 #' @return ggplot object
 #' @export
 
-ideoView <- function(x, chromosome='chr1', chr_txt_angle=45, chr_txt_size=5,
-                     layers=NULL)
+ideoView <- function(x, chromosome='chr1', txtAngle=45, txtSize=5,
+                     plotLayer=NULL)
 {
     cytobands <- x
 
@@ -28,8 +35,8 @@ ideoView <- function(x, chromosome='chr1', chr_txt_angle=45, chr_txt_size=5,
 
     # plot the chromosome
     chr_plot <- ideoView_buildMain(cytobands, chromosome=chromosome,
-                                   chr_txt_angle=chr_txt_angle,
-                                   chr_txt_size=chr_txt_size, layers=layers)
+                                   chr_txt_angle=txtAngle,
+                                   chr_txt_size=txtSize, layers=plotLayer)
 
     return(chr_plot)
 }

@@ -2,28 +2,37 @@
 % Please edit documentation in R/ideoView.R
 \name{ideoView}
 \alias{ideoView}
-\title{Chromosome plot}
+\title{Construct an ideogram}
 \usage{
-ideoView(x, chromosome = "chr1", chr_txt_angle = 45, chr_txt_size = 5,
-  layers = NULL)
+ideoView(x, chromosome = "chr1", txtAngle = 45, txtSize = 5,
+  plotLayer = NULL)
 }
 \arguments{
-\item{x}{data frame specifying cytogenetic information for a genome,
-should contain columns "chrom", "chromStart", "chromEnd", "name", "gieStain"}
+\item{x}{Object of class data frame with rows representing cytogenetic bands.
+The data frame must contain the following column names "chrom", "chromStart",
+"chromEnd", "name", "gieStain"}
 
-\item{chromosome}{character string specifying UCSC chromosome to plot}
+\item{chromosome}{Character string specifying which chromosome from the
+"chrom" column in the argument supplied to parameter x to plot.}
 
-\item{chr_txt_angle}{integer specifying angle of text when plotting band text}
+\item{txtAngle}{Integer specifying the angle of text labeling cytogenetic
+bands.}
 
-\item{chr_txt_size}{integer specifying size of text when plotting band text}
+\item{txtSize}{Integer specifying the size of text labeling cytogenetic
+bands.}
 
-\item{layers}{additional ggplot2 layers for the ideogram}
+\item{plotLayer}{additional ggplot2 layers for the ideogram}
 }
 \value{
 ggplot object
 }
 \description{
-plot a chromosome in ggplot using UCSC database
+Given a data frame with cytogenetic information, construct an ideogram.
+}
+\details{
+ideoView is a function designed to plot cytogenetic band
+inforamtion. Modifications to the graphic object can be made via the
+`plotLayer` parameter, see vignette for details.
 }
 \examples{
 # Obtain cytogenetic information for the genome of interest from attached
@@ -31,6 +40,6 @@ plot a chromosome in ggplot using UCSC database
 data <- cytoGeno[cytoGeno$genome == 'hg38',]
 
 # Call ideoView for chromosome 1
-ideoView(data, chromosome='chr1', chr_txt_size=4)
+ideoView(data, chromosome='chr1', txtSize=4)
 }
 

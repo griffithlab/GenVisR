@@ -2,46 +2,64 @@
 % Please edit documentation in R/geneViz.R
 \name{geneViz}
 \alias{geneViz}
-\title{Gene Plot}
+\title{Construct a gene-features plot}
 \usage{
 geneViz(txdb, gr, genome, reduce = FALSE, gene_colour = NULL, base = c(10,
   2, 2), transform = c("Intron", "CDS", "UTR"), isoformSel = NULL,
-  plot_transcript_name = TRUE, transcript_name_size = 4, layers = NULL)
+  labelTranscript = TRUE, labelTranscriptSize = 4, plotLayer = NULL)
 }
 \arguments{
-\item{txdb}{A TxDb object for a genome}
+\item{txdb}{Object of class TxDb giving transcription meta data for a genome
+assembly. See Bioconductor annotation packages.}
 
-\item{gr}{A Granges object specifying a region of interest}
+\item{gr}{Object of class GRanges specifying the region of interest and 
+corresponding to a single gene. See Bioconductor package GRanges.}
 
-\item{genome}{Object of class BSgenome specifying the genome}
+\item{genome}{Object of class BSgenome specifying the genome sequence of
+interest. See Bioconductor annotation packages.}
 
-\item{reduce}{Boolean specifying whether to collapse isoforms in the ROI}
+\item{reduce}{Boolean specifying whether to collapse gene isoforms within the
+region of interest into one representative transcript. Experimental use with
+caution!}
 
-\item{gene_colour}{character string specifying the colour of genomic features
-plotted}
+\item{gene_colour}{Character string specifying the colour of the gene to be
+plotted.}
 
-\item{base}{base A vector of log bases to transform the data, corresponding
-to the elements of transform}
+\item{base}{Numeric vector of log bases to transform the data
+corresponding to the elements supplied to the variable transform See details.}
 
-\item{transform}{A vector of strings designating what objects to log
-transform}
+\item{transform}{Character vector specifying what objects to log transform,
+accepts "Intron", "CDS", and "UTR" See details.}
 
-\item{isoformSel}{Character vector giving the names (from the txdb object) of
-isoforms within the region of interest to display}
+\item{isoformSel}{Character vector specifying the names
+(from the txdb object) of isoforms within the region of interest to display.}
 
-\item{plot_transcript_name}{Boolean specifying whether to plot the transcript
-name}
+\item{labelTranscript}{Boolean specifying whether to plot the transcript
+names in the gene plot.}
 
-\item{transcript_name_size}{Integer specifying the size of the transcript
-name text}
+\item{labelTranscriptSize}{Integer specifying the size of the transcript
+name text in the gene plot.}
 
-\item{layers}{additional ggplot2 layers to plot}
+\item{plotLayer}{Valid ggplot2 layer to be added to the gene plot.}
 }
 \value{
-ggplot object
+object of class list with list elements containing a ggplot object, 
+the gene features within the plot as a data frame, and mapping information
+of the gene features within the ggplot object.
 }
 \description{
-given a Granges object plot genomic features within the Granges object
+Given a GRanges object specifying a region of interest, plot genomic features
+within that region.
+}
+\details{
+geneViz is an internal function which will output a list of three
+elements. As a convenience the function is exported however to obtain the
+plot from geneViz the user must call the first element of the list. geneViz
+is intended to plot gene features within a single gene with boundaries
+specified by the GRanges object, plotting more that one gene is advised
+against.
+
+GET ALEX TO ADD TRANSFORM DETAILS HERE
 }
 \examples{
 # need transcript data for reference

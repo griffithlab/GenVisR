@@ -94,6 +94,11 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
         }
         # Convert MAF file to internal format
         x <- TvTi_convMaf(x)
+    } else {
+        memo <- paste0("TvTi requires a fileType specification, please",
+                       "specify one of \"MAF\" or \"MGI\" based on the",
+                       "argument supplied to parameter x. See docs for help.")
+        stop(memo)
     }
 
     # Remove any indels present in the data

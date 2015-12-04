@@ -101,9 +101,9 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
 
     # plot chromosome
     chromosome_plot <- ideoView(cytobands, chromosome=chr,
-                                chr_txt_angle=ideogram_txtAngle,
-                                chr_txt_size=ideogram_txtSize,
-                                layers=ideogramLayer)
+                                txtAngle=ideogram_txtAngle,
+                                txtSize=ideogram_txtSize,
+                                plotLayer=ideogramLayer)
 
     # if requested plot only selected chromosome
     x <- cnView_subsetChr(x, chr)
