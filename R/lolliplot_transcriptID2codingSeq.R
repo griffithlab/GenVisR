@@ -16,7 +16,8 @@ lolliplot_transcriptID2codingSeq <- function(transcriptID, species="hsapiens")
     message("Querying biomaRt for transcript sequence")
     
     # Load in mart
-    ensembl_mart <- biomaRt::useMart("ENSEMBL_MART_ENSEMBL", host="www.ensembl.org")
+    ensembl_mart <- biomaRt::useMart("ENSEMBL_MART_ENSEMBL",
+                                     host="www.ensembl.org")
     
     # select proper data set given regexp print warnings if unexpected out occur
     index <- which(grepl(species, biomaRt::listDatasets(ensembl_mart)$dataset))
@@ -27,9 +28,13 @@ lolliplot_transcriptID2codingSeq <- function(transcriptID, species="hsapiens")
                        "following format: hsapiens")
         stop(memo)
     } else if(length(index)==0) {
+        valid_species <- toString(gsub("_gene_ensembl",
+                                       "",
+                                       biomaRt::listDatasets(ensembl_mart)$dataset))
+        
         memo <- paste0(species, " does not appear to be supported by biomaRt",
-                       "if you beleive this to be in error please modify", 
-                       "you're input to to conform to this format: hsapiens")
+                       " please specify one of the following species:",
+                       valid_species)
         stop(memo)
     }
     ensembl_mart <- biomaRt::useDataset(as.character(biomaRt::listDatasets(ensembl_mart)$dataset[index]),

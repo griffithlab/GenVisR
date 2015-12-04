@@ -65,7 +65,7 @@ coverage plots.}
 \item{cov_plotLayer}{Valid ggplot2 layer to be added to the coverage
 sub-plots.}
 
-\item{base}{Numeric vector of log bases to transform the data,
+\item{base}{Numeric vector of log bases to transform the data
 corresponding to the elements supplied to the variable transform See details.}
 
 \item{transform}{Character vector specifying what objects to log transform,
@@ -116,6 +116,6 @@ ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
 data <- list("PTEN" = ptenCOV)
 
 # Call genCov
-genCov(data, txdb, gr, genome, gene.transcript_name_size=3)
+genCov(data, txdb, gr, genome, gene_labelTranscriptSize=3)
 }
 

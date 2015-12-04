@@ -39,7 +39,7 @@
 #' "bar". Changes the ggplot2 geom which constructs the data display.
 #' @param cov_plotLayer Valid ggplot2 layer to be added to the coverage
 #' sub-plots.
-#' @param base Numeric vector of log bases to transform the data,
+#' @param base Numeric vector of log bases to transform the data
 #' corresponding to the elements supplied to the variable transform See details.
 #' @param transform Character vector specifying what objects to log transform,
 #' accepts "Intron", "CDS", and "UTR" See details.
@@ -80,14 +80,15 @@
 #' data <- list("PTEN" = ptenCOV)
 #'
 #' # Call genCov
-#' genCov(data, txdb, gr, genome, gene.transcript_name_size=3)
+#' genCov(data, txdb, gr, genome, gene_labelTranscriptSize=3)
 #' @export
 
 genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
                    gene_name='Gene', gene_plotLayer=NULL, label_bgFill="black",
                    label_txtFill="white", label_borderFill="black",
                    label_txtSize=10, lab2plot_ratio=c(1, 10),
-                   cov_colour="blue", cov_plotType="line", cov_plotLayer=NULL, base=c(10,2,2),
+                   cov_colour="blue", cov_plotType="line", cov_plotLayer=NULL,
+                   base=c(10,2,2),
                    transform=c('Intron','CDS','UTR'),
                    gene_labelTranscript=TRUE,
                    gene_labelTranscriptSize=4, gene_isoformSel=NULL)
@@ -104,9 +105,9 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
     gp_result <- geneViz(txdb, gr, genome, reduce=reduce,
                          gene_colour=gene_colour, base=base,
                          transform=transform, isoformSel=gene_isoformSel,
-                         transcript_name_size=gene_labelTranscriptSize,
-                         plot_transcript_name=gene_labelTranscript,
-                         layers=gene_plotLayer)
+                         labelTranscriptSize=gene_labelTranscriptSize,
+                         labelTranscript=gene_labelTranscript,
+                         plotLayer=gene_plotLayer)
     gene <- gp_result$plot
     gene_list <- list()
     gene_list[[gene_name]] <- gene

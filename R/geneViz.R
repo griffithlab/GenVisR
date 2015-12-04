@@ -1,25 +1,41 @@
-#' Gene Plot
+#' Construct a gene-features plot
 #'
-#' given a Granges object plot genomic features within the Granges object
+#' Given a GRanges object specifying a region of interest, plot genomic features
+#' within that region.
 #' @name geneViz
-#' @param txdb A TxDb object for a genome
-#' @param gr A Granges object specifying a region of interest
-#' @param genome Object of class BSgenome specifying the genome
-#' @param reduce Boolean specifying whether to collapse isoforms in the ROI
-#' @param base  base A vector of log bases to transform the data, corresponding
-#' to the elements of transform
-#' @param transform A vector of strings designating what objects to log
-#' transform
-#' @param isoformSel Character vector giving the names (from the txdb object) of
-#' isoforms within the region of interest to display 
-#' @param plot_transcript_name Boolean specifying whether to plot the transcript
-#' name
-#' @param transcript_name_size Integer specifying the size of the transcript
-#' name text
-#' @param gene_colour character string specifying the colour of genomic features
-#' plotted
-#' @param layers additional ggplot2 layers to plot
-#' @return ggplot object
+#' @param txdb Object of class TxDb giving transcription meta data for a genome
+#' assembly. See Bioconductor annotation packages.
+#' @param gr Object of class GRanges specifying the region of interest and 
+#' corresponding to a single gene. See Bioconductor package GRanges.
+#' @param genome Object of class BSgenome specifying the genome sequence of
+#' interest. See Bioconductor annotation packages.
+#' @param reduce Boolean specifying whether to collapse gene isoforms within the
+#' region of interest into one representative transcript. Experimental use with
+#' caution!
+#' @param base Numeric vector of log bases to transform the data
+#' corresponding to the elements supplied to the variable transform See details.
+#' @param transform Character vector specifying what objects to log transform,
+#' accepts "Intron", "CDS", and "UTR" See details.
+#' @param isoformSel Character vector specifying the names
+#' (from the txdb object) of isoforms within the region of interest to display. 
+#' @param labelTranscript Boolean specifying whether to plot the transcript
+#' names in the gene plot.
+#' @param labelTranscriptSize Integer specifying the size of the transcript
+#' name text in the gene plot.
+#' @param gene_colour Character string specifying the colour of the gene to be
+#' plotted.
+#' @param plotLayer Valid ggplot2 layer to be added to the gene plot.
+#' @details geneViz is an internal function which will output a list of three
+#' elements. As a convenience the function is exported however to obtain the
+#' plot from geneViz the user must call the first element of the list. geneViz
+#' is intended to plot gene features within a single gene with boundaries
+#' specified by the GRanges object, plotting more that one gene is advised
+#' against.
+#' 
+#' GET ALEX TO ADD TRANSFORM DETAILS HERE
+#' @return object of class list with list elements containing a ggplot object, 
+#' the gene features within the plot as a data frame, and mapping information
+#' of the gene features within the ggplot object.
 #' @importFrom GenomicRanges seqnames
 #' @importFrom GenomicRanges GRanges
 #' @importFrom GenomicRanges strand
@@ -48,8 +64,8 @@
 
 geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
                     base=c(10,2,2), transform=c('Intron','CDS','UTR'),
-                    isoformSel=NULL, plot_transcript_name=TRUE,
-                    transcript_name_size=4, layers=NULL)
+                    isoformSel=NULL, labelTranscript=TRUE,
+                    labelTranscriptSize=4, plotLayer=NULL)
 {
 
     # extract a data frame for each type of gene feature given a transcript
@@ -216,22 +232,22 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
     }
 
     # construct the gene in gplot
-    if(reduce == TRUE || plot_transcript_name == FALSE)
+    if(reduce == TRUE || labelTranscript == FALSE)
     {
         gene_plot <- geneViz_buildGene(gene_features,
                                        display_x_axis=display_x_axis,
                                        x_limits=xlimits,
                                        gene_colour=gene_colour,
-                                       transcript_name=FALSE, layers=layers)
-    } else if(reduce == FALSE && plot_transcript_name == TRUE) {
+                                       transcript_name=FALSE, layers=plotLayer)
+    } else if(reduce == FALSE && labelTranscript == TRUE) {
         
         gene_plot <- geneViz_buildGene(gene_features,
                                        display_x_axis=display_x_axis,
                                        x_limits=xlimits,
                                        gene_colour=gene_colour,
                                        transcript_name=TRUE,
-                                       transcript_name_size=transcript_name_size,
-                                       layers=layers)
+                                       transcript_name_size=labelTranscriptSize,
+                                       layers=plotLayer)
     }
 
     out <- list('plot' = gene_plot,

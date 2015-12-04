@@ -2,75 +2,93 @@
 % Please edit documentation in R/TvTi.R
 \name{TvTi}
 \alias{TvTi}
-\title{plot transitions/transversions}
+\title{Construct transition-transversion plot}
 \usage{
 TvTi(x, y = NULL, clinData = NULL, type = "Proportion",
-  label_x_axis = TRUE, x_axis_text_angle = 45, palette = c("#D53E4F",
-  "#FC8D59", "#FEE08B", "#E6F598", "#99D594", "#3288BD"), file_type = "MAF",
-  tvti.layers = NULL, expec.layers = NULL, sort = "none",
-  dataOut = FALSE, clin.legend.col = NULL, clin.var.colour = NULL,
-  clin.var.order = NULL, clin.layer = NULL)
+  lab_Xaxis = TRUE, lab_txtAngle = 45, palette = c("#D53E4F", "#FC8D59",
+  "#FEE08B", "#E6F598", "#99D594", "#3288BD"), fileType = NULL,
+  tvtiLayer = NULL, expecLayer = NULL, sort = "none", dataOut = FALSE,
+  clinLegCol = NULL, clinVarCol = NULL, clinVarOrder = NULL,
+  clinLayer = NULL)
 }
 \arguments{
-\item{x}{Object of class data frame containing columns 'sample', reference',
-'variant'}
+\item{x}{Object of class data frame with rows representing transitions and
+transversions. The data frame must contain the following columns 'sample',
+reference' and 'variant' or alternatively "Tumor_Sample_Barcode",
+"Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2" depending on the
+argument supplied to the fileType parameter.}
 
-\item{y}{named vector containing expected transition/transversion proportions
-with names "A->C or T->G (TV)", "A->G or T->C (TI)", "A->T or T->A (TV)",
- "G->A or C->T (TI)", "G->C or C->G (TV)", "G->T or C->A (TV)" or a data
-frame with column names "Prop", "trans_tranv" and levels of trans_tranv
- matching "A->C or T->G (TV)", "A->G or T->C (TI)", "A->T or T->A (TV)",
- "G->A or C->T (TI)", "G->C or C->G (TV)", "G->T or C->A (TV)"}
+\item{y}{Named vector or data frame representing the expected transition and 
+transversion rates. Either option must name transition and transverions as
+follows: "A->C or T->G (TV)", "A->G or T->C (TI)", "A->T or T->A (TV)",
+ "G->A or C->T (TI)", "G->C or C->G (TV)", "G->T or C->A (TV)". If specifying
+ a data frame, the data frame must contain the following columns names
+ "Prop", "trans_tranv" (optional see vignette).}
 
-\item{clinData}{object of class data frame in "long format" containing
-columns "sample", "variable", "value"}
+\item{clinData}{Object of class data frame with rows representing clinical
+data. The data frame should be in "long format" and columns must be names as
+"sample", "variable", and "value" (optional see details and vignette).}
 
-\item{type}{Object of class character specifying whether to plot the
-Proportion or Frequency, one of "Proportion", "Frequency"}
+\item{type}{Character string specifying if the plot should display the
+Proportion or Frequency of transitions/transversions observed. One of
+"Proportion" or "Frequency", defaults to "Proportion".}
 
-\item{label_x_axis}{boolean specifying wheter to label x axis}
+\item{lab_Xaxis}{Boolean specifying whether to label the x-axis in the plot.}
 
-\item{x_axis_text_angle}{Integer specifying the angle of labels on the x_axis}
+\item{lab_txtAngle}{Integer specifying the angle of labels on the x-axis of
+the plot.}
 
-\item{palette}{Character vector of length 6 specifying colors for each
-trans/tranv type}
+\item{palette}{Character vector of length 6 specifying colours for each
+of the six possible transition transversion types.}
 
-\item{file_type}{Character string specifying the format the input is in,
-one of 'MAF', 'MGI'}
+\item{fileType}{Character string specifying the format the input given to
+parameter x is in, one of 'MAF', 'MGI'. The former option requires the data
+frame given to x to contain the following column names
+"Tumor_Sample_Barcode", "Reference_Allele", "Tumor_Seq_Allele1",
+"Tumor_Seq_Allele2" the later option requires the data frame givin to x to
+contain the following column names "reference", "variant" and "sample".}
 
-\item{tvti.layers}{Additional ggplot2 layers to add to the main panel plot}
+\item{tvtiLayer}{Valid ggplot2 layer to be added to the main plot.}
 
-\item{expec.layers}{Additional ggplot2 layers to add to the expected
-values plot}
+\item{expecLayer}{Valid ggplot2 layer to be added to the expected sub-plot.}
 
-\item{sort}{character specifying one of "sample", "tvti", "none" for
-plotting samples based on a sample name, transition/transversion freq, or no
-order}
+\item{sort}{Character string specifying the sort order of the sample
+variables in the plot. Arguments to this parameter should be "sample",
+"tvti", or "none" to sort the x-axis by sample name, transition transversion
+frequency, or no sort respectively.}
 
-\item{dataOut}{Boolean Specifying whether to output the data to be passed
-instead of plotting it}
+\item{dataOut}{Boolean specifying whether to output the data to be passed to
+ggplot instead of plotting.}
 
-\item{clin.legend.col}{an integer specifying the number of columns to plot in
-the clinical data legend}
+\item{clinLegCol}{Integer specifying the number of columns in the legend for
+the clinical data, only valid if argument is supplied to parameter clinData.}
 
-\item{clin.var.colour}{a named character vector specifying the mapping
-between colors and variables in the clinical data}
+\item{clinVarCol}{Named character vector specifying the mapping of colours
+to variables in the variable column of the data frame supplied to clinData
+(ex. "variable"="colour").}
 
-\item{clin.var.order}{a character vector of variables to order the clinical
-legend by}
+\item{clinVarOrder}{Character vector specifying the order in which to plot
+variables in the variable column of the argument given to the parameter
+clinData. The argument supplied to this parameter should have the same unique
+length and values as in the variable column of the argument supplied to 
+parameter clinData (see vignette).}
 
-\item{clin.layer}{Additional ggplot2 layer to plot on the clinical data}
+\item{clinLayer}{Valid ggplot2 layer to be added to the clinical sub-plot.}
 }
 \value{
-ggplot2 object or data frame if dataOut is set to TRUE
+A graphic object or data frame if dataOut==TRUE.
 }
 \description{
-Given a data frame with columns reference, variant, and sample construct a
-transition/transversion plot
+Given a data frame construct a plot displaying the proportion or frequency of
+transition and transversion types observed in a cohort.
+}
+\details{
+TvTi is a function designed to display proportion or frequency
+of transitions and transversion seen in a data frame supplied to parameter x.
 }
 \examples{
 TvTi(brcaMAF, type='Frequency',
 palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"),
-x_axis_text_angle=60)
+lab_txtAngle=60)
 }
 
