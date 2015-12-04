@@ -1,16 +1,29 @@
-#' Plot a mutation landscape
+#' Construct a waterfall plot
 #'
-#' Plot a mutation landscape plot for a cohort in an annotation file
+#' Given a data frame construct a water fall plot showing the mutation burden
+#' and mutation type on a gene and sample level.
 #' @name waterfall
-#' @param x a data frame in annotation format
-#' @param clinDat an optional data frame in "long" format giving additional
-#' information to be plotted, requires columns "sample", "variable", and "value"
-#' @param clin.legend.col an integer specifying the number of columns to plot in
-#' the clinical data legend
-#' @param clin.var.colour a named character vector specifying the mapping
-#' between colors and variables in the clinical data
-#' @param clin.var.order a character vector of variables to order the clinical
-#' legend by
+#' @param x Object of class data frame representing annotated mutations. The 
+#' data frame supplied must have one of the following sets of column names
+#' ("Tumor_Sample_Barcode", "Hugo_Symbol", "Variant Classification") for
+#' fileType="MAF", ("sample","gene_name","trv_type") for fileType="MGI" or
+#' ("sample", "gene", "variant_class") for fileType="Custom". This columns 
+#' should represent samples in a cohort, gene with mutation, and the mutation
+#' type respectively.
+#' @param clinData Object of class data frame with rows representing clinical
+#' data. The data frame should be in "long format" and columns must be names as
+#' "sample", "variable", and "value" (optional see details and vignette).
+#' @param clinLegCol Integer specifying the number of columns in the legend for
+#' the clinical data, only valid if argument is supplied to parameter clinData.
+#' @param clinVarCol Named character vector specifying the mapping of colours
+#' to variables in the variable column of the data frame supplied to clinData
+#' (ex. "variable"="colour").
+#' @param clinVarOrder Character vector specifying the order in which to plot
+#' variables in the variable column of the argument given to the parameter
+#' clinData. The argument supplied to this parameter should have the same unique
+#' length and values as in the variable column of the argument supplied to 
+#' parameter clinData (see vignette).
+#' @param clinLayer Valid ggplot2 layer to be added to the clinical sub-plot.
 #' @param mutBurden an optional data frame containing columns sample, mut_burden
 #' with sample levels matching those supplied in x
 #' @param main.recurrence_cutoff integer specifying removal of entries not seen
@@ -38,7 +51,6 @@
 #' type
 #' @param sampRecur.layers Additional ggplot2 layers to plot on the sample
 #' recurence chart
-#' @param clin.layers Additional ggplot2 layers to plot on the clinical data
 #' @param main.layers Additional ggplot2 layers to plot on the main panel
 #' @param mutRecur.layers Additional ggplot2 layers to plot on the mutation
 #' burden data
@@ -51,22 +63,22 @@
 #' @return a grob for plotting
 #' @export
 
-waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
-                      clin.var.order=NULL, mutBurden=NULL,
+waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
+                      clinVarOrder=NULL, clinLayer=NULL, mutBurden=NULL,
                       main.recurrence_cutoff=0, main.grid=TRUE,
                       main.label_x=FALSE, main.gene_label_size=8,
                       coverageSpace=44100000, file_type='MAF', main.genes=NULL,
                       main.samples=NULL, drop_mutation=FALSE, rmv_silent=FALSE,
                       main.label_col=NULL, main.plot_label_size=4,
                       main.palette=NULL, sampRecur.layers=NULL,
-                      clin.layers=NULL, main.layers=NULL, mutRecur.layers=NULL,
+                      main.layers=NULL, mutRecur.layers=NULL,
                       main.plot_label_angle=0, variant_class_order=NULL)
 {
     # Perform data quality checks and conversions
-    inputDat <- waterfall_qual(x, clinDat, mutBurden, file_type=file_type,
+    inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=file_type,
                                label_col=main.label_col)
     data_frame <- inputDat[[1]]
-    clinDat <- inputDat[[2]]
+    clinData <- inputDat[[2]]
     mutBurden <- inputDat[[3]]
 
     # Set flag if it is desirable to plot cell text
@@ -142,7 +154,7 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     data_frame <- waterfall_NA2gene(data_frame)
 
     # Plot the Heatmap
-    if(is.null(clinDat))
+    if(is.null(clinData))
     {
         p1 <- waterfall_buildMain(data_frame, grid=main.grid,
                                   label_x=main.label_x,
@@ -154,7 +166,7 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
                                   plot_label_size=main.plot_label_size,
                                   plot_palette=main.palette, layers=main.layers,
                                   plot_label_angle=main.plot_label_angle)
-    } else if(!is.null(clinDat)) {
+    } else if(!is.null(clinData)) {
         p1 <- waterfall_buildMain(data_frame, grid=main.grid,
                                   label_x=main.label_x,
                                   gene_label_size=main.gene_label_size,
@@ -168,14 +180,14 @@ waterfall <- function(x, clinDat=NULL, clin.legend.col=1, clin.var.colour=NULL,
     }
 
     # Plot any clinical data if it is specified
-    if(!is.null(clinDat))
+    if(!is.null(clinData))
     {
         # match the levels of sample in y to conform to the main plot
-        clinDat$sample <- factor(clinDat$sample, levels=sample_order)
-        p4 <- multi_buildClin(clinDat, clin.legend.col=clin.legend.col, 
-                              clin.var.colour=clin.var.colour, 
-                              clin.var.order=clin.var.order, 
-                              clin.layers=clin.layers)
+        clinData$sample <- factor(clinData$sample, levels=sample_order)
+        p4 <- multi_buildClin(clinData, clin.legend.col=clinLegCol, 
+                              clin.var.colour=clinVarCol, 
+                              clin.var.order=clinVarOrder, 
+                              clin.layers=clinLayer)
 
         # Align all plots and return as 1 plot
         pA <- waterfall_align(p2, p1, p3, p4)
