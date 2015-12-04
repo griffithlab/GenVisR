@@ -9,6 +9,8 @@
 #' (required if genome is not specified)
 #' @param genome character string specifying the genome assembly from which
 #' input data is based
+#' @param gender character string specifying whether loh on the X chromosome
+#' should be calculated for and plotted
 #' @param path character string specifying which directory contains 
 #' the sample information stored as datasets with columns "chromosome", 
 #' "position", "n_freq", "t_freq", and "sample" (required if x is not specified)
@@ -27,7 +29,7 @@
 #' gradient's middle values
 #' @param gradient_high object of class character for hex color code for 
 #' gradient's upper values
-#' @param theme_layer ggplot theme object specifying parameters for non data
+#' @param plotLayer ggplot theme object specifying parameters for non data
 #' elements
 #' @return grid object
 #' @importFrom gtools mixedsort
@@ -36,10 +38,10 @@
 #' @export
 
 lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
-                    step=500000, window_size=1000000, normal=50,
+                    gender=FALSE, step=500000, window_size=1000000, normal=50,
                     gradient_midpoint=20, gradient_low="#ffffff",
                     gradient_mid="#b2b2ff", gradient_high="#000000",
-                    theme_layer=NULL)
+                    plotLayer=NULL)
 {
     # Grab data if necessary
     if(!is.null(path))
@@ -50,7 +52,8 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                            "is supplied to path")
             stop(memo)
         }
-        x <- lohView_fileGlob(path=path, fileExt=fileExt, step=step)        
+        x <- lohView_fileGlob(path=path, fileExt=fileExt, step=step, 
+                              gender=gender)        
     } 
     
     # Data Quality Check
@@ -90,6 +93,13 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
     
     # set order of x axis variables in plot
     chromosomes <- gtools::mixedsort(as.character(unique(loh$chromosome)))
+    # remove X and/or Y variables
+    if (gender == TRUE) {
+        chromosomes <- chromosomes[chromosomes != "Y"]
+    }
+    if (gender == FALSE) {
+        chromosomes <- chromosomes[chromosomes != "X" & chromosomes != "Y"]
+    }
     loh$chromosome <- factor(loh$chromosome, levels=chromosomes)
     chr_pos$chromosome <- factor(chr_pos$chromosome, levels=chromosomes)
     
@@ -103,7 +113,7 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                                   gradient_low=gradient_low,
                                   gradient_mid=gradient_mid,
                                   gradient_high=gradient_high,
-                                  theme_layer=theme_layer)
+                                  theme_layer=plotLayer)
     
     #return the final plot
     return(loh_plot)

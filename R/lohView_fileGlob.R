@@ -10,7 +10,7 @@
 #' @param step integer with the length of divisions (bp) in chromosomes
 #' @return object of class data frame from data specified in path for lohView
 
-lohView_fileGlob <- function(path, fileExt, step)
+lohView_fileGlob <- function(path, fileExt, step, gender)
 {
     fileNames <- Sys.glob(paste0(path, '*.', fileExt))
     columnNames <- c("chromosome", "position", "n_freq", "t_freq", "sample")
@@ -25,20 +25,7 @@ lohView_fileGlob <- function(path, fileExt, step)
             warning(memo)
             next
         }
-        
-        sample <- as.character(data$sample[i])
-        chromosome <- as.character("Y")
-        levels(data$chromosome) <- c(levels(data$chromosome), "Y")
-        
-        if (data$chromosome[nrow(data)] == "X")
-        {
-            new_data <- c(chromosome,step*.4,50,50,sample)
-            new_data_2 <- c(chromosome,step*1.6,50,50,sample)
-            new_data_3 <- c(chromosome,step*2.8,50,50,sample)
-            new_data_4 <- c(chromosome,step*4,50,50,sample)
-            data <- rbind(data, new_data, new_data_2, new_data_3, new_data_4)
-        }
-        
+
         if (!exists("dataset"))
         {
             dataset <- data
@@ -49,6 +36,14 @@ lohView_fileGlob <- function(path, fileExt, step)
         }
         
         rm(data)
+    }
+    
+    if (gender == TRUE) {
+        dataset <- dataset[dataset$chromosome !="Y",]
+    }
+    if(gender == FALSE) {
+        dataset <- dataset[dataset$chromosome != "X" & 
+                               dataset$chromosome != "Y",]
     }
     
     return(dataset)
