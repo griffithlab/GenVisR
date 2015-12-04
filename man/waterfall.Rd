@@ -2,32 +2,45 @@
 % Please edit documentation in R/waterfall.R
 \name{waterfall}
 \alias{waterfall}
-\title{Plot a mutation landscape}
+\title{Construct a waterfall plot}
 \usage{
-waterfall(x, clinDat = NULL, clin.legend.col = 1, clin.var.colour = NULL,
-  clin.var.order = NULL, mutBurden = NULL, main.recurrence_cutoff = 0,
-  main.grid = TRUE, main.label_x = FALSE, main.gene_label_size = 8,
-  coverageSpace = 44100000, file_type = "MAF", main.genes = NULL,
-  main.samples = NULL, drop_mutation = FALSE, rmv_silent = FALSE,
-  main.label_col = NULL, main.plot_label_size = 4, main.palette = NULL,
-  sampRecur.layers = NULL, clin.layers = NULL, main.layers = NULL,
+waterfall(x, clinData = NULL, clinLegCol = 1, clinVarCol = NULL,
+  clinVarOrder = NULL, clinLayer = NULL, mutBurden = NULL,
+  main.recurrence_cutoff = 0, main.grid = TRUE, main.label_x = FALSE,
+  main.gene_label_size = 8, coverageSpace = 44100000, file_type = "MAF",
+  main.genes = NULL, main.samples = NULL, drop_mutation = FALSE,
+  rmv_silent = FALSE, main.label_col = NULL, main.plot_label_size = 4,
+  main.palette = NULL, sampRecur.layers = NULL, main.layers = NULL,
   mutRecur.layers = NULL, main.plot_label_angle = 0,
   variant_class_order = NULL)
 }
 \arguments{
-\item{x}{a data frame in annotation format}
+\item{x}{Object of class data frame representing annotated mutations. The 
+data frame supplied must have one of the following sets of column names
+("Tumor_Sample_Barcode", "Hugo_Symbol", "Variant Classification") for
+fileType="MAF", ("sample","gene_name","trv_type") for fileType="MGI" or
+("sample", "gene", "variant_class") for fileType="Custom". This columns 
+should represent samples in a cohort, gene with mutation, and the mutation
+type respectively.}
 
-\item{clinDat}{an optional data frame in "long" format giving additional
-information to be plotted, requires columns "sample", "variable", and "value"}
+\item{clinData}{Object of class data frame with rows representing clinical
+data. The data frame should be in "long format" and columns must be names as
+"sample", "variable", and "value" (optional see details and vignette).}
 
-\item{clin.legend.col}{an integer specifying the number of columns to plot in
-the clinical data legend}
+\item{clinLegCol}{Integer specifying the number of columns in the legend for
+the clinical data, only valid if argument is supplied to parameter clinData.}
 
-\item{clin.var.colour}{a named character vector specifying the mapping
-between colors and variables in the clinical data}
+\item{clinVarCol}{Named character vector specifying the mapping of colours
+to variables in the variable column of the data frame supplied to clinData
+(ex. "variable"="colour").}
 
-\item{clin.var.order}{a character vector of variables to order the clinical
-legend by}
+\item{clinVarOrder}{Character vector specifying the order in which to plot
+variables in the variable column of the argument given to the parameter
+clinData. The argument supplied to this parameter should have the same unique
+length and values as in the variable column of the argument supplied to 
+parameter clinData (see vignette).}
+
+\item{clinLayer}{Valid ggplot2 layer to be added to the clinical sub-plot.}
 
 \item{mutBurden}{an optional data frame containing columns sample, mut_burden
 with sample levels matching those supplied in x}
@@ -71,8 +84,6 @@ type}
 \item{sampRecur.layers}{Additional ggplot2 layers to plot on the sample
 recurence chart}
 
-\item{clin.layers}{Additional ggplot2 layers to plot on the clinical data}
-
 \item{main.layers}{Additional ggplot2 layers to plot on the main panel}
 
 \item{mutRecur.layers}{Additional ggplot2 layers to plot on the mutation
@@ -88,7 +99,8 @@ mutation types to plot (required if file_type="Custom")}
 a grob for plotting
 }
 \description{
-Plot a mutation landscape plot for a cohort in an annotation file
+Given a data frame construct a water fall plot showing the mutation burden
+and mutation type on a gene and sample level.
 }
 \examples{
 waterfall(brcaMAF)
