@@ -4,19 +4,26 @@
 \alias{TvTi}
 \title{Construct transition-transversion plot}
 \usage{
-TvTi(x, y = NULL, clinData = NULL, type = "Proportion",
+TvTi(x, fileType = NULL, y = NULL, clinData = NULL, type = "Proportion",
   lab_Xaxis = TRUE, lab_txtAngle = 45, palette = c("#D53E4F", "#FC8D59",
-  "#FEE08B", "#E6F598", "#99D594", "#3288BD"), fileType = NULL,
-  tvtiLayer = NULL, expecLayer = NULL, sort = "none", dataOut = FALSE,
-  clinLegCol = NULL, clinVarCol = NULL, clinVarOrder = NULL,
-  clinLayer = NULL)
+  "#FEE08B", "#E6F598", "#99D594", "#3288BD"), tvtiLayer = NULL,
+  expecLayer = NULL, sort = "none", dataOut = FALSE, clinLegCol = NULL,
+  clinVarCol = NULL, clinVarOrder = NULL, clinLayer = NULL)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing transitions and
 transversions. The data frame must contain the following columns 'sample',
 reference' and 'variant' or alternatively "Tumor_Sample_Barcode",
 "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2" depending on the
-argument supplied to the fileType parameter.}
+argument supplied to the fileType parameter. (required)}
+
+\item{fileType}{Character string specifying the format the input given to
+parameter x is in, one of 'MAF', 'MGI'. The former option requires the data
+frame given to x to contain the following column names
+"Tumor_Sample_Barcode", "Reference_Allele", "Tumor_Seq_Allele1",
+"Tumor_Seq_Allele2" the later option requires the data frame givin to x to
+contain the following column names "reference", "variant" and "sample".
+(required)}
 
 \item{y}{Named vector or data frame representing the expected transition and 
 transversion rates. Either option must name transition and transverions as
@@ -40,13 +47,6 @@ the plot.}
 
 \item{palette}{Character vector of length 6 specifying colours for each
 of the six possible transition transversion types.}
-
-\item{fileType}{Character string specifying the format the input given to
-parameter x is in, one of 'MAF', 'MGI'. The former option requires the data
-frame given to x to contain the following column names
-"Tumor_Sample_Barcode", "Reference_Allele", "Tumor_Seq_Allele1",
-"Tumor_Seq_Allele2" the later option requires the data frame givin to x to
-contain the following column names "reference", "variant" and "sample".}
 
 \item{tvtiLayer}{Valid ggplot2 layer to be added to the main plot.}
 

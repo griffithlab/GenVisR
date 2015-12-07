@@ -13,6 +13,14 @@
 
 TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
 {
+    # Check file type is valid
+    if(!grepl("MAF|MGI", file_type))
+    {
+        memo <- paste0("Did not recognize input to paramter fileType as a",
+                       " valid argument... Please specify one of \"MGI\"",
+                       " or \"MAF\"")
+        stop(memo)
+    }
     # Check if x input is a data frame
     if(!is.data.frame(x))
     {

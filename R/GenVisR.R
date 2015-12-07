@@ -72,9 +72,9 @@ NULL
 #'
 #' @docType data
 #' @keywords datasets
-#' @name ptenCOV
-#' @usage data(ptenCOV)
-#' @format a data frame with 107338 observations and 4 variables
+#' @name ptenCov
+#' @usage data(ptenCov)
+#' @format a data frame with 10734 observations and 4 variables
 #' @return Object of class data frame
 NULL
 

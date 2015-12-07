@@ -7,7 +7,7 @@
 #' transversions. The data frame must contain the following columns 'sample',
 #' reference' and 'variant' or alternatively "Tumor_Sample_Barcode",
 #' "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2" depending on the
-#' argument supplied to the fileType parameter.
+#' argument supplied to the fileType parameter. (required)
 #' @param y Named vector or data frame representing the expected transition and 
 #' transversion rates. Either option must name transition and transverions as
 #' follows: "A->C or T->G (TV)", "A->G or T->C (TI)", "A->T or T->A (TV)",
@@ -31,6 +31,7 @@
 #' "Tumor_Sample_Barcode", "Reference_Allele", "Tumor_Seq_Allele1",
 #' "Tumor_Seq_Allele2" the later option requires the data frame givin to x to
 #' contain the following column names "reference", "variant" and "sample".
+#' (required)
 #' @param tvtiLayer Valid ggplot2 layer to be added to the main plot.
 #' @param expecLayer Valid ggplot2 layer to be added to the expected sub-plot.
 #' @param sort Character string specifying the sort order of the sample
@@ -61,11 +62,11 @@
 #' @importFrom gtools mixedsort
 #' @export
 
-TvTi <- function(x, y=NULL, clinData=NULL, type='Proportion', lab_Xaxis=TRUE,
-                 lab_txtAngle=45,
+TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
+                 lab_Xaxis=TRUE, lab_txtAngle=45,
                  palette=c('#D53E4F', '#FC8D59', '#FEE08B', '#E6F598',
                            '#99D594', '#3288BD'),
-                 fileType=NULL, tvtiLayer=NULL, expecLayer=NULL,
+                 tvtiLayer=NULL, expecLayer=NULL,
                  sort='none', dataOut=FALSE, clinLegCol=NULL,
                  clinVarCol=NULL, clinVarOrder=NULL, clinLayer=NULL)
 { 
