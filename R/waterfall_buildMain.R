@@ -59,8 +59,8 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
                      '#ace7b9', '#cdf0d5', '#59CF74', '#002AA8', '#5977CF',
                      '#F37812', '#F2B079', '#888811', '#FDF31C', '#8C8C8C')
     } else if(toupper(file_type) == toupper('MAF')) {
-        palette <- c("grey", '#A80100', '#CF5A59', '#A80079', '#CF59AE', '#4f00A8',
-                     '#9159CF', '#000000', '#59CF74', '#00A8A8', '#79F2F2',
+        palette <- c("grey", '#A80100', '#CF5A59', '#A80079', '#CF59AE', '#000000',
+                     '#9159CF', '#4f00A8', '#59CF74', '#00A8A8', '#79F2F2',
                      '#006666', '#002AA8', '#5977CF', '#F37812', '#F2B079',
                      '#888811', '#FDF31C')
     } else if(toupper(file_type) == toupper('Custom')) {
