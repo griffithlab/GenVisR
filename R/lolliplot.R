@@ -77,6 +77,8 @@
 #' valid only if sideChain==FALSE.
 #' @param paletteB Character vector specifying colours for lollis representing
 #' mutations, valid only if argument is supplied to fillCol.
+#' @param dataOut Boolean specifying whether to output the data to be passed to
+#' ggplot instead of plotting.
 #' @details lolliplot is a function designed to display mutation information in
 #' the context of a protien identified by an ensembl transcript id. The
 #' lolliplot function will query ensembl via biomart to retrieve sequence and
@@ -124,7 +126,7 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                       obsB.adj.lmt=.5, obsB.iter.max=50000,
                       sideChain=FALSE, species="hsapiens",
                       maxLolliStack=NULL, plotLayer=NULL, paletteA=NULL,
-                      paletteB=NULL)
+                      paletteB=NULL, dataOut=FALSE)
 {
     # Perform quality check
     input <- lolliplot_qual(x, y, z)
@@ -211,8 +213,13 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
     } else {
         observed_mutation2 <- NULL
     }
-
-
+    
+    if(isTRUE(dataOut))
+    {
+        return(list("gene"=geneData,
+                    "observed_mutation"=observed_mutation,
+                    "observed_mutation2"=observed_mutation2))
+    }
     
     # construct the lolliplot
     plot <- lolliplot_buildMain(geneData, length, observed_mutation,
