@@ -11,7 +11,8 @@ waterfall(x, clinData = NULL, clinLegCol = 1, clinVarCol = NULL,
   plotGenes = NULL, plotSamples = NULL, mainDropMut = FALSE,
   rmvSilent = FALSE, mainLabelCol = NULL, mainLabelSize = 4,
   mainPalette = NULL, sampRecurLayer = NULL, mainLayer = NULL,
-  mutBurdenLayer = NULL, mainLabelAngle = 0, variant_class_order = NULL)
+  mutBurdenLayer = NULL, mainLabelAngle = 0, variant_class_order = NULL,
+  dataOut = FALSE)
 }
 \arguments{
 \item{x}{Object of class data frame representing annotated mutations. The 
@@ -103,6 +104,9 @@ text labels. Valid only if argument is supplied to the parameter
 \item{variant_class_order}{Character vector specifying the hierarchical order
 of mutation types to plot, required if file_type == "Custom"
 (see details and vignette).}
+
+\item{dataOut}{Boolean specifying whether to output the data to be passed to
+ggplot instead of plotting.}
 }
 \value{
 A graphic object.

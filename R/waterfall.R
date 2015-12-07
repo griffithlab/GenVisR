@@ -68,6 +68,8 @@
 #' (see details and vignette).
 #' @param plotSamples Character vector specifying samples to plot. If not null
 #' all other samples not specified within this parameter are removed.
+#' @param dataOut Boolean specifying whether to output the data to be passed to
+#' ggplot instead of plotting.
 #' @details waterfall is a function designed to visualize the mutations seen in
 #' a cohort. The function takes a data frame with appropriate column names (see
 #' fileType parameter) and plots the mutations within. In cases where multiple
@@ -107,7 +109,7 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
                       mainLabelCol=NULL, mainLabelSize=4,
                       mainPalette=NULL, sampRecurLayer=NULL,
                       mainLayer=NULL, mutBurdenLayer=NULL,
-                      mainLabelAngle=0, variant_class_order=NULL)
+                      mainLabelAngle=0, variant_class_order=NULL, dataOut=FALSE)
 {
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
@@ -187,6 +189,11 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
     # if there are any NA values in the data frame for a gene, give these NA
     # values a gene name so they are plotted properly
     data_frame <- waterfall_NA2gene(data_frame)
+    
+    if(isTrue(dataOut))
+    {
+        return(data_frame)
+    }
 
     # Plot the Heatmap
     if(is.null(clinData))

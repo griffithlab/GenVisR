@@ -11,7 +11,7 @@ lolliplot(x, y = NULL, z = NULL, fillCol = NULL, labelCol = NULL,
   obsB.rep.fact = 5000, obsB.rep.dist.lmt = 500, obsB.attr.fact = 0.1,
   obsB.adj.max = 0.1, obsB.adj.lmt = 0.5, obsB.iter.max = 50000,
   sideChain = FALSE, species = "hsapiens", maxLolliStack = NULL,
-  plotLayer = NULL, paletteA = NULL, paletteB = NULL)
+  plotLayer = NULL, paletteA = NULL, paletteB = NULL, dataOut = FALSE)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing mutations. The
@@ -114,6 +114,9 @@ valid only if sideChain==FALSE.}
 
 \item{paletteB}{Character vector specifying colours for lollis representing
 mutations, valid only if argument is supplied to fillCol.}
+
+\item{dataOut}{Boolean specifying whether to output the data to be passed to
+ggplot instead of plotting.}
 }
 \value{
 object of class ggplot2
