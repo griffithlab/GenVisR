@@ -190,7 +190,7 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
     # values a gene name so they are plotted properly
     data_frame <- waterfall_NA2gene(data_frame)
     
-    if(isTrue(dataOut))
+    if(isTRUE(dataOut))
     {
         return(data_frame)
     }

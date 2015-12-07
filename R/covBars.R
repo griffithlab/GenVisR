@@ -60,7 +60,7 @@ covBars <- function(x, colour=NULL, plot_title=NULL, x_title_size=12,
     # Construct the plot
     p1 <- covBars_buildMain(xmelt, col=colour, plot_title=plot_title,
                             x_lab_size=x_title_size, y_lab_size=y_title_size,
-                            facet_lab_size=facet_lab_size, layers=layers)
+                            facet_lab_size=facet_lab_size, layers=plotLayer)
 
     return(p1)
 }
