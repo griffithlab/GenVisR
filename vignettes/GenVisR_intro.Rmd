@@ -3,6 +3,7 @@ title: "GenVisR: An introduction"
 author: "Zachary Skidmore"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+theme: united
 vignette: >
   %\VignetteIndexEntry{GenVisR: An introduction}
   %\VignetteEngine{knitr::rmarkdown}
@@ -19,26 +20,28 @@ Intuitively visualizing and interpreting data from high-throughput genomic techn
 `waterfall` provides a method of visualizing the mutational landscape of a cohort. The input to `waterfall` consists of a data frame derived from either a .maf (version 2.4) file or a file in MGI annotation format (obtained from The [Genome Modeling System](https://github.com/genome/gms)) specified via the `fileType` parameter. `waterfall` will display the mutation occurrence and type in the main panel while showing the mutation burden and the percentage of samples with a mutation in the top and side sub-plots. Conflicts arising from multiple mutations in the same gene/sample cell are resolved by a hierarchical removal of mutations keeping the most deleterious as defined by the order of the "mutation type" legend. Briefly this hierarchy is as follows with the most deleterious defined first:
 ```{r kable 1, echo=FALSE}
 library(knitr)
-kable(data.frame("MAF"=c("nonsense", "frame_shift_del",
-                         "frame_shift_ins", "splice_site_del",
-                         "splice_site_ins", "splice_site",
-                         "nonstop", "in_frame_del", "in_frame_ins",
-                         "missense", "splice_region_del",
-                         "splice_region_ins", "splice_region",
-                         "5_prime_flanking_region",
-                         "3_prime_flanking_region",
-                         "3_prime_untranslated_region",
-                         "5_prime_untranslated_region", "rna",
-                         "intronic", "silent")))
-      
-kable(data.frame("MGI"=c("Nonsense_Mutation", "Frame_Shift_Ins",
-                         "Frame_Shift_Del", "Translation_Start_Site",
-                         "Splice_Site", "Nonstop_Mutation",
-                         "In_Frame_Ins", "In_Frame_Del",
-                         "Missense_Mutation", "5\'Flank",
-                         "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron",
-                         "IGR", "Silent", "Targeted_Region")))
+MGI <- c("nonsense", "frame_shift_del",
+         "frame_shift_ins", "splice_site_del",
+         "splice_site_ins", "splice_site",
+         "nonstop", "in_frame_del", "in_frame_ins",
+         "missense", "splice_region_del",
+         "splice_region_ins", "splice_region",
+         "5_prime_flanking_region",
+         "3_prime_flanking_region",
+         "3_prime_untranslated_region",
+         "5_prime_untranslated_region", "rna",
+         "intronic", "silent")
+MAF <- c("Nonsense_Mutation", "Frame_Shift_Ins",
+         "Frame_Shift_Del", "Translation_Start_Site",
+         "Splice_Site", "Nonstop_Mutation",
+         "In_Frame_Ins", "In_Frame_Del",
+         "Missense_Mutation", "5\'Flank",
+         "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron",
+         "IGR", "Silent", "Targeted_Region", "", "")
+
+kable(as.data.frame(cbind(MAF, MGI)))
 ```
+
 Occasionally a situation may arise in which it may be desireable to run `waterfall` on an unsupported file type. This can be achieved by setting the `fileType` parameter to "Custom". Further the hieararchy of mutations (described above) must be specified with the `variant_class_order` parameter which expects a character vector describing the mutations observed in order of most to least important. Note that all mutations in the input data must be specified in the `variant_class_order` parameter. Using this option will require the data frame to contain the following column names: "sample", "gene", "variant_class".
 
 `BRCA_MAF` is a truncated MAF file consisting of 50 samples from the TCGA project corresponding to [Breast invasive carcinoma](https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files#TCGAMAFFiles-BRCA:Breastinvasivecarcinoma) [(complete data)](https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf). Using this dataset we can view the default behavior of `waterfall`:
@@ -50,7 +53,7 @@ waterfall(brcaMAF)
 
 This type of view is of limited use without expanding the graphic device given the large number of genes. Often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are two ways to accomplish this, the `mainRecurCutoff` parameter accepts a numeric value between 0 and 1 and will remove genes from the data which do not have at least x proportion of samples mutated. For example if it were desireable to plot those genes with mutations in >= 6% of samples:
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+```{r, fig.keep='last', fig.width=10, fig.height=7, message=FALSE, warning=FALSE, results='hide'}
 # Load GenVisR and set seed
 library(GenVisR)
 set.seed(383)
@@ -61,7 +64,7 @@ waterfall(brcaMAF, mainRecurCutoff=.06)
 
 Alternatively one can select genes of interest using the `plotGenes` parameter. This parameter accepts a case insensitive character vector of genes present in the data and will subset the data on those genes. For example, if it was desirable to plot only the following genes "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
+```{r, fig.keep='last', fig.width=10, fig.height=7, message=FALSE, warning=FALSE, results='hide'}
 # Plot only the specified genes
 waterfall(brcaMAF, plotGenes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
 ```
@@ -75,7 +78,7 @@ kable(as.data.frame(cbind(sample=as.character(brcaMAF[1:10,16]),
 
 In addition to specifying the mutation burden the user also has the ability to plot additional clinical data. The clinical data supplied should be a data frame in "long" format with column names "sample", "variable", "value". It is recommended to use the `melt` function in the package [reshape2](http://cran.r-project.org/web/packages/reshape2/index.html) to coerce data into this format. Here we add clinical data to be plotted and specify a custom order and colours for these variables putting these values in two columns within the clinical plot legend:
 
-```{r, fig.keep='last', fig.width=10.5, fig.height=7.5, message=FALSE, warning=FALSE, results='hide'}
+```{r, fig.keep='last', fig.width=12, fig.height=8.5, message=FALSE, warning=FALSE, results='hide'}
 # Create clinical data
 subtype <- c('lumA', 'lumB', 'her2', 'basal', 'normal')
 subtype <- sample(subtype, 50, replace=TRUE)
@@ -162,7 +165,7 @@ end=c(89729532)), strand=strand(c("+")))
 data <- list("PTEN" = ptenCov)
 
 # Call genCov
-genCov(data, txdb, gr, genome, gene_labelTranscriptSize=5)
+genCov(data, txdb, gr, genome, gene_labelTranscriptSize=2)
 ```
 
 By default genCov will perform a log compression of genomic space for each feature type,'Intron','CDS','UTR' specified by the parameter `transform`. The degree of compression can be set via the parameter `base` which will perform the appropriate log compression for the features specified. The user can turn off this behavior by setting transform to `NULL`. `genCov` Defaults to log-10 compression for intronic space, and log-2 compression for CDS and UTR regions. Here we turn off the compression and reduce all gene transcripts to one representative pseudo-transctipt.
@@ -293,7 +296,7 @@ data <- cytoGeno[cytoGeno$genome == 'hg38',]
 ideoView(data, chromosome='chr1', txtSize=4)
 ```
 
-## compIdent
+### compIdent
 TODO: add description and example, this is the identity snps plot
 
 ### geneViz
