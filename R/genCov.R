@@ -77,7 +77,7 @@
 #'ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
 #'
 #' # Define preloaded coverage data as named list
-#' data <- list("PTEN" = ptenCOV)
+#' data <- list("PTEN" = ptenCov)
 #'
 #' # Call genCov
 #' genCov(data, txdb, gr, genome, gene_labelTranscriptSize=3)

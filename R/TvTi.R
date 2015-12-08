@@ -56,7 +56,7 @@
 #' @examples
 #' TvTi(brcaMAF, type='Frequency',
 #' palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"),
-#' lab_txtAngle=60)
+#' lab_txtAngle=60, fileType="MAF")
 #' @return A graphic object or data frame if dataOut==TRUE.
 #' @importFrom plyr adply
 #' @importFrom gtools mixedsort
