@@ -8,7 +8,7 @@
 #' TODO
 #' @return graphical object
 #' @examples
-#' TODO
+#' #TODO
 #' @export
 
 compIdent <- function(x, genome)

@@ -21,6 +21,6 @@ Given the bam file path, count the number of reads at the 24 SNP locations
 TODO
 }
 \examples{
-TODO
+#TODO
 }
 

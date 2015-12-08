@@ -6,10 +6,12 @@
 #' @param master an object of class data frame containing columns start, end,
 #' width, type, trans_start, trans_end representing a master genomic region with
 #' features from isoforms merged
-#' @param cov.coords an object of class data frame containing columns start and end
-#' to map to transformed space, with rows demarking single nucleotide coverages
+#' @param cov.coords an object of class data frame containing columns start and
+#' end to map to transformed space, with rows demarking single nucleotide
+#' coverages
 #' @return an object of class data frame identical to coord but with extra
 #' columns for transformed coord
+#' @importFrom plyr adply
 
 geneViz_mapCovCoordSpace <- function(cov.coords, master)
 { 
@@ -33,7 +35,7 @@ geneViz_mapCovCoordSpace <- function(cov.coords, master)
         return(cov.region.coords)
     }
     
-    x <- adply(master, 1, transform.coordinates, cov.coords=cov.coords)
+    x <- plyr::adply(master, 1, transform.coordinates, cov.coords=cov.coords)
 
     return(x)
 }
