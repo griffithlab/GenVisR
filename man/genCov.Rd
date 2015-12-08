@@ -97,7 +97,15 @@ gc content within genomic features to be calculated and displayed. The
 argument supplied to x must contain data on the same chromosome as the region
 of interest specified in the parameter `gr`!
 
-GET ALEX TO ADD TRANSFORM DETAILS AND DETAILS ON THE APROX FEATURE.
+Typically, introns of a transcript are much larger than exons, while exons are
+sometimes of greater interest. To address this, genCov will by default
+scale the x-axis to expand track information according to region type: coding
+sequence (CDS), untranslated region (UTR), or intron / intergenic (Intron).
+The amount by which each region is scaled is controlled by the `base` and
+`transform` arguments. `transform` specifies which regions to scale, and `base`
+corresponds to the log base transform to apply to those regions. To keep one or
+more region types from being scaled, omit the corresponding entries from the 
+`base` and `transform` vectors.
 }
 \examples{
 # Load transcript meta data

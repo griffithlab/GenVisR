@@ -59,7 +59,15 @@ is intended to plot gene features within a single gene with boundaries
 specified by the GRanges object, plotting more that one gene is advised
 against.
 
-GET ALEX TO ADD TRANSFORM DETAILS HERE
+Typically, introns of a transcript are much larger than exons, while exons are
+sometimes of greater interest. To address this, genCov will by default
+scale the x-axis to expand track information according to region type: coding
+sequence (CDS), untranslated region (UTR), or intron / intergenic (Intron).
+The amount by which each region is scaled is controlled by the `base` and
+`transform` arguments. `transform` specifies which regions to scale, and `base`
+corresponds to the log base transform to apply to those regions. To keep one or
+more region types from being scaled, omit the corresponding entries from the 
+`base` and `transform` vectors.
 }
 \examples{
 # need transcript data for reference

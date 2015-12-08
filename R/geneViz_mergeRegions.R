@@ -80,7 +80,7 @@ geneViz_mergeRegions <- function(gene_features, gr, base, transform)
         r.start <- master[n, 2]
         row <- master[1,]
         width <- gr.stop - r.start
-        row[c(1:3,5)] <- c(r.start, gr.stop, width, width)
+        row[c(1:3,5)] <- c(r.start + 1, gr.stop, width, width)
         row[4] <- 'Intron'
         master <- rbind(master, row)
     }
