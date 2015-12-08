@@ -150,10 +150,7 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
         coverage_data <- lapply(coverage_data, test)
         message("Mapping coverage data onto transformed gene-space")
         coverage_data <- lapply(coverage_data,
-                                function(x, master) plyr::adply(x, 1,
-                                                                geneViz_mapCoordSpace,
-                                                                master=master,
-                                                                .progress='text'),
+                                geneViz_mapCovCoordSpace,
                                 master=master)
 
         # Replace original coordinates with transformed coordinates
