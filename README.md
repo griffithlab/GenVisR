@@ -30,7 +30,7 @@ devtools::install_github("griffithlab/GenVisR")
 
 ## Tips for developers
 * It is recommended to use Rstudio for development, Clone the repo and open the "GGgenome.Rproj" folder in Rstudio.
-* It is necessary to manual install all packages (since you are cloning and building, not installing), all packages within the imports, Depends, and Suggests flags in the "DESCRIPTION" file (~/GenVisR/DESCRIPTION) should be installed!
+* It is necessary to manual install all packages (since you are cloning and building, not installing), all packages within the imports, Depends, and Suggests flags in the "DESCRIPTION" file (~/GenVisR/DESCRIPTION) should be installed! The r-package devtools should be installed as well!
 * Build and Reload the package at this step (shorcut: Shift+Cmd+B)
 * GenVisR uses roxygen2 for documentation, to update the Reference Manuscript edit the roxygen2 flags (i.e. @param, @details, etc.) in the code. These are within the R function files in ~/GenVisR/R/, Then run devtools::document().
 * To update the vignette edit the R markdown file in the vignettes subdirectory (~/GenVisR/vignettes/GenVisR_intro.Rmd) and press the knit button in Rstudio
