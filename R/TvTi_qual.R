@@ -21,6 +21,7 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
                        " or \"MAF\"")
         stop(memo)
     }
+    
     # Check if x input is a data frame
     if(!is.data.frame(x))
     {

@@ -189,11 +189,6 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
     # if there are any NA values in the data frame for a gene, give these NA
     # values a gene name so they are plotted properly
     data_frame <- waterfall_NA2gene(data_frame)
-    
-    if(isTRUE(dataOut))
-    {
-        return(data_frame)
-    }
 
     # Plot the Heatmap
     if(is.null(clinData))
@@ -236,6 +231,13 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
         return(grid::grid.draw(pA))
     }
 
+    if(isTRUE(dataOut))
+    {
+        return(list("main"=data_frame,
+                    "mutation_count"=data_frame2,
+                    "clinical"=clinData))
+    }
+    
     # Align the Plots and return as 1 plot
     pA <- waterfall_align(p2, p1, p3)
 

@@ -1,7 +1,7 @@
 #' Calculate Transition/Transversion Frequency
 #'
-#' Given a data frame with columns reference, variant, and sample construct
-#' a transition/transversion plot
+#' Given a data frame with columns reference, variant, sample, and trans/tranv
+#' calculate the frequencies of transitions and transversion occuring.
 #' @name TvTi_calcTransTranvFreq
 #' @param x Object of class data frame containing columns 'reference',
 #' 'variant', 'sample', 'trans_tranv'
