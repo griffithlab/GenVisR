@@ -10,9 +10,9 @@ TvTi_rmMnuc <- function(x)
 {
     original_size <- nrow(x)
 
-  # Find and multi nucleotide codes
-  x <- x[grep('[ACGT]{2,}', x$reference, perl=TRUE, invert=TRUE),]
-  x <- x[grep('[ACGT]{2,}', x$variant, perl=TRUE, invert=TRUE),]
+  # Find and remove multi nucleotide codes
+  x <- x[grep('[ACGT]{2,}', x$reference, perl=TRUE, invert=TRUE, ignore.case=TRUE),]
+  x <- x[grep('[ACGT]{2,}', x$variant, perl=TRUE, invert=TRUE, ignore.case=TRUE),]
   
   new_size <- nrow(x)
   

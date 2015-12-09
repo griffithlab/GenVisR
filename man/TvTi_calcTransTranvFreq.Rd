@@ -15,7 +15,7 @@ Object of class data frame with Frequency and Proportion of
 Transistions/Transversions appended on a sample level
 }
 \description{
-Given a data frame with columns reference, variant, and sample construct
-a transition/transversion plot
+Given a data frame with columns reference, variant, sample, and trans/tranv
+calculate the frequencies of transitions and transversion occuring.
 }
 

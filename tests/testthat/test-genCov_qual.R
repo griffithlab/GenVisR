@@ -21,12 +21,14 @@ test_that("genCov_qual correctly identifies if elements in the list x are not of
 
 test_that("genCov_qual correctly identifies if a column name is missing in x", {
     x <- data.frame(incorrect=c(1, 2), cov=c(50, 50))
+    x <- list("test"=x)
     
     expect_error(genCov_qual(x=x, txdb=txdb, gr=gr, genome=genome), "x are missing column names")        
 })
 
 test_that("genCov_qual correctly identifies if input to txdb in not a TxDb object", {
     x <- data.frame(end=c(1, 2), cov=c(50, 50))
+    x <- list("test"=x)
     incorrect <- 'incorrect'
     
     expect_error(genCov_qual(x=x, txdb=incorrect, gr=gr, genome=genome), "txdb does not appear")        
@@ -34,6 +36,7 @@ test_that("genCov_qual correctly identifies if input to txdb in not a TxDb objec
 
 test_that("genCov_qual correctly identifies if input to gr in not a Granges object", {
     x <- data.frame(end=c(1, 2), cov=c(50, 50))
+    x <- list("test"=x)
     incorrect <- 'incorrect'
     
     expect_error(genCov_qual(x=x, txdb=txdb, gr=incorrect, genome=genome), "gr does not appear")        
@@ -41,6 +44,7 @@ test_that("genCov_qual correctly identifies if input to gr in not a Granges obje
 
 test_that("genCov_qual correctly identifies if input to genome in not a BSgenome object", {
     x <- data.frame(end=c(1, 2), cov=c(50, 50))
+    x <- list("test"=x)
     incorrect <- 'incorrect'
     
     expect_error(genCov_qual(x=x, txdb=txdb, gr=gr, genome=incorrect), "genome does not appear")        
