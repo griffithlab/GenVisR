@@ -8,7 +8,8 @@ TvTi(x, fileType = NULL, y = NULL, clinData = NULL, type = "Proportion",
   lab_Xaxis = TRUE, lab_txtAngle = 45, palette = c("#D53E4F", "#FC8D59",
   "#FEE08B", "#E6F598", "#99D594", "#3288BD"), tvtiLayer = NULL,
   expecLayer = NULL, sort = "none", dataOut = FALSE, clinLegCol = NULL,
-  clinVarCol = NULL, clinVarOrder = NULL, clinLayer = NULL)
+  clinVarCol = NULL, clinVarOrder = NULL, clinLayer = NULL,
+  progress = TRUE)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing transitions and
@@ -74,6 +75,9 @@ length and values as in the variable column of the argument supplied to
 parameter clinData (see vignette).}
 
 \item{clinLayer}{Valid ggplot2 layer to be added to the clinical sub-plot.}
+
+\item{progress}{Boolean specifying if progress bar should be displayed for
+the function.}
 }
 \value{
 A graphic object or data frame if dataOut==TRUE.

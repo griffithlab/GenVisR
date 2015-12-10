@@ -51,6 +51,8 @@
 #' length and values as in the variable column of the argument supplied to 
 #' parameter clinData (see vignette).
 #' @param clinLayer Valid ggplot2 layer to be added to the clinical sub-plot.
+#' @param progress Boolean specifying if progress bar should be displayed for
+#' the function.
 #' @details TvTi is a function designed to display proportion or frequency
 #' of transitions and transversion seen in a data frame supplied to parameter x.
 #' @examples
@@ -68,7 +70,8 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
                            '#99D594', '#3288BD'),
                  tvtiLayer=NULL, expecLayer=NULL,
                  sort='none', dataOut=FALSE, clinLegCol=NULL,
-                 clinVarCol=NULL, clinVarOrder=NULL, clinLayer=NULL)
+                 clinVarCol=NULL, clinVarOrder=NULL, clinLayer=NULL,
+                 progress=TRUE)
 { 
     # Perform quality checks
     out <- TvTi_qual(x, y, clinData, file_type=fileType)
@@ -77,8 +80,14 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
     clinData <- out$input3
 
     # add transition/transversion info
-    message("annotating transitions and transversions")
-    x <- plyr::adply(x, 1, TvTi_annoTransTranv, .progress='text')
+    if(isTRUE(progress))
+    {
+        message("annotating transitions and transversions")
+        x <- plyr::adply(x, 1, TvTi_annoTransTranv, .progress='text')
+    } else {
+        x <- plyr::adply(x, 1, TvTi_annoTransTranv)
+    }
+
 
     # Calculate the proportion of transitions/transversions
     x <- TvTi_calcTransTranvFreq(x)
@@ -100,12 +109,6 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
         memo <-paste0(sort, " is not a valid parameter for sort, please",
                       " specify one of \"sample\", \"tvti\", \"none\"")
         stop(memo)
-    }
-
-    # if requested output the data instead of ploting
-    if(isTRUE(dataOut))
-    {
-        return(x)
     }
 
     # Perform a quality control on y to ensure fill levels match x
@@ -154,6 +157,12 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
                              expec.layers=expecLayer)
     } else {
         p2 <- NULL
+    }
+    
+    # if requested output the data instead of ploting
+    if(isTRUE(dataOut))
+    {
+        return(list("main"=x, "expect"=y))
     }
 
     finalPlot <- TvTi_alignPlot(p1=p1, p2=p2, p3=p3)
