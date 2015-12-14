@@ -175,9 +175,8 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
         }
     }
     
+    # grab the length of the protein in Amino Acids
     proteinLength <- length(residueSeq)    
-    
-
     
     # if z is specified plot that instead of fetching the domain information
     if(!is.null(z))

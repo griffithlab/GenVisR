@@ -14,19 +14,30 @@ lolliplot_constructGene <- function(gene, domain_data, length)
     # message
     message("Constructing gene track")
     
-    # rename columns for domain_data
+    # rename columns for domain_data and make sure description column is
+    # not a factor
     colnames(domain_data) <- c("description", "start", "end")
+    domain_data$description <- as.character(domain_data$description)
     
     # quality check of domain data
     if(max(domain_data$end) > length)
     {
-        memo <- paste0("The end position of a domain:",  max(domain_data$end),
-                       "is exceeding the length of the protein:", length)
+        memo <- paste0("The end position of a domain: ",  max(domain_data$end),
+                       " is exceeding the length of the protein:", length)
         warning(memo)
     } else if(min(domain_data$start) < 1) {
         memo <- paste0("The start position of a domain:",
                        min(domain_data$start),
                        "is less than the start of the protein", 1)
+        warning(memo)
+    }
+    
+    # Check that start coordinates are always less than the end coordinates
+    if(any(domain_data$start >= domain_data$end))
+    {
+        memo <- paste0("Found a start position greater than an end position",
+                       " in the protein features track. Check input to Z or",
+                       "results of the biomaRt query using dataOut==TRUE.")
         warning(memo)
     }
     
@@ -51,13 +62,13 @@ lolliplot_constructGene <- function(gene, domain_data, length)
     
     # add this nest information to the data frame
     domain_data$nest <- nest + 1
+    colnames(domain_data) <- c("Domain", "pos_from", "pos_to", "nest")
     
     # add in the actual transcript track to the domain information
-    gene <- c(gene, 1, length, 1)
+    gene <- data.frame(Domain=gene, pos_from=1, pos_to=length, nest=1)
     
     # combine gene and domain information
     gene <- rbind(gene, domain_data)
-    colnames(gene) <- c("Domain", "pos_from", "pos_to", "nest")
     
     # annotate display heights based on nesting and make sure coord are numeric
     gene$height_min <- .1/(as.numeric(gene$nest))

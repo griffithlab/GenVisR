@@ -1,8 +1,8 @@
 #' dodge coordinates
 #'
-#' given amino acid position coordinates on, before grouping and dodge on y axis
+#' given a data frame, dodge x coordinates ontop of each other
 #' @name lolliplot_dodgeCoordY
-#' @param x data frame containing columns coord_x_dodge and group
+#' @param x data frame containing columns coord_x_dodge
 #' @param track character vector, one of "top", "bottom" specifying whether to
 #' dodge in a positive or negative fashion
 #' @return numeric vector of dodged position coordinates on y axis
