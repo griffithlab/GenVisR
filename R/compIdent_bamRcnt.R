@@ -92,8 +92,6 @@ compIdent_bamRcnt <- function(bamfile, genome, targetbed = NULL)
     x3 <- cbind(x2[,1:2],getref,total_reads,x2[,3:6])
     
     # total_reads column = sum of A, C, G, and T counts
-    #x3$total_reads <- x3$A+x3$C+x3$G+x3$T
-    x3$total_reads <- rowSums(x[c('A', 'C', 'G', 'T')])
-    message('LET ME KNOW IF THIS DOES NOT WORK: compIdent_bamRcnt ln 96')
+    x3$total_reads <- rowSums(x3[,c('A', 'C', 'G', 'T')])
     return(x3)
 }
