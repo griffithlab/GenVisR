@@ -25,8 +25,9 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
                                   rep.fact, rep.dist.lmt, attr.fact, adj.max,
                                   adj.lmt, iter.max)
 {
+    # Remove variants within an intronic or splice site region
     if(any(grepl("^e", x$amino_acid_change, ignore.case=TRUE, perl=TRUE)))
-    {
+    {   
         # save original data frame size before subset for message
         origDim <- nrow(x)
         
@@ -40,6 +41,15 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
         memo <- paste0("Removed ", origDim - newDim,
                        " variants not within a residue")
         message(memo)
+        
+        # if the removal has removed all rows print an error
+        if(newDim == 0)
+        {
+            memo <- paste0("Did not detect any residues, please check input", 
+                           " lolliplot must have at least one valid residue",
+                           " present!")
+            stop(memo)
+        }
     }
     
     # extract the mutation types and set a flag specifying they are present
@@ -123,9 +133,7 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
                               adj.lmt=adj.lmt,
                               iter.max=iter.max)
 
-    # Redefine and return grouping information and then dodge y coordinates
-    mutation_data$group <-
-    lolliplot_groupMutcoord(as.vector(mutation_data$mutation_coord))
+    # Dodge y coordinates
     if(track == 'top')
     {
         mutation_data$coord_y_dodge <- lolliplot_dodgeCoordY(mutation_data,

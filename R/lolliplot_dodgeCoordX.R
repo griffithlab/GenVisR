@@ -1,6 +1,6 @@
 #' dodge coordinates
 #'
-#' given amino acid position coordinates on, before grouping and dodge on x axis
+#' given amino acid position dodge on x axis
 #' @name lolliplot_dodgeCoordX
 #' @param x numeric vector of position coordinates on x axis
 #' @param rep.fact repulsive factor for plotted mutations observed track

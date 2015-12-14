@@ -29,6 +29,6 @@ observed track}
 numeric vector of dodged position coordinates on x axis
 }
 \description{
-given amino acid position coordinates on, before grouping and dodge on x axis
+given amino acid position dodge on x axis
 }
 

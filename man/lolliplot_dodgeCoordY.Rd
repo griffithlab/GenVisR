@@ -7,7 +7,7 @@
 lolliplot_dodgeCoordY(x, track = "top")
 }
 \arguments{
-\item{x}{data frame containing columns coord_x_dodge and group}
+\item{x}{data frame containing columns coord_x_dodge}
 
 \item{track}{character vector, one of "top", "bottom" specifying whether to
 dodge in a positive or negative fashion}
@@ -16,6 +16,6 @@ dodge in a positive or negative fashion}
 numeric vector of dodged position coordinates on y axis
 }
 \description{
-given amino acid position coordinates on, before grouping and dodge on y axis
+given a data frame, dodge x coordinates ontop of each other
 }
 
