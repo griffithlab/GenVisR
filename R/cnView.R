@@ -27,6 +27,8 @@
 #' @param plotLayer Valid ggplot2 layer to be added to the copy number plot.
 #' @param ideogramLayer Valid ggplot2 layer to be added to the ideogram
 #' sub-plot.
+#' @param dataOut Boolean specifying whether to output the data to be passed to
+#' ggplot instead of plotting.
 #' @details cnView is able to plot in two modes specified via the `chr`
 #' parameter, these modes are single chromosome view in which an ideogram is
 #' displayed and genome view where chromosomes are faceted. For the single
@@ -54,7 +56,8 @@
 
 cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
                    CNscale="absolute", ideogram_txtAngle=45,
-                   ideogram_txtSize=5, plotLayer=NULL, ideogramLayer=NULL)
+                   ideogram_txtSize=5, plotLayer=NULL, ideogramLayer=NULL, 
+                   dataOut=FALSE)
 {
     # Perform a basic quality check
     input <- cnView_qual(x, y, z, genome)
@@ -95,6 +98,10 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
     # Plot all chromosomes at once if specified
     if(chr == 'all')
     {
+        # if data is requested give that
+        if(isTRUE(dataOut)){return(list(main=x, dummyData=dummyData, segments=z))}
+        
+        # else plot the graphic
         p1 <- cnView_buildMain(x, z=z, dummyData, chr=chr)
         return(p1)
     }
@@ -111,7 +118,12 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
     {
         z <- cnView_subsetChr(z, chr)
     }
-
+    
+    if(isTRUE(dataOut))
+    {
+        return(list(main=x, dummyData=dummyData, segments=z))        
+    }
+    
     # build the cn plot
     CN_plot <- cnView_buildMain(x, dummyData, z=z, chr=chr, CNscale=CNscale,
                                 layers=plotLayer)

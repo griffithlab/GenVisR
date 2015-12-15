@@ -6,7 +6,7 @@
 \usage{
 cnView(x, y = NULL, z = NULL, genome = "hg19", chr = "chr1",
   CNscale = "absolute", ideogram_txtAngle = 45, ideogram_txtSize = 5,
-  plotLayer = NULL, ideogramLayer = NULL)
+  plotLayer = NULL, ideogramLayer = NULL, dataOut = FALSE)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing copy number calls
@@ -42,6 +42,9 @@ the ideogram subplot.}
 
 \item{ideogramLayer}{Valid ggplot2 layer to be added to the ideogram
 sub-plot.}
+
+\item{dataOut}{Boolean specifying whether to output the data to be passed to
+ggplot instead of plotting.}
 }
 \value{
 graphical output
