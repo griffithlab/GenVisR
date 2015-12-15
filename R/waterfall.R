@@ -70,6 +70,8 @@
 #' all other samples not specified within this parameter are removed.
 #' @param dataOut Boolean specifying whether to output the data to be passed to
 #' ggplot instead of plotting.
+#' @param plotMutBurden Boolean specify if the mutation burden sub-plot should
+#' be displayed.
 #' @details waterfall is a function designed to visualize the mutations seen in
 #' a cohort. The function takes a data frame with appropriate column names (see
 #' fileType parameter) and plots the mutations within. In cases where multiple
@@ -98,6 +100,7 @@
 #' # Plot the data
 #' waterfall(brcaMAF)
 #' @return A graphic object.
+#' @import grid
 #' @export
 
 waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
@@ -109,7 +112,8 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
                       mainLabelCol=NULL, mainLabelSize=4,
                       mainPalette=NULL, sampRecurLayer=NULL,
                       mainLayer=NULL, mutBurdenLayer=NULL,
-                      mainLabelAngle=0, variant_class_order=NULL, dataOut=FALSE)
+                      mainLabelAngle=0, variant_class_order=NULL, dataOut=FALSE,
+                      plotMutBurden=TRUE)
 {
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
@@ -166,22 +170,33 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
 
     # Reorder the sample levels in data_frame2 to match the main plot's levels,
     # and then plot the top margin plot
-    if(!is.null(mutBurden))
+    if(isTRUE(plotMutBurden))
     {
-        if(!setequal(sample_order, mutBurden$sample))
+        if(!is.null(mutBurden))
         {
-            stop("levels in the sample column of mutBurden does not match
+            if(!setequal(sample_order, mutBurden$sample))
+            {
+                stop("levels in the sample column of mutBurden does not match
                  either: the samples given in x, or plotSamples")
-        }
-
-        mutBurden$sample <- factor(mutBurden$sample, levels=sample_order)
-        p3 <- waterfall_buildMutBurden_B(mutBurden, layers=mutBurdenLayer)
+            }
+            
+            mutBurden$sample <- factor(mutBurden$sample, levels=sample_order)
+            p3 <- waterfall_buildMutBurden_B(mutBurden, layers=mutBurdenLayer)
+        } else {
+            data_frame2$sample <- factor(data_frame2$sample,
+                                         levels=sample_order)
+            p3 <- waterfall_buildMutBurden_A(data_frame2, coverageSpace,
+                                             layers=mutBurdenLayer)
+        }        
     } else {
-        data_frame2$sample <- factor(data_frame2$sample,
-                                     levels=sample_order)
-        p3 <- waterfall_buildMutBurden_A(data_frame2, coverageSpace,
-                                         layers=mutBurdenLayer)
+        # create a blank ggplot object
+        df <- data.frame()  
+        p3 <- ggplot(df) + geom_point() + xlim(0, 1) + ylim(0, 1) +
+            theme(axis.text.x=element_blank(), axis.text.y=element_blank(),
+                  axis.ticks.x=element_blank(), axis.ticks.y=element_blank(),
+                  panel.background=element_blank(), panel.grid=element_blank())
     }
+
 
     # Plot the Left Bar Chart
     p2 <- waterfall_buildGenePrevelance(data_frame, layers=sampRecurLayer)
@@ -221,6 +236,11 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
     {
         # match the levels of sample in y to conform to the main plot
         clinData$sample <- factor(clinData$sample, levels=sample_order)
+        
+        # if dataOut is specified skip to that code block
+        if(isTRUE(dataOut)){next}
+        
+        # plot the clinical data
         p4 <- multi_buildClin(clinData, clin.legend.col=clinLegCol, 
                               clin.var.colour=clinVarCol, 
                               clin.var.order=clinVarOrder, 

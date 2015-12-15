@@ -12,7 +12,7 @@ waterfall(x, clinData = NULL, clinLegCol = 1, clinVarCol = NULL,
   rmvSilent = FALSE, mainLabelCol = NULL, mainLabelSize = 4,
   mainPalette = NULL, sampRecurLayer = NULL, mainLayer = NULL,
   mutBurdenLayer = NULL, mainLabelAngle = 0, variant_class_order = NULL,
-  dataOut = FALSE)
+  dataOut = FALSE, plotMutBurden = TRUE)
 }
 \arguments{
 \item{x}{Object of class data frame representing annotated mutations. The 
@@ -107,6 +107,9 @@ of mutation types to plot, required if file_type == "Custom"
 
 \item{dataOut}{Boolean specifying whether to output the data to be passed to
 ggplot instead of plotting.}
+
+\item{plotMutBurden}{Boolean specify if the mutation burden sub-plot should
+be displayed.}
 }
 \value{
 A graphic object.
