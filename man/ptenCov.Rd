@@ -3,7 +3,7 @@
 \docType{data}
 \name{ptenCov}
 \alias{ptenCov}
-\title{Coverage for the pten gene}
+\title{Coverage for PTEN}
 \format{a data frame with 10734 observations and 4 variables}
 \usage{
 data(ptenCov)
@@ -12,7 +12,8 @@ data(ptenCov)
 Object of class data frame
 }
 \description{
-A data set containing coverage data for pten obtained using "bedtools multicov" from "Convergent loss of PTEN leads to clinical resistance to a PI3K-alpha inhibitor" PMID:25409150
+A data set containing coverage data for PTEN from Juric et al. Nature 2015,
+PMID:25409150
 }
 \keyword{datasets}
 

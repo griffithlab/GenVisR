@@ -12,7 +12,8 @@ data(Luc2CNraw)
 Object of class data frame
 }
 \description{
-Downsampled copy number calls for Luc2 chromosome 14 originating from cnv-hmm "Genomic Landscape of Non-Small Cell Lung Cancer in Smokers and Never-Smokers" PMID:22980976
+Downsampled copy number calls for Luc2 chromosome 14 originating from
+cnv-hmm. Govindan et al. Cell. 2012, PMID:22980976
 }
 \keyword{datasets}
 
