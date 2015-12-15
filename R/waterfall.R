@@ -100,7 +100,6 @@
 #' # Plot the data
 #' waterfall(brcaMAF)
 #' @return A graphic object.
-#' @import grid
 #' @export
 
 waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
@@ -191,10 +190,14 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
     } else {
         # create a blank ggplot object
         df <- data.frame()  
-        p3 <- ggplot(df) + geom_point() + xlim(0, 1) + ylim(0, 1) +
-            theme(axis.text.x=element_blank(), axis.text.y=element_blank(),
-                  axis.ticks.x=element_blank(), axis.ticks.y=element_blank(),
-                  panel.background=element_blank(), panel.grid=element_blank())
+        p3 <- ggplot2::ggplot(df) + ggplot2::geom_point() +
+            ggplot2::xlim(0, 1) + ggplot2::ylim(0, 1) +
+            ggplot2::theme(axis.text.x=ggplot2::element_blank(),
+                           axis.text.y=ggplot2::element_blank(),
+                           axis.ticks.x=ggplot2::element_blank(),
+                           axis.ticks.y=ggplot2::element_blank(),
+                           panel.background=ggplot2::element_blank(),
+                           panel.grid=ggplot2::element_blank())
     }
 
 
