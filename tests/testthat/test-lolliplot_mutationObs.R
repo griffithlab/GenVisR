@@ -47,3 +47,31 @@ test_that("lolliplot_mutationObs correctly notifies if amino_acid_change notatio
                                        rep.fact=5000, rep.dist.lmt=500, attr.fact=.1,
                                        adj.max=.1, adj.lmt=.5, iter.max=10000), "Could not determine notation type")
 })
+
+test_that("lolliplot_mutationObs correctly sets mutations y coord based on the track", {
+    x <- data.frame(gene=c("TP53"), amino_acid_change=c('p.F426A'), transcript_name=c("ENST00000269305"))
+    out <- lolliplot_mutationObs(x, track="bottom", fill_value=NULL, label_column=NULL,
+                                 rep.fact=5000, rep.dist.lmt=500, attr.fact=.1, 
+                                 adj.max=.1, adj.lmt=.5, iter.max=10000)
+    expect_true(out$coord_y_dodge < 0)
+    out <- lolliplot_mutationObs(x, track="top", fill_value=NULL, label_column=NULL,
+                                 rep.fact=5000, rep.dist.lmt=500, attr.fact=.1, 
+                                 adj.max=.1, adj.lmt=.5, iter.max=10000)   
+    expect_true(out$coord_y_dodge > 0)
+})
+
+test_that("lolliplot_mutationObs correctly sets a specified label column", {
+    x <- data.frame(gene=c("TP53"), amino_acid_change=c('p.F426A'), transcript_name=c("ENST00000269305"), testA="blue", testB="red")
+    out <- lolliplot_mutationObs(x, track="bottom", fill_value=NULL, label_column="testA",
+                                 rep.fact=5000, rep.dist.lmt=500, attr.fact=.1, 
+                                 adj.max=.1, adj.lmt=.5, iter.max=10000)
+    expect_equal(out$labels, "blue")
+})
+
+test_that("lolliplot_mutationOBs correctly sets a specified fill column", {
+    x <- data.frame(gene=c("TP53"), amino_acid_change=c('p.F426A'), transcript_name=c("ENST00000269305"), testA="blue", testB="red")
+    out <- lolliplot_mutationObs(x, track="bottom", fill_value="testB", label_column=NULL,
+                                 rep.fact=5000, rep.dist.lmt=500, attr.fact=.1, 
+                                 adj.max=.1, adj.lmt=.5, iter.max=10000)
+    expect_equal(as.character(out$testB), "red")
+})
