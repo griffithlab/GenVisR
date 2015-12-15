@@ -12,7 +12,7 @@ data(hg19chr)
 Object of class data frame
 }
 \description{
-A data set containg chromosome boundaries corresponding to hg19 in base pairs
+A data set containg chromosome boundaries corresponding to hg19.
 }
 \keyword{datasets}
 
