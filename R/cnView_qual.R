@@ -25,12 +25,12 @@ cnView_qual <- function(x, y, z, genome)
     {
         memo <- paste0("Did not detect correct columns in argument supplied",
                        " to x. missing one of \"chromosome\", \"coordinate\", ",
-                       "\"cn\", \"p_value\"")
+                       "\"cn\"")
         stop(memo)
     }
 
     # Check chromosome column in x
-    if(!all(grepl("^chr", x$chromosome)))
+    if(!any(grepl("^chr", x$chromosome)))
     {
         memo <- paste0("Did not detect the prefix chr in the chromosome column",
                        " of x... adding prefix")
@@ -41,7 +41,7 @@ cnView_qual <- function(x, y, z, genome)
                        " proceeding")
         message(memo)
     } else {
-        memo <- paste0("Detected unknown or mixed prefixes in the chromosome",
+        memo <- paste0("Detected mixed prefixes in the chromosome",
                        " column of x... should either be chr or none i.e. ",
                        "chr1 or 1")
         stop(memo)
@@ -110,7 +110,7 @@ cnView_qual <- function(x, y, z, genome)
         }
         
         # Check chromosome column in z
-        if(!all(grepl("^chr", z$chromosome)))
+        if(!any(grepl("^chr", z$chromosome)))
         {
             memo <- paste0("Did not detect the prefix chr in the chromosome",
                            " column of z... adding prefix")
@@ -121,7 +121,7 @@ cnView_qual <- function(x, y, z, genome)
                            "proceeding")
             message(memo)
         } else {
-            memo <- paste0("Detected unknown or mixed prefixes in the",
+            memo <- paste0("Detected mixed prefixes in the",
                            " chromosome column of z... should either be chr or",
                            "none i.e. chr1 or 1")
             stop(memo)
