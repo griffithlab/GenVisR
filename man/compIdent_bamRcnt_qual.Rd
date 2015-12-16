@@ -4,14 +4,14 @@
 \alias{compIdent_bamRcnt_qual}
 \title{Count nucleotide reads at SNP locations}
 \usage{
-compIdent_bamRcnt_qual(bai, genome, targetbed)
+compIdent_bamRcnt_qual(genome, targetbed)
 }
 \arguments{
-\item{bai}{Path to the bam index file}
-
 \item{genome}{Object of class BSgenome corresponding to a genome of interest}
 
 \item{targetbed}{Object of class data frame containing target locations in .bed format}
+
+\item{bai}{Path to the bam index file}
 }
 \value{
 list of data objects passing quality checks

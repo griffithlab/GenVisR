@@ -4,12 +4,15 @@
 \alias{compIdent}
 \title{Construct identity snp comparison plot}
 \usage{
-compIdent(x, genome)
+compIdent(x, genome, debug = FALSE)
 }
 \arguments{
 \item{x}{data frame with column names sample_name, bamfile}
 
 \item{genome}{Object of class BSgenome specifying the genome}
+
+\item{debug}{Boolean specifying if test datasets should be used for
+debugging.}
 }
 \value{
 graphical object

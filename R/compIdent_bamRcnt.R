@@ -1,11 +1,13 @@
 #' Count nucleotide reads at SNP locations
 #'
 #' Given the bam file path, count the number of reads at specified snp locations
-#' @name comIdent_bamRcnt
+#' @name compIdent_bamRcnt
 #' @param bamfile Path to the bam file
 #' @param genome Object of class BSgenome corresponding to a genome of interest
 #' @param targetbed Object of class data frame containing target locations in
 #' .bed format and containing columns chr, start, end
+#' @param debug Boolean specifying if test datasets should be used for
+#' debugging.
 #' @return object of class data frame containing readcount information
 #' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges IRanges
@@ -17,15 +19,12 @@
 
 compIdent_bamRcnt <- function(bamfile, genome, targetbed = NULL, debug=FALSE)
 {
-    if(!(isTRUE(debug))){
-        # obtain the bam index file
-        bai <- paste0(bamfile,".bai")
-        # Check to see if index file is found
-        if(!file.exists(bai))
-        {
-            stop("Could not find bam index file for: ", gsub(".bai$", "bam", bai))
-        }
+    # if debug flag is false read in the mab files
+    if(!(isTRUE(debug)))
+    {
+
     }
+    
     # Perform basic quality checks on input data
     list <- compIdent_bamRcnt_qual(genome, targetbed)
     genome <- list[[1]]
@@ -61,10 +60,23 @@ compIdent_bamRcnt <- function(bamfile, genome, targetbed = NULL, debug=FALSE)
                                                           pengelly.chr$end),
                                          strand=c('+'))
     
-    if(isTRUE(debug)){
+    if(isTRUE(debug))
+    {
         pileup_table <- bamfile
     } else{
-        ## Check using ScanBamHeader to see if 'chr' is included in chromosome names.
+        # obtain the bam index file name
+        bai <- paste0(bamfile,".bai")
+        
+        # Check to see if index file is found
+        if(!file.exists(bai))
+        {
+            memo <- paste0("Could not find bam index file for: ",
+                           gsub(".bai$", "bam", bai))
+            stop(memo)
+        }
+        
+        # Check using ScanBamHeader to see if 'chr' is included in chromosome
+        # names
         what <- c("rname", "qname", "strand", "pos", "qwidth", "seq")
         chrcheck <- names(Rsamtools::scanBamHeader(bamfile)[[1]]$targets[1])
     
