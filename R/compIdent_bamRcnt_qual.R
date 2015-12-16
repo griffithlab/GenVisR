@@ -7,14 +7,8 @@
 #' @param targetbed Object of class data frame containing target locations in .bed format
 #' @return list of data objects passing quality checks
 
-compIdent_bamRcnt_qual<-function(bai, genome, targetbed)
+compIdent_bamRcnt_qual<-function(genome, targetbed)
 {
-    # Check to see if index file is found
-    if(!file.exists(bai))
-    {
-        stop("Could not find bam index file for: ", gsub(".bai$", "bam", bai))
-    }
-
     # Check to see if genome is of class BSgenome
     if(!class(genome)[1]=="BSgenome")
     {
@@ -41,5 +35,5 @@ compIdent_bamRcnt_qual<-function(bai, genome, targetbed)
         }
     }
 
-    return(list(bai, genome, targetbed))
+    return(list(genome, targetbed))
 }

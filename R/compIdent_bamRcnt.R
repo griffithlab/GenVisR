@@ -15,16 +15,21 @@
 #' @importFrom reshape2 melt
 #' @importFrom reshape2 dcast
 
-compIdent_bamRcnt <- function(bamfile, genome, targetbed = NULL)
+compIdent_bamRcnt <- function(bamfile, genome, targetbed = NULL, debug=FALSE)
 {
-    # obtain the bam index file
-    bai <- paste0(bamfile,".bai")
-
+    if(!(isTRUE(debug))){
+        # obtain the bam index file
+        bai <- paste0(bamfile,".bai")
+        # Check to see if index file is found
+        if(!file.exists(bai))
+        {
+            stop("Could not find bam index file for: ", gsub(".bai$", "bam", bai))
+        }
+    }
     # Perform basic quality checks on input data
-    list <- compIdent_bamRcnt_qual(bai, genome, targetbed)
-    bai <- list[[1]]
-    genome <- list[[2]]
-    targetbed <- list[[3]]
+    list <- compIdent_bamRcnt_qual(genome, targetbed)
+    genome <- list[[1]]
+    targetbed <- list[[2]]
 
     # Read in the target bed locations. If none specified, read in 24 Pengelly
     # loci.
@@ -55,22 +60,22 @@ compIdent_bamRcnt <- function(bamfile, genome, targetbed = NULL)
                                          IRanges::IRanges(pengelly.chr$start,
                                                           pengelly.chr$end),
                                          strand=c('+'))
-
-    # Check using ScanBamHeader to see if 'chr' is included in chromosome names.
-    # Read in bam file
-    what <- c("rname", "qname", "strand", "pos", "qwidth", "seq")
-    chrcheck <- names(Rsamtools::scanBamHeader(bamfile)[[1]]$targets[1])
     
-    if(any(grepl("chr", chrcheck)))
-    {
-        param <- Rsamtools::ScanBamParam(which=grange.chr, what=what)
-    } else {
-        param <- Rsamtools::ScanBamParam(which=grange, what=what)
+    if(isTRUE(debug)){
+        pileup_table <- bamfile
+    } else{
+        ## Check using ScanBamHeader to see if 'chr' is included in chromosome names.
+        what <- c("rname", "qname", "strand", "pos", "qwidth", "seq")
+        chrcheck <- names(Rsamtools::scanBamHeader(bamfile)[[1]]$targets[1])
+    
+        if(any(grepl("chr", chrcheck))){
+            param <- Rsamtools::ScanBamParam(which=grange.chr, what=what)
+        } else {
+            param <- Rsamtools::ScanBamParam(which=grange, what=what)
+        }
+        # Pileup generates a table of nucleotide counts at each location by strand
+        pileup_table <- Rsamtools::pileup(bamfile, bai, scanBamParam = param)
     }
-    bam <- Rsamtools::scanBam(bamfile, bai, param=param)
-
-    # Pileup generates a table of nucleotide counts at each location by strand
-    pileup_table <- Rsamtools::pileup(bamfile, bai, scanBamParam = param)
     # Remove strand and which_label columns
     pileup_table <- pileup_table[,c('seqnames',
                                     'pos',
