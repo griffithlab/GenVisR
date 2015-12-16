@@ -4,6 +4,8 @@
 #' @name compIdent
 #' @param x data frame with column names sample_name, bamfile
 #' @param genome Object of class BSgenome specifying the genome
+#' @param debug Boolean specifying if test datasets should be used for
+#' debugging.
 #' @details
 #' TODO
 #' @return graphical object
@@ -13,11 +15,16 @@
 
 compIdent <- function(x, genome, debug=FALSE)
 {
-    if(isTRUE(debug)){
+    # Run with the Debug data set if specified
+    if(isTRUE(debug))
+    {
         bams <- list(normal=HCC1395_N, tumor=HCC1395_T)
         samplenames <- c('normal','tumor')
-        count_tables <- lapply(bams, compIdent_bamRcnt, genome=genome, debug=TRUE)
-    } else{ 
+        count_tables <- lapply(bams,
+                               compIdent_bamRcnt,
+                               genome=genome,
+                               debug=debug)
+    } else { 
         # Grab the bam files and samples from the data frame
         bams <- as.character(x$bamfile)
         samplenames <- as.character(x$sample_name)
@@ -27,7 +34,7 @@ compIdent <- function(x, genome, debug=FALSE)
     }
 
     # make an sample identity plot
-    plot <- compIdent_buildMain(count_tables,samplenames)
+    plot <- compIdent_buildMain(count_tables, samplenames)
 
     return(plot)
 }
