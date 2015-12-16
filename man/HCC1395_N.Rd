@@ -4,7 +4,7 @@
 \name{HCC1395_N}
 \alias{HCC1395_N}
 \title{Normal BAM}
-\format{a named list with 24 elements and 6 variables}
+\format{a data frame with 59 observations and 6 variables}
 \usage{
 data(HCC1395_N)
 }
@@ -12,8 +12,8 @@ data(HCC1395_N)
 Object of class list
 }
 \description{
-A data set containing aligned reads intersecting 24 identity snp locations
-from GenVisR::SNPloci. Aligned reads are downsamples and originate from
+A data set containing read pileups intersecting 24 identity snp locations
+from GenVisR::SNPloci. Pileups are from downsampled bams and originate from
 normal tissue corresponding to the HCC1395 breast cancer cell line.
 }
 \keyword{datasets}
