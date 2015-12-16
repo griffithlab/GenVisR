@@ -20,7 +20,7 @@ lohView_qual <- function(x, y, genome)
     }
 
     # check that correct columns are supplied in x
-    x_col <- c('chromosome', 'position', 'n_freq', 't_freq', 'sample')
+    x_col <- c('chromosome', 'position', 'n_vaf', 't_vaf', 'sample')
     if(!all(x_col %in% colnames(x)))
     {
         stop('Did not detect required column names in x, required columns are: '

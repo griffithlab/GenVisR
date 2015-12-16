@@ -8,7 +8,7 @@ lohView_windowPosition(out, step, window_size)
 }
 \arguments{
 \item{out}{object of class dataframe with columns 'chromosome',
-'position', 'n_freq', 't_freq', and 'sample'}
+'position', 'n_vaf', 't_vaf', and 'sample'}
 
 \item{step}{integer with the length of divisions (bp) in chromosomes}
 

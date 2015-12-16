@@ -9,11 +9,11 @@
 #' (required if genome is not specified)
 #' @param genome character string specifying the genome assembly from which
 #' input data is based
-#' @param gender character string specifying whether loh on the X chromosome
-#' should be calculated for and plotted
+#' @param gender vector of length equal to the number of samples, consisting of 
+#' elements from the set {"M", "F"}
 #' @param path character string specifying which directory contains 
 #' the sample information stored as datasets with columns "chromosome", 
-#' "position", "n_freq", "t_freq", and "sample" (required if x is not specified)
+#' "position", "n_vaf", "t_vaf", and "sample" (required if x is not specified)
 #' @param fileExt character string specifying the file extensions of files
 #' within the path specified (required if path argument is specified)
 #' @param step integer with the length of divisions (bp) in chromosomes
@@ -38,7 +38,7 @@
 #' @export
 
 lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
-                    gender=FALSE, step=500000, window_size=1000000, normal=50,
+                    gender=NULL, step=500000, window_size=1000000, normal=50,
                     gradient_midpoint=20, gradient_low="#ffffff",
                     gradient_mid="#b2b2ff", gradient_high="#000000",
                     plotLayer=NULL)
@@ -91,19 +91,22 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
     # Calculate loh via sliding window
     loh <- lohView_slidingWindow(loh_data=x, step, window_size, normal)
     
-    # set order of x axis variables in plot
+    # set order of x axis labels in plot
     chromosomes <- gtools::mixedsort(as.character(unique(loh$chromosome)))
-    # remove X and/or Y variables
-    if (gender == TRUE) {
+    # remove X and/or Y chromosomes
+    if (is.null(gender) == FALSE) {
         chromosomes <- chromosomes[chromosomes != "Y"]
+        chr_pos <- chr_pos[(chr_pos$chromosome != "chrY"),]
     }
-    if (gender == FALSE) {
+    if (is.null(gender) == TRUE) {
         chromosomes <- chromosomes[chromosomes != "X" & chromosomes != "Y"]
+        chr_pos <- chr_pos[(chr_pos$chromosome != "chrX" & 
+                                                chr_pos$chromosome != "chrY"),]
     }
     loh$chromosome <- factor(loh$chromosome, levels=chromosomes)
     chr_pos$chromosome <- factor(chr_pos$chromosome, levels=chromosomes)
     
-    # set order of y axis variables in plot
+    # set order of y axis labels in plot
     samples <- gtools::mixedsort(as.character(unique(loh$sample)))
     loh$sample <- factor(loh$sample, levels=samples)
     

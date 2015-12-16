@@ -2,8 +2,8 @@
 #' 
 #' Obtain LOH heatmap on entire chromsomes from samples in a cohort
 #' @name lohView_slidingWindow
-#' @param loh_data data frame with columns "chromosome", "position", "n_freq",
-#' "tfreq", "sample" giving raw vaf calls for germline variants
+#' @param loh_data data frame with columns "chromosome", "position", "n_vaf",
+#' "t_vaf", "sample" giving raw vaf calls for germline variants
 #' @param step integer with the length of divisions (bp) in chromosomes
 #' @param window_size integer with the size of the sliding window (bp) to be 
 #' applied
