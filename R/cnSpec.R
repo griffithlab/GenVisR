@@ -20,6 +20,8 @@
 #' @param facet_lab_size Integer specifying the size of the faceted labels
 #' plotted.
 #' @param plotLayer Valid ggplot2 layer to be added to the plot.
+#' @param dataOut Boolean specifying whether to output the data to be passed to
+#' ggplot instead of plotting.
 #' @details cnSpec requires the location of chromosome boundaries for a given
 #' genome assembly in order to ensure the entire chromosome space is plotted.
 #' As a convenience this information is available to cnSpec for
@@ -44,7 +46,7 @@
 cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
                    CN_Loss_colour='#002EB8', CN_Gain_colour='#A30000',
                    x_title_size=12, y_title_size=12, facet_lab_size=10,
-                   plotLayer=NULL)
+                   plotLayer=NULL, dataOut=FALSE)
 {
     # Perform quality check on input data
     data <- cnSpec_qual(x, y, genome)
@@ -79,8 +81,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
                        " positions")
         message(memo)
         cyto_data <- suppressWarnings(multi_cytobandRet(genome))
-        UCSC_Chr_pos <- multi_chrBound(cyto_data)
-        
+        UCSC_Chr_pos <- multi_chrBound(cyto_data)        
     }
 
     # Check that dummy data has a size, if not report an error
@@ -91,7 +92,8 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
         stop(memo)
     }
 
-    # Dcast the input data into a recognizable format
+    # Dcast the input data into a recognizable format this will set as NA
+    # segment calls in one sample but not the other
     CN_data <- reshape2::dcast(x, chromosome + start + end ~ sample,
                                value.var = "segmean")
 
@@ -111,7 +113,13 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
     sample_sorted <- as.vector(unique(CN_data$sample))
     sample_sorted <- gtools::mixedsort(sample_sorted)
     CN_data$sample <- factor(CN_data$sample, levels=sample_sorted)
-
+    
+    # if requested output data instead of plotting
+    if(isTRUE(dataOut))
+    {
+        return(list(cnData=CN_data))
+    }
+    
     # Construct the plot
     p1 <- cnSpec_buildMain(CN_data, plot_title=plot_title,
                            CN_low_colour=CN_Loss_colour,
