@@ -184,10 +184,10 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
         geneData <- lolliplot_constructGene(gene, z, proteinLength)
     } else {
         # extract protien domain data
-        protien_domain <- lolliplot_fetchDomain(transcriptID, species=species)
+        protein_domain <- lolliplot_fetchDomain(transcriptID, species=species)
         
         # construct gene from data collected
-        geneData <- lolliplot_constructGene(gene, protien_domain, proteinLength)
+        geneData <- lolliplot_constructGene(gene, protein_domain, proteinLength)
     }
  
     # construct data frame of observed mutations for top track
