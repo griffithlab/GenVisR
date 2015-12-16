@@ -7,7 +7,7 @@
 cnSpec(x, y = NULL, genome = "hg19", plot_title = NULL,
   CN_Loss_colour = "#002EB8", CN_Gain_colour = "#A30000",
   x_title_size = 12, y_title_size = 12, facet_lab_size = 10,
-  plotLayer = NULL)
+  plotLayer = NULL, dataOut = FALSE)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing copy-number
@@ -36,6 +36,9 @@ number gains.}
 plotted.}
 
 \item{plotLayer}{Valid ggplot2 layer to be added to the plot.}
+
+\item{dataOut}{Boolean specifying whether to output the data to be passed to
+ggplot instead of plotting.}
 }
 \value{
 ggplot object

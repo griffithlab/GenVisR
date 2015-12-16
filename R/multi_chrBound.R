@@ -8,8 +8,16 @@
 
 multi_chrBound <- function(x)
 {
-    # Extract the columns needed, should be chromosome start stop in that order
-    data <- x[,c(1,2,3)]
+    # Check that input has size
+    if(nrow(x) < 1)
+    {
+        memo <- paste0("input has 0 rows, it is possible that the UCSC",
+                       " MySQL query has failed")
+        stop(memo)
+    }
+    
+    # Extract the columns needed
+    data <- x[,c('chrom' ,'chromStart' , 'chromEnd')]
 
     # Obtain max for each chromosome
     maxChrom <- aggregate(chromStart ~ chrom, data=data, max)
