@@ -299,7 +299,7 @@ ideoView(data, chromosome='chr1', txtSize=4)
 ### compIdent
 TODO: add description and example, this is the identity snps plot
 
-```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis'}
+```{r, fig.keep='last', fig.width=11, fig.height=8, message=FALSE, warning=FALSE, results='asis'}
 # Read in BSgenome object (hg19)
 hg19 <- BSgenome.Hsapiens.UCSC.hg19
 

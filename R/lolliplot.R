@@ -79,6 +79,7 @@
 #' mutations, valid only if argument is supplied to fillCol.
 #' @param dataOut Boolean specifying whether to output the data to be passed to
 #' ggplot instead of plotting.
+#' @param host Host to connect to for biomaRt queries.
 #' @details lolliplot is a function designed to display mutation information in
 #' the context of a protien identified by an ensembl transcript id. The
 #' lolliplot function will query ensembl via biomart to retrieve sequence and
@@ -126,7 +127,7 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                       obsB.adj.lmt=.5, obsB.iter.max=50000,
                       sideChain=FALSE, species="hsapiens",
                       maxLolliStack=NULL, plotLayer=NULL, paletteA=NULL,
-                      paletteB=NULL, dataOut=FALSE)
+                      paletteB=NULL, dataOut=FALSE, host="www.ensembl.org")
 {
     # Perform quality check
     input <- lolliplot_qual(x, y, z)
@@ -145,7 +146,9 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
     gene <- as.character(x$gene[1])
 
     # Obtain length of protein
-    result <- lolliplot_transcriptID2codingSeq(transcriptID, species=species)
+    result <- lolliplot_transcriptID2codingSeq(transcriptID,
+                                               species=species,
+                                               host=host)
     codingSeq <- result$coding
     cdsLen <- result$cds_length
         
@@ -184,7 +187,9 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
         geneData <- lolliplot_constructGene(gene, z, proteinLength)
     } else {
         # extract protien domain data
-        protein_domain <- lolliplot_fetchDomain(transcriptID, species=species)
+        protein_domain <- lolliplot_fetchDomain(transcriptID,
+                                                species=species,
+                                                host=host)
         
         # construct gene from data collected
         geneData <- lolliplot_constructGene(gene, protein_domain, proteinLength)
