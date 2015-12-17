@@ -4,13 +4,16 @@
 #' @name lolliplot_fetchDomain
 #' @param transcriptID String specifying ensembl transcript id
 #' @param species character string to use when searching for ensemblMart dataset
+#' @param host Host to connect to.
 #' @return data frame of protien domains and start/stop coordinates
 #' @importFrom biomaRt useMart
 #' @importFrom biomaRt listDatasets
 #' @importFrom biomaRt useDataset
 #' @importFrom biomaRt getBM
 #' 
-lolliplot_fetchDomain <- function(transcriptID, species="hsapiens")
+lolliplot_fetchDomain <- function(transcriptID,
+                                  species="hsapiens",
+                                  host="www.ensembl.org")
 {
     # display message
     message("Querying biomaRt for protein domains")

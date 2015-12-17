@@ -4,12 +4,15 @@
 \alias{lolliplot_transcriptID2codingSeq}
 \title{fetch protein length}
 \usage{
-lolliplot_transcriptID2codingSeq(transcriptID, species = "hsapiens")
+lolliplot_transcriptID2codingSeq(transcriptID, species = "hsapiens",
+  host = "www.ensembl.org")
 }
 \arguments{
 \item{transcriptID}{character string giving ensembl transcript id}
 
 \item{species}{character string to use when searching for ensemblMart dataset}
+
+\item{host}{Host to connect to.}
 }
 \value{
 length in residues of ensembl transcript id
