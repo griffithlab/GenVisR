@@ -7,7 +7,8 @@
 lohView(x = NULL, path = NULL, fileExt = NULL, y = NULL,
   genome = "hg19", step = 5e+05, window_size = 1e+06, normal = 50,
   gradient_midpoint = 20, gradient_low = "#ffffff",
-  gradient_mid = "#b2b2ff", gradient_high = "#000000", theme_layer = NULL)
+  gradient_mid = "#b2b2ff", gradient_high = "#000000", theme_layer = NULL,
+  method = "tile")
 }
 \arguments{
 \item{x}{object of class data frame with columns 'chromosome', 'position',
@@ -49,6 +50,9 @@ gradient's upper values}
 
 \item{theme_layer}{ggplot theme object specifying parameters for non data
 elements}
+
+\item{method}{Character string specifying the approach to be used for
+displaying Loss of Heterozygosity, one of "tile" or "slide".}
 }
 \value{
 grid object

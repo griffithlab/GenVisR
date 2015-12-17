@@ -29,17 +29,18 @@
 #' gradient's upper values
 #' @param theme_layer ggplot theme object specifying parameters for non data
 #' elements
+#' @param method Character string specifying the approach to be used for
+#' displaying Loss of Heterozygosity, one of "tile" or "slide".
 #' @return grid object
 #' @importFrom gtools mixedsort
 #' @examples
 #' ## Insert an example once the first part of this is understood
-#' @export
 
 lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                     step=500000, window_size=1000000, normal=50,
                     gradient_midpoint=20, gradient_low="#ffffff",
                     gradient_mid="#b2b2ff", gradient_high="#000000",
-                    theme_layer=NULL)
+                    theme_layer=NULL, method="tile")
 {
     # Grab data if necessary
     if(!is.null(path))
@@ -85,8 +86,18 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
         stop(memo)
     }
     
-    # Calculate loh via sliding window
-    loh <- lohView_slidingWindow(loh_data=x, step, window_size, normal)
+    if(touppper(method) == 'SLIDE')
+    {
+        # Calculate loh via sliding window
+        loh <- lohView_slidingWindow(loh_data=x, step, window_size, normal)
+    } else if(toupper(method) == 'TILE') {
+        # add code here
+    } else {
+        memo <- paste0("Did not recognize input to parameter method.", 
+                       "Please specify one of \"Tile\" or \"slide\".")
+        stop(memo)
+    }
+
     
     # set order of x axis variables in plot
     chromosomes <- gtools::mixedsort(as.character(unique(loh$chromosome)))

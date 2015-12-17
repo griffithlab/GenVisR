@@ -12,7 +12,7 @@
 
 lohView_fileGlob <- function(path, fileExt, step)
 {
-    fileNames <- Sys.glob(paste0(path, '*.', fileExt))
+    fileNames <- Sys.glob(paste0(path, '*', fileExt))
     columnNames <- c("chromosome", "position", "n_freq", "t_freq", "sample")
     
     for (i in 1:length(fileNames))
