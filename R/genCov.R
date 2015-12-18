@@ -36,7 +36,7 @@
 #' @param cov_colour Character string specifying the colour of the data in the
 #' coverage plots.
 #' @param cov_plotType Character string specifying one of "line", "area" or
-#' "bar". Changes the ggplot2 geom which constructs the data display.
+#' "bar" or "point". Changes the ggplot2 geom which constructs the data display.
 #' @param cov_plotLayer Valid ggplot2 layer to be added to the coverage
 #' sub-plots.
 #' @param base Numeric vector of log bases to transform the data
