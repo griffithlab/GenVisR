@@ -16,8 +16,12 @@ lolliplot_transcriptID2codingSeq <- function(transcriptID,
                                              host="www.ensembl.org")
 {
     # display mesage
+    memo <- paste0("Using the following host: ", host, "for biomaRt queries",
+                   " to change the ensembl annotation version alter this",
+                   " parameter!")
+    message(memo)
     message("Querying biomaRt for transcript sequence")
-    
+
     # Load in mart
     ensembl_mart <- biomaRt::useMart("ENSEMBL_MART_ENSEMBL",
                                      host=host)
