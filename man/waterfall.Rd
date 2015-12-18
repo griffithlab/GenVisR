@@ -12,7 +12,7 @@ waterfall(x, clinData = NULL, clinLegCol = 1, clinVarCol = NULL,
   rmvSilent = FALSE, mainLabelCol = NULL, mainLabelSize = 4,
   mainPalette = NULL, sampRecurLayer = NULL, mainLayer = NULL,
   mutBurdenLayer = NULL, mainLabelAngle = 0, variant_class_order = NULL,
-  dataOut = FALSE, plotMutBurden = TRUE)
+  dataOut = FALSE, plotMutBurden = TRUE, maxGenes = NULL)
 }
 \arguments{
 \item{x}{Object of class data frame representing annotated mutations. The 
@@ -110,6 +110,9 @@ ggplot instead of plotting.}
 
 \item{plotMutBurden}{Boolean specify if the mutation burden sub-plot should
 be displayed.}
+
+\item{maxGenes}{Integer specifying the maximum number of genes to be plotted.
+Genes kept will be choosen based on the reccurence of mutations in samples.}
 }
 \value{
 A graphic object.

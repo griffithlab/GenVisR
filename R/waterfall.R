@@ -72,6 +72,8 @@
 #' ggplot instead of plotting.
 #' @param plotMutBurden Boolean specify if the mutation burden sub-plot should
 #' be displayed.
+#' @param maxGenes Integer specifying the maximum number of genes to be plotted.
+#' Genes kept will be choosen based on the reccurence of mutations in samples.
 #' @details waterfall is a function designed to visualize the mutations seen in
 #' a cohort. The function takes a data frame with appropriate column names (see
 #' fileType parameter) and plots the mutations within. In cases where multiple
@@ -112,7 +114,7 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
                       mainPalette=NULL, sampRecurLayer=NULL,
                       mainLayer=NULL, mutBurdenLayer=NULL,
                       mainLabelAngle=0, variant_class_order=NULL, dataOut=FALSE,
-                      plotMutBurden=TRUE)
+                      plotMutBurden=TRUE, maxGenes=NULL)
 {
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
@@ -158,15 +160,21 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
 
     # Subset the data based on the recurrence of mutations at the gene level
     data_frame <- waterfall_geneRecurCutoff(data_frame, mainRecurCutoff)
-
-    # reorder the genes based on frequency of mutations in the gene
+    
+    # Use the max genes parameter to limit the number of genes plotted
+    # and then reorder genes based on the frequency of mutations
     gene_sorted <- waterfall_geneSort(data_frame)
     data_frame$gene <- factor(data_frame$gene, levels=gene_sorted)
+    if(!is.null(maxGenes))
+    {
+        max_gene_list <- tail(gene_sorted, maxGenes)
+        data_frame <- data_frame[data_frame$gene %in% max_gene_list,]
+    }
 
     # reorder the samples based on hiearchial sort on ordered gene list
     sample_order <- waterfall_sampSort(data_frame)
     data_frame$sample <- factor(data_frame$sample, levels=sample_order)
-
+    
     # Reorder the sample levels in data_frame2 to match the main plot's levels,
     # and then plot the top margin plot
     if(isTRUE(plotMutBurden))
