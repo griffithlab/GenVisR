@@ -119,7 +119,7 @@ mutations, valid only if argument is supplied to fillCol.}
 \item{dataOut}{Boolean specifying whether to output the data to be passed to
 ggplot instead of plotting.}
 
-\item{host}{Host to connect to for biomaRt queries.}
+\item{host}{Host to connect to for biomaRt queries (see details).}
 }
 \value{
 object of class ggplot2
@@ -139,6 +139,12 @@ query. Valid arguments to this field are those species with datasts available
 via ensembl. please specify species in lowercase without a period
 (i.e. hsapiens instead of H.sapiens), lolliplot will inform the user of
 available species if input to the species parameter is not recognized.
+Further lolliplot will build a protein framework based on sequence data
+obtained from biomaRt, by default this will default to the latest ensembl
+version. In order for the most accurate representation the annotation version
+of the mutations given to lolliplot should match the annotation version used 
+by biomaRt. The annotation version used by biomaRt can be changed via the 
+host paramter (see vignette for more details).
 
 lolliplot is capable of plotting two seperate sets of data on the protein
 representation specified by parameters `x` and `y`, the data supplied to
