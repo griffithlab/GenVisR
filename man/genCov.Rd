@@ -60,7 +60,7 @@ track labels to plot space.}
 coverage plots.}
 
 \item{cov_plotType}{Character string specifying one of "line", "area" or
-"bar". Changes the ggplot2 geom which constructs the data display.}
+"bar" or "point". Changes the ggplot2 geom which constructs the data display.}
 
 \item{cov_plotLayer}{Valid ggplot2 layer to be added to the coverage
 sub-plots.}
