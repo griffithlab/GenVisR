@@ -35,7 +35,7 @@ cnView_qual <- function(x, y, z, genome, CNscale)
     if(CNscale == "absolute")
     {
         # if any cn values are negative something fishy is happening, report
-        if(any(x$cn < 0))
+        if(any(as.numeric(as.character(x$cn)) < 0))
         {
             memo <- paste0("Detected negative values in the copy number",
                            " column but CNscale is set to \"absolute\"!")
@@ -67,8 +67,11 @@ cnView_qual <- function(x, y, z, genome, CNscale)
         stop(memo)
     }
 
-    # make sure the chromosome column is of class factor
+    # make sure the chromosome column is of class factor and the other columns
+    # are not
     x$chromosome <- as.factor(x$chromosome)
+    x$coordinate <- as.numeric(as.character(x$coordinate))
+    x$cn <- as.numeric(as.character(x$cn))
 
     ################### Check input to y ###############################
     preloaded <- c("hg38", "hg19", "mm10", "mm9", "rn5")

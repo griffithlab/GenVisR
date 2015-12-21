@@ -7,7 +7,7 @@
 genCov(x, txdb, gr, genome, reduce = FALSE, gene_colour = NULL,
   gene_name = "Gene", gene_plotLayer = NULL, label_bgFill = "black",
   label_txtFill = "white", label_borderFill = "black", label_txtSize = 10,
-  lab2plot_ratio = c(1, 10), cov_colour = "blue", cov_plotType = "line",
+  lab2plot_ratio = c(1, 10), cov_colour = "blue", cov_plotType = "point",
   cov_plotLayer = NULL, base = NULL, transform = NULL,
   gene_labelTranscript = TRUE, gene_labelTranscriptSize = 4,
   gene_isoformSel = NULL)
@@ -59,7 +59,7 @@ track labels to plot space.}
 \item{cov_colour}{Character string specifying the colour of the data in the
 coverage plots.}
 
-\item{cov_plotType}{Character string specifying one of "line", "area" or
+\item{cov_plotType}{Character string specifying one of "line",
 "bar" or "point". Changes the ggplot2 geom which constructs the data display.}
 
 \item{cov_plotLayer}{Valid ggplot2 layer to be added to the coverage

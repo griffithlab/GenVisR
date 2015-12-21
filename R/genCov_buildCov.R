@@ -7,19 +7,18 @@
 #' @param x_limits vector giving x-axis limits for plot, inferred from data
 #' if not specified
 #' @param colour character string specifying the color of the data in the plot
-#' @param plot_type character string specifying one of line, area, bar, or point
-#' for data display
+#' @param plot_type character string specifying one of line, bar, or
+#' point for data display
 #' @param display_x_axis boolean specifying whether to plot x-axis labels
 #' @param layers additional ggplot2 layers to plot
 #' @return ggplot object
 #' @import ggplot2
 
 genCov_buildCov <- function(data_frame, x_limits=NULL, display_x_axis=TRUE,
-                            colour="blue", plot_type="line", layers=NULL)
+                            colour="blue", plot_type="point", layers=NULL)
 {
      # Specify various parameters of the plot
     line <- geom_line(colour=colour)
-    area <- geom_area(colour=colour, fill=colour)
     bar <- geom_bar(fill=colour, width=1, stat="identity")
     point <- geom_point(fill=colour, colour=colour)
 
@@ -58,15 +57,13 @@ genCov_buildCov <- function(data_frame, x_limits=NULL, display_x_axis=TRUE,
     if(toupper(plot_type) == "LINE")
     {
         cov_plot <- cov_plot + line
-    } else if(toupper(plot_type) == "AREA") {
-        cov_plot <- cov_plot + area
     } else if(toupper(plot_type) == "BAR"){
         cov_plot <- cov_plot + bar
     } else if(toupper(plot_type) == "POINT") {
         cov_plot <- cov_plot + point
     } else {
         memo <- paste0("Do not recoginze: ", plot_type,
-                       ", please specify 'line', 'area' or 'bar'")
+                       ", please specify 'line', 'point' or 'bar'")
         stop(memo)
     }
 

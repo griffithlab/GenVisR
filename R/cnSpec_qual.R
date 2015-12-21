@@ -81,7 +81,7 @@ cnSpec_qual <- function(x, y, genome, CNscale)
     if(CNscale == "absolute")
     {
         # if any cn values are negative something fishy is happening, report
-        if(any(x$segmean < 0))
+        if(any(as.numeric(as.character(x$segmean)) < 0))
         {
             memo <- paste0("Detected negative values in the segmean",
                            " column but CNscale is set to \"absolute\"!")
