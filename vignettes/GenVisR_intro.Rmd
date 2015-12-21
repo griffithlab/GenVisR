@@ -146,7 +146,7 @@ lolliplot(data, y=data2, fillCol='impact', labelCol='amino_acid_change')
 
 ### genCov
 
-`genCov` provides a methodology for viewing coverage information in relation to a gene track. It takes a named list of data frames with each data frame containing column names "end" and "cov" and rows corresponding to coordinates within the region of interest. Additional required arguments are a GRanges object specifying the region of interest, a BSgenome for gc content calculation, and a TxDb object containing transcription metadata (see the package [Granges](http://www.bioconductor.org/packages/release/bioc/html/GenomicRanges.html) for more information). `genCov` will plot a genomic features track and align coverage data in the list to the plot. It is recommended to use [bedtools multicov](http://bedtools.readthedocs.org/en/latest/content/tools/multicov.html) to obtain coverage information for a region of interest. We demonstrate `genCov` functionality using the included data set ptenCOV which contains coverage information for the gene PTEN.
+`genCov` provides a methodology for viewing coverage information in relation to a gene track. It takes a named list of data frames with each data frame containing column names "end" and "cov" and rows corresponding to coordinates within the region of interest. Additional required arguments are a GRanges object specifying the region of interest, a BSgenome for gc content calculation, and a TxDb object containing transcription metadata (see the package [Granges](http://www.bioconductor.org/packages/release/bioc/html/GenomicRanges.html) for more information). `genCov` will plot a genomic features track and align coverage data in the list to the plot. It is recommended to use [bedtools multicov](http://bedtools.readthedocs.org/en/latest/content/tools/multicov.html) to obtain coverage information for a region of interest. We demonstrate `genCov` functionality using the pseudo-data containingcoverage information for the gene PTEN.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Load transcript meta data
@@ -161,18 +161,31 @@ genome <- BSgenome.Hsapiens.UCSC.hg19
 gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), 
 end=c(89729532)), strand=strand(c("+")))
 
-# Define preloaded coverage data as named list
-data <- list("PTEN" = ptenCov)
+# Create Data for input
+start <- c(89622194:89729524)
+end <- c(89622195:89729525)
+chr <- 10
+cov <- c(rnorm(100000, mean=40), rnorm(7331, mean=10))
+cov_input_A <- as.data.frame(cbind(chr, start, end, cov))
+
+start <- c(89622194:89729524)
+end <- c(89622195:89729525)
+chr <- 10
+cov <- c(rnorm(50000, mean=40), rnorm(7331, mean=10), rnorm(50000, mean=40))
+cov_input_B <- as.data.frame(cbind(chr, start, end, cov))
+
+# Define the data as a list
+data <- list("Sample A"=cov_input_A, "Sample B"=cov_input_B)
 
 # Call genCov
 genCov(data, txdb, gr, genome, gene_labelTranscriptSize=2)
 ```
 
-By default genCov will perform a log compression of genomic space for each feature type,'Intron','CDS','UTR' specified by the parameter `transform`. The degree of compression can be set via the parameter `base` which will perform the appropriate log compression for the features specified. The user can turn off this behavior by setting transform to `NULL`. `genCov` Defaults to log-10 compression for intronic space, and log-2 compression for CDS and UTR regions. Here we turn off the compression and reduce all gene transcripts to one representative pseudo-transctipt.
+Often it may be usefull to compress genomic space, genCov can perform such a compression via a log transform for each feature type,'Intron','CDS','UTR' specified by the parameter `transform`. The degree of compression can be set via the parameter `base` which will perform the appropriate log compression for the features specified. Here we display `genCov` compression functionality with log-10 compression for intronic space, and log-2 compression for CDS and UTR regions. Further we choose to display a simplified representation of genomic features within the region of interest via the `reduce` parameter.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide'}
 # Turn off feature compression and reduce gene transcripts
-genCov(data, txdb, gr, genome, transform=NULL, reduce=TRUE)
+genCov(data, txdb, gr, genome, transform=c("Intron", "CDS", "UTR"), base=c(10, 2, 2), reduce=TRUE)
 ```
 
 ### TvTi
@@ -224,11 +237,14 @@ cnSpec(LucCNseg, y=hg19chr)
 cnView provides a method for visualizing raw copy number calls focused on either a single chromosome or all chromosomes. Unlike the majority of plots within GenVisR cnView is intended to be used for a single sample. Input consists of a data frame with column names "chromosome", "coordinate", "cn", and "p_value" (optional) as well as a specification of which chromosome to plot for `chr` and which genome assembly should be used for `genome`. The algorithm will produce an ideogram on the top track and plot copy number calls beneath. If a "p_value" column is present in the input data cnView will create a transparency value for all calls/observations based on that column with less significant calls having a higher transparency. Eliminating the "p_value" column will terminate this behavior. Here we demonstrate `cnView` with raw copy number calls for chromosome 14 from the attached data set Luc2CNraw.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
-# Obtain CN segments for Luc2 corresponding to chromosome 14
-CNseg <- LucCNseg[LucCNseg$sample == 'Luc2' & LucCNseg$chromosome == 14,]
+# Create data
+chromosome <- 'chr14'
+coordinate <- sort(sample(0:106455000, size=2000, replace=FALSE))
+cn <- c(rnorm(300, mean=3, sd=.2), rnorm(700, mean=2, sd=.2), rnorm(1000, mean=3, sd=.2))
+data <- as.data.frame(cbind(chromosome, coordinate, cn))
 
 # Call cnView with basic input
-cnView(Luc2CNraw, chr='chr14', genome='hg19', ideogram_txtSize=4)
+cnView(data, chr='chr14', genome='hg19', ideogram_txtSize=4)
 ```
 
 `cnView` obtains ideogram information and chromosomal boundaries either via a preloaded genome or the UCSC sql database if it is available. In the interest of flexibility the user also has the option of specifying cytogenetic information to the argument `y`. This input should take the form of a data frame with column names "chrom", "chromStart", "chromEnd", "name", "gieStain". This format mirrors what is retrievable via the aforementioned MySQL database.

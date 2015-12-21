@@ -5,7 +5,7 @@
 \title{build coverage plot}
 \usage{
 genCov_buildCov(data_frame, x_limits = NULL, display_x_axis = TRUE,
-  colour = "blue", plot_type = "line", layers = NULL)
+  colour = "blue", plot_type = "point", layers = NULL)
 }
 \arguments{
 \item{data_frame}{an object of class data frame containing columns
@@ -18,8 +18,8 @@ if not specified}
 
 \item{colour}{character string specifying the color of the data in the plot}
 
-\item{plot_type}{character string specifying one of line, area, bar, or point
-for data display}
+\item{plot_type}{character string specifying one of line, bar, or
+point for data display}
 
 \item{layers}{additional ggplot2 layers to plot}
 }
