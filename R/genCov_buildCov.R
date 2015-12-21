@@ -40,18 +40,19 @@ genCov_buildCov <- function(data_frame, x_limits=NULL, display_x_axis=TRUE,
     # Define the theme
     if(display_x_axis == TRUE)
     {
-        theme <- theme(axis.title.x=element_blank(),
-                       axis.title.y=element_blank())
+        theme <- theme(axis.title.x=element_blank())
     } else {
         theme <- theme(axis.title.x=element_blank(),
                        axis.text.x=element_blank(),
-                       axis.ticks.x=element_blank(),
-                       axis.title.y=element_blank())
+                       axis.ticks.x=element_blank())
     }
-
+    
+    # Define y label
+    y_label <- ylab("Coverage Depth")
+    
     # Define the main plot
     cov_plot <- ggplot(data_frame, aes_string(x='end', y='cov')) + x_limits +
-        theme_bw() + theme + layers
+        theme_bw() + theme + y_label + layers
 
     # Define Control structure for plot type
     if(toupper(plot_type) == "LINE")
