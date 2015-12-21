@@ -8,8 +8,8 @@ genCov(x, txdb, gr, genome, reduce = FALSE, gene_colour = NULL,
   gene_name = "Gene", gene_plotLayer = NULL, label_bgFill = "black",
   label_txtFill = "white", label_borderFill = "black", label_txtSize = 10,
   lab2plot_ratio = c(1, 10), cov_colour = "blue", cov_plotType = "line",
-  cov_plotLayer = NULL, base = c(10, 2, 2), transform = c("Intron", "CDS",
-  "UTR"), gene_labelTranscript = TRUE, gene_labelTranscriptSize = 4,
+  cov_plotLayer = NULL, base = NULL, transform = NULL,
+  gene_labelTranscript = TRUE, gene_labelTranscriptSize = 4,
   gene_isoformSel = NULL)
 }
 \arguments{

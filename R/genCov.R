@@ -97,8 +97,8 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
                    label_txtFill="white", label_borderFill="black",
                    label_txtSize=10, lab2plot_ratio=c(1, 10),
                    cov_colour="blue", cov_plotType="line", cov_plotLayer=NULL,
-                   base=c(10,2,2),
-                   transform=c('Intron','CDS','UTR'),
+                   base=NULL,
+                   transform=NULL,
                    gene_labelTranscript=TRUE,
                    gene_labelTranscriptSize=4, gene_isoformSel=NULL)
 {
