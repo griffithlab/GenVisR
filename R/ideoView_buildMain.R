@@ -25,7 +25,8 @@ ideoView_buildMain <- function(data_frame, chromosome,
                    legend.position='right')
     
     # modify ggplot legend defaults
-    legend <- scale_fill_manual(values=c('gneg'='grey100', 'stalk'='brown3',
+    legend <- scale_fill_manual("Giemsa stain",
+                                values=c('gneg'='grey100', 'stalk'='brown3',
                                          'acen'='brown4', 'gpos'='grey0',
                                          'gvar'='grey0', 'gpos1'='#FFFFFF',
                                          'gpos2'='#FCFCFC', 'gpos3'='#F9F9F9',

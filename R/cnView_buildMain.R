@@ -25,18 +25,20 @@ cnView_buildMain <- function(x, y, z=NULL, chr, CNscale=FALSE, layers=NULL)
     if(CNscale == "relative")
     {
         # cn fill colors
-        shade_cn <- scale_color_gradient2(midpoint=0,
+        shade_cn <- scale_color_gradient2("Copy Number",
+                                          midpoint=0,
                                           low='#009ACD',
-                                          mid='#646082',
+                                          mid='gray65',
                                           high='#C82536',
                                           space='Lab')
         # y label
         ylabel <- ylab('Copy Number Difference')
     } else if(CNscale == "absolute") {
         # cn fill colors
-        shade_cn <- scale_color_gradient2(midpoint=2,
+        shade_cn <- scale_color_gradient2("Copy Number",
+                                          midpoint=2,
                                           low='#009ACD',
-                                          mid='#646082',
+                                          mid='gray65',
                                           high='#C82536',
                                           space='Lab')
         # y label
