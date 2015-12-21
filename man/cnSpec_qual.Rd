@@ -4,7 +4,7 @@
 \alias{cnSpec_qual}
 \title{Construct CN cohort plot}
 \usage{
-cnSpec_qual(x, y, genome)
+cnSpec_qual(x, y, genome, CNscale)
 }
 \arguments{
 \item{x}{object of class data frame containing columns chromosome, start,
@@ -14,6 +14,10 @@ stop, segmean, sample}
 locations}
 
 \item{genome}{character string specifying a user supplied genome}
+
+\item{CNscale}{Character string specifying if copy number calls supplied are
+relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+"relative" or "absolute"}
 }
 \value{
 character string specifying input passed quality check

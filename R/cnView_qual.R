@@ -5,11 +5,14 @@
 #' @param x a data frame with columns chromosome, coordinate, cn
 #' @param y a data frame with columns "chrom", "chromStart", "chromEnd", "name",
 #' "gieStain"
+#' @param CNscale Character string specifying if copy number calls supplied are
+#' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+#' "relative" or "absolute"
 #' @param z a data frame with columns chromosome, start, end , segmean
 #' @param genome character string specifying UCSC genome to use
 #' @return a list of data frames passing quality checks
 
-cnView_qual <- function(x, y, z, genome)
+cnView_qual <- function(x, y, z, genome, CNscale)
 {
     ############################## Check input to x #####################
     if(!is.data.frame(x))
@@ -26,6 +29,23 @@ cnView_qual <- function(x, y, z, genome)
         memo <- paste0("Did not detect correct columns in argument supplied",
                        " to x. missing one of \"chromosome\", \"coordinate\", ",
                        "\"cn\"")
+        stop(memo)
+    }
+    
+    if(CNscale == "absolute")
+    {
+        # if any cn values are negative something fishy is happening, report
+        if(any(x$cn < 0))
+        {
+            memo <- paste0("Detected negative values in the copy number",
+                           " column but CNscale is set to \"absolute\"!")
+            warning(memo)
+        }
+    } else if(CNscale == "relative") {
+        next
+    } else {
+        memo <- paste0("Did not recognize input to parameter CNscale",
+                       " please specify one of \"relative\" or \"absolute\"!")
         stop(memo)
     }
 

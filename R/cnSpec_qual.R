@@ -7,10 +7,13 @@
 #' stop, segmean, sample
 #' @param y object of class data frame containing user supplied chromosome
 #' locations
+#' @param CNscale Character string specifying if copy number calls supplied are
+#' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+#' "relative" or "absolute"
 #' @param genome character string specifying a user supplied genome
 #' @return character string specifying input passed quality check
 
-cnSpec_qual <- function(x, y, genome)
+cnSpec_qual <- function(x, y, genome, CNscale)
 {
     # Check genome is acceptable name if y is not supplied
     if(is.null(y))
@@ -72,6 +75,23 @@ cnSpec_qual <- function(x, y, genome)
         memo <- paste0("Did not detect correct columns in input to x, ",
                        "missing one of \"chromosome\", \"start\", \"end\",",
                        " \"segmean\", \"sample\"!")
+        stop(memo)
+    }
+    
+    if(CNscale == "absolute")
+    {
+        # if any cn values are negative something fishy is happening, report
+        if(any(x$segmean < 0))
+        {
+            memo <- paste0("Detected negative values in the segmean",
+                           " column but CNscale is set to \"absolute\"!")
+            warning(memo)
+        }
+    } else if(CNscale == "relative") {
+        next
+    } else {
+        memo <- paste0("Did not recognize input to parameter CNscale",
+                       " please specify one of \"relative\" or \"absolute\"!")
         stop(memo)
     }
     
