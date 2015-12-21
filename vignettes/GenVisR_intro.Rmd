@@ -108,7 +108,7 @@ Occasionally there may be samples not represented within the .maf file (due to a
 
 ### lolliplot
 
-`lolliplot` provides a method for visualizing mutation hotspots overlayed on a protein framework. The (basic) input consist of a data frame with required columns "transcript_name", "gene" and "amino_acid_change" giving the ensembl transcript id, gene name, and the amino acid change in p. notation respectively. The data frame input to `lolliplot` must contain only one unique transcript name. `lolliplot` uses the R package [biomaRt](https://bioconductor.org/packages/release/bioc/html/biomaRt.html) to obtain sequence and protein domain information and as such needs an active internet connection. `lolliplot` assumes the species to be *hsapiens*, this assumption can be changed via the parameter `species` which which will expect a valid ensembl mart species.
+`lolliplot` provides a method for visualizing mutation hotspots overlayed on a protein framework. The (basic) input consists of a data frame with required columns "transcript_name", "gene" and "amino_acid_change" giving the ensembl transcript id, gene name, and the amino acid change in p. notation respectively. The data frame input to `lolliplot` must contain only one unique transcript name. `lolliplot` uses the R package [biomaRt](https://bioconductor.org/packages/release/bioc/html/biomaRt.html) to obtain sequence and protein domain information and as such needs an active internet connection. `lolliplot` assumes the species to be *hsapiens*, this assumption can be changed via the parameter `species` which which will expect a valid ensembl mart species.
 
 ```{r, fig.keep='last', fig.width=12, fig.height=4.5, message=FALSE, warning=FALSE, results='hide'}
 # Create input data
@@ -176,7 +176,7 @@ genCov(data, txdb, gr, genome, transform=NULL, reduce=TRUE)
 ```
 
 ### TvTi
-`TvTi` provides a framework for visualizing transversions and transitions for a given cohort. Input consists of a .maf (version 2.4) file containing sample and allele information (see .maf spec). Alternatively the `fileType` parameter can be set to "MGI" with the input supplied consisting of a data frame with column names "sample", "reference", and "variant". TvTi will remove indels and multinucleotide calls from the input and plot the proportion of Transition/Transversion types for each sample specified in the input file.
+`TvTi` provides a framework for visualizing transversions and transitions for a given cohort. Input consists of a .maf (version 2.4) file containing sample and allele information (see .maf spec). Alternatively the `fileType` parameter can be set to "MGI" with the input supplied consisting of a data frame with column names "sample", "reference", and "variant". Files for the "MGI" format can be obtained via the [Genome Modeling System](https://github.com/genome/gms). TvTi will remove indels and multinucleotide calls from the input and plot the proportion of Transition/Transversion types for each sample specified in the input file.
 
 ```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide'}
 # Call TvTi
@@ -221,7 +221,7 @@ cnSpec(LucCNseg, y=hg19chr)
 ```
 
 ### cnView
-cnView provides a method for visualizing raw copy number calls focused on either a single chromosome or all chromosomes. Unlike the majority of plots within GenVisR cnView is intended to be used for a single sample. Input consists of a data frame with column names "chromosome", "coordinate", "cn", and "p_value" (optional) as well as a specification of which chromosome to plot `chr` and which genome assembly should be used for `genome`. The algorithm will produce an ideogram on the top track and plot copy number calls beneath. If a "p_value" column is present in the input data cnView will create a transparency value for all calls/observations based on that column with less significant calls having a higher transparency. Eliminating the "p_value" column will terminate this behavior. Here we demonstrate `cnView` with raw copy number calls for chromosome 14 from the attached data set Luc2CNraw.
+cnView provides a method for visualizing raw copy number calls focused on either a single chromosome or all chromosomes. Unlike the majority of plots within GenVisR cnView is intended to be used for a single sample. Input consists of a data frame with column names "chromosome", "coordinate", "cn", and "p_value" (optional) as well as a specification of which chromosome to plot for `chr` and which genome assembly should be used for `genome`. The algorithm will produce an ideogram on the top track and plot copy number calls beneath. If a "p_value" column is present in the input data cnView will create a transparency value for all calls/observations based on that column with less significant calls having a higher transparency. Eliminating the "p_value" column will terminate this behavior. Here we demonstrate `cnView` with raw copy number calls for chromosome 14 from the attached data set Luc2CNraw.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis'}
 # Obtain CN segments for Luc2 corresponding to chromosome 14
@@ -281,7 +281,7 @@ cnFreq(LucCNseg)
 ```
 
 ### lohView
-lohView provides a method for visualizing LOH from a multi sample and multi chromosome perspective. Input consists of a data frame with column names "chromosome", "position", "n_freq", "t_freq", and "sample".
+lohView provides a method for visualizing Loss of Heterozygosity (LOH) from a multi sample and multi chromosome perspective. Input consists of a data frame with column names "chromosome", "position", "n_freq", "t_freq", and "sample".
 
 TODO: example and expand description
 

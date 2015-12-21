@@ -16,7 +16,7 @@ lolliplot_transcriptID2codingSeq <- function(transcriptID,
                                              host="www.ensembl.org")
 {
     # display mesage
-    memo <- paste0("Using the following host: ", host, "for biomaRt queries",
+    memo <- paste0("Using the following host: ", host, " for biomaRt queries",
                    " to change the ensembl annotation version alter this",
                    " parameter!")
     message(memo)
