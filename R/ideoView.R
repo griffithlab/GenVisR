@@ -28,7 +28,8 @@
 ideoView <- function(x, chromosome='chr1', txtAngle=45, txtSize=5,
                      plotLayer=NULL)
 {
-    cytobands <- x
+    # Perform quality check
+    cytobands <- ideoView_qual(x)
 
     # format the data obtained from ucsc into something ggplot can understand
     cytobands <- ideoView_formatCytobands(cytobands, chromosome=chromosome)

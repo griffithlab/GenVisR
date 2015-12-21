@@ -19,9 +19,9 @@ genCov_buildCov <- function(data_frame, x_limits=NULL, display_x_axis=TRUE,
 {
      # Specify various parameters of the plot
     line <- geom_line(colour=colour)
-    area <- geom_area(colour=colour)
+    area <- geom_area(colour=colour, fill=colour)
     bar <- geom_bar(fill=colour, width=1, stat="identity")
-    point <- geom_point(fill=colour)
+    point <- geom_point(fill=colour, colour=colour)
 
     if(is.null(x_limits))
     {
