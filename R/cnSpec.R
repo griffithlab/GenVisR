@@ -22,6 +22,9 @@
 #' @param plotLayer Valid ggplot2 layer to be added to the plot.
 #' @param dataOut Boolean specifying whether to output the data to be passed to
 #' ggplot instead of plotting.
+#' @param CNscale Character string specifying if copy number calls supplied are
+#' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+#' "relative" or "absolute"
 #' @details cnSpec requires the location of chromosome boundaries for a given
 #' genome assembly in order to ensure the entire chromosome space is plotted.
 #' As a convenience this information is available to cnSpec for
@@ -46,10 +49,10 @@
 cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
                    CN_Loss_colour='#002EB8', CN_Gain_colour='#A30000',
                    x_title_size=12, y_title_size=12, facet_lab_size=10,
-                   plotLayer=NULL, dataOut=FALSE)
+                   plotLayer=NULL, dataOut=FALSE, CNscale="absolute")
 {
     # Perform quality check on input data
-    data <- cnSpec_qual(x, y, genome)
+    data <- cnSpec_qual(x, y, genome, CNscale=CNscale)
     x <- data[[1]]
     y <- data[[2]]
 
@@ -127,7 +130,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
                            x_lab_size=x_title_size,
                            y_lab_size=y_title_size,
                            facet_lab_size=facet_lab_size,
-                           layers=plotLayer)
+                           layers=plotLayer, CNscale=CNscale)
 
     return(p1)
 }

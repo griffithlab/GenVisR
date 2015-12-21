@@ -60,7 +60,7 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
                    dataOut=FALSE)
 {
     # Perform a basic quality check
-    input <- cnView_qual(x, y, z, genome)
+    input <- cnView_qual(x, y, z, genome, CNscale=CNscale)
     x <- input[[1]]
     y <- input[[2]]
     z <- input[[3]]

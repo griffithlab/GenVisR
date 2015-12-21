@@ -14,6 +14,9 @@
 #' @param facet_lab_size integer specifying the size of the faceted labels
 #' @param layers Additional layers to be plotted, can be a theme but must be a
 #' ggplot layer
+#' @param CNscale Character string specifying if copy number calls supplied are
+#' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+#' "relative" or "absolute"
 #' @return ggplot object
 #' @import scales
 #' @import ggplot2
@@ -21,7 +24,7 @@
 cnSpec_buildMain <- function(data_frame, plot_title=NULL,
                              CN_low_colour='#002EB8', CN_high_colour='#A30000',
                              x_lab_size=12, y_lab_size=12, facet_lab_size=10,
-                             layers=NULL)
+                             layers=NULL, CNscale="absolute")
 {
     CN_data <- na.omit(data_frame)
     dummy_data <- data_frame
@@ -37,13 +40,25 @@ cnSpec_buildMain <- function(data_frame, plot_title=NULL,
 
     # Define parameters of plot
     facet <- facet_grid(sample ~ chromosome, scales='free', space='free')
-    fill_gradient <- scale_fill_gradientn("Copy Number",
-                                          colours=c(CN_low_colour,
-                                                    'white',
-                                                    CN_high_colour),
-                                          values=rescale(c(0, 2, 4)),
-                                          limits=c(0, 4),
-                                          oob=squish)
+    if(CNscale == "absolute")
+    {
+        fill_gradient <- scale_fill_gradientn("Copy Number",
+                                              colours=c(CN_low_colour,
+                                                        'white',
+                                                        CN_high_colour),
+                                              values=rescale(c(0, 2, 4)),
+                                              limits=c(0, 4),
+                                              oob=squish)
+    } else if(CNscale == "relative") {
+        fill_graident <- scale_fill_gradientn("Copy Number",
+                                              colours=c(CN_low_colour,
+                                                        "white",
+                                                        CN_high_colour),
+                                              values=rescale(c(-2, 0, 4)),
+                                              limits=c(0, 4),
+                                              oob=squish)
+    }
+
     ylabel <- ylab('Sample')
     xlabel <- xlab('Chromosome')
     title <- ggtitle(plot_title)

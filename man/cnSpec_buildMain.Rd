@@ -6,7 +6,7 @@
 \usage{
 cnSpec_buildMain(data_frame, plot_title = NULL, CN_low_colour = "#002EB8",
   CN_high_colour = "#A30000", x_lab_size = 12, y_lab_size = 12,
-  facet_lab_size = 10, layers = NULL)
+  facet_lab_size = 10, layers = NULL, CNscale = "absolute")
 }
 \arguments{
 \item{data_frame}{object of class data frame containing columns chromosome,
@@ -27,6 +27,10 @@ gradient}
 
 \item{layers}{Additional layers to be plotted, can be a theme but must be a
 ggplot layer}
+
+\item{CNscale}{Character string specifying if copy number calls supplied are
+relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+"relative" or "absolute"}
 }
 \value{
 ggplot object
