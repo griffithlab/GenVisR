@@ -21,9 +21,6 @@ waterfall_qual <- function(x, y, z, file_type, label_col)
         stop("Did not detect a data frame for input to x")
     }
 
-    # drop unused levels in x
-    x <- droplevels(x)
-
     # Convert file type to internal format
     if(toupper(file_type) == toupper("MAF"))
     {
@@ -35,6 +32,12 @@ waterfall_qual <- function(x, y, z, file_type, label_col)
     } else {
         stop("Unrecognized file_type: ", file_type)
     }
+    
+    # drop unused levels in x
+    x$sample <- as.factor(x$sample)
+    x$gene <- as.factor(x$gene)
+    x$trv_type <- as.factor(x$trv_type)
+    x <- droplevels(x)
 
     # Check input data to clinDat
     if(!is.null(y))
