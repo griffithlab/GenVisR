@@ -9,4 +9,11 @@ test_that("waterfall_sampSort properly sorts samples based on a hierarchy", {
     out <- waterfall_sampSort(x)
     expec <- c('a', 'b', 'c')
     expect_equal(out, expec)
+    
+    # Test that samples added in via the plotSamples parameter in waterfall are
+    # put last
+    x <- data.frame(sample=c('TESTA', 'A'), gene=c(NA, 'x'), trv_type=c(NA, 'missense'))
+    out <- waterfall_sampSort(x)
+    expec <- c('A', 'TESTA')
+    #expect_equal(out, expec)
 })
