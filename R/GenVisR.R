@@ -71,19 +71,6 @@ NULL
 #' @return Object of class data frame
 NULL
 
-#' Coverage for PTEN
-#'
-#' A data set containing coverage data for PTEN from Juric et al. Nature 2015,
-#' PMID:25409150
-#'
-#' @docType data
-#' @keywords datasets
-#' @name ptenCov
-#' @usage data(ptenCov)
-#' @format a data frame with 10734 observations and 4 variables
-#' @return Object of class data frame
-NULL
-
 #' Identity snps
 #' 
 #' A data set containing locations of 24 identity snps originating from:
