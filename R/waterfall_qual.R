@@ -52,6 +52,11 @@ waterfall_qual <- function(x, y, z, file_type, label_col)
         {
             stop("Did not detect correct sample names in clinDat")
         }
+        
+        # make sure clinical data columns are of expected class
+        y$sample <- as.factor(y$sample)
+        y$variable <- as.factor(y$variable)
+        y$value <- as.character(y$value)
     }
 
     # check input data to mutBurden
@@ -67,7 +72,11 @@ waterfall_qual <- function(x, y, z, file_type, label_col)
         {
             stop("Did not detect correct sample names in mutBurden")
         }
+        
+        # Make sure mutation burden columns are of proper class
+        z$sample <- as.factor(z$sample)
+        z$mut_burden <- as.numeric(as.character(z$mut_burden))
     }
-
+    
     return(list(x, y, z))
 }

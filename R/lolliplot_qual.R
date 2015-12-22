@@ -27,6 +27,11 @@ lolliplot_qual <- function(x, y, z)
              missing one of transcript_name, gene, amino_acid_change")
     }
     
+    # Make sure columns in x are of the proper class
+    x$transcript_name <- as.factor(x$transcript_name)
+    x$gene <- as.factor(x$gene)
+    x$amino_acid_change <- as.factor(x$amino_acid_change)
+    
     # Check that "transcript_name" in x contains only 1 transcript
     if(length(unique(x$transcript_name)) != 1)
     {
@@ -50,6 +55,10 @@ lolliplot_qual <- function(x, y, z)
             stop("Did not detect correct columns in y, missing one of
                  transcript_name, amino_acid_change")
         }
+        
+        # make sure columns in y are of proper class
+        y$transcript_name <- as.factor(y$transcript_name)
+        y$amino_acid_change <- as.factor(y$amino_acid_change)
     }
 
     # Check input to z
@@ -73,6 +82,11 @@ lolliplot_qual <- function(x, y, z)
                            " \"stop\"")
             stop(memo)
         }
+        
+        # make sure column class of z are of proper type
+        z$description <- as.factor(z$description)
+        z$start <- as.numeric(as.character(z$start))
+        z$stop <- as.numeric(as.character(z$stop))
     }
 
     return(list(x, y, z))
