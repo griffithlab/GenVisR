@@ -10,8 +10,6 @@ compIdent_bamRcnt_qual(genome, targetbed)
 \item{genome}{Object of class BSgenome corresponding to a genome of interest}
 
 \item{targetbed}{Object of class data frame containing target locations in .bed format}
-
-\item{bai}{Path to the bam index file}
 }
 \value{
 list of data objects passing quality checks

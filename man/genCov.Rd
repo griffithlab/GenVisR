@@ -120,8 +120,21 @@ genome <- BSgenome.Hsapiens.UCSC.hg19
 gr <- GRanges(seqnames=c("chr10"),
 ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
 
-# Define preloaded coverage data as named list
-data <- list("PTEN" = ptenCov)
+# Create Data for input
+start <- c(89622194:89729524)
+end <- c(89622195:89729525)
+chr <- 10
+cov <- c(rnorm(100000, mean=40), rnorm(7331, mean=10))
+cov_input_A <- as.data.frame(cbind(chr, start, end, cov))
+
+start <- c(89622194:89729524)
+end <- c(89622195:89729525)
+chr <- 10
+cov <- c(rnorm(50000, mean=40), rnorm(7331, mean=10), rnorm(50000, mean=40))
+cov_input_A <- as.data.frame(cbind(chr, start, end, cov))
+
+# Define the data as a list
+data <- list("Sample A"=cov_input_A)
 
 # Call genCov
 genCov(data, txdb, gr, genome, gene_labelTranscriptSize=3)

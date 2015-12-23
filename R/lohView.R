@@ -86,7 +86,7 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
         stop(memo)
     }
     
-    if(touppper(method) == 'SLIDE')
+    if(toupper(method) == 'SLIDE')
     {
         # Calculate loh via sliding window
         loh <- lohView_slidingWindow(loh_data=x, step, window_size, normal)

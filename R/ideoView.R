@@ -27,7 +27,7 @@
 
 ideoView <- function(x, chromosome='chr1', txtAngle=45, txtSize=5,
                      plotLayer=NULL)
-{
+{ 
     # Perform quality check
     cytobands <- ideoView_qual(x)
 
