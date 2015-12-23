@@ -2,12 +2,13 @@
 % Please edit documentation in R/lohView.R
 \name{lohView}
 \alias{lohView}
-\title{plot LOH data}
+\title{Plot LOH data}
 \usage{
 lohView(x = NULL, path = NULL, fileExt = NULL, y = NULL,
   genome = "hg19", gender = NULL, step = 5e+05, window_size = 1e+06,
   normal = 50, gradient_midpoint = 20, gradient_low = "#ffffff",
-  gradient_mid = "#b2b2ff", gradient_high = "#000000", plotLayer = NULL)
+  gradient_mid = "#b2b2ff", gradient_high = "#000000", theme_layer = NULL,
+  method = "tile")
 }
 \arguments{
 \item{x}{object of class data frame with columns 'chromosome', 'position',
@@ -30,13 +31,14 @@ input data is based}
 \item{gender}{vector of length equal to the number of samples, consisting of
 elements from the set {"M", "F"}}
 
-\item{step}{integer with the length of divisions (bp) in chromosomes}
+\item{step}{integer with the length of divisions (bp) in chromosomes (only
+required when tile=FALSE}
 
 \item{window_size}{integer with the size of the sliding window (bp) to be
 applied}
 
 \item{normal}{integer specifying the normal VAF frequency used in LOH
-calculations#'}
+calculations}
 
 \item{gradient_midpoint}{object of class numeric specifying the midpoint
 for legend's gradient scale}
@@ -50,12 +52,13 @@ gradient's middle values}
 \item{gradient_high}{object of class character for hex color code for
 gradient's upper values}
 
-\item{plotLayer}{ggplot theme object specifying parameters for non data
+\item{theme_layer}{ggplot theme object specifying parameters for non data
 elements}
+
+\item{method}{character string specifying the approach to be used for
+displaying Loss of Heterozygosity, one of "tile" or "slide"}
 }
 \value{
-ggplot object
-
 grid object
 }
 \description{

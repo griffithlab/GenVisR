@@ -1,4 +1,4 @@
-#' plot LOH data
+#' Plot LOH data
 #'
 #' Produce a graphic visualizing Loss of Heterozygosity in a cohort
 #' @name lohView
@@ -16,11 +16,12 @@
 #' "position", "n_vaf", "t_vaf", and "sample" (required if x is not specified)
 #' @param fileExt character string specifying the file extensions of files
 #' within the path specified (required if path argument is specified)
-#' @param step integer with the length of divisions (bp) in chromosomes
+#' @param step integer with the length of divisions (bp) in chromosomes (only 
+#' required when tile=FALSE
 #' @param window_size integer with the size of the sliding window (bp) to be 
 #' applied
 #' @param normal integer specifying the normal VAF frequency used in LOH 
-#' calculations#' @return ggplot object
+#' calculations 
 #' @param gradient_midpoint object of class numeric specifying the midpoint 
 #' for legend's gradient scale
 #' @param gradient_low object of class character for hex color code for 
@@ -29,8 +30,10 @@
 #' gradient's middle values
 #' @param gradient_high object of class character for hex color code for 
 #' gradient's upper values
-#' @param plotLayer ggplot theme object specifying parameters for non data
+#' @param theme_layer ggplot theme object specifying parameters for non data
 #' elements
+#' @param method character string specifying the approach to be used for 
+#' displaying Loss of Heterozygosity, one of "tile" or "slide"
 #' @return grid object
 #' @importFrom gtools mixedsort
 #' @examples
@@ -38,10 +41,10 @@
 #' @export
 
 lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
-                    gender=NULL, step=500000, window_size=1000000, normal=50,
-                    gradient_midpoint=20, gradient_low="#ffffff",
+                    gender=NULL, step=500000, window_size=1000000, 
+                    normal=50, gradient_midpoint=20, gradient_low="#ffffff",
                     gradient_mid="#b2b2ff", gradient_high="#000000",
-                    plotLayer=NULL)
+                    theme_layer=NULL, method="tile")
 {
     # Grab data if necessary
     if(!is.null(path))
@@ -88,8 +91,21 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
         stop(memo)
     }
     
-    # Calculate loh via sliding window
-    loh <- lohView_slidingWindow(loh_data=x, step, window_size, normal)
+    # Produce dataset with loh mean absolute differences 
+    if (toupper(method) == 'SLIDE') {
+        # Calculate loh via sliding window
+        loh <- lohView_slidingWindow(loh_data=x, step, window_size, normal)
+    }
+    else if(toupper(method) == 'TILE') {
+        # Calculate loh via tiled window
+        ## Insert code
+        loh <- lohView_tileWindow(loh_data=x, window_size, normal)
+    }
+    else {
+        memo <- paste0("Did not recognize input to parameter method.", 
+                       "Please specify one of \"Tile\" or \"Slide\".")
+        stop(memo)
+    }
     
     # set order of x axis labels in plot
     chromosomes <- gtools::mixedsort(as.character(unique(loh$chromosome)))
@@ -116,7 +132,7 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                                   gradient_low=gradient_low,
                                   gradient_mid=gradient_mid,
                                   gradient_high=gradient_high,
-                                  theme_layer=plotLayer)
+                                  theme_layer=theme_layer)
     
     #return the final plot
     return(loh_plot)

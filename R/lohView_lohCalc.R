@@ -12,32 +12,31 @@
 #' "n_vaf", "t_vaf", "sample", "loh_diff"
 
 lohView_lohCalc <- function(window_data, out, normal)
+    
 {
-    window <- as.data.frame(window_data)
-    sample_data <- as.data.frame(out)
+    window <- data.frame(window_data)   
+    sample_data <- data.frame(out)    
     sample_data$position <- as.numeric(as.character(sample_data$position))
     total <- data.frame()
-    
-    for (i in 1:nrow(window))
+
+    for (i in 1:nrow(window))        
     {
-        filtered_data <- 
-            sample_data[sample_data$position >= window$window_start[i] &
-                            sample_data$position <= window$window_stop[i],]
-        
-        loh_calc <- abs(as.numeric(as.character(filtered_data$t_vaf)) - normal)
+        filtered_data <-        
+            sample_data[sample_data$position >= window$window_start[i] &                           
+                            sample_data$position <= window$window_stop[i],]       
+        loh_calc <- abs(as.numeric(as.character(filtered_data$t_vaf)) - normal)       
         loh_avg <- mean(loh_calc)
-        
-        if (is.na(loh_avg)==TRUE)
-        {
-            loh_avg <- NULL
+        if (is.na(loh_avg)==TRUE)    
+        {            
+            loh_avg <- NULL            
         }
         
-        filtered_data$loh_diff <- loh_avg
-        total <- rbind(total, filtered_data)
+        filtered_data$loh_diff_avg <- loh_avg
+        total <- rbind(total, filtered_data)     
     }
-    
     return(total)
-}
+    
+} 
 
 
 
