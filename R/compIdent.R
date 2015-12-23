@@ -18,7 +18,7 @@ compIdent <- function(x, genome, debug=FALSE)
     # Run with the Debug data set if specified
     if(isTRUE(debug))
     {
-        bams <- list(normal=HCC1395_N, tumor=HCC1395_T)
+        bams <- list(normal=GenVisR::HCC1395_N, tumor=GenVisR::HCC1395_T)
         samplenames <- c('normal','tumor')
         count_tables <- lapply(bams,
                                compIdent_bamRcnt,

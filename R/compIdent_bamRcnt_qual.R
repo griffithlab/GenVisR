@@ -2,7 +2,6 @@
 #'
 #' Given the bam file path, count the number of reads at the 24 SNP locations
 #' @name compIdent_bamRcnt_qual
-#' @param bai Path to the bam index file
 #' @param genome Object of class BSgenome corresponding to a genome of interest
 #' @param targetbed Object of class data frame containing target locations in .bed format
 #' @return list of data objects passing quality checks

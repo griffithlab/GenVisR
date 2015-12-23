@@ -2,7 +2,7 @@
 #' 
 #' Check that input to ideoView is properly formatted
 #' 
-#' @name ideoView
+#' @name ideoView_qual
 #' @param x a data frame with rows representing cytogenetic bands for a genome.
 #' The data frame should have columns "chrom", "chromStart", "chromEnd", "name",
 #' "gieStain'.
