@@ -14,30 +14,21 @@
 compIdent_buildMain <- function(count_tables, sample_names)
 {
     # Function that calculates frequencies from readcounts.
-    freq <- function(v){
-        v[,5:8] <- v[,5:8]/v[,4]
+    annonymous <- function(v)
+    {
+        v[,c("A", "C", "G", "T")] <- v[,c("A", "C", "G", "T")]/v[,c("total_reads")]
         return(v)
     }
-    freqs <- lapply(count_tables, freq)
+    count_tables <- lapply(count_tables, annonymous)
 
-    # Add a column of the variant allele after the column of the
-    # reference allele
-    var <- c('A','A','C','T','G','C','C','A','C','C','G','A','G','T','G','A','A',
-             'A','A','C','C','G','G','C')
-    add_varcol <- function(w)
+    # Define VAF based upon variant allele 
+    annonymous <- function(x)
     {
-        cbind(w[,1:3],var,w[,4:8])
+        vaf <- apply(x,1,function(y){return(as.numeric(y[as.character(y["var"])]))})
+        x$vaf <- vaf
+        return(x)
     }
-    freqs_withvarcol <- lapply(freqs, add_varcol)
-
-    # Extract VAF based upon variant allele
-    calcVAF <- function(x)
-    {
-        apply(x,1,function(y){
-              return(as.numeric(y[as.character(y["var"])]))
-              })
-    }
-    calcVAFs <- lapply(freqs_withvarcol, calcVAF)
+    count_tables <- lapply(count_tables, annonymous)
 
     # Make one table: rsid, sampleVAFs
     id <- 1:24
@@ -76,9 +67,7 @@ compIdent_buildMain <- function(count_tables, sample_names)
 
     ## Move x-axis labels above graph
     plotVAF <- ggplotGrob(plotVAF)
-    #panel <- c(subset(plotVAF$layout, name=="panel", se=t:r)) 
     panel <- plotVAF$layout[plotVAF$layout$name=='panel',][,c('t', 'l', 'b', 'r')]
-    message("LET ME KNOW IF THIS DOES NOT WORK: compIdent_buildMain ln 80")
     rn <- which(plotVAF$layout$name == "axis-b")
     axis.grob <- plotVAF$grobs[[rn]]
     axisb <- axis.grob$children[[2]]

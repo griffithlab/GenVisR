@@ -4,16 +4,23 @@
 #' @name compIdent
 #' @param x data frame with column names sample_name, bamfile
 #' @param genome Object of class BSgenome specifying the genome
+#' @param targetbed Object of class data frame containing target locations in
+#' 1-base format and containing columns "chr", "start", "end", "var", "name"
 #' @param debug Boolean specifying if test datasets should be used for
 #' debugging.
 #' @details
-#' TODO
+#' compIdent is a function designed to compa
 #' @return graphical object
 #' @examples
-#' #TODO
+#' # Read in BSgenome object (hg19)
+#' library(BSgenome.Hsapiens.UCSC.hg19)
+#' hg19 <- BSgenome.Hsapiens.UCSC.hg19
+#'
+#' # Generate plot
+#' compIdent(genome=hg19, debug=TRUE)
 #' @export
 
-compIdent <- function(x, genome, debug=FALSE)
+compIdent <- function(x, genome, target=NULL, debug=FALSE)
 {
     # Run with the Debug data set if specified
     if(isTRUE(debug))
@@ -23,14 +30,24 @@ compIdent <- function(x, genome, debug=FALSE)
         count_tables <- lapply(bams,
                                compIdent_bamRcnt,
                                genome=genome,
-                               debug=debug)
+                               debug=debug,
+                               target=target)
     } else { 
         # Grab the bam files and samples from the data frame
         bams <- as.character(x$bamfile)
         samplenames <- as.character(x$sample_name)
 
         # Readcount the supplied bam files
-        count_tables <- lapply(bams, compIdent_bamRcnt, genome=genome)
+        count_tables <- lapply(bams,
+                               compIdent_bamRcnt,
+                               genome=genome,
+                               target=target)
+        annonymous <- function(x)
+        {
+            return(x)
+            
+        }
+        lapply(count_tables, annonymous)
     }
 
     # make an sample identity plot

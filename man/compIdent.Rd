@@ -4,7 +4,7 @@
 \alias{compIdent}
 \title{Construct identity snp comparison plot}
 \usage{
-compIdent(x, genome, debug = FALSE)
+compIdent(x, genome, target = NULL, debug = FALSE)
 }
 \arguments{
 \item{x}{data frame with column names sample_name, bamfile}
@@ -13,6 +13,9 @@ compIdent(x, genome, debug = FALSE)
 
 \item{debug}{Boolean specifying if test datasets should be used for
 debugging.}
+
+\item{targetbed}{Object of class data frame containing target locations in
+1-base format and containing columns "chr", "start", "end", "var", "name"}
 }
 \value{
 graphical object
@@ -21,9 +24,14 @@ graphical object
 Given the bam file path, count the number of reads at the 24 SNP locations
 }
 \details{
-TODO
+compIdent is a function designed to compa
 }
 \examples{
-#TODO
+# Read in BSgenome object (hg19)
+library(BSgenome.Hsapiens.UCSC.hg19)
+hg19 <- BSgenome.Hsapiens.UCSC.hg19
+
+# Generate plot
+compIdent(genome=hg19, debug=TRUE)
 }
 

@@ -75,6 +75,12 @@ If it is available cnView can plot copy-number segment calls on top of raw
 calls supplied to parameter `x` via the parameter `z`.
 }
 \examples{
+# Create data
+chromosome <- 'chr14'
+coordinate <- sort(sample(0:106455000, size=2000, replace=FALSE))
+cn <- c(rnorm(300, mean=3, sd=.2), rnorm(700, mean=2, sd=.2), rnorm(1000, mean=3, sd=.2))
+data <- as.data.frame(cbind(chromosome, coordinate, cn))
+
 # Plot raw copy number calls
 cnView(Luc2CNraw, chr='chr14', genome='hg19', ideogram_txtSize=4)
 }

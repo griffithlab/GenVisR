@@ -4,8 +4,8 @@
 #' @name compIdent_bamRcnt
 #' @param bamfile Path to the bam file
 #' @param genome Object of class BSgenome corresponding to a genome of interest
-#' @param targetbed Object of class data frame containing target locations in
-#' .bed format and containing columns chr, start, end
+#' @param target Object of class data frame containing target locations in
+#' 1-base format and containing columns "chr", "start", "end", "var", "name"
 #' @param debug Boolean specifying if test datasets should be used for
 #' debugging.
 #' @return object of class data frame containing readcount information
@@ -17,49 +17,49 @@
 #' @importFrom reshape2 melt
 #' @importFrom reshape2 dcast
 
-compIdent_bamRcnt <- function(bamfile, genome, targetbed = NULL, debug=FALSE)
+compIdent_bamRcnt <- function(bamfile, genome, target=NULL, debug=FALSE)
 {
-    # if debug flag is false read in the mab files
-    if(!(isTRUE(debug)))
-    {
 
-    }
-    
     # Perform basic quality checks on input data
-    list <- compIdent_bamRcnt_qual(genome, targetbed)
+    list <- compIdent_bamRcnt_qual(genome, target)
     genome <- list[[1]]
-    targetbed <- list[[2]]
+    target <- list[[2]]
 
     # Read in the target bed locations. If none specified, read in 24 Pengelly
     # loci.
-    if(!is.null(targetbed))
+    if(!is.null(target))
     {
-        pengelly <- read.table(file=targetbed, sep='\t', header = TRUE)
+        target <- target
     } else {
-        pengelly <- GenVisR::SNPloci
+        memo <- paste0("Argument not supplied to target, defaulting to",
+                       "predefined identity SNPs from hg19 assembly")
+        message(memo)
+        target <- GenVisR::SNPloci
     }
     
-    pengelly.chr <- pengelly
-
-    # Check if pengelly bed file has 'chr' associated with chromosome number in
-    # chr column.
-    if(any(grepl("chr", pengelly$chr)))
+    # Target locations must conform to the bam files being read in, create
+    # two versions one with "chr1" and the other with "1" and use whichever is
+    # appropriate
+    if(any(grepl("chr", target$chr)))
     {
-        pengelly$chr <- gsub("chr","",pengelly$chr)
+        target$chr <- gsub("chr", "", target$chr)
     } else {
-        pengelly.chr$chr <- paste0("chr",pengelly.chr$chr)
+        target.chr <- target
+        target.chr$chr <- paste0("chr", target$chr)
     }
     
-    grange <- GenomicRanges::GRanges(pengelly$chr,
-                                     IRanges::IRanges(pengelly$start,
-                                                      pengelly$end),
-                                     strand=c('+'))
+    # Similar to above create two Grange objects one with "chr" appendix and
+    # one without
+    grange <- GenomicRanges::GRanges(target$chr,
+                                     IRanges::IRanges(target$start,
+                                                      target$end))
     
-    grange.chr <- GenomicRanges::GRanges(pengelly.chr$chr,
-                                         IRanges::IRanges(pengelly.chr$start,
-                                                          pengelly.chr$end),
-                                         strand=c('+'))
+    grange.chr <- GenomicRanges::GRanges(target.chr$chr,
+                                         IRanges::IRanges(target.chr$start,
+                                                          target.chr$end))
     
+    # If debug flag is true run the test case else read in specified bam
+    # files
     if(isTRUE(debug))
     {
         pileup_table <- bamfile
@@ -77,22 +77,24 @@ compIdent_bamRcnt <- function(bamfile, genome, targetbed = NULL, debug=FALSE)
         
         # Check using ScanBamHeader to see if 'chr' is included in chromosome
         # names
-        what <- c("rname", "qname", "strand", "pos", "qwidth", "seq")
+        what <- c("rname", "qname", "pos", "qwidth", "seq")
         chrcheck <- names(Rsamtools::scanBamHeader(bamfile)[[1]]$targets[1])
-    
-        if(any(grepl("chr", chrcheck))){
+        
+        # set up the appropriate param based on if chr is present in bam or not
+        if(any(grepl("chr", chrcheck)))
+        {
             param <- Rsamtools::ScanBamParam(which=grange.chr, what=what)
         } else {
             param <- Rsamtools::ScanBamParam(which=grange, what=what)
         }
-        # Pileup generates a table of nucleotide counts at each location by strand
-        pileup_table <- Rsamtools::pileup(bamfile, bai, scanBamParam = param)
+        
+        # Pileup generates a table of nucleotide counts at each location
+        pileup_table <- Rsamtools::pileup(bamfile, bai, scanBamParam=param)
     }
+    
     # Remove strand and which_label columns
-    pileup_table <- pileup_table[,c('seqnames',
-                                    'pos',
-                                    'nucleotide',
-                                    'count')]
+    pileup_table <- pileup_table[, !names(pileup_table) %in% c('strand',
+                                                               'which_label')]
     
     # Rename columns to match bamreadcount table
     colnames(pileup_table)[1:2] <- c('chr','position')
@@ -100,15 +102,20 @@ compIdent_bamRcnt <- function(bamfile, genome, targetbed = NULL, debug=FALSE)
     # Use reshape to create separate columns for nucleotides
     # Result (x2) is: chr, position, A, C, G, T
     x <- reshape2::melt(pileup_table, c('chr','position','nucleotide'), 'count')
-    x2 <- reshape2::dcast(x, chr + position ~ nucleotide, fun.aggregate = sum)
+    x <- reshape2::dcast(x, chr + position ~ nucleotide, fun.aggregate = sum)
 
-    # Add ref column and total_reads column
-    getref <- as.character(Biostrings::getSeq(genome, grange.chr))
-    total_reads <- data.frame(matrix(ncol=1,nrow=24))
-    colnames(total_reads) <- 'total_reads'
-    x3 <- cbind(x2[,1:2],getref,total_reads,x2[,3:6])
+    # Add ref column
+    x$getref <- as.character(Biostrings::getSeq(genome, grange.chr))
     
-    # total_reads column = sum of A, C, G, and T counts
-    x3$total_reads <- rowSums(x3[,c('A', 'C', 'G', 'T')])
-    return(x3)
+    # Add total reads columns
+    x$total_reads <- rowSums(x[,c('A', 'C', 'G', 'T')])
+    
+    # Add back in var and name colummns
+    x$key <- paste0(x$chr, ":", x$position)
+    target$key <- paste0(target$chr, ":", target$end)
+    x <- merge(x, target, by=c("key", "chr"))
+    x <- x[,c("chr", "position", "A", "C", "G", "T", "total_reads", "getref",
+              "var", "name")]
+    
+    return(x)
 }
