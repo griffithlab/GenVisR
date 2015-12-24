@@ -4,15 +4,15 @@
 \alias{compIdent_bamRcnt}
 \title{Count nucleotide reads at SNP locations}
 \usage{
-compIdent_bamRcnt(bamfile, genome, targetbed = NULL, debug = FALSE)
+compIdent_bamRcnt(bamfile, genome, target = NULL, debug = FALSE)
 }
 \arguments{
 \item{bamfile}{Path to the bam file}
 
 \item{genome}{Object of class BSgenome corresponding to a genome of interest}
 
-\item{targetbed}{Object of class data frame containing target locations in
-.bed format and containing columns chr, start, end}
+\item{target}{Object of class data frame containing target locations in
+1-base format and containing columns "chr", "start", "end", "var", "name"}
 
 \item{debug}{Boolean specifying if test datasets should be used for
 debugging.}
