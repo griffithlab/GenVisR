@@ -13,13 +13,13 @@ bam file path.}
 
 \item{genome}{Object of class BSgenome specifying the genome.}
 
-\item{debug}{Boolean specifying if test datasets should be used for
-debugging.}
-
-\item{targetbed}{Object of class data frame containing target locations in
+\item{target}{Object of class data frame containing target locations in
 1-base format and containing columns names "chr", "start", "end", "var",
 "name". Columns should correspond to chromosome, start, end, variant allele, 
 name of location.}
+
+\item{debug}{Boolean specifying if test datasets should be used for
+debugging.}
 }
 \value{
 graphical object

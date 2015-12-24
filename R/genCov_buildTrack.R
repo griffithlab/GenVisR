@@ -10,7 +10,6 @@
 #' @param size integer specifying the size of the text within the label
 #' @return ggplot object
 #' @import ggplot2
-#' @import grid
 
 genCov_buildTrack <- function(name, bg_fill="black", text_fill="white",
                               border="black", size=10)
@@ -29,7 +28,6 @@ genCov_buildTrack <- function(name, bg_fill="black", text_fill="white",
                    axis.text.y=element_blank(), axis.ticks.y=element_blank(),
                    plot.margin=unit(c(0, 0, 0, 0), "null"),
                    axis.ticks.length=unit(0,"null"),
-                   axis.ticks.margin=unit(0, "null"),
                    panel.margin=unit(0,"null"))
 
     # Define the main plot

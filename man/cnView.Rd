@@ -82,6 +82,6 @@ cn <- c(rnorm(300, mean=3, sd=.2), rnorm(700, mean=2, sd=.2), rnorm(1000, mean=3
 data <- as.data.frame(cbind(chromosome, coordinate, cn))
 
 # Plot raw copy number calls
-cnView(Luc2CNraw, chr='chr14', genome='hg19', ideogram_txtSize=4)
+cnView(data, chr='chr14', genome='hg19', ideogram_txtSize=4)
 }
 

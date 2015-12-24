@@ -6,7 +6,7 @@
 #' "sample_name", "bamfile". Columns should correspond to a sample name and a
 #' bam file path.
 #' @param genome Object of class BSgenome specifying the genome.
-#' @param targetbed Object of class data frame containing target locations in
+#' @param target Object of class data frame containing target locations in
 #' 1-base format and containing columns names "chr", "start", "end", "var",
 #' "name". Columns should correspond to chromosome, start, end, variant allele, 
 #' name of location.

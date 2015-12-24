@@ -9,21 +9,21 @@
 compIdent_format <- function(x)
 {
     # Function that calculates frequencies from readcounts.
-    annonymous <- function(v)
+    annonymous_A <- function(v)
     {
         v[,c("A", "C", "G", "T")] <- v[,c("A", "C", "G", "T")]/v[,c("total_reads")]
         return(v)
     }
-    x <- lapply(x, annonymous)
+    x <- lapply(x, annonymous_A)
     
     # Define VAF based upon variant allele 
-    annonymous <- function(x)
+    annonymous_B <- function(x)
     {
         vaf <- apply(x,1,function(y){return(as.numeric(y[as.character(y["var"])]))})
         x$vaf <- vaf
         return(x)
     }
-    x <- lapply(x, annonymous)
+    x <- lapply(x, annonymous_B)
     
     # add column specifying the name of the lists and convert to single data
     # frame

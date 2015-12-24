@@ -8,6 +8,7 @@
 #' @import ggplot2
 #' @importFrom gtable gtable_add_rows
 #' @importFrom gridExtra arrangeGrob
+#' @importFrom scales log10_trans
 
 compIdent_buildMain <- function(x)
 {
@@ -73,7 +74,7 @@ compIdent_buildMain <- function(x)
     plotCov <- geom_bar(stat="identity", position="dodge")
     x_label <- xlab("SNP")
     y_label <- ylab("Coverage")
-    y_axis <- scale_y_continuous(trans=log10_trans(),
+    y_axis <- scale_y_continuous(trans=scales::log10_trans(),
                                 breaks=c(10, 50, 100, 500, 1000))
     theme_A <- theme(legend.position="bottom", axis.text.y=element_text(hjust=0.5),
                      axis.text.x=element_text(angle=90, vjust=0.5, hjust=0.5),
