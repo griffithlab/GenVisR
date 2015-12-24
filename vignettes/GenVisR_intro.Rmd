@@ -319,8 +319,9 @@ ideoView(data, chromosome='chr1', txtSize=4)
 
 ### compIdent (snp identity graphic)
 
-`compIdent` produces a plot comparing samples
-TODO: add description and example, this is the identity snps plot
+`compIdent` produces a plot comparing samples based on identity snp variant allele frequency (VAF) values. The graphic displays VAF values at genomic locations given via the parameter `target`. If no argument is supplied to `target` the algorithm will default to 24 biallelic identity snps from the hg19 genome assembly identified by "pengelly et al. Genome Med. 2013, PMID 24070238". `compIdent` expects a data frame with rows specifying samples and columns providing sample names and bam file locations given to parameter `x`. Please note that compIdent will not index bam files and will look for a .bai file for the associated bam.
+
+Here we show the behavior of `compIdent` using a predefined dataset of vaf values accessible via the debut parameter (for debugging and display purposes only). In an ideal case we would expect to see similar vaf values for samples from the same origin at all 24 target sites providing a usefull method for identifying sample mix ups. Occasionally as seen here for the HCC1395 breast cancer cell line copy number alterations can skew the results making a sample seem unrelated.
 
 ```{r, fig.keep='last', fig.width=11, fig.height=8, message=FALSE, warning=FALSE, results='asis'}
 # Read in BSgenome object (hg19)
