@@ -4,12 +4,10 @@
 \alias{compIdent_buildMain}
 \title{Compare sample identities}
 \usage{
-compIdent_buildMain(count_tables, sample_names)
+compIdent_buildMain(x)
 }
 \arguments{
-\item{count_tables}{list of readcount tables}
-
-\item{sample_names}{list of names associated with each sample in counts list}
+\item{x}{Data frame of vaf for each sample}
 }
 \value{
 ggplot2 object

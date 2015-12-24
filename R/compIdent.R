@@ -22,6 +22,14 @@
 
 compIdent <- function(x, genome, target=NULL, debug=FALSE)
 {
+    # Warn if target is null
+    if(is.null(target))
+    {
+        memo <- paste0("Argument not supplied to target, defaulting to",
+                       " predefined identity SNPs from hg19 assembly!")
+        message(memo)
+    }
+    
     # Run with the Debug data set if specified
     if(isTRUE(debug))
     {
@@ -36,22 +44,20 @@ compIdent <- function(x, genome, target=NULL, debug=FALSE)
         # Grab the bam files and samples from the data frame
         bams <- as.character(x$bamfile)
         samplenames <- as.character(x$sample_name)
+        names(bams) <- samplenames
 
         # Readcount the supplied bam files
         count_tables <- lapply(bams,
                                compIdent_bamRcnt,
                                genome=genome,
                                target=target)
-        annonymous <- function(x)
-        {
-            return(x)
-            
-        }
-        lapply(count_tables, annonymous)
     }
+    
+    # Format the readcount tables into a form acceptable by compIdent_buildMain
+    count_tables <- compIdent_format(count_tables)
 
     # make an sample identity plot
-    plot <- compIdent_buildMain(count_tables, samplenames)
+    plot <- compIdent_buildMain(count_tables)
 
     return(plot)
 }

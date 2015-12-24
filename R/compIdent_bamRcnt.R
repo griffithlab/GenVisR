@@ -31,9 +31,6 @@ compIdent_bamRcnt <- function(bamfile, genome, target=NULL, debug=FALSE)
     {
         target <- target
     } else {
-        memo <- paste0("Argument not supplied to target, defaulting to",
-                       "predefined identity SNPs from hg19 assembly")
-        message(memo)
         target <- GenVisR::SNPloci
     }
     
