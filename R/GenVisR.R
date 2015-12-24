@@ -44,20 +44,6 @@ NULL
 #' @return Object of class data frame
 NULL
 
-
-#' CN data for Luc2
-#'
-#' Downsampled copy number calls for Luc2 chromosome 14 originating from
-#' cnv-hmm. Govindan et al. Cell. 2012, PMID:22980976
-#'
-#' @docType data
-#' @keywords datasets
-#' @name Luc2CNraw
-#' @usage data(Luc2CNraw)
-#' @format a data frame with 10000 observations and 5 variables
-#' @return Object of class data frame
-NULL
-
 #' Truncated CN segments
 #'
 #' A data set in long format containing Copy Number segments for 4 samples

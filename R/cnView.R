@@ -56,7 +56,7 @@
 #' data <- as.data.frame(cbind(chromosome, coordinate, cn))
 #' 
 #' # Plot raw copy number calls
-#' cnView(Luc2CNraw, chr='chr14', genome='hg19', ideogram_txtSize=4)
+#' cnView(data, chr='chr14', genome='hg19', ideogram_txtSize=4)
 #' @return graphical output
 #' @export
 

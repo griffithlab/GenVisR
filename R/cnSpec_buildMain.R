@@ -18,8 +18,9 @@
 #' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
 #' "relative" or "absolute"
 #' @return ggplot object
-#' @import scales
 #' @import ggplot2
+#' @importFrom scales squish
+#' @importFrom scales rescale
 
 cnSpec_buildMain <- function(data_frame, plot_title=NULL,
                              CN_low_colour='#002EB8', CN_high_colour='#A30000',
@@ -46,17 +47,17 @@ cnSpec_buildMain <- function(data_frame, plot_title=NULL,
                                               colours=c(CN_low_colour,
                                                         'white',
                                                         CN_high_colour),
-                                              values=rescale(c(0, 2, 4)),
+                                              values=scales::rescale(c(0, 2, 4)),
                                               limits=c(0, 4),
-                                              oob=squish)
+                                              oob=scales::squish)
     } else if(CNscale == "relative") {
         fill_graident <- scale_fill_gradientn("Copy Number",
                                               colours=c(CN_low_colour,
                                                         "white",
                                                         CN_high_colour),
-                                              values=rescale(c(-2, 0, 4)),
+                                              values=scales::rescale(c(-2, 0, 4)),
                                               limits=c(0, 4),
-                                              oob=squish)
+                                              oob=scales::squish)
     }
 
     ylabel <- ylab('Sample')
