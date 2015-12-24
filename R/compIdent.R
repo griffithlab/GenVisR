@@ -2,14 +2,30 @@
 #'
 #' Given the bam file path, count the number of reads at the 24 SNP locations
 #' @name compIdent
-#' @param x data frame with column names sample_name, bamfile
-#' @param genome Object of class BSgenome specifying the genome
+#' @param x data frame with rows representing samples and column names 
+#' "sample_name", "bamfile". Columns should correspond to a sample name and a
+#' bam file path.
+#' @param genome Object of class BSgenome specifying the genome.
 #' @param targetbed Object of class data frame containing target locations in
-#' 1-base format and containing columns "chr", "start", "end", "var", "name"
+#' 1-base format and containing columns names "chr", "start", "end", "var",
+#' "name". Columns should correspond to chromosome, start, end, variant allele, 
+#' name of location.
 #' @param debug Boolean specifying if test datasets should be used for
 #' debugging.
 #' @details
-#' compIdent is a function designed to compa
+#' compIdent is a function designed to comppare samples via variant allele
+#' frequencies (VAF) at specific sites. By default these sites correspond to 24
+#' identity snps originating from the hg19 assembly however the user can specify
+#' alternate sites via the target paramter. To view the 24 identity snp
+#' locations use GenVisR::SNPloci.
+#' 
+#' Samples from the same origin are expected to have similar VAF values however
+#' results can skew based on copy number alterations (CNA). The user is expected 
+#' to  ensure no CNA occur at the 24 identity snp sites.
+#' 
+#' For display and debugging purposes a debug parameter is available which will
+#' use predefined data instead of reading in bam files. Note that data in the
+#' debug parameter is only available at the afore mentioned 24 sites.
 #' @return graphical object
 #' @examples
 #' # Read in BSgenome object (hg19)
