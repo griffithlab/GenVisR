@@ -4,7 +4,7 @@
 #' information to compare multiple sample identities
 #' @name compIdent_buildMain
 #' @param x Data frame of vaf for each sample
-#' @return ggplot2 object
+#' @return ggplot2 grob object
 #' @import ggplot2
 #' @importFrom gtable gtable_add_rows
 #' @importFrom gridExtra arrangeGrob
@@ -92,5 +92,5 @@ compIdent_buildMain <- function(x)
     # Plot all
     final <- gridExtra::arrangeGrob(p1, tmp, p2, heights=c(60, 10, 40))
 
-    return(grid::grid.draw(final))
+    return(final)
 }

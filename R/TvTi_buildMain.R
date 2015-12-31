@@ -102,10 +102,12 @@ TvTi_buildMain <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
         theme <- theme(axis.text.x=element_blank(),
                        axis.ticks.x=element_blank())
     }
-
+    
     # Define plot
-    p1 <- ggplot() + bar + xlabel + ylabel + theme_bw() + theme + fill_palette +
-    expected + guides(fill=guide_legend(reverse=TRUE)) + layers
+    tmp <- data.frame(x=0, y=0)
+    p1 <- ggplot(data=tmp, aes(y=0)) + bar + xlabel + ylabel +
+        theme_bw() + theme + fill_palette + expected +
+        guides(fill=guide_legend(reverse=TRUE)) + layers
 
     return(p1)
 }

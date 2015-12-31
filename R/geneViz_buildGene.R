@@ -88,8 +88,10 @@ geneViz_buildGene <- function(data_frame, display_x_axis=TRUE, x_limits=NULL,
     }
 
     # Define the main plot
-    gene_plot <- ggplot() + gene_track + gene_features + theme_bw() + theme +
-        xlimits + transcript_name + layers
+    tmp <- data.frame(xmin=0, xmax=0, ymin=0, ymax=0, x=0, y=0, xend=0, yend=0)
+    gene_plot <- ggplot(data=tmp, aes(xmin=0, xmax=0, ymin=0, ymax=0, x=0, y=0, xend=0, yend=0)) +
+        gene_track + gene_features + theme_bw() + theme + xlimits +
+        transcript_name + layers
 
     return(gene_plot)
 }

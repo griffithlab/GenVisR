@@ -75,5 +75,5 @@ compIdent <- function(x, genome, target=NULL, debug=FALSE)
     # make an sample identity plot
     plot <- compIdent_buildMain(count_tables)
 
-    return(plot)
+    return(grid::grid.draw(plot))
 }
