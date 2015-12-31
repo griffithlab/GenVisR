@@ -35,11 +35,21 @@ cnFreq_qual <- function(x)
              'loss') %in% colnames(x)))
     {
         plotType <- "prop"
+        x$chromosome <- as.factor(x$chromosome)
+        x$start <- as.integer(as.character(x$start))
+        x$end <- as.integer(as.character(x$end))
+        x$loss <- as.numeric(as.character(x$loss))
+        x$gain <- as.numeric(as.character(x$gain))
     } else if(all(c('chromosome',
                     'start','end',
                     'segmean',
                     'sample') %in% colnames(x))) {
         plotType <- "freq"
+        x$chromosome <- as.factor(x$chromosome)
+        x$start <- as.integer(as.character(x$start))
+        x$end <- as.integer(as.character(x$end))
+        x$segmean <- as.numeric(as.character(x$segmean))
+        x$sample <- as.factor(x$sample)
     } else {
         memo <- paste0("Did not detect correct columns in argument supplied",
                        " to x!")
@@ -80,7 +90,7 @@ cnFreq_qual <- function(x)
         if(any(tmpsum>1))
         {
             memo <- paste0("The proportions of gain + loss sums to greater ",
-                           "than 1 for", sum(tmpsum>1), " elements!")
+                           "than 1 for ", sum(tmpsum>1), " elements!")
             warning(memo)
         }
         
