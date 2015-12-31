@@ -10,7 +10,7 @@ compIdent_buildMain(x)
 \item{x}{Data frame of vaf for each sample}
 }
 \value{
-ggplot2 object
+ggplot2 grob object
 }
 \description{
 Produce an identity SNP plot displaying VAFs of 24 SNP locations and coverage

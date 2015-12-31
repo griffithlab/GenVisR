@@ -113,10 +113,11 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
     if(is.null(mutation_observed2))
     {
         y_limits <- ylim(c(-.1, max(mutation_observed$coord_y_dodge) + .1))
-        p1 <- ggplot() + gene_plot + domain_plot + observed_line_2 +
-        observed_line + observed_plot + x_label + title +
-        y_limits + theme_bw() + theme + guide + layers + gene_features_fill +
-        lolli_features_fill
+        tmp <- data.frame(xmin=0, xmax=0, ymin=0, ymax=0, x=0, y=0, xend=0, yend=0)
+        p1 <- ggplot(data=tmp, aes(xmin=0, xmax=0, ymin=0, ymax=0, x=0, y=0, xend=0, yend=0)) +
+            gene_plot + domain_plot + observed_line_2 + observed_line +
+            observed_plot + x_label + title + y_limits + theme_bw() + theme +
+            guide + layers + gene_features_fill + lolli_features_fill
     } else {
         y_limits <- ylim(c(min(mutation_observed2$coord_y_dodge) - .1,
                            max(mutation_observed$coord_y_dodge) + .1))
@@ -143,11 +144,13 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
                                                             y=-.3,
                                                             xend='coord_x_dodge',
                                                             yend='coord_y_dodge'))
-
-        p1 <- ggplot() + gene_plot + domain_plot + observed_line +
-        observed_line_2 + observed_plot + observed2_line + observed2_line_2 +
-        observed2_plot + x_label + title + y_limits + theme_bw() + theme +
-        guide + layers + gene_features_fill + lolli_features_fill
+        
+        tmp <- data.frame(xmin=0, xmax=0, ymin=0, ymax=0, x=0, y=0, xend=0, yend=0)
+        p1 <- ggplot(tmp, aes(xmin=0, xmax=0, ymin=0, ymax=0, x=0, y=0, xend=0, yend=0)) +
+            gene_plot + domain_plot + observed_line + observed_line_2 +
+            observed_plot + observed2_line + observed2_line_2 + observed2_plot +
+            x_label + title + y_limits + theme_bw() + theme + guide + layers +
+            gene_features_fill + lolli_features_fill
     }
 
     # If a label column is specified plot labels

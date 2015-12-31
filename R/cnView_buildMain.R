@@ -90,8 +90,10 @@ cnView_buildMain <- function(x, y, z=NULL, chr, CNscale=FALSE, layers=NULL)
     }
 
     # build the plot
-    p1 <- ggplot() + cnpoints + shade_cn + ylabel + xlabel + theme_bw() +
-        theme + cnseg + dummy_data + transparency + layers
+    tmp <- data.frame(x=0, y=0)
+    p1 <- ggplot(data=tmp, aes(x=0)) + cnpoints + shade_cn +
+        ylabel + xlabel + theme_bw() + theme + cnseg + dummy_data +
+        transparency + layers
 
     if(chr == 'all')
     {
