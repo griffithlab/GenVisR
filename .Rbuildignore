@@ -1,2 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+.git
+.gitignore
+.DS_Store
+Images
