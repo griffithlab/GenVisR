@@ -50,6 +50,7 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
                                "\"trans_tranv\"")
                 stop(memo)
             }
+            y$Prop <- as.numeric(as.character(y$Prop))
         }
 
         # Check y input if vector
@@ -61,7 +62,10 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
 
             if(typeof(y$Prop) != "double" & typeof(y$Prop) != "numeric")
             {
-                stop("values found in y are not of type double or numeric")
+                memo <- paste0("Values found in y are not of type double",
+                               " or numeric... attempting to coerce")
+                warning(memo)
+                y$Prop <- as.numeric(as.character(y$Prop))
             }
         }
 
@@ -144,7 +148,7 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
         }
 
         # check that y sums to 1 (i.e. its a true proportion among all elements)
-        if(sum(y$Prop) != 1)
+        if(round(sum(y$Prop), digits=1) != 1)
         {
             stop("The sum of elements in y should equal 1")
         }
