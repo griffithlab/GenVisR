@@ -1,6 +1,8 @@
 # GenVisR
 Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. GenVisr (Genomic Visualizations in R) attempts to alleviate this burden by providing highly customizable publication-quality graphics focused primarily on a cohort level (i.e., multiple samples/patients). GenVisr attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
 
+![alt tag](https://github.com/griffithlab/GenVisR/blob/master/Images/GenVisR_ex.png)
+
 ## Installation Instructions
 
 Note requires R >= 3.2.1, see Description file for a full list of dependencies
