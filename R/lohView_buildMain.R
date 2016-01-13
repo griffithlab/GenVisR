@@ -37,7 +37,7 @@ lohView_buildMain <- function(x, dummyData,
     data <- geom_rect(data=x, aes_string(xmin='window_start',
                                          xmax='window_stop',
                                          ymin=-1,
-                                         ymax=1, fill='loh_diff'))
+                                         ymax=1, fill='loh_diff_avg'))
 
     
     # Define additional plot parameters
