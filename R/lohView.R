@@ -1,4 +1,4 @@
-#' plot LOH data
+#' Plot LOH data
 #'
 #' Produce a graphic visualizing Loss of Heterozygosity in a cohort
 #' @name lohView
@@ -9,16 +9,19 @@
 #' (required if genome is not specified)
 #' @param genome character string specifying the genome assembly from which
 #' input data is based
+#' @param gender vector of length equal to the number of samples, consisting of 
+#' elements from the set {"M", "F"}
 #' @param path character string specifying which directory contains 
 #' the sample information stored as datasets with columns "chromosome", 
-#' "position", "n_freq", "t_freq", and "sample" (required if x is not specified)
+#' "position", "n_vaf", "t_vaf", and "sample" (required if x is not specified)
 #' @param fileExt character string specifying the file extensions of files
 #' within the path specified (required if path argument is specified)
-#' @param step integer with the length of divisions (bp) in chromosomes
+#' @param step integer with the length of divisions (bp) in chromosomes (only 
+#' required when tile=FALSE
 #' @param window_size integer with the size of the sliding window (bp) to be 
 #' applied
 #' @param normal integer specifying the normal VAF frequency used in LOH 
-#' calculations#' @return ggplot object
+#' calculations 
 #' @param gradient_midpoint object of class numeric specifying the midpoint 
 #' for legend's gradient scale
 #' @param gradient_low object of class character for hex color code for 
@@ -37,8 +40,8 @@
 #' ## Insert an example once the first part of this is understood
 
 lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
-                    step=500000, window_size=1000000, normal=50,
-                    gradient_midpoint=20, gradient_low="#ffffff",
+                    gender=NULL, step=500000, window_size=1000000, 
+                    normal=50, gradient_midpoint=20, gradient_low="#ffffff",
                     gradient_mid="#b2b2ff", gradient_high="#000000",
                     theme_layer=NULL, method="tile")
 {
@@ -51,7 +54,8 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                            "is supplied to path")
             stop(memo)
         }
-        x <- lohView_fileGlob(path=path, fileExt=fileExt, step=step)        
+        x <- lohView_fileGlob(path=path, fileExt=fileExt, step=step, 
+                              gender=gender)        
     } 
     
     # Data Quality Check
@@ -86,25 +90,38 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
         stop(memo)
     }
     
-    if(toupper(method) == 'SLIDE')
-    {
+    # Produce dataset with loh mean absolute differences 
+    if (toupper(method) == 'SLIDE') {
         # Calculate loh via sliding window
         loh <- lohView_slidingWindow(loh_data=x, step, window_size, normal)
-    } else if(toupper(method) == 'TILE') {
-        # add code here
-    } else {
+    }
+    else if(toupper(method) == 'TILE') {
+        # Calculate loh via tiled window
+        ## Insert code
+        loh <- lohView_tileWindow(loh_data=x, window_size, normal)
+    }
+    else {
         memo <- paste0("Did not recognize input to parameter method.", 
-                       "Please specify one of \"Tile\" or \"slide\".")
+                       "Please specify one of \"Tile\" or \"Slide\".")
         stop(memo)
     }
-
     
-    # set order of x axis variables in plot
+    # set order of x axis labels in plot
     chromosomes <- gtools::mixedsort(as.character(unique(loh$chromosome)))
+    # remove X and/or Y chromosomes
+    if (is.null(gender) == FALSE) {
+        chromosomes <- chromosomes[chromosomes != "Y"]
+        chr_pos <- chr_pos[(chr_pos$chromosome != "chrY"),]
+    }
+    if (is.null(gender) == TRUE) {
+        chromosomes <- chromosomes[chromosomes != "X" & chromosomes != "Y"]
+        chr_pos <- chr_pos[(chr_pos$chromosome != "chrX" & 
+                                                chr_pos$chromosome != "chrY"),]
+    }
     loh$chromosome <- factor(loh$chromosome, levels=chromosomes)
     chr_pos$chromosome <- factor(chr_pos$chromosome, levels=chromosomes)
     
-    # set order of y axis variables in plot
+    # set order of y axis labels in plot
     samples <- gtools::mixedsort(as.character(unique(loh$sample)))
     loh$sample <- factor(loh$sample, levels=samples)
     

@@ -3,7 +3,7 @@
 #' Calculate window positions to perform LOH calculation
 #' @name lohView_windowPosition
 #' @param out object of class dataframe with columns 'chromosome', 
-#' 'position', 'n_freq', 't_freq', and 'sample'
+#' 'position', 'n_vaf', 't_vaf', and 'sample'
 #' @param step integer with the length of divisions (bp) in chromosomes
 #' @param window_size integer with the size of the sliding window (bp) to be 
 #' applied
@@ -13,8 +13,7 @@
 
 lohView_windowPosition <- function(out, step, window_size)
 {
-    window <- lapply(out, function(x) 
-    {
+        window <- lapply(out, function(x) {
         min <- integer()
         max <- integer()
         window_stop_1 <- integer()
@@ -27,8 +26,7 @@ lohView_windowPosition <- function(out, step, window_size)
         
         num <- trunc(window_num)
         
-        for (w in 1:num)
-        {
+        for (w in 1:num) {
             window_data[w,1] <- as.integer(min + (step*(w-1)))
             window_data[w,2] <- as.integer(window_stop_1 + (step*(w-1)))
         }
@@ -38,8 +36,8 @@ lohView_windowPosition <- function(out, step, window_size)
         window_final[nrow(window_final), 2] <- max
         
         return(window_final)
-    })
-    
+    })  
+
     return(window)
 }
     
