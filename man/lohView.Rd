@@ -2,11 +2,11 @@
 % Please edit documentation in R/lohView.R
 \name{lohView}
 \alias{lohView}
-\title{plot LOH data}
+\title{Plot LOH data}
 \usage{
 lohView(x = NULL, path = NULL, fileExt = NULL, y = NULL,
-  genome = "hg19", step = 5e+05, window_size = 1e+06, normal = 50,
-  gradient_midpoint = 20, gradient_low = "#ffffff",
+  genome = "hg19", gender = NULL, step = 5e+05, window_size = 1e+06,
+  normal = 50, gradient_midpoint = 20, gradient_low = "#ffffff",
   gradient_mid = "#b2b2ff", gradient_high = "#000000", theme_layer = NULL,
   method = "tile")
 }
@@ -16,7 +16,7 @@ lohView(x = NULL, path = NULL, fileExt = NULL, y = NULL,
 
 \item{path}{character string specifying which directory contains 
 the sample information stored as datasets with columns "chromosome", 
-"position", "n_freq", "t_freq", and "sample" (required if x is not specified)}
+"position", "n_vaf", "t_vaf", and "sample" (required if x is not specified)}
 
 \item{fileExt}{character string specifying the file extensions of files
 within the path specified (required if path argument is specified)}
@@ -28,13 +28,17 @@ within the path specified (required if path argument is specified)}
 \item{genome}{character string specifying the genome assembly from which
 input data is based}
 
-\item{step}{integer with the length of divisions (bp) in chromosomes}
+\item{gender}{vector of length equal to the number of samples, consisting of 
+elements from the set {"M", "F"}}
+
+\item{step}{integer with the length of divisions (bp) in chromosomes (only 
+required when tile=FALSE}
 
 \item{window_size}{integer with the size of the sliding window (bp) to be 
 applied}
 
 \item{normal}{integer specifying the normal VAF frequency used in LOH 
-calculations#' @return ggplot object}
+calculations}
 
 \item{gradient_midpoint}{object of class numeric specifying the midpoint 
 for legend's gradient scale}

@@ -2,13 +2,13 @@
 % Please edit documentation in R/lohView_slidingWindow.R
 \name{lohView_slidingWindow}
 \alias{lohView_slidingWindow}
-\title{obtain LOH data}
+\title{Obtain LOH data}
 \usage{
 lohView_slidingWindow(loh_data, step, window_size, normal)
 }
 \arguments{
-\item{loh_data}{data frame with columns "chromosome", "position", "n_freq",
-"tfreq", "sample" giving raw vaf calls for germline variants}
+\item{loh_data}{data frame with columns "chromosome", "position", "n_vaf",
+"t_vaf", "sample" giving raw vaf calls for germline variants}
 
 \item{step}{integer with the length of divisions (bp) in chromosomes}
 

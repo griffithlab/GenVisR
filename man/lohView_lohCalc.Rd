@@ -11,14 +11,14 @@ lohView_lohCalc(window_data, out, normal)
 'window_start' and 'window_stop}
 
 \item{out}{object of class dataframe with columns 'chromosome', 
-'position', 'n_freq', 't_freq', and 'sample'}
+'position', 'n_vaf', 't_vaf', and 'sample'}
 
 \item{normal}{integer specifying the subtraction value from tumor VAF}
 }
 \value{
 object of class dataframe containing mean LOH difference calculations
 and column names "window_start", "window_stop", "chromosome", "position", 
-"n_freq", "t_freq", "sample", "loh_diff"
+"n_vaf", "t_vaf", "sample", "loh_diff"
 }
 \description{
 Obtain LOH on an entire chromsomes from samples in a cohort

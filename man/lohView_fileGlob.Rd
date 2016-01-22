@@ -4,12 +4,12 @@
 \alias{lohView_fileGlob}
 \title{Grab data for lohView}
 \usage{
-lohView_fileGlob(path, fileExt, step)
+lohView_fileGlob(path, fileExt, step, gender)
 }
 \arguments{
 \item{path}{character string specifying which directory contains 
 the sample information stored as datasets with columns "chromosome", 
-"position", "n_freq", "t_freq", and "sample" (required if x is not specified)}
+"position", "n_vaf", "t_vaf", and "sample" (required if x is not specified)}
 
 \item{fileExt}{character string specifying the file extensions of files}
 
