@@ -10,7 +10,7 @@
 #' CDS
 #' @return Object of class Granges list
 #' @importFrom GenomicFeatures transcriptsByOverlaps
-#' @importFrom GenomicRanges unlist
+#' @importFrom BiocGenerics unlist
 #' @importFrom GenomicRanges reduce
 #' @importFrom GenomicRanges GRangesList
 #' @importFrom GenomicRanges strand
@@ -26,9 +26,9 @@ geneViz_extrCDS <- function(txdb=NULL, gr=NULL, reduce=FALSE, gaps=FALSE)
 
     # get a list of transcript id's overlapping the Granges object
     transcripts <- GenomicFeatures::transcriptsByOverlaps(txdb, gr)
-    map <- IRanges::relist(GenomicRanges::unlist(transcripts, use.names=FALSE)$tx_id, 
+    map <- IRanges::relist(BiocGenerics::unlist(transcripts, use.names=FALSE)$tx_id,
                            transcripts)
-    txid <- GenomicRanges::unlist(map, use.names=FALSE)
+    txid <- BiocGenerics::unlist(map, use.names=FALSE)
 
     # extract CDS from transcript database given transcript ID
     cds <- geneViz_cdsFromTXID(txdb, txid)
@@ -42,7 +42,7 @@ geneViz_extrCDS <- function(txdb=NULL, gr=NULL, reduce=FALSE, gaps=FALSE)
     # reduce isoforms into one if set to true and convert to GRanges list
     if(reduce==TRUE)
     {
-        cds <- GenomicRanges::reduce(GenomicRanges::unlist(cds))
+        cds <- GenomicRanges::reduce(BiocGenerics::unlist(cds))
         cds <- GenomicRanges::GRangesList(cds)
     }
 
@@ -51,19 +51,19 @@ geneViz_extrCDS <- function(txdb=NULL, gr=NULL, reduce=FALSE, gaps=FALSE)
     {
         GenomicRanges::strand(gr) <- '+'
         cds_forward <- lapply(cds, GenomicRanges::intersect, gr)
-        
+
         GenomicRanges::strand(gr) <- '-'
         cds_reverse <- lapply(cds, GenomicRanges::intersect, gr)
-        
+
         cds <- c(cds_forward, cds_reverse)
     } else {
         cds <- lapply(cds, GenomicRanges::intersect, gr)
     }
-    
+
     f2 <- function(x){
         return(length(x) > 0)
     }
-    idx <- as.vector(GenomicRanges::unlist(lapply(cds, f2)))
+    idx <- as.vector(BiocGenerics::unlist(lapply(cds, f2)))
     cds <- cds[idx]
     if(length(cds) == 0){
         return(NA)
@@ -78,7 +78,7 @@ geneViz_extrCDS <- function(txdb=NULL, gr=NULL, reduce=FALSE, gaps=FALSE)
         cds <- lapply(cds, GenomicRanges::gaps)
 
         # Limit the caluclated gaps to just the chromosomal region of interest
-        cds <- lapply(cds, function(x) x[GenomicRanges::seqnames(x) == 
+        cds <- lapply(cds, function(x) x[GenomicRanges::seqnames(x) ==
                                              as.character(GenomicRanges::seqnames(gr))])
 
         # Limit the calculated gaps to just the strand of interest
@@ -89,7 +89,7 @@ geneViz_extrCDS <- function(txdb=NULL, gr=NULL, reduce=FALSE, gaps=FALSE)
     if(reduce==FALSE)
     {
         keys <- names(cds)
-        
+
         f3 <- function(gr, name)
         {
             GenomicRanges::mcols(gr)$txname <- name

@@ -1,6 +1,6 @@
 Package: GenVisR
 Title: Genomic Visualizations in R
-Version: 0.99.1
+Version: 0.99.2
 Authors@R: c(person(given="Zachary", family="Skidmore", email="zskidmor@genome.wustl.edu",
           role=c("aut", "cre")), person(given="Alex", family="Wagner", role="aut"),
           person(given="Robert", family="Lesurf", role="aut"), person(given="Katie",
@@ -10,7 +10,7 @@ Maintainer: Zachary Skidmore <zskidmor@genome.wustl.edu>
 Description: Produce highly customizable publication quality graphics for genomic data
           primarily at the cohort level.
 Depends: R (>= 3.3.0)
-Imports: AnnotationDbi, biomaRt, Biostrings, DBI, FField, GenomicFeatures, GenomicRanges,
+Imports: AnnotationDbi, biomaRt, BiocGenerics, Biostrings, DBI, FField, GenomicFeatures, GenomicRanges,
           ggplot2 (>= 0.9.2), grid, gridExtra, gtable, gtools, IRanges, plyr (>= 1.8.3),
           reshape2, RMySQL, Rsamtools, scales
 License: GPL-3 + file LICENSE
