@@ -20,13 +20,13 @@ lohView_qual <- function(x, y, genome)
     }
 
     # check that correct columns are supplied in x
-    x_col <- c('chromosome', 'position', 'n_freq', 't_freq', 'sample')
+	x_col <- c('chromosome', 'position', 'n_vaf', 't_vaf', 'sample')
     if(!all(x_col %in% colnames(x)))
     {
         stop('Did not detect required column names in x, required columns are: '
              , paste0(x_col, sep="\t"))
     }
-    
+
     # Check chromosome column in x
     if(!all(grepl("^chr", x$chromosome)))
     {
@@ -44,7 +44,7 @@ lohView_qual <- function(x, y, genome)
                        "chr1 or 1")
         stop(memo)
     }
-    
+
     # Check genome is acceptable name if y is not supplied
     if(is.null(y))
     {
@@ -63,14 +63,14 @@ lohView_qual <- function(x, y, genome)
             }
         }
     } else {
-        
+
         # Check that y is a data frame
         if(!is.data.frame(y))
         {
             message("y is not a data frame, attempting to coerce")
             y <- as.data.frame(y)
         }
-        
+
         # Check column names of y
         if(!all(c('chromosome', 'start', 'end') %in% colnames(y)))
         {
@@ -78,7 +78,7 @@ lohView_qual <- function(x, y, genome)
                            "one of \"chromosome\", \"start\", \"end\"")
             stop(memo)
         }
-        
+
         # Ensure that columns in data frame are of proper type
         y$chromosome <- as.character(y$chromosome)
         y$start <- as.integer(as.character(y$start))

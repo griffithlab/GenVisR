@@ -21,7 +21,7 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
                        " or \"MAF\"")
         stop(memo)
     }
-    
+
     # Check if x input is a data frame
     if(!is.data.frame(x))
     {
@@ -60,8 +60,11 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
             colnames(y) <- c('Prop', 'trans_tranv')
 
             if(typeof(y$Prop) != "double" & typeof(y$Prop) != "numeric")
-            {
-                stop("values found in y are not of type double or numeric")
+			{
+                memo <- paste0("Values found in y are not of type double",
+                               " or numeric... attempting to coerce")
+                warning(memo)
+                y$Prop <- as.numeric(as.character(y$Prop))
             }
         }
 
@@ -144,12 +147,12 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
         }
 
         # check that y sums to 1 (i.e. its a true proportion among all elements)
-        if(sum(y$Prop) != 1)
+		if(round(sum(y$Prop), digits=1) != 1)
         {
             stop("The sum of elements in y should equal 1")
         }
     }
-    
+
     # Check input data to clinDat
     if(!is.null(z))
     {
@@ -158,12 +161,12 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
             stop("Did not detect a data frame for input to clinDat")
         }
         z <- droplevels(z)
-        
+
         if(!all(c('sample', 'variable', 'value') %in% colnames(z)))
         {
             stop("Did not detect correct sample names in clinDat")
         }
-        
+
         if(!all(levels(x$sample) %in% levels(z$sample)))
         {
             memo <- paste0("Found a sample supplied to clinData not found",
