@@ -3,11 +3,11 @@
 #' Given a data frame construct a water fall plot showing the mutation burden
 #' and mutation type on a gene and sample level.
 #' @name waterfall
-#' @param x Object of class data frame representing annotated mutations. The 
+#' @param x Object of class data frame representing annotated mutations. The
 #' data frame supplied must have one of the following sets of column names
 #' ("Tumor_Sample_Barcode", "Hugo_Symbol", "Variant Classification") for
 #' fileType="MAF", ("sample","gene_name","trv_type") for fileType="MGI" or
-#' ("sample", "gene", "variant_class") for fileType="Custom". This columns 
+#' ("sample", "gene", "variant_class") for fileType="Custom". This columns
 #' should represent samples in a cohort, gene with mutation, and the mutation
 #' type respectively.
 #' @param clinData Object of class data frame with rows representing clinical
@@ -21,7 +21,7 @@
 #' @param clinVarOrder Character vector specifying the order in which to plot
 #' variables in the variable column of the argument given to the parameter
 #' clinData. The argument supplied to this parameter should have the same unique
-#' length and values as in the variable column of the argument supplied to 
+#' length and values as in the variable column of the argument supplied to
 #' parameter clinData (see vignette).
 #' @param clinLayer Valid ggplot2 layer to be added to the clinical sub-plot.
 #' @param mutBurden Object of class data frame containing columns "sample",
@@ -40,15 +40,15 @@
 #' covered by sequence data from which mutations could be called
 #' (see details and vignette).
 #' @param fileType Character string specifying the file format of the data
-#' frame specified to parameter `x`, one of "MGI", "MAF", "Custom" 
+#' frame specified to parameter `x`, one of "MGI", "MAF", "Custom"
 #' (see details and vignette).
 #' @param plotGenes Character vector specifying genes to plot. If not null genes
 #' not specified within this character vector are removed.
 #' @param mainDropMut Boolean specifying whether to drop unused
 #' "mutation type" levels from the legend.
-#' @param rmvSilent Boolean specifying if silent mutations should be removed 
+#' @param rmvSilent Boolean specifying if silent mutations should be removed
 #' from the plot.
-#' @param mainLabelCol Character string specifying a column name from the 
+#' @param mainLabelCol Character string specifying a column name from the
 #' argument supplied to parameter `x` from which to derive cell labels from
 #' (see details and vignette).
 #' @param mainLabelSize Integer specifying the size of text labels for cells
@@ -83,7 +83,7 @@
 #' `variant_class_order` parameter with the highest priorities occuring first.
 #' Additionally this parameter will override the default orders of MGI and MAF
 #' file types.
-#' 
+#'
 #' Various data subsets are allowed via the waterfall function (see above), all
 #' of these subsets will occur independently of the mutation burden calculation.
 #' To clarify the removal of genes and mutations will only occur after the
@@ -93,7 +93,7 @@
 #' recommended to supply this information via the mutBurden parameter which.
 #' Note that the mutation burden calculation relies on the `coverageSpace`
 #' parameter (see vignette).
-#' 
+#'
 #' It is possible to display additional information within the plot via cell
 #' labels. The `mainLabelCol` parameter will look for an additional column in
 #' the data frame and plot text within cells based on those values
@@ -160,7 +160,7 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
 
     # Subset the data based on the recurrence of mutations at the gene level
     data_frame <- waterfall_geneRecurCutoff(data_frame, mainRecurCutoff)
-    
+
     # Use the max genes parameter to limit the number of genes plotted
     # and then reorder genes based on the frequency of mutations
     gene_sorted <- waterfall_geneSort(data_frame)
@@ -174,7 +174,7 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
     # reorder the samples based on hiearchial sort on ordered gene list
     sample_order <- waterfall_sampSort(data_frame)
     data_frame$sample <- factor(data_frame$sample, levels=sample_order)
-    
+
     # Reorder the sample levels in data_frame2 to match the main plot's levels,
     # and then plot the top margin plot
     if(isTRUE(plotMutBurden))
@@ -186,7 +186,7 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
                 stop("levels in the sample column of mutBurden does not match
                  either: the samples given in x, or plotSamples")
             }
-            
+
             mutBurden$sample <- factor(mutBurden$sample, levels=sample_order)
             p3 <- waterfall_buildMutBurden_B(mutBurden, layers=mutBurdenLayer)
         } else {
@@ -194,10 +194,10 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
                                          levels=sample_order)
             p3 <- waterfall_buildMutBurden_A(data_frame2, coverageSpace,
                                              layers=mutBurdenLayer)
-        }        
+        }
     } else {
         # create a blank ggplot object
-        df <- data.frame()  
+        df <- data.frame()
         p3 <- ggplot2::ggplot(df) + ggplot2::geom_point() +
             ggplot2::xlim(0, 1) + ggplot2::ylim(0, 1) +
             ggplot2::theme(axis.text.x=ggplot2::element_blank(),
@@ -247,14 +247,15 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
     {
         # match the levels of sample in y to conform to the main plot
         clinData$sample <- factor(clinData$sample, levels=sample_order)
-        
+		clinData <- clinData[-which(is.na(clinData$sample)),]
+
         # if dataOut is specified skip to that code block
         if(isTRUE(dataOut)){next}
-        
+
         # plot the clinical data
-        p4 <- multi_buildClin(clinData, clin.legend.col=clinLegCol, 
-                              clin.var.colour=clinVarCol, 
-                              clin.var.order=clinVarOrder, 
+        p4 <- multi_buildClin(clinData, clin.legend.col=clinLegCol,
+                              clin.var.colour=clinVarCol,
+                              clin.var.order=clinVarOrder,
                               clin.layers=clinLayer)
 
         # Align all plots and return as 1 plot
@@ -268,7 +269,7 @@ waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
                     "mutation_count"=data_frame2,
                     "clinical"=clinData))
     }
-    
+
     # Align the Plots and return as 1 plot
     pA <- waterfall_align(p2, p1, p3)
 

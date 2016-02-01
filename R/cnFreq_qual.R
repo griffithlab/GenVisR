@@ -87,13 +87,13 @@ cnFreq_qual <- function(x)
 
         # Check that no proportions add up to more than 1 for the same window
         tmpsum <- apply(x[,c("gain","loss")], 1, sum, na.rm=TRUE)
-        if(any(tmpsum>1))
+		if(any(round(tmpsum, digits=1) > 1))
         {
             memo <- paste0("The proportions of gain + loss sums to greater ",
                            "than 1 for ", sum(tmpsum>1), " elements!")
             warning(memo)
         }
-        
+
     }
 
     # Make sure that columns are the correct data type
@@ -101,18 +101,18 @@ cnFreq_qual <- function(x)
     {
         stop("The start column is not numeric")
     }
-    
+
     if(!all(x$end == as.numeric(as.character(x$end))))
     {
         stop("The end column is not numeric")
     }
-    
+
     if(plotType=="freq")
     {
         if(!all(x$segmean == as.numeric(as.character(x$segmean))))
         {
             stop("The segmean column is not numeric")
-        }        
+        }
     }
 
     return(list(x,plotType))

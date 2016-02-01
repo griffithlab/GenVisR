@@ -1,19 +1,19 @@
 #' Obtain window information
-#' 
+#'
 #' Calculate window positions to perform LOH calculation
 #' @name lohView_windowPosition
-#' @param out object of class dataframe with columns 'chromosome', 
-#' 'position', 'n_freq', 't_freq', and 'sample'
+#' @param out object of class dataframe with columns 'chromosome',
+#' 'position', 'n_vaf', 't_vaf', and 'sample'
 #' @param step integer with the length of divisions (bp) in chromosomes
-#' @param window_size integer with the size of the sliding window (bp) to be 
+#' @param window_size integer with the size of the sliding window (bp) to be
 #' applied
-#' @return list containing window start/stop positions for each chromosome 
+#' @return list containing window start/stop positions for each chromosome
 #' from each sample to perform LOH calculations
 
 
 lohView_windowPosition <- function(out, step, window_size)
 {
-    window <- lapply(out, function(x) 
+    window <- lapply(out, function(x)
     {
         min <- integer()
         max <- integer()
@@ -24,23 +24,21 @@ lohView_windowPosition <- function(out, step, window_size)
         window_stop_1 <- min+window_size
         window_num <- as.integer((max-min)/step)
         window_data <- data.frame()
-        
+
         num <- trunc(window_num)
-        
+
         for (w in 1:num)
         {
             window_data[w,1] <- as.integer(min + (step*(w-1)))
             window_data[w,2] <- as.integer(window_stop_1 + (step*(w-1)))
         }
-        
+
         colnames(window_data) <- c("window_start", "window_stop")
         window_final <- window_data[window_data$window_stop < max,]
         window_final[nrow(window_final), 2] <- max
-        
+
         return(window_final)
     })
-    
+
     return(window)
 }
-    
-    
