@@ -22,5 +22,5 @@ inst/doc
 #Man files
 man/*.Rd
 
-# R project files
-*.Rproj
+# ignore .gitignore to avoid pushing to bioconductor SVN repo
+.gitignore
