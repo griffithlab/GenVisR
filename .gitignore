@@ -24,3 +24,6 @@ man/*.Rd
 
 # R project files
 *.Rproj
+
+# ignore .gitignore to avoid pushing to svn repo
+.gitignore
