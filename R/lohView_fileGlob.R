@@ -56,7 +56,7 @@ lohView_fileGlob <- function(path, fileExt, step, gender)
 
         rm(data)
     }
-
+    
     tail(dataset)
     return(dataset)
 }

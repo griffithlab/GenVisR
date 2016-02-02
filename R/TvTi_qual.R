@@ -50,6 +50,8 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
                                "\"trans_tranv\"")
                 stop(memo)
             }
+
+            y$Prop <- as.numeric(as.character(y$Prop))
         }
 
         # Check y input if vector
