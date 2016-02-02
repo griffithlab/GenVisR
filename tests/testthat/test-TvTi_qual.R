@@ -39,7 +39,7 @@ test_that("TvTi_qual checks that proportion values are of numeric type", {
     x <- data.frame(sample=c("a", "b"), reference=c("a", "t"), variant=c("g", "c"))
     y <- c("A->C or T->G (TV)"="1/6", "A->G or T->C (TI)"="1/6", "A->T or T->A (TV)"="1/6", "G->A or C->T (TI)"="1/6", "G->C or C->G (TV)"="1/6", "G->T or C->A (TV)"="1/6")
     file_type <- "MGI"
-    expect_error(TvTi_qual(x, y=y, file_type=file_type), "not of type double or numeric")
+    expect_warning(TvTi_qual(x, y=y, file_type=file_type), "not of type double or numeric")
 })
 
 test_that("TvTi_qual recognizes if input to y is not of proper class", {
