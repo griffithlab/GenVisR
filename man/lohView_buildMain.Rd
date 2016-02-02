@@ -9,23 +9,23 @@ lohView_buildMain(x, dummyData, gradient_midpoint = gradient_midpoint,
   gradient_high = gradient_high, theme_layer = theme_layer)
 }
 \arguments{
-\item{x}{object of class dataframe with loh difference 
-calculations and column names "window_start", "window_stop", "chromosome", 
+\item{x}{object of class dataframe with loh difference
+calculations and column names "window_start", "window_stop", "chromosome",
 "sample", and "loh_diff"}
 
 \item{dummyData}{object of class dataframe with column names "chromosome",
 "start", "end" specifying chromosome boundaries}
 
-\item{gradient_midpoint}{object of class numeric specifying the midpoint 
+\item{gradient_midpoint}{object of class numeric specifying the midpoint
 for legend's gradient scale}
 
-\item{gradient_low}{object of class character for hex color code for 
+\item{gradient_low}{object of class character for hex color code for
 gradient's lower values}
 
-\item{gradient_mid}{object of class character for hex color code for 
+\item{gradient_mid}{object of class character for hex color code for
 gradient's middle values}
 
-\item{gradient_high}{object of class character for hex color code for 
+\item{gradient_high}{object of class character for hex color code for
 gradient's upper values}
 
 \item{theme_layer}{ggplot theme object specifying parameters for non data
