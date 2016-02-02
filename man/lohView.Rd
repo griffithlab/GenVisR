@@ -67,3 +67,4 @@ Produce a graphic visualizing Loss of Heterozygosity in a cohort
 \examples{
 ## Insert an example once the first part of this is understood
 }
+

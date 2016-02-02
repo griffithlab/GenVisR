@@ -22,3 +22,4 @@ object of class data frame from data specified in path for lohView
 Look in the specified file path and grab data with the proper extension for
 lohView
 }
+
