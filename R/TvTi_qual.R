@@ -149,7 +149,7 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
         }
 
         # check that y sums to 1 (i.e. its a true proportion among all elements)
-		if(round(sum(y$Prop), digits=1) != 1)
+		if(round(sum(y$Prop), digits=2) != 1)
         {
             stop("The sum of elements in y should equal 1")
         }
