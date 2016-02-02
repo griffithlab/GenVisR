@@ -10,10 +10,10 @@ lohView_tilePosition(out, window_size)
 lohView_windowPosition(out, step, window_size)
 }
 \arguments{
-\item{out}{object of class dataframe with columns 'chromosome',
+\item{out}{object of class dataframe with columns 'chromosome', 
 'position', 'n_vaf', 't_vaf', and 'sample'}
 
-\item{window_size}{integer with the size of the sliding window (bp) to be
+\item{window_size}{integer with the size of the sliding window (bp) to be 
 applied}
 
 \item{step}{integer with the length of divisions (bp) in chromosomes}
@@ -25,7 +25,7 @@ applied}
 applied}
 }
 \value{
-list containing window start/stop positions for each chromosome
+list containing window start/stop positions for each chromosome 
 from each sample to perform LOH calculations
 
 list containing window start/stop positions for each chromosome
@@ -36,3 +36,4 @@ Calculate window positions to perform LOH calculation
 
 Calculate window positions to perform LOH calculation
 }
+

@@ -23,3 +23,4 @@ and column names "window_start", "window_stop", "chromosome", "position",
 \description{
 Obtain LOH on an entire chromsomes from samples in a cohort
 }
+
