@@ -13,8 +13,7 @@
 
 lohView_windowPosition <- function(out, step, window_size)
 {
-    window <- lapply(out, function(x)
-    {
+        window <- lapply(out, function(x) {
         min <- integer()
         max <- integer()
         window_stop_1 <- integer()
@@ -27,8 +26,7 @@ lohView_windowPosition <- function(out, step, window_size)
 
         num <- trunc(window_num)
 
-        for (w in 1:num)
-        {
+        for (w in 1:num) {
             window_data[w,1] <- as.integer(min + (step*(w-1)))
             window_data[w,2] <- as.integer(window_stop_1 + (step*(w-1)))
         }

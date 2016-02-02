@@ -36,4 +36,4 @@ lohView_lohCalc <- function(window_data, out, normal)
     }
     return(total)
 
-}
+} 
