@@ -21,3 +21,6 @@ inst/doc
 
 #Man files
 man/*.Rd
+
+# R project files
+*.Rproj
