@@ -15,11 +15,11 @@ waterfall(x, clinData = NULL, clinLegCol = 1, clinVarCol = NULL,
   dataOut = FALSE, plotMutBurden = TRUE, maxGenes = NULL)
 }
 \arguments{
-\item{x}{Object of class data frame representing annotated mutations. The 
+\item{x}{Object of class data frame representing annotated mutations. The
 data frame supplied must have one of the following sets of column names
 ("Tumor_Sample_Barcode", "Hugo_Symbol", "Variant Classification") for
 fileType="MAF", ("sample","gene_name","trv_type") for fileType="MGI" or
-("sample", "gene", "variant_class") for fileType="Custom". This columns 
+("sample", "gene", "variant_class") for fileType="Custom". This columns
 should represent samples in a cohort, gene with mutation, and the mutation
 type respectively.}
 
@@ -37,7 +37,7 @@ to variables in the variable column of the data frame supplied to clinData
 \item{clinVarOrder}{Character vector specifying the order in which to plot
 variables in the variable column of the argument given to the parameter
 clinData. The argument supplied to this parameter should have the same unique
-length and values as in the variable column of the argument supplied to 
+length and values as in the variable column of the argument supplied to
 parameter clinData (see vignette).}
 
 \item{clinLayer}{Valid ggplot2 layer to be added to the clinical sub-plot.}
@@ -64,7 +64,7 @@ covered by sequence data from which mutations could be called
 (see details and vignette).}
 
 \item{fileType}{Character string specifying the file format of the data
-frame specified to parameter `x`, one of "MGI", "MAF", "Custom" 
+frame specified to parameter `x`, one of "MGI", "MAF", "Custom"
 (see details and vignette).}
 
 \item{plotGenes}{Character vector specifying genes to plot. If not null genes
@@ -76,10 +76,10 @@ all other samples not specified within this parameter are removed.}
 \item{mainDropMut}{Boolean specifying whether to drop unused
 "mutation type" levels from the legend.}
 
-\item{rmvSilent}{Boolean specifying if silent mutations should be removed 
+\item{rmvSilent}{Boolean specifying if silent mutations should be removed
 from the plot.}
 
-\item{mainLabelCol}{Character string specifying a column name from the 
+\item{mainLabelCol}{Character string specifying a column name from the
 argument supplied to parameter `x` from which to derive cell labels from
 (see details and vignette).}
 
