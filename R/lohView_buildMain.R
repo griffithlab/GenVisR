@@ -37,7 +37,7 @@ lohView_buildMain <- function(x, dummyData,
     data <- geom_rect(data=x, aes_string(xmin='window_start',
                                          xmax='window_stop',
                                          ymin=-1,
-										 ymax=1, fill='loh_diff_avg'))
+                                         ymax=1, fill='loh_diff_avg'))
 
 
     # Define additional plot parameters
@@ -64,7 +64,6 @@ lohView_buildMain <- function(x, dummyData,
                             panel.grid.minor=element_blank())
     }
 
-
     LOHgradient <-scale_fill_gradient2(midpoint = gradient_midpoint,
                                        guide = "colourbar",
                                        high = gradient_high,
@@ -75,7 +74,6 @@ lohView_buildMain <- function(x, dummyData,
     # Build the plot
     p1 <- ggplot() + dummy_data + data + facet + x_scale + y_scale + lab_x +
         lab_y + BWscheme + LOHgradient + plot_theme
-
-
+     
     return(p1)
 }
