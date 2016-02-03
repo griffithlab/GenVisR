@@ -15,8 +15,6 @@ applied}
 
 \item{normal}{integer specifying the normal VAF frequency used in LOH 
 calculations}
-
-\item{tile}{object specifying whether the loh calculations should be tiled}
 }
 \value{
 object of class dataframe containing LOH data
