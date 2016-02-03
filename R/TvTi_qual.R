@@ -64,9 +64,8 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
             if(typeof(y$Prop) != "double" & typeof(y$Prop) != "numeric")
 			{
                 memo <- paste0("Values found in y are not of type double",
-                               " or numeric... attempting to coerce")
-                warning(memo)
-                y$Prop <- as.numeric(as.character(y$Prop))
+                               " or numeric!")
+                stop(memo)
             }
         }
 
