@@ -149,6 +149,6 @@ the data frame and plot text within cells based on those values
 }
 \examples{
 # Plot the data
-waterfall(brcaMAF)
+waterfall(brcaMAF, plotGenes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
 }
 
