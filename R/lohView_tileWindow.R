@@ -4,7 +4,6 @@
 #' @name lohView_tileWindow
 #' @param loh_data data frame with columns "chromosome", "position", "n_vaf",
 #' "t_vaf", "sample" giving raw vaf calls for germline variants
-#' @param tile object specifying whether the loh calculations should be tiled
 #' @param window_size integer with the size of the sliding window (bp) to be 
 #' applied
 #' @param normal integer specifying the normal VAF frequency used in LOH 

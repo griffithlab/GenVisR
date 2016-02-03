@@ -8,6 +8,8 @@
 #' "position", "n_vaf", "t_vaf", and "sample" (required if x is not specified)
 #' @param fileExt character string specifying the file extensions of files
 #' @param step integer with the length of divisions (bp) in chromosomes
+#' @param gender vector of length equal to the number of samples, consisting of
+#' elements from the set {"M", "F"}
 #' @return object of class data frame from data specified in path for lohView
 
 lohView_fileGlob <- function(path, fileExt, step, gender)
