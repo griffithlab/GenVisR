@@ -16,9 +16,9 @@ source("http://bioconductor.org/biocLite.R")
 biocLite(c("AnnotationDbi", "biomaRt", "Biostrings", "GenomicFeatures", "GenomicRanges", "Rsamtools"))
 ```
 
-* It is suggested but not required to install knitr and rmarkdown for vignette creation
+* It is suggested but not required to install knitr and rmarkdown for vignette creation and testthat for unit tests
 ```R
-install.packages(c("rmarkdown", "knitr"))
+install.packages(c("rmarkdown", "knitr", "testthat"))
 ```
 
 * Install GenVisR
@@ -27,15 +27,10 @@ devtools::install_github("griffithlab/GenVisR")
 ```
 
 ## Tips for developers
-* It is recommended to use Rstudio for development, Clone the repo and open the "GGgenome.Rproj" folder in Rstudio.
-* It is necessary to manual install all packages (since you are cloning and building, not installing), all packages within the imports, Depends, and Suggests flags in the "DESCRIPTION" file (~/GenVisR/DESCRIPTION) should be installed! The r-package devtools should be installed as well!
-* Build and Reload the package at this step (shorcut: Shift+Cmd+B)
-* GenVisR uses roxygen2 for documentation, to update the Reference Manuscript edit the roxygen2 flags (i.e. @param, @details, etc.) in the code. These are within the R function files in ~/GenVisR/R/, Then run devtools::document().
-* To update the vignette edit the R markdown file in the vignettes subdirectory (~/GenVisR/vignettes/GenVisR_intro.Rmd) and press the knit button in Rstudio
+* It is recommended to use Rstudio for development, Clone the repo at (https://github.com/griffithlab/GenVisR.git) and open the "GenVisR.Rproj" folder in Rstudio.
+* It is necessary to manual install all packages (since you are cloning and building, not installing), all packages within the imports, Depends, and Suggests flags in the "DESCRIPTION" file (GenVisR/DESCRIPTION) should be installed! The r-package devtools should be installed as well!
+* Build and Reload the package at this step (Rstudio shorcut: Shift+Cmd+B)
+* GenVisR uses roxygen2 for documentation, to update the Reference Manuscript edit the roxygen2 flags (i.e. @param, @details, etc.) in the code. These are within the R function files in GenVisR/R/*.R, Then run devtools::document() or build and reload the package.
+* To update the vignette edit the R markdown file in the vignettes subdirectory (GenVisR/vignettes/GenVisR_intro.Rmd) and press the knit button in Rstudio
 * Code for GenVisR is within the R subdirectory (~/GenVisR/R/), make changes there. Be sure to build and reload the package from Rstudio to test changes (Rstudio -> Build -> Build & Reload || Shift+CMD+B)
-* test cases are in the test subdirectory (~/GenVisR/tests/testthat/), tests must be named with the character string "test" in the beginning of the name (i.e. for the waterfall function the test file would look like test-waterfall.R). To run tests run devtools::test()
-
-[![Coverage Status](https://coveralls.io/repos/griffithlab/GenVisR/badge.svg?branch=master&service=github)](https://coveralls.io/github/griffithlab/GenVisR?branch=master)
-
-
-
+* test cases are in the test subdirectory (~/GenVisR/tests/testthat/) and use the testthat package, tests must be named with the character string "test" in the beginning of the name (i.e. for the waterfall function the test file would look like test-waterfall.R). To run tests run devtools::test()
