@@ -14,6 +14,9 @@ the sample information stored as datasets with columns "chromosome",
 \item{fileExt}{character string specifying the file extensions of files}
 
 \item{step}{integer with the length of divisions (bp) in chromosomes}
+
+\item{gender}{vector of length equal to the number of samples, consisting of
+elements from the set {"M", "F"}}
 }
 \value{
 object of class data frame from data specified in path for lohView
