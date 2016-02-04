@@ -13,7 +13,7 @@
 
 lohView_windowPosition <- function(out, step, window_size)
 {
-        window <- lapply(out, function(x) {
+    window <- lapply(out, function(x) {
         ## Calculate the number of windows necessary for each list
         min <- integer()
         max <- integer()
@@ -35,16 +35,13 @@ lohView_windowPosition <- function(out, step, window_size)
             return(window_data)
         })
         window_data <- plyr::ldply(window_data, data.frame)
-
         # Get window positions whose values are below max & set max as the 
         # final window position (end of the chromosome)
         colnames(window_data) <- c("window_start", "window_stop")
         window_final <- window_data[window_data$window_stop < max,]
         window_final[nrow(window_final), 2] <- max
-        
         return(window_final)
-    })  
-
+    })
     return(window)
 }
     
