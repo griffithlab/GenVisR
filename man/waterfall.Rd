@@ -4,15 +4,15 @@
 \alias{waterfall}
 \title{Construct a waterfall plot}
 \usage{
-waterfall(x, clinData = NULL, clinLegCol = 1, clinVarCol = NULL,
-  clinVarOrder = NULL, clinLayer = NULL, mutBurden = NULL,
-  mainRecurCutoff = 0, mainGrid = TRUE, mainXlabel = FALSE,
-  main_geneLabSize = 8, coverageSpace = 44100000, fileType = "MAF",
-  plotGenes = NULL, plotSamples = NULL, mainDropMut = FALSE,
-  rmvSilent = FALSE, mainLabelCol = NULL, mainLabelSize = 4,
-  mainPalette = NULL, sampRecurLayer = NULL, mainLayer = NULL,
-  mutBurdenLayer = NULL, mainLabelAngle = 0, variant_class_order = NULL,
-  dataOut = FALSE, plotMutBurden = TRUE, maxGenes = NULL)
+waterfall(x, mainRecurCutoff = 0, mainGrid = TRUE, mainXlabel = FALSE,
+  main_geneLabSize = 8, mainLabelCol = NULL, mainLabelSize = 4,
+  mainLabelAngle = 0, mainDropMut = FALSE, mainPalette = NULL,
+  mainLayer = NULL, mutBurden = NULL, plotMutBurden = TRUE,
+  coverageSpace = 44100000, mutBurdenLayer = NULL, clinData = NULL,
+  clinLegCol = 1, clinVarOrder = NULL, clinVarCol = NULL,
+  clinLayer = NULL, sampRecurLayer = NULL, plotGenes = NULL,
+  plotSamples = NULL, maxGenes = NULL, rmvSilent = FALSE,
+  fileType = "MAF", variant_class_order = NULL, dataOut = FALSE)
 }
 \arguments{
 \item{x}{Object of class data frame representing annotated mutations. The
@@ -22,28 +22,6 @@ fileType="MAF", ("sample","gene_name","trv_type") for fileType="MGI" or
 ("sample", "gene", "variant_class") for fileType="Custom". This columns
 should represent samples in a cohort, gene with mutation, and the mutation
 type respectively.}
-
-\item{clinData}{Object of class data frame with rows representing clinical
-data. The data frame should be in "long format" and columns must be names as
-"sample", "variable", and "value" (optional see details and vignette).}
-
-\item{clinLegCol}{Integer specifying the number of columns in the legend for
-the clinical data, only valid if argument is supplied to parameter clinData.}
-
-\item{clinVarCol}{Named character vector specifying the mapping of colours
-to variables in the variable column of the data frame supplied to clinData
-(ex. "variable"="colour").}
-
-\item{clinVarOrder}{Character vector specifying the order in which to plot
-variables in the variable column of the argument given to the parameter
-clinData. The argument supplied to this parameter should have the same unique
-length and values as in the variable column of the argument supplied to
-parameter clinData (see vignette).}
-
-\item{clinLayer}{Valid ggplot2 layer to be added to the clinical sub-plot.}
-
-\item{mutBurden}{Object of class data frame containing columns "sample",
-"mut_burden" with sample levels matching those supplied in x.}
 
 \item{mainRecurCutoff}{Numeric value between 0 and 1 specifying a
 mutation recurrence cutoff. Genes which do not have mutations in the
@@ -59,26 +37,6 @@ names. Not recommended if the number of samples to be plotted is large.}
 \item{main_geneLabSize}{Intenger specifying the size of gene names displayed
 on the y-axis.}
 
-\item{coverageSpace}{Integer specifying the size in bp of the genome
-covered by sequence data from which mutations could be called
-(see details and vignette).}
-
-\item{fileType}{Character string specifying the file format of the data
-frame specified to parameter `x`, one of "MGI", "MAF", "Custom"
-(see details and vignette).}
-
-\item{plotGenes}{Character vector specifying genes to plot. If not null genes
-not specified within this character vector are removed.}
-
-\item{plotSamples}{Character vector specifying samples to plot. If not null
-all other samples not specified within this parameter are removed.}
-
-\item{mainDropMut}{Boolean specifying whether to drop unused
-"mutation type" levels from the legend.}
-
-\item{rmvSilent}{Boolean specifying if silent mutations should be removed
-from the plot.}
-
 \item{mainLabelCol}{Character string specifying a column name from the
 argument supplied to parameter `x` from which to derive cell labels from
 (see details and vignette).}
@@ -87,19 +45,67 @@ argument supplied to parameter `x` from which to derive cell labels from
 in the main plot. Valid only if argument is supplied to the parameter
 `mainLabelCol`.}
 
+\item{mainLabelAngle}{Integer specifying the degree of rotation for
+text labels. Valid only if argument is supplied to the parameter
+`mainLabelCol`.}
+
+\item{mainDropMut}{Boolean specifying whether to drop unused
+"mutation type" levels from the legend.}
+
 \item{mainPalette}{Character vector specifying colours for mutation types
 plotted in the main plot, must specify a colour for each mutation type
 plotted.}
 
-\item{sampRecurLayer}{Valid ggplot2 layer to be added to the left sub-plot.}
-
 \item{mainLayer}{Valid ggplot2 layer to be added to the main plot.}
+
+\item{mutBurden}{Object of class data frame containing columns "sample",
+"mut_burden" with sample levels matching those supplied in x.}
+
+\item{plotMutBurden}{Boolean specify if the mutation burden sub-plot should
+be displayed.}
+
+\item{coverageSpace}{Integer specifying the size in bp of the genome
+covered by sequence data from which mutations could be called
+(see details and vignette).}
 
 \item{mutBurdenLayer}{Valid ggplot2 layer to be added to the top sub-plot.}
 
-\item{mainLabelAngle}{Integer specifying the degree of rotation for
-text labels. Valid only if argument is supplied to the parameter
-`mainLabelCol`.}
+\item{clinData}{Object of class data frame with rows representing clinical
+data. The data frame should be in "long format" and columns must be names as
+"sample", "variable", and "value" (optional see details and vignette).}
+
+\item{clinLegCol}{Integer specifying the number of columns in the legend for
+the clinical data, only valid if argument is supplied to parameter clinData.}
+
+\item{clinVarOrder}{Character vector specifying the order in which to plot
+variables in the variable column of the argument given to the parameter
+clinData. The argument supplied to this parameter should have the same unique
+length and values as in the variable column of the argument supplied to
+parameter clinData (see vignette).}
+
+\item{clinVarCol}{Named character vector specifying the mapping of colours
+to variables in the variable column of the data frame supplied to clinData
+(ex. "variable"="colour").}
+
+\item{clinLayer}{Valid ggplot2 layer to be added to the clinical sub-plot.}
+
+\item{sampRecurLayer}{Valid ggplot2 layer to be added to the left sub-plot.}
+
+\item{plotGenes}{Character vector specifying genes to plot. If not null genes
+not specified within this character vector are removed.}
+
+\item{plotSamples}{Character vector specifying samples to plot. If not null
+all other samples not specified within this parameter are removed.}
+
+\item{maxGenes}{Integer specifying the maximum number of genes to be plotted.
+Genes kept will be choosen based on the reccurence of mutations in samples.}
+
+\item{rmvSilent}{Boolean specifying if silent mutations should be removed
+from the plot.}
+
+\item{fileType}{Character string specifying the file format of the data
+frame specified to parameter `x`, one of "MGI", "MAF", "Custom"
+(see details and vignette).}
 
 \item{variant_class_order}{Character vector specifying the hierarchical order
 of mutation types to plot, required if file_type == "Custom"
@@ -107,12 +113,6 @@ of mutation types to plot, required if file_type == "Custom"
 
 \item{dataOut}{Boolean specifying whether to output the data to be passed to
 ggplot instead of plotting.}
-
-\item{plotMutBurden}{Boolean specify if the mutation burden sub-plot should
-be displayed.}
-
-\item{maxGenes}{Integer specifying the maximum number of genes to be plotted.
-Genes kept will be choosen based on the reccurence of mutations in samples.}
 }
 \value{
 A graphic object.
