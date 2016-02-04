@@ -24,15 +24,22 @@ lohView_slidingWindow <- function(loh_data, step, window_size, normal)
 
     total <- data.frame()
     final_dataset <- list()
-    ## Perform loh Calculations on each chromosome and sample
+    final_df <- list()
+    loh_df <- list()
+    ## Perform loh Calculations on each chromosome and sample within each window
     for (i in 1:length(out))
     {
-        final_dataset[[i]] <- plyr::adply(window_data[[i]], 1, lohView_lohCalc,
-                                          out[[i]], normal)   
-    }  
+        final_df[[i]] <- lohView_lohCalc(window_data[[i]], out[[i]], 
+                                              normal)
+        final_dataset[[i]] <- plyr::ldply(final_df[[i]], data.frame)
+    }
+    
+    ## Calculate avg loh for overlapping regions 
+    df <- lohView_stepCalc(final_dataset, step = step) 
     
     ## Combine the lists into a single dataframe
-    loh_dataset <- plyr::ldply(final_dataset, data.frame)
+    loh_dataset <- plyr::ldply(df, data.frame)
+    colnames(loh_dataset) <- c("window_start", "window_stop", "chromosome", "sample", "loh_diff_avg")
     
     return(loh_dataset)
 }
