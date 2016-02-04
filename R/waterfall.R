@@ -10,22 +10,6 @@
 #' ("sample", "gene", "variant_class") for fileType="Custom". This columns
 #' should represent samples in a cohort, gene with mutation, and the mutation
 #' type respectively.
-#' @param clinData Object of class data frame with rows representing clinical
-#' data. The data frame should be in "long format" and columns must be names as
-#' "sample", "variable", and "value" (optional see details and vignette).
-#' @param clinLegCol Integer specifying the number of columns in the legend for
-#' the clinical data, only valid if argument is supplied to parameter clinData.
-#' @param clinVarCol Named character vector specifying the mapping of colours
-#' to variables in the variable column of the data frame supplied to clinData
-#' (ex. "variable"="colour").
-#' @param clinVarOrder Character vector specifying the order in which to plot
-#' variables in the variable column of the argument given to the parameter
-#' clinData. The argument supplied to this parameter should have the same unique
-#' length and values as in the variable column of the argument supplied to
-#' parameter clinData (see vignette).
-#' @param clinLayer Valid ggplot2 layer to be added to the clinical sub-plot.
-#' @param mutBurden Object of class data frame containing columns "sample",
-#' "mut_burden" with sample levels matching those supplied in x.
 #' @param mainRecurCutoff Numeric value between 0 and 1 specifying a
 #' mutation recurrence cutoff. Genes which do not have mutations in the
 #' proportion os samples defined are removed.
@@ -36,18 +20,6 @@
 #' names. Not recommended if the number of samples to be plotted is large.
 #' @param main_geneLabSize Intenger specifying the size of gene names displayed
 #' on the y-axis.
-#' @param coverageSpace Integer specifying the size in bp of the genome
-#' covered by sequence data from which mutations could be called
-#' (see details and vignette).
-#' @param fileType Character string specifying the file format of the data
-#' frame specified to parameter `x`, one of "MGI", "MAF", "Custom"
-#' (see details and vignette).
-#' @param plotGenes Character vector specifying genes to plot. If not null genes
-#' not specified within this character vector are removed.
-#' @param mainDropMut Boolean specifying whether to drop unused
-#' "mutation type" levels from the legend.
-#' @param rmvSilent Boolean specifying if silent mutations should be removed
-#' from the plot.
 #' @param mainLabelCol Character string specifying a column name from the
 #' argument supplied to parameter `x` from which to derive cell labels from
 #' (see details and vignette).
@@ -57,23 +29,51 @@
 #' @param mainLabelAngle Integer specifying the degree of rotation for
 #' text labels. Valid only if argument is supplied to the parameter
 #' `mainLabelCol`.
+#' @param mainDropMut Boolean specifying whether to drop unused
+#' "mutation type" levels from the legend.
 #' @param mainPalette Character vector specifying colours for mutation types
 #' plotted in the main plot, must specify a colour for each mutation type
 #' plotted.
-#' @param sampRecurLayer Valid ggplot2 layer to be added to the left sub-plot.
 #' @param mainLayer Valid ggplot2 layer to be added to the main plot.
+#' @param mutBurden Object of class data frame containing columns "sample",
+#' "mut_burden" with sample levels matching those supplied in x.
+#' @param plotMutBurden Boolean specify if the mutation burden sub-plot should
+#' be displayed.
+#' @param coverageSpace Integer specifying the size in bp of the genome
+#' covered by sequence data from which mutations could be called
+#' (see details and vignette).
 #' @param mutBurdenLayer Valid ggplot2 layer to be added to the top sub-plot.
+#' @param clinData Object of class data frame with rows representing clinical
+#' data. The data frame should be in "long format" and columns must be names as
+#' "sample", "variable", and "value" (optional see details and vignette).
+#' @param clinLegCol Integer specifying the number of columns in the legend for
+#' the clinical data, only valid if argument is supplied to parameter clinData.
+#' @param clinVarOrder Character vector specifying the order in which to plot
+#' variables in the variable column of the argument given to the parameter
+#' clinData. The argument supplied to this parameter should have the same unique
+#' length and values as in the variable column of the argument supplied to
+#' parameter clinData (see vignette).
+#' @param clinVarCol Named character vector specifying the mapping of colours
+#' to variables in the variable column of the data frame supplied to clinData
+#' (ex. "variable"="colour").
+#' @param clinLayer Valid ggplot2 layer to be added to the clinical sub-plot.
+#' @param sampRecurLayer Valid ggplot2 layer to be added to the left sub-plot.
+#' @param plotGenes Character vector specifying genes to plot. If not null genes
+#' not specified within this character vector are removed.
+#' @param plotSamples Character vector specifying samples to plot. If not null
+#' all other samples not specified within this parameter are removed.
+#' @param maxGenes Integer specifying the maximum number of genes to be plotted.
+#' Genes kept will be choosen based on the reccurence of mutations in samples.
+#' @param rmvSilent Boolean specifying if silent mutations should be removed
+#' from the plot.
+#' @param fileType Character string specifying the file format of the data
+#' frame specified to parameter `x`, one of "MGI", "MAF", "Custom"
+#' (see details and vignette).
 #' @param variant_class_order Character vector specifying the hierarchical order
 #' of mutation types to plot, required if file_type == "Custom"
 #' (see details and vignette).
-#' @param plotSamples Character vector specifying samples to plot. If not null
-#' all other samples not specified within this parameter are removed.
 #' @param dataOut Boolean specifying whether to output the data to be passed to
 #' ggplot instead of plotting.
-#' @param plotMutBurden Boolean specify if the mutation burden sub-plot should
-#' be displayed.
-#' @param maxGenes Integer specifying the maximum number of genes to be plotted.
-#' Genes kept will be choosen based on the reccurence of mutations in samples.
 #' @details waterfall is a function designed to visualize the mutations seen in
 #' a cohort. The function takes a data frame with appropriate column names (see
 #' fileType parameter) and plots the mutations within. In cases where multiple
@@ -104,17 +104,16 @@
 #' @return A graphic object.
 #' @export
 
-waterfall <- function(x, clinData=NULL, clinLegCol=1, clinVarCol=NULL,
-                      clinVarOrder=NULL, clinLayer=NULL, mutBurden=NULL,
-                      mainRecurCutoff=0, mainGrid=TRUE,
-                      mainXlabel=FALSE, main_geneLabSize=8,
-                      coverageSpace=44100000, fileType='MAF', plotGenes=NULL,
-                      plotSamples=NULL, mainDropMut=FALSE, rmvSilent=FALSE,
-                      mainLabelCol=NULL, mainLabelSize=4,
-                      mainPalette=NULL, sampRecurLayer=NULL,
-                      mainLayer=NULL, mutBurdenLayer=NULL,
-                      mainLabelAngle=0, variant_class_order=NULL, dataOut=FALSE,
-                      plotMutBurden=TRUE, maxGenes=NULL)
+waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE, 
+                      main_geneLabSize=8, mainLabelCol=NULL, mainLabelSize=4,
+                      mainLabelAngle=0, mainDropMut=FALSE, mainPalette=NULL, 
+                      mainLayer=NULL, mutBurden=NULL, plotMutBurden=TRUE, 
+                      coverageSpace=44100000, mutBurdenLayer=NULL,
+                      clinData=NULL, clinLegCol=1, clinVarOrder=NULL,
+                      clinVarCol=NULL, clinLayer=NULL, sampRecurLayer=NULL, 
+                      plotGenes=NULL, plotSamples=NULL, maxGenes=NULL, 
+                      rmvSilent=FALSE, fileType='MAF',
+                      variant_class_order=NULL, dataOut=FALSE)
 {
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
