@@ -4,7 +4,7 @@
 \alias{bamreadcount}
 \title{Count nucleotide reads at SNP locations}
 \usage{
-bamreadcount(bamfile)
+bamreadcount(bamfile, genome, targetbed = NULL)
 }
 \arguments{
 \item{bamfile}{Path to the bam file}
