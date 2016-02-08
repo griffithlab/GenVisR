@@ -11,6 +11,8 @@
 
 extrcds <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
 {
+  message("Obtaining CDS Coordinates")
+  
   # get a list of transcript id's overlapping the Granges object
   transcripts <- transcriptsByOverlaps(txdb, gr)
   map <- relist(unlist(transcripts, use.names=FALSE)$tx_id, transcripts)
@@ -33,6 +35,8 @@ extrcds <- function(txdb, gr, reduce=FALSE, gaps=FALSE)
   # If gaps is set to true report report gaps between cds in lieu of cds
   if(gaps == TRUE)
   {
+    message("Calculating CDS Gaps")
+    
     # Calcluate gaps between cds regions for each isoform
     cds <- lapply(cds, gaps)
     
