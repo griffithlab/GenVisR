@@ -332,14 +332,6 @@ hg19 <- BSgenome.Hsapiens.UCSC.hg19
 compIdent(genome=hg19, debug=TRUE)
 ```
 
-```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis'}
-# Read in BSgenome object (hg19)
-hg19 <- BSgenome.Hsapiens.UCSC.hg19
-
-# Generate plot
-compIdent(genome=hg19, debug=TRUE)
-```
-
 ### geneViz
 It is also possible to plot just a gene of interest identified by specifying a Txdb object, GRanges object, and a BSgenome via a call to `geneViz`. The algorithm will plot genomic features for a single gene bounded by the Granges object overlaying gc content calculations over those features obtained from the provided BSgenome. Note that geneViz will output the plot and additional supplemental information used in the plot generation as a list, to call the plot call the first element of the list.
 
