@@ -4,12 +4,13 @@
 #' @name build_trans_tranv
 #' @param x Object of class data frame containing columns 'trans_tranv', 'sample', 'Freq', and 'Prop'
 #' @param type Object of class character specifying whether to plot the Proportion or Frequency, one of "Prop"
+#' @param label_x_axis boolean specifying wheter to label x axis
 #' @param x_axis_text_angle Integer specifying the angle to labels on x_axis
 #' @param palette Character vector of length 6 specifying colors for trans/tranv type
 #' @return GGplot Object
 #' @import ggplot2
 
-build_trans_tranv <- function(x, type='Proportion', x_axis_text_angle=45, palette=c('#7BC374', '#EFCD8D', '#8763A0', '#6677A0', '#EDEE8D', '#EF8D8D'))
+build_trans_tranv <- function(x, type='Proportion', label_x_axis=TRUE, x_axis_text_angle=45, palette=c('#7BC374', '#EFCD8D', '#8763A0', '#6677A0', '#EDEE8D', '#EF8D8D'))
 {
   # Define various parameters of plot
   if(type == 'Proportion')
@@ -24,9 +25,16 @@ build_trans_tranv <- function(x, type='Proportion', x_axis_text_angle=45, palett
   fill_palette <- scale_fill_manual(name='Transistion/Transverstion', values=palette)
   
   # Define theme of plot
-  theme <- theme(axis.text.x=element_text(angle=x_axis_text_angle, hjust=1, vjust=1))
+  if(label_x_axis == TRUE)
+  {
+    theme <- theme(axis.text.x=element_text(angle=x_axis_text_angle, hjust=1, vjust=1))
+  } else {
+    theme <- theme(axis.text.x=element_blank(), axis.ticks.x=element_blank())
+  }
+  
   
   # Define plot
-  ggplot() + bar + xlabel + ylabel + theme + fill_palette
+  p1 <- ggplot() + bar + xlabel + ylabel + theme + fill_palette
   
+  return(p1)
 }
