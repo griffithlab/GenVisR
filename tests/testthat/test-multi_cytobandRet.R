@@ -1,3 +1,6 @@
+# load suggested package RMySQL
+suppressPackageStartupMessages(library(RMySQL))
+
 test_that("multi_cytobandRet retrieves data in the expected format", {
     out <- suppressWarnings(multi_cytobandRet("hg19"))
     expect <- c("chrom", "chromStart", "chromEnd", "name", "gieStain")

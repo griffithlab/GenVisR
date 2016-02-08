@@ -7,6 +7,7 @@
 #' in at least "x" percent of samples
 #' @return a subset data frame
 #' @importFrom plyr count
+#' @importFrom stats na.omit
 
 waterfall_geneRecurCutoff <- function(x, recurrence_cutoff)
 {
@@ -15,7 +16,7 @@ waterfall_geneRecurCutoff <- function(x, recurrence_cutoff)
         message("Performing recurrence cutoff...")
     }
     mutRecur <- plyr::count(unique(x), vars=c("gene"))
-    mutRecur <- na.omit(mutRecur)
+    mutRecur <- stats::na.omit(mutRecur)
     mutRecur$prop <- mutRecur$freq/nlevels(x$sample)
 
     # If recurrence cutoff specified exceeds upper limit such that no plot

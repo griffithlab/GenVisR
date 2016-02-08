@@ -6,6 +6,7 @@
 #' @param x object of class matrix containing rows for the coverage and columns
 #' the sample names
 #' @param col vector of colors for the coverage bars
+#' @importFrom grDevices rainbow
 #' @return a list of data frame and color vector
 
 covBars_qual <- function(x, col)
@@ -31,7 +32,7 @@ covBars_qual <- function(x, col)
         memo <- paste0("Argument supplied to col has 0 length... ",
                        "default colour scheme will be used")
         message(memo)
-        col <- rainbow(nrow(x),start=0,end=0.9)
+        col <- grDevices::rainbow(nrow(x),start=0,end=0.9)
     }
 
     # Check that rownames of x can be converted to integers

@@ -2,7 +2,7 @@
 #' 
 #' Calculate avverage LOH within each step
 #' @name lohView_stepCalc
-#' @param x object of class dataframe with columns 'window_start', 
+#' @param final_dataset object of class dataframe with columns 'window_start', 
 #' 'window_stop', 'chromosome', 'position', 'n_vaf', 't_vaf', 'sample', and 
 #' 'loh_diff_avg'
 #' @param step integer with the length of divisions (bp) in chromosomes

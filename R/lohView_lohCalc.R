@@ -23,7 +23,7 @@ lohView_lohCalc <- function(window_data, out, normal)
     window_stop <- vector()
     num <- as.vector(1:nrow(window))
     
-    df <- lapply(num, function(i){
+    df <- do.call("rbind", lapply(num, function(i){
         ## filter sample_data for loh calls whose positions fall in the
         ## window frame
         filtered_data <- 
@@ -45,13 +45,10 @@ lohView_lohCalc <- function(window_data, out, normal)
         filtered_data$loh_diff_avg <- loh_avg
         filtered_data$window_start <- window_start
         filtered_data$window_stop <- window_stop
-        total <- rbind(total, filtered_data)
-        return(total)
-    })
-
+        return(filtered_data)
+    }))
 
     return(df)
-    
 } 
 
 

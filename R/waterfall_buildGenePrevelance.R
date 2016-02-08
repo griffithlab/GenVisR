@@ -6,6 +6,7 @@
 #' @param layers additional ggplot2 layers
 #' @return a ggplot object
 #' @importFrom plyr count
+#' @importFrom stats na.omit
 
 waterfall_buildGenePrevelance <- function(data_frame, layers=NULL)
 {
@@ -47,7 +48,7 @@ waterfall_buildGenePrevelance <- function(data_frame, layers=NULL)
     }
 
     # Plotting call
-    p1 <- ggplot(na.omit(data_frame),
+    p1 <- ggplot(stats::na.omit(data_frame),
                  aes_string(x='gene', y='prop', fill='trv_type')) +
     geom_bar(position='stack', alpha=.75, width=1, stat='identity') +
     theme_bw() + coord_flip() + theme + y_label + scale_y_reverse() +

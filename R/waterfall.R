@@ -102,6 +102,7 @@
 #' # Plot the data
 #' waterfall(brcaMAF, plotGenes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
 #' @return A graphic object.
+#' @importFrom utils tail
 #' @export
 
 waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE, 
@@ -166,7 +167,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     data_frame$gene <- factor(data_frame$gene, levels=gene_sorted)
     if(!is.null(maxGenes))
     {
-        max_gene_list <- tail(gene_sorted, maxGenes)
+        max_gene_list <- utils::tail(gene_sorted, maxGenes)
         data_frame <- data_frame[data_frame$gene %in% max_gene_list,]
     }
 
