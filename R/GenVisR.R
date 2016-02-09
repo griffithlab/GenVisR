@@ -95,3 +95,16 @@ NULL
 #' @format a data frame with 59 observations and 6 variables
 #' @return Object of class list
 NULL
+
+#' Germline Calls
+#' 
+#' A data set containing downsampled Germline calls originating from the HCC1395
+#' breast cancer cell line.
+#' @docType data
+#' @keywords datasets
+#' @name HCC1395_Germline
+#' @usage data(HCC1395_Germline)
+#' @format a data frame with 9200 observations and 5 variables
+#' @return Object of class data frame
+NULL
+

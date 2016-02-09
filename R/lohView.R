@@ -1,43 +1,73 @@
 #' Plot LOH data
 #'
-#' Produce a graphic visualizing Loss of Heterozygosity in a cohort
+#' Construct a graphic visualizing Loss of Heterozygosity in a cohort
 #' @name lohView
-#' @param x object of class data frame with columns 'chromosome', 'position',
-#' 'n_vaf', 't_vaf', 'sample'
-#' @param y object of class data frame with columns 'chromosome', 'start',
-#' 'end' specifying chromosomal boundaries for a genome assembly
-#' (required if genome is not specified)
-#' @param genome character string specifying the genome assembly from which
-#' input data is based
-#' @param gender vector of length equal to the number of samples, consisting of 
-#' elements from the set {"M", "F"}
-#' @param path character string specifying which directory contains 
-#' the sample information stored as datasets with columns "chromosome", 
-#' "position", "n_vaf", "t_vaf", and "sample" (required if x is not specified)
-#' @param fileExt character string specifying the file extensions of files
-#' within the path specified (required if path argument is specified)
-#' @param step integer with the length of divisions (bp) in chromosomes (only 
-#' required when tile=FALSE
-#' @param window_size integer with the size of the sliding window (bp) to be 
-#' applied
-#' @param normal integer specifying the normal VAF frequency used in LOH 
-#' calculations 
-#' @param gradient_midpoint object of class numeric specifying the midpoint 
-#' for legend's gradient scale
-#' @param gradient_low object of class character for hex color code for 
-#' gradient's lower values
-#' @param gradient_mid object of class character for hex color code for 
-#' gradient's middle values
-#' @param gradient_high object of class character for hex color code for 
-#' gradient's upper values
-#' @param theme_layer ggplot theme object specifying parameters for non data
-#' elements
+#' @param x object of class data frame with rows representing germline calls.
+#' The data frame must contain columns with the following names "chromosome",
+#' "position", "n_vaf", "t_vaf", "sample". required if path is set to NULL (see
+#' details).
+#' @param y Object of class data frame with rows representing chromosome
+#' boundaries for a genome assembly. The data frame must contain columns with
+#' the following names "chromosome", "start", "end" (optional: see details).
+#' @param genome Character string specifying a valid UCSC genome (see details).
+#' @param gender Character vector of length equal to the number of samples,
+#' consisting of elements from the set {"M", "F"}. Used to suppress the plotting
+#' of allosomes where appropriate.
+#' @param path Character string specifying the path to a directory containing
+#' germline calls for each sample. Germline calls are expected to be stored as
+#' tab-seperated files which contain the following column names "chromosome", 
+#' "position", "n_vaf", "t_vaf", and "sample". required if x is set to null
+#' (see details).
+#' @param fileExt Character string specifying the file extensions of files
+#' within the path specified. Required if argument is supplied to path
+#' (see details).
+#' @param step Integer value specifying the step size (i.e. the number of base
+#' pairs to move the window). required when method is set to slide
+#' (see details).
+#' @param window_size Integer value specifying the size of the window in base
+#' pairs in which to calculate the mean Loss of Heterozygosity (see details).
+#' @param normal Numeric value within the range 0-50 specifying the expected
+#' normal variant allele frequency to be used in Loss of Heterozygosity 
+#' calculations. defaults to 50\%
+#' @param gradient_midpoint Numeric value specifying the midpoint 
+#' for the legend's gradient scale.
+#' @param gradient_low Character string specifying the colour for 
+#' gradient legends low value
+#' @param gradient_mid Character string specifying the colour for gradient
+#' legends midpoint value.
+#' @param gradient_high Character string specifying the colour for gradient
+#' legends high value.
+#' @param theme_layer Valid ggpot2 layer to be added to the plot.
 #' @param method character string specifying the approach to be used for 
-#' displaying Loss of Heterozygosity, one of "tile" or "slide"
-#' @return grid object
+#' displaying Loss of Heterozygosity, one of "tile" or "slide" (see details).
+#' @return ggplot object
+#' @details lohView is intended to plot the loss of heterozygosity (LOH) within
+#' a sample. As such lohView expects input data to contain only LOH calls. Input
+#' can be supplied as a single data frame given to the argument x with rows
+#' containing germline calls and variables giving the chromosome, position, 
+#' normal variant allele frequency, tumor variant allele frequency, and the
+#' sample. In lieu of this format a series of .tsv files can be supplied via the 
+#' path and fileExt arguments. If this method is choosen samples will be infered
+#' from the file names. In both cases columns containing the variant allele
+#' frequency for normal and tumor samples should range from 0-100.
+#' Two methods exist to calculate and display LOH events. If the method is set
+#' to "tile" mean LOH is calculated based on the window_size argument with
+#' windows being placed next to each other. If the method is set to slide the
+#' widnow will slide and calculate the LOH based on the step parameter.
+#' In order to ensure the entire chromosome is plotted lohView requries the
+#' location of chromosome boundaries for a given genome assembly. As a
+#' convenience this information is available for the following genomes "hg19",
+#' "hg38", "mm9", "mm10", "rn5" and can be tetrieved by supplying one of the
+#' afore mentioned assemblies via the 'genome'paramter. If an argument is
+#' supplied to the 'genome' parameter and is unrecognized a query to the UCSC
+#' MySQL database will be attempted to obtain the required information. If
+#' chromosome boundary locations are unavailable for a given assembly this
+#' information can be supplied to the 'y' parameter which has priority over the
+#' 'genome' parameter. 
 #' @importFrom gtools mixedsort
-#' @examples
-#' ## Insert an example once the first part of this is understood
+#' @examples 
+#' # plot loh within the example dataset
+#' lohView(x=HCC1395_Germline)
 #' @export
 
 lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
