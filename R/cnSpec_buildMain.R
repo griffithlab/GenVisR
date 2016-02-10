@@ -21,13 +21,14 @@
 #' @import ggplot2
 #' @importFrom scales squish
 #' @importFrom scales rescale
+#' @importFrom stats na.omit
 
 cnSpec_buildMain <- function(data_frame, plot_title=NULL,
                              CN_low_colour='#002EB8', CN_high_colour='#A30000',
                              x_lab_size=12, y_lab_size=12, facet_lab_size=10,
                              layers=NULL, CNscale="absolute")
 {
-    CN_data <- na.omit(data_frame)
+    CN_data <- stats::na.omit(data_frame)
     dummy_data <- data_frame
 
     # Define Theme of plot

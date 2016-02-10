@@ -5,6 +5,7 @@
 #' @name multi_chrBound
 #' @param x data frame containg columns chromosome, start, end
 #' @return object of class data frame formatted to internal specifications
+#' @importFrom stats aggregate
 
 multi_chrBound <- function(x)
 {
@@ -20,12 +21,12 @@ multi_chrBound <- function(x)
     data <- x[,c('chrom' ,'chromStart' , 'chromEnd')]
 
     # Obtain max for each chromosome
-    maxChrom <- aggregate(chromStart ~ chrom, data=data, max)
+    maxChrom <- stats::aggregate(chromStart ~ chrom, data=data, max)
     maxChrom <- cbind(maxChrom, maxChrom[,2])
     colnames(maxChrom) <- c('chromosome', 'start', 'end')
 
     # Obtain max for each chromosome
-    minChrom <- aggregate(chromStart ~ chrom, data=data, min)
+    minChrom <- stats::aggregate(chromStart ~ chrom, data=data, min)
     minChrom <- cbind(minChrom, minChrom[,2])
     colnames(minChrom) <- c('chromosome', 'start', 'end')
 

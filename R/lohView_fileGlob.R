@@ -11,6 +11,7 @@
 #' @param gender vector of length equal to the number of samples, consisting of
 #' elements from the set {"M", "F"}
 #' @return object of class data frame from data specified in path for lohView
+#' @importFrom utils read.delim
 
 lohView_fileGlob <- function(path, fileExt, step, gender)
 {
@@ -28,7 +29,7 @@ lohView_fileGlob <- function(path, fileExt, step, gender)
     # Extract raw t_vaf and n_vaf values and merge the dataset
     for (i in 1:length(fileNames))
     {
-        data <- read.delim(fileNames[i])
+        data <- utils::read.delim(fileNames[i])
         if (is.null(gender) == FALSE) {
             data <- data[data$chromosome !="Y",]
             if (is.null(data$gender) == TRUE) {
@@ -59,6 +60,5 @@ lohView_fileGlob <- function(path, fileExt, step, gender)
         rm(data)
     }
     
-    tail(dataset)
     return(dataset)
 }

@@ -7,17 +7,17 @@
 lohView_lohCalc(window_data, out, normal)
 }
 \arguments{
-\item{window_data}{object of class data frame with columns
+\item{window_data}{object of class data frame with columns 
 'window_start' and 'window_stop}
 
-\item{out}{object of class dataframe with columns 'chromosome',
+\item{out}{object of class dataframe with columns 'chromosome', 
 'position', 'n_vaf', 't_vaf', and 'sample'}
 
 \item{normal}{integer specifying the subtraction value from tumor VAF}
 }
 \value{
 object of class dataframe containing mean LOH difference calculations
-and column names "window_start", "window_stop", "chromosome", "position",
+and column names "window_start", "window_stop", "chromosome", "position", 
 "n_vaf", "t_vaf", "sample", "loh_diff"
 }
 \description{

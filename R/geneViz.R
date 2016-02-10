@@ -69,6 +69,8 @@
 #'
 #' # Plot the graphic
 #' geneViz(txdb, gr, genome)
+#' @importFrom stats na.omit
+#' @importFrom stats setNames
 #' @export
 
 geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
@@ -99,12 +101,12 @@ geneViz <- function(txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
         gene_features <- cds         
     }else{
         keys <- unique(c(names(cds), names(UTR)))
-        gene_features <- setNames(mapply(rbind,
-                                         cds[keys],
-                                         UTR[keys],
-                                         SIMPLIFY=FALSE), keys)
+        gene_features <- stats::setNames(mapply(rbind,
+                                                cds[keys],
+                                                UTR[keys],
+                                                SIMPLIFY=FALSE), keys)
     }
-    gene_features <- lapply(gene_features, na.omit)
+    gene_features <- lapply(gene_features, stats::na.omit)
     
     # give the user the ability to select specific isoforms
     if(!is.null(isoformSel))

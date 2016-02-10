@@ -210,13 +210,13 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
     {
         p1 <- ggplot(data_frame, aes_string('sample', 'gene')) +
         geom_tile(aes_string(fill='trv_type'), position="identity") +
-        theme + legend + ggtitle(title) + x_label + vertical_grid +
+        theme + legend + x_label + vertical_grid +
         horizontal_grid + scale_x_discrete(drop=FALSE) + label +
         layers
     } else {
         p1 <- ggplot(data_frame, aes_string('sample', 'gene')) +
         geom_tile(aes_string(fill='trv_type'), position="identity") +
-        theme + legend + ggtitle(title) + x_label +
+        theme + legend + x_label +
         scale_x_discrete(drop=FALSE) + label + layers
     }
 

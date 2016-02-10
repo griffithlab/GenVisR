@@ -58,6 +58,7 @@
 #' # Plot raw copy number calls
 #' cnView(data, chr='chr14', genome='hg19', ideogram_txtSize=4)
 #' @return graphical output
+#' @importFrom stats aggregate
 #' @export
 
 cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
@@ -93,9 +94,9 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
     }
 
     # Create Dummy data and add to x for proper plot dimensions
-    fakeStart <- aggregate(data=cytobands, FUN=min, chromStart~chrom)
+    fakeStart <- stats::aggregate(data=cytobands, FUN=min, chromStart~chrom)
     colnames(fakeStart) <- c("chromosome", "coordinate")
-    fakeEnd <- aggregate(data=cytobands, FUN=max, chromEnd~chrom)
+    fakeEnd <- stats::aggregate(data=cytobands, FUN=max, chromEnd~chrom)
     colnames(fakeEnd) <- c("chromosome", "coordinate")
     dummyData <- rbind(fakeStart, fakeEnd)
     dummyData$chromosome <- as.factor(dummyData$chromosome)

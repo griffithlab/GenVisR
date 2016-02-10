@@ -14,6 +14,7 @@
 #' name text
 #' @param layers additional ggplot2 layers to plot
 #' @return ggplot object
+#' @importFrom stats aggregate
 #' @import ggplot2
 
 geneViz_buildGene <- function(data_frame, display_x_axis=TRUE, x_limits=NULL,
@@ -37,8 +38,8 @@ geneViz_buildGene <- function(data_frame, display_x_axis=TRUE, x_limits=NULL,
 
     if(transcript_name == TRUE)
     {
-        transcript_data_x <- aggregate(start ~ txname, data=data_frame, min)
-        transcript_data_y <- aggregate(Mid ~ txname, data=data_frame, max)
+        transcript_data_x <- stats::aggregate(start ~ txname, data=data_frame, min)
+        transcript_data_y <- stats::aggregate(Mid ~ txname, data=data_frame, max)
         transcript_data <- merge(transcript_data_x, transcript_data_y,
                                  by="txname")
         transcript_data$label_pos <- transcript_data$start - 1.5

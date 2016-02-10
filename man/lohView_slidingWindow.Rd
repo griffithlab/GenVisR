@@ -12,10 +12,10 @@ lohView_slidingWindow(loh_data, step, window_size, normal)
 
 \item{step}{integer with the length of divisions (bp) in chromosomes}
 
-\item{window_size}{integer with the size of the sliding window (bp) to be
+\item{window_size}{integer with the size of the sliding window (bp) to be 
 applied}
 
-\item{normal}{integer specifying the normal VAF frequency used in LOH
+\item{normal}{integer specifying the normal VAF frequency used in LOH 
 calculations}
 }
 \value{
