@@ -100,7 +100,10 @@ cnSpec_qual <- function(x, y, genome, CNscale)
     x$start <- as.integer(as.character(x$start))
     x$end <- as.integer(as.character(x$end))
     x$segmean <- as.numeric(as.character(x$segmean))
-    x$sample <- as.character(x$sample)
+    if(!is.factor(x$sample))
+    {
+        x$sample <- as.character(x$sample)
+    }
 
     return(list(x, y))
 }
