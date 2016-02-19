@@ -1,3 +1,15 @@
+---
+title: "GenVisR: An introduction"
+author: "Zachary Skidmore"
+date: "2016-02-19"
+output: rmarkdown::html_vignette
+theme: united
+vignette: >
+  %\VignetteIndexEntry{GenVisR: An introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
 # GenVisR
 
 Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
@@ -22,10 +34,10 @@ Intuitively visualizing and interpreting data from high-throughput genomic techn
 3. [Hints](#hints)
 4. [Session Info](#session-info)
 
-##Installation Instructions <a name="install"></a>
-GenVisr is an R package available via Bioconductor (version 3.3) and via github. GenVisR currently resides on the devel branch of Bioconductor and will be added to the release branch at the next the next Bioconductor release cycle (spring 2016). To install GenVisR from the Bioconductor devel branch it is neccessary to install the R and bioconductor devel versions. Briefly the steps are as follows:
+##<a name="install"></a>Installation Instructions 
+GenVisr is an R package available via Bioconductor (version 3.3) and via GitHub. GenVisR currently resides on the devel branch of Bioconductor and will be added to the release branch at the next the next Bioconductor release cycle (spring 2016). To install GenVisR from the Bioconductor devel branch it is neccessary to install the R and bioconductor devel versions. Briefly the steps are as follows:
 
-####Install from Bioconductor <a name="install-bioc"></a>
+####<a name="install-bioc"></a>Install from Bioconductor 
 note: Requires R version 3.3.0 (devel)
 
 * Full instructions can be found here: http://bioconductor.org/packages/devel/bioc/html/GenVisR.html
@@ -51,9 +63,9 @@ BiocInstaller::biocValid()
 source("https://bioconductor.org/biocLite.R")
 biocLite("GenVisR")
 ```
-####Install from GitHub <a name="install-github"></a>
+####<a name="install-github"></a>Install from GitHub 
 note: Requries R version 3.2.1
-* Full instructions can be found here: https://github.com/griffithlab/GenVisR
+* Full instructions can be found here: https://GitHub.com/griffithlab/GenVisR
 
 1) Install the devtools package from CRAN
 ```R
@@ -66,13 +78,13 @@ biocLite(c("AnnotationDbi", "biomaRt", "Biostrings", "GenomicFeatures", "Genomic
 ```
 3) Install GenVisR
 ```R
-devtools::install_github("griffithlab/GenVisR")
+devtools::install_GitHub("griffithlab/GenVisR")
 ```
 
-## Functions <a name="functions"></a>
+## <a name="functions"></a>Functions 
 
-### waterfall (mutation overview graphic) <a name="waterfall"></a>
-`waterfall` provides a method of visualizing the mutational landscape of a cohort. The input to `waterfall` consists of a data frame derived from either a .maf (version 2.4) file or a file in MGI annotation format (obtained from The [Genome Modeling System](https://github.com/genome/gms)) specified via the `fileType` parameter. `waterfall` will display the mutation occurrence and type in the main panel while showing the mutation burden and the percentage of samples with a mutation in the top and side sub-plots. Conflicts arising from multiple mutations in the same gene/sample cell are resolved by a hierarchical removal of mutations keeping the most deleterious as defined by the order of the "mutation type" legend. Briefly this hierarchy is as follows with the most deleterious defined first:
+### <a name="waterfall"></a>waterfall (mutation overview graphic) 
+`waterfall` provides a method of visualizing the mutational landscape of a cohort. The input to `waterfall` consists of a data frame derived from either a .maf (version 2.4) file or a file in MGI annotation format (obtained from The [Genome Modeling System](https://GitHub.com/genome/gms)) specified via the `fileType` parameter. `waterfall` will display the mutation occurrence and type in the main panel while showing the mutation burden and the percentage of samples with a mutation in the top and side sub-plots. Conflicts arising from multiple mutations in the same gene/sample cell are resolved by a hierarchical removal of mutations keeping the most deleterious as defined by the order of the "mutation type" legend. Briefly this hierarchy is as follows with the most deleterious defined first:
 
 |MAF                    |MGI                         |
 |:----------------------|:---------------------------|
@@ -180,7 +192,7 @@ waterfall(brcaMAF, clinDat=clinical,
 
 Occasionally there may be samples not represented within the .maf file (due to a lack of mutations). It may still be desirable to plot these samples. To accomplish this simply add the relevant samples into the appropriate column before loading the data and leave the rest of the columns as NA. Alternatively the user can specify a list of samples to plot via the `plotSamples` parameter which will accept samples not in the input data.
 
-### lolliplot (mutation hotspot graphic) <a name="lolliplot"></a>
+### <a name="lolliplot"></a>lolliplot (mutation hotspot graphic) 
 
 `lolliplot` provides a method for visualizing mutation hotspots overlayed on a protein framework. The (basic) input consists of a data frame with required columns "transcript_name", "gene" and "amino_acid_change" giving the ensembl transcript id, gene name, and the amino acid change in p. notation respectively. The data frame input to `lolliplot` must contain only one unique transcript name. `lolliplot` uses the R package [biomaRt](https://bioconductor.org/packages/release/bioc/html/biomaRt.html) to obtain sequence and protein domain information and as such needs an active internet connection. `lolliplot` assumes the species from which to build a mart is *hsapiens*, this assumption can be changed via the parameter `species` which which will expect a valid ensembl mart species. Further by default the latest ensembl annotations will be used to build the protein framework. If it is desireable to build the protein framework from an older ensembl annotation the user has the option to change the annotation version by changing the `host` parameter. For example if the user wanted to use the Dec. 2013 ensembl annotation they would specify host="dec2013.archive.ensembl.org", the host parameter in lolliplot will pass it's value to biomaRt::useMart, see biomaRt doc for using older archived annotations via biomaRt.
 
@@ -229,7 +241,7 @@ lolliplot(data, y=data2, fillCol='impact', labelCol='amino_acid_change')
 
 `lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data in an attempt to achieve a reasonable degree of separation between points. Suitable defaults have been set for the majority of use cases. On occasion the user may need to manually adjust the force field parameters especially if the number of points to apply the model to is large. This can be done for both upper and lower tracks individually via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
 
-### genCov (sequence coverage graphic)<a name="gencov"></a>
+### <a name="gencov"></a>genCov (sequence coverage graphic)
 
 `genCov` provides a methodology for viewing coverage information in relation to a gene track. It takes a named list of data frames with each data frame containing column names "end" and "cov" and rows corresponding to coordinates within the region of interest. Additional required arguments are a GRanges object specifying the region of interest, a BSgenome for gc content calculation, and a TxDb object containing transcription metadata (see the package [Granges](http://www.bioconductor.org/packages/release/bioc/html/GenomicRanges.html) for more information). `genCov` will plot a genomic features track and align coverage data in the list to the plot. It is recommended to use [bedtools multicov](http://bedtools.readthedocs.org/en/latest/content/tools/multicov.html) to obtain coverage information for a region of interest. We demonstrate `genCov` functionality using pseudo-data containing coverage information for the gene PTEN.
 
@@ -315,8 +327,8 @@ genCov(data, txdb, gr, genome, transform=c("Intron", "CDS", "UTR"), base=c(10, 2
 ## Error in genCov_qual(x = x, txdb = txdb, gr = gr, genome = genome): object 'txdb' not found
 ```
 
-### TvTi (transition/transversion graphic)<a name="tvti"></a>
-`TvTi` provides a framework for visualizing transversions and transitions for a given cohort. Input consists of a .maf (version 2.4) file containing sample and allele information (see .maf spec). Alternatively the `fileType` parameter can be set to "MGI" with the input supplied consisting of a data frame with column names "sample", "reference", and "variant". Files for the "MGI" format can be obtained via the [Genome Modeling System](https://github.com/genome/gms). TvTi will remove indels and multinucleotide calls from the input and plot the proportion of Transition/Transversion types for each sample specified in the input file.
+### <a name="tvti"></a>TvTi (transition/transversion graphic)
+`TvTi` provides a framework for visualizing transversions and transitions for a given cohort. Input consists of a .maf (version 2.4) file containing sample and allele information (see .maf spec). Alternatively the `fileType` parameter can be set to "MGI" with the input supplied consisting of a data frame with column names "sample", "reference", and "variant". Files for the "MGI" format can be obtained via the [Genome Modeling System](https://GitHub.com/genome/gms). TvTi will remove indels and multinucleotide calls from the input and plot the proportion of Transition/Transversion types for each sample specified in the input file.
 
 
 ```r
@@ -353,7 +365,7 @@ TvTi(brcaMAF, y=expec, lab_txtAngle=45, fileType="MAF")
 
 ![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
 
-### cnSpec (copy altered cohort graphic)<a name="cnspec"></a>
+### <a name="cnspec"></a>cnSpec (copy altered cohort graphic)
 
 cnSpec produces a plot displaying copy number segments at a cohort level. Basic input consists of a data frame with column names 'chromosome', 'start', 'end' 'segmean' and 'sample' with rows denoting segments with copy number alterations. A UCSC genome is also required (defaults to 'hg19') to determine chromosomal boundaries. cnSpec will produce a grid faceted on chromosome and sample displaying all CN segment calls in the input. Here we use the attached data set LucCNseg containing copy number segment calls for 4 samples from whole genome sequencing data.
 
@@ -377,7 +389,7 @@ By default a few select genomes are included as part of GenVisR, these are "hg38
 cnSpec(LucCNseg, y=hg19chr)
 ```
 
-### cnView (copy altered single sample graphic)<a name="cnview"></a>
+### <a name="cnview"></a>cnView (copy altered single sample graphic)
 cnView provides a method for visualizing raw copy number calls focused on either a single chromosome or all chromosomes. Unlike the majority of plots within GenVisR cnView is intended to be used for a single sample. Input consists of a data frame with column names "chromosome", "coordinate", "cn", and "p_value" (optional) as well as a specification of which chromosome to plot specified via the parameter `chr` and which genome assembly should be used for chromosome boundaries `genome`. The algorithm will produce an ideogram on the top track and plot copy number calls beneath. If a "p_value" column is present in the input data cnView will create a transparency value for all calls/observations based on that column with less significant calls having a higher transparency. Eliminating the "p_value" column will terminate this behavior. Here we demonstrate `cnView` pseudo-data for chromosome 14.
 
 
@@ -414,7 +426,7 @@ cnView(data, z=dataSeg, chr='chr14', genome='hg19', ideogram_txtSize=4)
 
 ![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png)
 
-### covBars (sequencing coverage cohort)<a name="covbars"></a>
+### <a name="covbars"></a>covBars (sequencing coverage cohort)
 
 `covBars` produces a plot displaying sequencing coverage at a cohort level. Basic input consists of a matrix with columns representing samples, rows denoting sequencing depth (i.e. reads of depth), and elements of the matrix representing the number of bases with x depth for x sample.
 
@@ -442,7 +454,7 @@ covBars(x, colour=c("blue","grey","red"))
 
 ![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18-1.png)
 
-### cnFreq (proportional copy number alterations)<a name="cnfreq"></a>
+### <a name="cnfreq"></a>cnFreq (proportional copy number alterations)
 
 `cnFreq` produces a plot displaying the proportion (default) or frequency of copy number losses/gains at a cohort level. Basic input consists of a data frame with rows representing the proportion of CN losses/gains across the genome (default), or actual CN values.
 
@@ -472,7 +484,7 @@ An alternate long data frame format with actual copy number values may be used. 
 cnFreq(LucCNseg)
 ```
 
-### ideoView (ideogram graphic)<a name="ideoview"></a>
+### <a name="ideoview"></a>ideoView (ideogram graphic)
 The user has the ability to plot an ideogram representative of the chromosome of interest for a given assembly via the function `ideoView`. Basic input consists of a data frame with column names: "chrom", "chromStart", "chromEnd", "name", "gieStain" mirroring the format retrievable from the UCSC sql database, and a chromosome for which to display `chromsome`. Here we use the preloaded genome hg38 in the attached data set cytoGeno.
 
 
@@ -486,7 +498,7 @@ ideoView(data, chromosome='chr1', txtSize=4)
 
 ![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21-1.png)
 
-### lohView (mean absolute LOH difference)<a name="lohview"></a>
+### <a name="lohview"></a>lohView (mean absolute LOH difference)
 `lohView` obtains mean absolute LOH differene between tumor VAF and a default normal VAF parameter set at 50 for all calls made within a specified window length. Input data should include column names "chromosome", "position", "n_vaf", "t_vaf", "sample". If the `method` specified is "tile", mean LOH difference will be plotted for adjacent windows across the entire genome for multiple samples. If the`method` specified is "slide", mean LOH difference for overlapping windows will be plotted over a `step` sized window. When `gender` is NULL, LOH calculations will be excluded from both the X and Y chromosome for all samples. When the `gender` of each sample is specified, LOH calculations will include X chromosomes, along with all autosomes for all samples.
 
 ```r
@@ -498,7 +510,7 @@ lohView(x=HCC1395_Germline)
 ## Error in is.data.frame(x): object 'HCC1395_Germline' not found
 ```
 
-### compIdent (snp identity graphic)<a name="compident"></a>
+### <a name="compident"></a>compIdent (snp identity graphic)
 
 `compIdent` produces a plot comparing samples based on identity snp variant allele frequency (VAF) values. The graphic displays VAF values at genomic locations given via the parameter `target`. If no argument is supplied to `target` the algorithm will default to 24 biallelic identity snps from the hg19 genome assembly identified by "pengelly et al. Genome Med. 2013, PMID 24070238". `compIdent` expects a data frame with rows specifying samples and columns providing sample names and bam file locations given to parameter `x`. Please note that compIdent will not index bam files and will look for a .bai file for the associated bam.
 
@@ -531,7 +543,7 @@ compIdent(genome=hg19, debug=TRUE)
 ## Error in compIdent_bamRcnt_qual(genome, target): object 'hg19' not found
 ```
 
-### geneViz<a name="geneviz"></a>
+### <a name="geneviz"></a>geneViz
 It is also possible to plot just a gene of interest identified by specifying a Txdb object, GRanges object, and a BSgenome via a call to `geneViz`. The algorithm will plot genomic features for a single gene bounded by the Granges object overlaying gc content calculations over those features obtained from the provided BSgenome. Note that geneViz will output the plot and additional supplemental information used in the plot generation as a list, to call the plot call the first element of the list.
 
 
@@ -580,7 +592,7 @@ p1[[1]]
 ## Error in eval(expr, envir, enclos): object 'p1' not found
 ```
 
-## Hints<a name="hints"></a>
+## <a name="hints"></a>Hints
 
 Due to the complex nature and variability of the graphics produced by GenVisR it is recommended that the user adjust the graphics device size for all outputs manually. If not given enough space within the graphics device grob objects will start to collide This can be done via the following:
 
@@ -604,7 +616,7 @@ plot_theme <- theme(axis.text.x=element_blank(),
 cnFreq(LucCNseg, plotLayer=plot_theme)
 ```
 
-## Session Info<a name="session-info"></a>
+## <a name="session-info"></a>Session Info
 
 
 ```r
@@ -626,19 +638,26 @@ sessionInfo()
 ## [1] reshape2_1.4.1  GenVisR_0.99.10 knitr_1.12.3   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.3                 formatR_1.2.1               plyr_1.8.3                 
-##  [4] highr_0.5.1                 GenomeInfoDb_1.7.6          XVector_0.11.4             
-##  [7] GenomicFeatures_1.23.22     bitops_1.0-6                tools_3.3.0                
-## [10] zlibbioc_1.17.0             biomaRt_2.27.2              digest_0.6.9               
-## [13] RSQLite_1.0.0               evaluate_0.8                gtable_0.1.2               
-## [16] DBI_0.3.1                   parallel_3.3.0              gridExtra_2.0.0            
-## [19] rtracklayer_1.31.6          stringr_1.0.0               Biostrings_2.39.7          
-## [22] S4Vectors_0.9.26            gtools_3.5.0                IRanges_2.5.24             
-## [25] stats4_3.3.0                grid_3.3.0                  FField_0.1.0               
-## [28] Biobase_2.31.3              AnnotationDbi_1.33.7        XML_3.98-1.3               
-## [31] BiocParallel_1.5.16         ggplot2_2.0.0               magrittr_1.5               
-## [34] scales_0.3.0                Rsamtools_1.23.3            BiocGenerics_0.17.3        
-## [37] GenomicRanges_1.23.13       GenomicAlignments_1.7.13    SummarizedExperiment_1.1.18
-## [40] colorspace_1.2-6            labeling_0.3                stringi_1.0-1              
+##  [1] Rcpp_0.12.3                 formatR_1.2.1              
+##  [3] plyr_1.8.3                  highr_0.5.1                
+##  [5] GenomeInfoDb_1.7.6          XVector_0.11.4             
+##  [7] GenomicFeatures_1.23.22     bitops_1.0-6               
+##  [9] tools_3.3.0                 zlibbioc_1.17.0            
+## [11] biomaRt_2.27.2              digest_0.6.9               
+## [13] RSQLite_1.0.0               evaluate_0.8               
+## [15] gtable_0.1.2                DBI_0.3.1                  
+## [17] parallel_3.3.0              gridExtra_2.0.0            
+## [19] rtracklayer_1.31.6          stringr_1.0.0              
+## [21] Biostrings_2.39.7           S4Vectors_0.9.26           
+## [23] gtools_3.5.0                IRanges_2.5.24             
+## [25] stats4_3.3.0                grid_3.3.0                 
+## [27] FField_0.1.0                Biobase_2.31.3             
+## [29] AnnotationDbi_1.33.7        XML_3.98-1.3               
+## [31] BiocParallel_1.5.16         ggplot2_2.0.0              
+## [33] magrittr_1.5                scales_0.3.0               
+## [35] Rsamtools_1.23.3            BiocGenerics_0.17.3        
+## [37] GenomicRanges_1.23.13       GenomicAlignments_1.7.13   
+## [39] SummarizedExperiment_1.1.18 colorspace_1.2-6           
+## [41] labeling_0.3                stringi_1.0-1              
 ## [43] RCurl_1.95-4.7              munsell_0.4.2
 ```
