@@ -385,6 +385,7 @@ cnFreq(LucCNseg, plotLayer=plot_theme)
 ```{r}
 sessionInfo()
 ```
+
 ## Installation Instructions
 
 ### Stable Installation Instructions
