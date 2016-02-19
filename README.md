@@ -2,6 +2,42 @@
 
 Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
 
+##Installation Instructions
+GenVisr is an R package available via Bioconductor (version 3.3) and via github. GenVisR currently resides on the devel branch of Bioconductor and will be added to the release branch at the next the next Bioconductor release cycle (spring 2016). To install GenVisR from the Bioconductor devel branch it is neccessary to install the R and bioconductor devel versions. Briefly the steps are as follows:
+####Install from Biocondcutor
+note: Requires R version 3.3.0 (devel), full instructions can be found here: http://bioconductor.org/packages/devel/bioc/html/GenVisR.html
+1. Install R-devel (version 3.3.0), installation instructions can be found at and are specific to the OS: http://bioconductor.org/developers/how-to/useDevel/
+2. Install the latest BiocInstaller
+```R
+# Repeat the command below until there is no "BiocInstaller"
+remove.packages("BiocInstaller")
+​
+# Install the current version
+source("https://bioconductor.org/biocLite.R")
+BiocInstaller::biocValid()
+```
+3. Install GenVisR
+```R
+source("https://bioconductor.org/biocLite.R")
+biocLite("GenVisR")
+```
+####Install from github
+note: Requries R version 3.2.1, full instructions can be found here:
+https://github.com/griffithlab/GenVisR
+1. Install the devtools package from CRAN
+```R
+install.packages("devtools")
+```
+2. Install Bioconductor dependencies
+```R
+source("http://bioconductor.org/biocLite.R")
+biocLite(c("AnnotationDbi", "biomaRt", "Biostrings", "GenomicFeatures", "GenomicRanges", "Rsamtools"))
+```
+3. Install GenVisR
+```R
+devtools::install_github("griffithlab/GenVisR")
+```
+
 ## Functions
 
 ### waterfall (mutation overview graphic)
@@ -582,44 +618,3 @@ sessionInfo()
 ## [41] labeling_0.3                stringi_1.0-1              
 ## [43] RCurl_1.95-4.7              munsell_0.4.2
 ```
-
-##Installation Instructions
-GenVisr is an R package available via Bioconductor (version 3.3) and via github. GenVisR currently resides on the devel branch of Bioconductor and will be added to the release branch at the next the next Bioconductor release cycle (spring 2016). To install GenVisR from the Bioconductor devel branch it is neccessary to install the R and bioconductor devel versions. Briefly the steps are as follows:
-####Install from Biocondcutor
-note: Requires R version 3.3.0 (devel), full instructions can be found here: http://bioconductor.org/packages/devel/bioc/html/GenVisR.html
-1. Install R-devel (version 3.3.0), installation instructions can be found at and are specific to the OS: http://bioconductor.org/developers/how-to/useDevel/
-2. Install the latest BiocInstaller
-```R
-# Repeat the command below until there is no "BiocInstaller"
-remove.packages("BiocInstaller")
-​
-# Install the current version
-source("https://bioconductor.org/biocLite.R")
-BiocInstaller::biocValid()
-```
-3. Install GenVisR
-```R
-source("https://bioconductor.org/biocLite.R")
-biocLite("GenVisR")
-```
-####Install from github
-note: Requries R version 3.2.1, full instructions can be found here:
-https://github.com/griffithlab/GenVisR
-1. Install the devtools package from CRAN
-```R
-install.packages("devtools")
-```
-2. Install Bioconductor dependencies
-```R
-source("http://bioconductor.org/biocLite.R")
-biocLite(c("AnnotationDbi", "biomaRt", "Biostrings", "GenomicFeatures", "GenomicRanges", "Rsamtools"))
-```
-3. Install GenVisR
-```R
-devtools::install_github("griffithlab/GenVisR")
-```
-​
-##Examples
-Please refer to the GenVisR vignette available at:
-http://bioconductor.org/packages/devel/bioc/html/GenVisR.html
-For a brief introduction to core functions with examples.
