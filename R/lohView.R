@@ -71,7 +71,7 @@
 #' @export
 
 lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
-                    gender=NULL, step=100000, window_size=250000, 
+                    gender=NULL, step=500000, window_size=1250000, 
                     normal=50, gradient_midpoint=20, gradient_low="#ffffff",
                     gradient_mid="#b2b2ff", gradient_high="#000000",
                     theme_layer=NULL, method="slide")

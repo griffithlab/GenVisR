@@ -34,10 +34,10 @@ Intuitively visualizing and interpreting data from high-throughput genomic techn
 3. [Hints](#hints)
 4. [Session Info](#session-info)
 
-##<a name="install"></a>Installation Instructions 
+## <a name="install"></a>Installation Instructions 
 GenVisr is an R package available via Bioconductor (version 3.3) and via GitHub. GenVisR currently resides on the devel branch of Bioconductor and will be added to the release branch at the next the next Bioconductor release cycle (spring 2016). To install GenVisR from the Bioconductor devel branch it is neccessary to install the R and bioconductor devel versions. Briefly the steps are as follows:
 
-####<a name="install-bioc"></a>Install from Bioconductor 
+#### <a name="install-bioc"></a>Install from Bioconductor 
 note: Requires R version 3.3.0 (devel)
 
 * Full instructions can be found here: http://bioconductor.org/packages/devel/bioc/html/GenVisR.html
@@ -51,7 +51,7 @@ note: Requires R version 3.3.0 (devel)
 ```R
 # Repeat the command below until there is no "BiocInstaller"
 remove.packages("BiocInstaller")
-​
+
 # Install the current version
 source("https://bioconductor.org/biocLite.R")
 BiocInstaller::biocValid()
@@ -63,7 +63,7 @@ BiocInstaller::biocValid()
 source("https://bioconductor.org/biocLite.R")
 biocLite("GenVisR")
 ```
-####<a name="install-github"></a>Install from GitHub 
+#### <a name="install-github"></a>Install from GitHub 
 note: Requries R version 3.2.1
 * Full instructions can be found here: https://GitHub.com/griffithlab/GenVisR
 
@@ -406,7 +406,7 @@ hg19 <- BSgenome.Hsapiens.UCSC.hg19
 compIdent(genome=hg19, debug=TRUE)
 ```
 
-### <a name="geneviz"></a>geneViz
+### <a name="geneviz"></a>geneViz (Transcript Represenation)
 It is also possible to plot just a gene of interest identified by specifying a Txdb object, GRanges object, and a BSgenome via a call to `geneViz`. The algorithm will plot genomic features for a single gene bounded by the Granges object overlaying gc content calculations over those features obtained from the provided BSgenome. Note that geneViz will output the plot and additional supplemental information used in the plot generation as a list, to call the plot call the first element of the list.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=5, message=FALSE, warning=FALSE, results='hide'}
