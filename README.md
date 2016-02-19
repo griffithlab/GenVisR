@@ -31,8 +31,8 @@ source("https://bioconductor.org/biocLite.R")
 biocLite("GenVisR")
 ```
 ####Install from github
-note: Requries R version 3.2.1, full instructions can be found here:
-https://github.com/griffithlab/GenVisR
+note: Requries R version 3.2.1
+* Full instructions can be found here: https://github.com/griffithlab/GenVisR
 
 1) Install the devtools package from CRAN
 ```R
