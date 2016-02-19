@@ -1,15 +1,3 @@
----
-title: "GenVisR: An introduction"
-author: "Zachary Skidmore"
-date: "2016-02-19"
-output: rmarkdown::html_vignette
-theme: united
-vignette: >
-  %\VignetteIndexEntry{GenVisR: An introduction}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
 # GenVisR
 
 Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
