@@ -66,7 +66,7 @@ biocLite(c("AnnotationDbi", "biomaRt", "Biostrings", "GenomicFeatures", "Genomic
 ```
 3) Install GenVisR
 ```R
-devtools::install_GitHub("griffithlab/GenVisR")
+devtools::install_github("griffithlab/GenVisR")
 ```
 
 ## <a name="functions"></a>Functions 
