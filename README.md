@@ -114,6 +114,8 @@ To view the general behavior of `waterfall` we use the `brcaMAF` data structure 
 
 
 ```r
+# Load GenVisR library
+library(GenVisR)
 # Plot the mutation landscape
 waterfall(brcaMAF, fileType="MAF")
 ```
@@ -122,8 +124,7 @@ This type of view is of limited use without expanding the graphic device given t
 
 
 ```r
-# Load GenVisR and set seed
-library(GenVisR)
+# Set seed
 set.seed(383)
 
 # Plot only genes with mutations in 6% or more of samples
