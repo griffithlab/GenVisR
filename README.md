@@ -51,6 +51,12 @@ BiocInstaller::biocValid()
 source("https://bioconductor.org/biocLite.R")
 biocLite("GenVisR")
 ```
+
+4) Load genVisR package
+```R
+library(GenVisR)
+```
+
 ####<a name="install-github"></a>Install from GitHub 
 note: Requries R version 3.2.1
 * Full instructions can be found here: https://GitHub.com/griffithlab/GenVisR
@@ -67,6 +73,11 @@ biocLite(c("AnnotationDbi", "biomaRt", "Biostrings", "GenomicFeatures", "Genomic
 3) Install GenVisR
 ```R
 devtools::install_github("griffithlab/GenVisR")
+```
+
+4) Load genVisR package
+```R
+library(GenVisR)
 ```
 
 ## <a name="functions"></a>Functions 
