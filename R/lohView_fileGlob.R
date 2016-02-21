@@ -59,6 +59,37 @@ lohView_fileGlob <- function(path, fileExt, step, gender)
 
         rm(data)
     }
-    
-    return(dataset)
+    ## Solves problem of user removing loh values for any autosome
+    all_lev <- unique(droplevels(dataset$chromosome))
+    sample <- unique(dataset$sample)
+    total <- data.frame()
+        for (r in 1:length(sample)) {
+            df <- dataset[dataset$sample==sample[r],]
+            dflevels <- unique(droplevels(df$chromosome))
+            chrDiff <- setdiff(all_lev, dflevels)
+            if (length(chrDiff) >= 1) {
+                for (i in 1:length(chrDiff)) {
+                    if(is.null(gender)==TRUE) {
+                        d1 <- c(as.numeric(chrDiff[i]), step, 50, 50, 
+                                as.character(sample))
+                        d2 <- c(as.numeric(chrDiff[i]), step+window_size,50, 50, 
+                                as.character(sample))
+                        df <- data.frame(rbind(df, d1, d2))
+                    }
+                    if(is.null(gender)==FALSE) {
+                        d1 <- c(as.character(chrDiff[i]), step, 50, 50, 
+                                as.character(sample[r]), 
+                                as.character(gender[r]))
+                        
+                        d2 <- c(as.character(chrDiff[i]),step+window_size,50, 50, 
+                                as.character(sample[r]), 
+                                as.character(gender[r]))
+                        df <- data.frame(rbind(df, d1, d2))
+                    }
+                }
+            }
+            total <- rbind(total, df)
+        }
+    return(total)
 }
+

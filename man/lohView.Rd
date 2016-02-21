@@ -5,10 +5,10 @@
 \title{Plot LOH data}
 \usage{
 lohView(x = NULL, path = NULL, fileExt = NULL, y = NULL,
-  genome = "hg19", gender = NULL, step = 1e+05, window_size = 250000,
+  genome = "hg19", gender = NULL, step = 1e+06, window_size = 2500000,
   normal = 50, gradient_midpoint = 20, gradient_low = "#ffffff",
   gradient_mid = "#b2b2ff", gradient_high = "#000000", theme_layer = NULL,
-  method = "tile")
+  method = "slide")
 }
 \arguments{
 \item{x}{object of class data frame with rows representing germline calls.
