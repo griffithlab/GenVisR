@@ -247,7 +247,10 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     {
         # match the levels of sample in y to conform to the main plot
         clinData$sample <- factor(clinData$sample, levels=sample_order)
-		clinData <- clinData[-which(is.na(clinData$sample)),]
+        if(any(is.na(clinData$sample)))
+        {
+            clinData <- clinData[-which(is.na(clinData$sample)),]
+        }
 
         # if dataOut is specified skip to that code block
         if(isTRUE(dataOut)){next}

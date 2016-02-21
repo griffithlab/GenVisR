@@ -113,8 +113,15 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
     chromosome_sorted <- as.vector(unique(CN_data$chromosome))
     chromosome_sorted <- gtools::mixedsort(chromosome_sorted)
     CN_data$chromosome <- factor(CN_data$chromosome, levels=chromosome_sorted)
-    sample_sorted <- as.vector(unique(CN_data$sample))
-    sample_sorted <- gtools::mixedsort(sample_sorted)
+
+    # if x$sample was a factor plot that instead of sorting samples
+    if(is.factor(x$sample))
+    {
+        sample_sorted <- levels(x$sample)
+    } else {
+        sample_sorted <- as.vector(unique(CN_data$sample))
+        sample_sorted <- gtools::mixedsort(sample_sorted)
+    }
     CN_data$sample <- factor(CN_data$sample, levels=sample_sorted)
     
     # if requested output data instead of plotting

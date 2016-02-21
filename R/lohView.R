@@ -86,7 +86,7 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
             stop(memo)
         }
         x <- lohView_fileGlob(path=path, fileExt=fileExt, step=step, 
-                              gender=gender)        
+                              window_size=window_size, gender=gender)        
     }
     if (is.null(path)) {
         if (is.null(gender) == FALSE) {

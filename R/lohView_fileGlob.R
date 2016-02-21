@@ -13,7 +13,7 @@
 #' @return object of class data frame from data specified in path for lohView
 #' @importFrom utils read.delim
 
-lohView_fileGlob <- function(path, fileExt, step, gender)
+lohView_fileGlob <- function(path, fileExt, step, window_size, gender)
 {
     # Obtain file names with the tumor and normal vaf values
     fileNames <- Sys.glob(paste0(path, '*.', fileExt))
@@ -72,7 +72,8 @@ lohView_fileGlob <- function(path, fileExt, step, gender)
                     if(is.null(gender)==TRUE) {
                         d1 <- c(as.numeric(chrDiff[i]), step, 50, 50, 
                                 as.character(sample))
-                        d2 <- c(as.numeric(chrDiff[i]), step+window_size,50, 50, 
+                        d2 <- c(as.numeric(chrDiff[i]), 
+                                step + window_size, 50, 50, 
                                 as.character(sample))
                         df <- data.frame(rbind(df, d1, d2))
                     }
@@ -81,7 +82,8 @@ lohView_fileGlob <- function(path, fileExt, step, gender)
                                 as.character(sample[r]), 
                                 as.character(gender[r]))
                         
-                        d2 <- c(as.character(chrDiff[i]),step+window_size,50, 50, 
+                        d2 <- c(as.character(chrDiff[i]),step + window_size, 
+                                50, 50, 
                                 as.character(sample[r]), 
                                 as.character(gender[r]))
                         df <- data.frame(rbind(df, d1, d2))
