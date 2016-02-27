@@ -4,7 +4,7 @@
 \alias{lohView_fileGlob}
 \title{Grab data for lohView}
 \usage{
-lohView_fileGlob(path, fileExt, step, gender)
+lohView_fileGlob(path, fileExt, step, window_size, gender)
 }
 \arguments{
 \item{path}{character string specifying which directory contains

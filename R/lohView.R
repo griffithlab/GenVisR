@@ -74,7 +74,7 @@
 #' @export
 
 lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
-                    gender=NULL, step=500000, window_size=1250000, 
+                    gender=NULL, step=1000000, window_size=2500000, 
                     normal=50, gradient_midpoint=20, gradient_low="#ffffff",
                     gradient_mid="#b2b2ff", gradient_high="#000000",
                     theme_layer=NULL, method="slide", out="plot")
@@ -89,7 +89,7 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
             stop(memo)
         }
         x <- lohView_fileGlob(path=path, fileExt=fileExt, step=step, 
-                              gender=gender)        
+                              window_size=window_size, gender=gender)        
     }
     if (is.null(path)) {
         if (is.null(gender) == FALSE) {

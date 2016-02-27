@@ -51,6 +51,12 @@ BiocInstaller::biocValid()
 source("https://bioconductor.org/biocLite.R")
 biocLite("GenVisR")
 ```
+
+4) Load genVisR package
+```R
+library(GenVisR)
+```
+
 ####<a name="install-github"></a>Install from GitHub 
 note: Requries R version 3.2.1
 * Full instructions can be found here: https://GitHub.com/griffithlab/GenVisR
@@ -66,7 +72,12 @@ biocLite(c("AnnotationDbi", "biomaRt", "Biostrings", "GenomicFeatures", "Genomic
 ```
 3) Install GenVisR
 ```R
-devtools::install_GitHub("griffithlab/GenVisR")
+devtools::install_github("griffithlab/GenVisR")
+```
+
+4) Load genVisR package
+```R
+library(GenVisR)
 ```
 
 ## <a name="functions"></a>Functions 
@@ -103,6 +114,8 @@ To view the general behavior of `waterfall` we use the `brcaMAF` data structure 
 
 
 ```r
+# Load GenVisR library
+library(GenVisR)
 # Plot the mutation landscape
 waterfall(brcaMAF, fileType="MAF")
 ```
@@ -111,8 +124,7 @@ This type of view is of limited use without expanding the graphic device given t
 
 
 ```r
-# Load GenVisR and set seed
-library(GenVisR)
+# Set seed
 set.seed(383)
 
 # Plot only genes with mutations in 6% or more of samples
