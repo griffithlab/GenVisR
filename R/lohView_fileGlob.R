@@ -10,6 +10,8 @@
 #' @param step integer with the length of divisions (bp) in chromosomes
 #' @param gender vector of length equal to the number of samples, consisting of
 #' elements from the set {"M", "F"}
+#' @param window_size Integer value specifying the size of the window in base
+#' pairs in which to calculate the mean Loss of Heterozygosity.
 #' @return object of class data frame from data specified in path for lohView
 #' @importFrom utils read.delim
 

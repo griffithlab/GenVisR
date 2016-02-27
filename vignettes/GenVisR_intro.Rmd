@@ -2,9 +2,7 @@
 title: "GenVisR: An introduction"
 author: "Zachary Skidmore"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_document
-fig_width: 7.5
-fig_height: 5
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GenVisR: An introduction}
   %\VignetteEngine{knitr::rmarkdown}
@@ -385,15 +383,10 @@ data <- cytoGeno[cytoGeno$genome == 'hg38',]
 ideoView(data, chromosome='chr1', txtSize=4)
 ```
 
-<<<<<<< HEAD
 ### <a name="lohview"></a>lohView (mean absolute LOH difference)
-`lohView` obtains mean absolute LOH differene between tumor VAF and a default normal VAF parameter set at 50 for all calls made within a specified window length. Input data should include column names "chromosome", "position", "n_vaf", "t_vaf", "sample". If the `method` specified is "tile", mean LOH difference will be plotted for adjacent windows across the entire genome for multiple samples. If the`method` specified is "slide", mean LOH difference for overlapping windows will be plotted over a `step` sized window. When `gender` is NULL, LOH calculations will be excluded from both the X and Y chromosome for all samples. When the `gender` of each sample is specified, LOH calculations will include X chromosomes, along with all autosomes for all samples.
-```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
-=======
-### lohView (mean absolute LOH difference)
 `lohView` obtains mean absolute LOH differene between tumor VAF and a default normal VAF parameter set at 50 for all calls made within a specified window length. Input data should include column names "chromosome", "position", "n_vaf", "t_vaf", "sample". If the `method` specified is "tile", mean LOH difference will be plotted for adjacent windows across the entire genome for multiple samples. If the`method` specified is "slide", mean LOH difference for overlapping windows will be plotted over a `step` sized window. When `gender` is NULL, LOH calculations will be excluded from both the X and Y chromosome for all samples. When the `gender` of each sample is specified, LOH calculations will be performed on the X chromosome, along with all autosomes for all samples. If the user does not provide loh information for any chromosome-sample pair, lohView will plot a white rectangle in for that region in the genome. 
-```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis'}
->>>>>>> 684575448def3d3da422a1e4ba7257eb7db13739
+```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+
 # Call lohView with basic input 
 lohView(x=HCC1395_Germline)
 ```
