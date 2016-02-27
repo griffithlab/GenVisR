@@ -12,7 +12,7 @@ waterfall(x, mainRecurCutoff = 0, mainGrid = TRUE, mainXlabel = FALSE,
   clinLegCol = 1, clinVarOrder = NULL, clinVarCol = NULL,
   clinLayer = NULL, sampRecurLayer = NULL, plotGenes = NULL,
   plotSamples = NULL, maxGenes = NULL, rmvSilent = FALSE,
-  fileType = "MAF", variant_class_order = NULL, dataOut = FALSE)
+  fileType = "MAF", variant_class_order = NULL, out = "plot")
 }
 \arguments{
 \item{x}{Object of class data frame representing annotated mutations. The
@@ -111,11 +111,12 @@ frame specified to parameter `x`, one of "MGI", "MAF", "Custom"
 of mutation types to plot, required if file_type == "Custom"
 (see details and vignette).}
 
-\item{dataOut}{Boolean specifying whether to output the data to be passed to
-ggplot instead of plotting.}
+\item{out}{Character vector specifying the the object to output, one of
+"data", "grob", or "plot", defaults to "plot" (see returns).}
 }
 \value{
-A graphic object.
+One of the following, a list of dataframes containing data to be
+plotted, a grob object, or a plot.
 }
 \description{
 Given a data frame construct a water fall plot showing the mutation burden

@@ -27,8 +27,8 @@
 #' @param plotLayer Valid ggplot2 layer to be added to the copy number plot.
 #' @param ideogramLayer Valid ggplot2 layer to be added to the ideogram
 #' sub-plot.
-#' @param dataOut Boolean specifying whether to output the data to be passed to
-#' ggplot instead of plotting.
+#' @param out Character vector specifying the the object to output, one of
+#' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @details cnView is able to plot in two modes specified via the `chr`
 #' parameter, these modes are single chromosome view in which an ideogram is
 #' displayed and genome view where chromosomes are faceted. For the single
@@ -57,14 +57,15 @@
 #' 
 #' # Plot raw copy number calls
 #' cnView(data, chr='chr14', genome='hg19', ideogram_txtSize=4)
-#' @return graphical output
+#' @return One of the following, a list of dataframes containing data to be
+#' plotted, a grob object, or a plot.
 #' @importFrom stats aggregate
 #' @export
 
 cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
                    CNscale="absolute", ideogram_txtAngle=45,
                    ideogram_txtSize=5, plotLayer=NULL, ideogramLayer=NULL, 
-                   dataOut=FALSE)
+                   out="plot")
 {
     # Perform a basic quality check
     input <- cnView_qual(x, y, z, genome, CNscale=CNscale)
@@ -105,12 +106,8 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
     # Plot all chromosomes at once if specified
     if(chr == 'all')
     {
-        # if data is requested give that
-        if(isTRUE(dataOut)){return(list(main=x, dummyData=dummyData, segments=z))}
-        
-        # else plot the graphic
+        # plot the graphic
         p1 <- cnView_buildMain(x, z=z, dummyData, chr=chr)
-        return(p1)
     }
 
     # plot chromosome
@@ -126,16 +123,19 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
         z <- cnView_subsetChr(z, chr)
     }
     
-    if(isTRUE(dataOut))
-    {
-        return(list(main=x, dummyData=dummyData, segments=z))        
-    }
-    
-    # build the cn plot
+    # build the plot
     CN_plot <- cnView_buildMain(x, dummyData, z=z, chr=chr, CNscale=CNscale,
                                 layers=plotLayer)
 
-    p1 <- cnView_align(chromosome_plot, CN_plot)
-
-    return(grid::grid.draw(p1))
+    # Decide what to output
+    dataOut <- list(main=x, dummyData=dummyData, segments=z)
+    if(!exists("p1"))
+    {
+        p1 <- cnView_align(chromosome_plot, CN_plot)
+        output <- multi_selectOut(data=dataOut, plot=p1, draw=TRUE, out=out)
+    } else {
+        output <- multi_selectOut(data=dataOut, plot=p1, draw=FALSE, out=out)
+    }
+    
+    return(output)
 }

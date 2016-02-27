@@ -7,9 +7,9 @@
 TvTi(x, fileType = NULL, y = NULL, clinData = NULL, type = "Proportion",
   lab_Xaxis = TRUE, lab_txtAngle = 45, palette = c("#D53E4F", "#FC8D59",
   "#FEE08B", "#E6F598", "#99D594", "#3288BD"), tvtiLayer = NULL,
-  expecLayer = NULL, sort = "none", dataOut = FALSE, clinLegCol = NULL,
+  expecLayer = NULL, sort = "none", clinLegCol = NULL,
   clinVarCol = NULL, clinVarOrder = NULL, clinLayer = NULL,
-  progress = TRUE)
+  progress = TRUE, out = "plot")
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing transitions and
@@ -58,9 +58,6 @@ variables in the plot. Arguments to this parameter should be "sample",
 "tvti", or "none" to sort the x-axis by sample name, transition transversion
 frequency, or no sort respectively.}
 
-\item{dataOut}{Boolean specifying whether to output the data to be passed to
-ggplot instead of plotting.}
-
 \item{clinLegCol}{Integer specifying the number of columns in the legend for
 the clinical data, only valid if argument is supplied to parameter clinData.}
 
@@ -78,9 +75,13 @@ parameter clinData (see vignette).}
 
 \item{progress}{Boolean specifying if progress bar should be displayed for
 the function.}
+
+\item{out}{Character vector specifying the the object to output, one of
+"data", "grob", or "plot", defaults to "plot" (see returns).}
 }
 \value{
-A graphic object or data frame if dataOut==TRUE.
+One of the following, a list of dataframes containing data to be
+plotted, a grob object, or a plot.
 }
 \description{
 Given a data frame construct a plot displaying the proportion or frequency of

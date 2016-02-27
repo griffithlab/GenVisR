@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 .gitignore
 .DS_Store
+figure

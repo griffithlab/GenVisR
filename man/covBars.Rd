@@ -5,7 +5,8 @@
 \title{Construct an overall coverage cohort plot}
 \usage{
 covBars(x, colour = NULL, plot_title = NULL, x_title_size = 12,
-  y_title_size = 12, facet_lab_size = 10, plotLayer = NULL)
+  y_title_size = 12, facet_lab_size = 10, plotLayer = NULL,
+  out = "plot")
 }
 \arguments{
 \item{x}{Object of class matrix with rows representing coverage achieved
@@ -25,9 +26,13 @@ plot.}
 plotted.}
 
 \item{plotLayer}{Valid ggplot2 layer to be added to the plot.}
+
+\item{out}{Character vector specifying the the object to output, one of
+"data", "grob", or "plot", defaults to "plot" (see returns).}
 }
 \value{
-ggplot object
+One of the following, a list of dataframes containing data to be
+plotted, a grob object, or a plot.
 }
 \description{
 Given a matrix construct a plot to display sequencing depth acheived

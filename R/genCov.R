@@ -49,6 +49,8 @@
 #' name text in the gene plot.
 #' @param gene_isoformSel Character vector specifying the names
 #' (from the txdb object) of isoforms within the region of interest to display.
+#' @param out Character vector specifying the the object to output, one of
+#' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @details genCov is a function designed construct a series of tracks based on 
 #' a TxDb object giving transcript features, and coverage data supplied to
 #' parameter `x`. The function will look at a region of interest specified by
@@ -68,7 +70,8 @@
 #' more region types from being scaled, omit the corresponding entries from the 
 #' `base` and `transform` vectors.
 #' 
-#' @return Graphical object
+#' @return One of the following, a list of dataframes containing data to be
+#' plotted, a grob object, or a plot.
 #' @importFrom GenomicRanges start
 #' @importFrom GenomicRanges end
 #' @importFrom plyr adply
@@ -113,7 +116,7 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
                    base=c(10, 2, 2),
                    transform=c("Intron", "CDS", "UTR"),
                    gene_labelTranscript=TRUE,
-                   gene_labelTranscriptSize=4, gene_isoformSel=NULL)
+                   gene_labelTranscriptSize=4, gene_isoformSel=NULL, out="plot")
 {
     # Perform data quality checks
     data <- genCov_qual(x=x, txdb=txdb, gr=gr, genome=genome)
@@ -213,6 +216,8 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
                                            axis_align='width',
                                            widthRatio=lab2plot_ratio,
                                            list=TRUE)
-
-    return(grid::grid.draw(track_coverage_plot))
+    # Decide what to output
+    output <- multi_selectOut(data=merged_data, plot=track_coverage_plot,
+                              draw=TRUE, out=out)
+    return(output)
 }

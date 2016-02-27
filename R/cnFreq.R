@@ -25,6 +25,8 @@
 #' @param facet_lab_size Integer specifying the size of the faceted labels
 #'  plotted.
 #' @param plotLayer Valid ggplot2 layer to be added to the plot.
+#' @param out Character vector specifying the the object to output, one of
+#' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @details cnFreq will detect the column names present in the data frame
 #' supplied to x, and will perform one of the following actions. If "gain" and
 #' "loss" columns are detected the raw data will be plotted, if "segmean" and 
@@ -32,7 +34,8 @@
 #' present in the cohort will be calculated and plotted. The `plotLayer`
 #' parameter can be used to add an additional layer to the ggplot2 graphic
 #' (see vignette).
-#' @return ggplot object
+#' @return One of the following, a dataframe containing data to be
+#' plotted, a grob object, or a plot.
 #' @importFrom gtools mixedsort
 #' @examples
 #' # Create data
@@ -49,7 +52,7 @@
 cnFreq <- function(x, CN_low_cutoff=1.5, CN_high_cutoff=2.5, plot_title=NULL,
                    CN_Loss_colour='#002EB8', CN_Gain_colour='#A30000',
                    x_title_size=12, y_title_size=12, facet_lab_size=10,
-                   plotLayer=NULL)
+                   plotLayer=NULL, out="plot")
 {
     # Perform quality check on input data
     data <- cnFreq_qual(x)
@@ -89,8 +92,8 @@ cnFreq <- function(x, CN_low_cutoff=1.5, CN_high_cutoff=2.5, plot_title=NULL,
     chr_order <- as.vector(unique(x$chromosome))
     chr_order <- gtools::mixedsort(chr_order)
     x$chromosome <- factor(x$chromosome, levels=chr_order)
-
-    # Construct the plot
+    
+    # build the plot
     p1 <- cnFreq_buildMain(x, plotType, plot_title=plot_title,
                            CN_low_colour=CN_Loss_colour,
                            CN_high_colour=CN_Gain_colour,
@@ -98,6 +101,8 @@ cnFreq <- function(x, CN_low_cutoff=1.5, CN_high_cutoff=2.5, plot_title=NULL,
                            y_lab_size=y_title_size,
                            facet_lab_size=facet_lab_size,
                            plotLayer=plotLayer)
-
-    return(p1)
+    
+    # Decide what to output
+    output <- multi_selectOut(data=list("data"=x), plot=p1, out=out)
+    return(output)
 }

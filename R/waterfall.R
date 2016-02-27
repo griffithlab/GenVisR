@@ -72,8 +72,8 @@
 #' @param variant_class_order Character vector specifying the hierarchical order
 #' of mutation types to plot, required if file_type == "Custom"
 #' (see details and vignette).
-#' @param dataOut Boolean specifying whether to output the data to be passed to
-#' ggplot instead of plotting.
+#' @param out Character vector specifying the the object to output, one of
+#' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @details waterfall is a function designed to visualize the mutations seen in
 #' a cohort. The function takes a data frame with appropriate column names (see
 #' fileType parameter) and plots the mutations within. In cases where multiple
@@ -101,7 +101,8 @@
 #' @examples
 #' # Plot the data
 #' waterfall(brcaMAF, plotGenes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
-#' @return A graphic object.
+#' @return One of the following, a list of dataframes containing data to be
+#' plotted, a grob object, or a plot.
 #' @importFrom utils tail
 #' @export
 
@@ -114,7 +115,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       clinVarCol=NULL, clinLayer=NULL, sampRecurLayer=NULL, 
                       plotGenes=NULL, plotSamples=NULL, maxGenes=NULL, 
                       rmvSilent=FALSE, fileType='MAF',
-                      variant_class_order=NULL, dataOut=FALSE)
+                      variant_class_order=NULL, out="plot")
 {
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
@@ -208,7 +209,6 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                            panel.grid=ggplot2::element_blank())
     }
 
-
     # Plot the Left Bar Chart
     p2 <- waterfall_buildGenePrevelance(data_frame, layers=sampRecurLayer)
 
@@ -252,9 +252,6 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
             clinData <- clinData[-which(is.na(clinData$sample)),]
         }
 
-        # if dataOut is specified skip to that code block
-        if(isTRUE(dataOut)){next}
-
         # plot the clinical data
         p4 <- multi_buildClin(clinData, clin.legend.col=clinLegCol,
                               clin.var.colour=clinVarCol,
@@ -266,15 +263,14 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
         return(grid::grid.draw(pA))
     }
 
-    if(isTRUE(dataOut))
+    # Decide what to output
+    if(!exists("pA"))
     {
-        return(list("main"=data_frame,
-                    "mutation_count"=data_frame2,
-                    "clinical"=clinData))
+        pA <- waterfall_align(p2, p1, p3)
     }
-
-    # Align the Plots and return as 1 plot
-    pA <- waterfall_align(p2, p1, p3)
-
-    return(grid::grid.draw(pA))
+    dataOut <- list("main"=data_frame,
+                    "mutation_count"=data_frame2,
+                    "clinical"=clinData)
+    output <- multi_selectOut(data=dataOut, plot=pA, draw=TRUE, out=out)
+    return(output)
 }

@@ -7,7 +7,7 @@
 cnSpec(x, y = NULL, genome = "hg19", plot_title = NULL,
   CN_Loss_colour = "#002EB8", CN_Gain_colour = "#A30000",
   x_title_size = 12, y_title_size = 12, facet_lab_size = 10,
-  plotLayer = NULL, dataOut = FALSE, CNscale = "absolute")
+  plotLayer = NULL, out = "plot", CNscale = "absolute")
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing copy-number
@@ -37,15 +37,16 @@ plotted.}
 
 \item{plotLayer}{Valid ggplot2 layer to be added to the plot.}
 
-\item{dataOut}{Boolean specifying whether to output the data to be passed to
-ggplot instead of plotting.}
+\item{out}{Character vector specifying the the object to output, one of
+"data", "grob", or "plot", defaults to "plot" (see returns).}
 
 \item{CNscale}{Character string specifying if copy number calls supplied are
 relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
 "relative" or "absolute"}
 }
 \value{
-ggplot object
+One of the following, a list of dataframes containing data to be
+plotted, a grob object, or a plot.
 }
 \description{
 Given a data frame construct a plot to display copy-number calls for a cohort

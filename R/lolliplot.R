@@ -77,9 +77,9 @@
 #' valid only if sideChain==FALSE.
 #' @param paletteB Character vector specifying colours for lollis representing
 #' mutations, valid only if argument is supplied to fillCol.
-#' @param dataOut Boolean specifying whether to output the data to be passed to
-#' ggplot instead of plotting.
 #' @param host Host to connect to for biomaRt queries (see details).
+#' @param out Character vector specifying the the object to output, one of
+#' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @details lolliplot is a function designed to display mutation information in
 #' the context of a protien identified by an ensembl transcript id. The
 #' lolliplot function will query ensembl via biomart to retrieve sequence and
@@ -122,7 +122,8 @@
 #'
 #' # Call lolliplot
 #' lolliplot(data)
-#' @return object of class ggplot2
+#' @return One of the following, a list of dataframes containing data to be
+#' plotted, a grob object, or a plot.
 #' @export
 
 lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
@@ -134,7 +135,7 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                       obsB.adj.lmt=.5, obsB.iter.max=50000,
                       sideChain=FALSE, species="hsapiens",
                       maxLolliStack=NULL, plotLayer=NULL, paletteA=NULL,
-                      paletteB=NULL, dataOut=FALSE, host="www.ensembl.org")
+                      paletteB=NULL, host="www.ensembl.org", out="plot")
 {
     # Perform quality check
     input <- lolliplot_qual(x, y, z)
@@ -225,13 +226,6 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
         observed_mutation2 <- NULL
     }
     
-    if(isTRUE(dataOut))
-    {
-        return(list("gene"=geneData,
-                    "observed_mutation"=observed_mutation,
-                    "observed_mutation2"=observed_mutation2))
-    }
-    
     # construct the lolliplot
     plot <- lolliplot_buildMain(geneData, length, observed_mutation,
                                 observed_mutation2,fillCol, labelCol,
@@ -240,5 +234,10 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                                 plot_sidechain=sideChain, layers=plotLayer,
                                 paletteA=paletteA, paletteB=paletteB)
 
-    return(plot)
+    # Decide what to output
+    dataOut <- list("gene"=geneData,
+                    "observed_mutation"=observed_mutation,
+                    "observed_mutation2"=observed_mutation2)
+    output <- multi_selectOut(data=dataOut, plot=plot, out=out)
+    return(output)
 }

@@ -40,7 +40,10 @@
 #' @param theme_layer Valid ggpot2 layer to be added to the plot.
 #' @param method character string specifying the approach to be used for 
 #' displaying Loss of Heterozygosity, one of "tile" or "slide" (see details).
-#' @return ggplot object
+#' @param out Character vector specifying the the object to output, one of
+#' "data", "grob", or "plot", defaults to "plot" (see returns).
+#' @return One of the following, a list of dataframes containing data to be
+#' plotted, a grob object, or a plot.
 #' @details lohView is intended to plot the loss of heterozygosity (LOH) within
 #' a sample. As such lohView expects input data to contain only LOH calls. Input
 #' can be supplied as a single data frame given to the argument x with rows
@@ -74,7 +77,7 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                     gender=NULL, step=500000, window_size=1250000, 
                     normal=50, gradient_midpoint=20, gradient_low="#ffffff",
                     gradient_mid="#b2b2ff", gradient_high="#000000",
-                    theme_layer=NULL, method="slide")
+                    theme_layer=NULL, method="slide", out="plot")
 {
     # Grab data if necessary
     if(!is.null(path))
@@ -178,6 +181,7 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                                   gradient_high=gradient_high,
                                   theme_layer=theme_layer)
     
-    #return the final plot
-    return(loh_plot)
+    # Decide what to output
+    output <- multi_selectOut(data=loh, plot=loh_plot, draw=FALSE, out=out)
+    return(output)
 }

@@ -4,7 +4,7 @@
 \alias{compIdent}
 \title{Construct identity snp comparison plot}
 \usage{
-compIdent(x, genome, target = NULL, debug = FALSE)
+compIdent(x, genome, target = NULL, debug = FALSE, out = "plot")
 }
 \arguments{
 \item{x}{data frame with rows representing samples and column names 
@@ -20,9 +20,13 @@ name of location.}
 
 \item{debug}{Boolean specifying if test datasets should be used for
 debugging.}
+
+\item{out}{Character vector specifying the the object to output, one of
+"data", "grob", or "plot", defaults to "plot" (see returns).}
 }
 \value{
-graphical object
+One of the following, a list of dataframes containing data to be
+plotted, a grob object, or a plot.
 }
 \description{
 Given the bam file path, count the number of reads at the 24 SNP locations

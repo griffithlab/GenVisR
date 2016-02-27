@@ -12,6 +12,8 @@
 #' @param txtSize Integer specifying the size of text labeling cytogenetic
 #' bands.
 #' @param plotLayer additional ggplot2 layers for the ideogram
+#' @param out Character vector specifying the the object to output, one of
+#' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @details ideoView is a function designed to plot cytogenetic band
 #' inforamtion. Modifications to the graphic object can be made via the
 #' `plotLayer` parameter, see vignette for details.
@@ -22,11 +24,12 @@
 #'
 #' # Call ideoView for chromosome 1
 #' ideoView(data, chromosome='chr1', txtSize=4)
-#' @return ggplot object
+#' @return One of the following, a list of dataframes containing data to be
+#' plotted, a grob object, or a plot.
 #' @export
 
 ideoView <- function(x, chromosome='chr1', txtAngle=45, txtSize=5,
-                     plotLayer=NULL)
+                     plotLayer=NULL, out="plot")
 { 
     # Perform quality check
     cytobands <- ideoView_qual(x)
@@ -38,6 +41,8 @@ ideoView <- function(x, chromosome='chr1', txtAngle=45, txtSize=5,
     chr_plot <- ideoView_buildMain(cytobands, chromosome=chromosome,
                                    chr_txt_angle=txtAngle,
                                    chr_txt_size=txtSize, layers=plotLayer)
-
-    return(chr_plot)
+    
+    # Decide what to output
+    output <-multi_selectOut(data=cytobands, plot=chr_plot, draw=FALSE)
+    return(output)
 }

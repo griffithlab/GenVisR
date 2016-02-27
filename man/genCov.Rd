@@ -10,7 +10,7 @@ genCov(x, txdb, gr, genome, reduce = FALSE, gene_colour = NULL,
   lab2plot_ratio = c(1, 10), cov_colour = "blue", cov_plotType = "point",
   cov_plotLayer = NULL, base = c(10, 2, 2), transform = c("Intron", "CDS",
   "UTR"), gene_labelTranscript = TRUE, gene_labelTranscriptSize = 4,
-  gene_isoformSel = NULL)
+  gene_isoformSel = NULL, out = "plot")
 }
 \arguments{
 \item{x}{Named list with list elements containing data frames
@@ -79,9 +79,13 @@ name text in the gene plot.}
 
 \item{gene_isoformSel}{Character vector specifying the names
 (from the txdb object) of isoforms within the region of interest to display.}
+
+\item{out}{Character vector specifying the the object to output, one of
+"data", "grob", or "plot", defaults to "plot" (see returns).}
 }
 \value{
-Graphical object
+One of the following, a list of dataframes containing data to be
+plotted, a grob object, or a plot.
 }
 \description{
 Given a list of data frames construct a sequencing coverage view over a
