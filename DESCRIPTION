@@ -1,6 +1,6 @@
 Package: GenVisR
 Title: Genomic Visualizations in R
-Version: 0.99.15
+Version: 0.99.17
 Authors@R: c(person(given="Zachary", family="Skidmore", email="zskidmor@genome.wustl.edu",
           role=c("aut", "cre")), person(given="Alex", family="Wagner", role="aut"),
           person(given="Robert", family="Lesurf", role="aut"), person(given="Katie",
