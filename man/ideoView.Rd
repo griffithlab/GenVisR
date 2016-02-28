@@ -5,7 +5,7 @@
 \title{Construct an ideogram}
 \usage{
 ideoView(x, chromosome = "chr1", txtAngle = 45, txtSize = 5,
-  plotLayer = NULL)
+  plotLayer = NULL, out = "plot")
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing cytogenetic bands.
@@ -22,9 +22,13 @@ bands.}
 bands.}
 
 \item{plotLayer}{additional ggplot2 layers for the ideogram}
+
+\item{out}{Character vector specifying the the object to output, one of
+"data", "grob", or "plot", defaults to "plot" (see returns).}
 }
 \value{
-ggplot object
+One of the following, a list of dataframes containing data to be
+plotted, a grob object, or a plot.
 }
 \description{
 Given a data frame with cytogenetic information, construct an ideogram.

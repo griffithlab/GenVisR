@@ -7,7 +7,7 @@
 cnFreq(x, CN_low_cutoff = 1.5, CN_high_cutoff = 2.5, plot_title = NULL,
   CN_Loss_colour = "#002EB8", CN_Gain_colour = "#A30000",
   x_title_size = 12, y_title_size = 12, facet_lab_size = 10,
-  plotLayer = NULL)
+  plotLayer = NULL, out = "plot")
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing the proportion of
@@ -41,9 +41,13 @@ number gains.}
 plotted.}
 
 \item{plotLayer}{Valid ggplot2 layer to be added to the plot.}
+
+\item{out}{Character vector specifying the the object to output, one of
+"data", "grob", or "plot", defaults to "plot" (see returns).}
 }
 \value{
-ggplot object
+One of the following, a dataframe containing data to be
+plotted, a grob object, or a plot.
 }
 \description{
 Given a data frame construct a plot to display copy number changes across the

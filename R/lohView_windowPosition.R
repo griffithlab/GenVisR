@@ -38,7 +38,7 @@ lohView_windowPosition <- function(out, step, window_size)
         # Get window positions whose values are below max & set max as the 
         # final window position (end of the chromosome)
         colnames(window_data) <- c("window_start", "window_stop")
-        window_final <- window_data[window_data$window_stop < max,]
+        window_final <- window_data[window_data$window_stop <= max,]
         window_final[nrow(window_final), 2] <- max
         return(window_final)
     })

@@ -38,8 +38,8 @@
 #' variables in the plot. Arguments to this parameter should be "sample",
 #' "tvti", or "none" to sort the x-axis by sample name, transition transversion
 #' frequency, or no sort respectively.
-#' @param dataOut Boolean specifying whether to output the data to be passed to
-#' ggplot instead of plotting.
+#' @param out Character vector specifying the the object to output, one of
+#' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @param clinLegCol Integer specifying the number of columns in the legend for
 #' the clinical data, only valid if argument is supplied to parameter clinData.
 #' @param clinVarCol Named character vector specifying the mapping of colours
@@ -59,7 +59,8 @@
 #' TvTi(brcaMAF, type='Frequency',
 #' palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"),
 #' lab_txtAngle=60, fileType="MAF")
-#' @return A graphic object or data frame if dataOut==TRUE.
+#' @return One of the following, a list of dataframes containing data to be
+#' plotted, a grob object, or a plot.
 #' @importFrom plyr adply
 #' @importFrom gtools mixedsort
 #' @export
@@ -69,15 +70,14 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
                  palette=c('#D53E4F', '#FC8D59', '#FEE08B', '#E6F598',
                            '#99D594', '#3288BD'),
                  tvtiLayer=NULL, expecLayer=NULL,
-                 sort='none', dataOut=FALSE, clinLegCol=NULL,
-                 clinVarCol=NULL, clinVarOrder=NULL, clinLayer=NULL,
-                 progress=TRUE)
+                 sort='none', clinLegCol=NULL, clinVarCol=NULL,
+                 clinVarOrder=NULL, clinLayer=NULL, progress=TRUE, out="plot")
 { 
     # Perform quality checks
-    out <- TvTi_qual(x, y, clinData, file_type=fileType)
-    x <- out$input1
-    y <- out$input2
-    clinData <- out$input3
+    output <- TvTi_qual(x, y, clinData, file_type=fileType)
+    x <- output$input1
+    y <- output$input2
+    clinData <- output$input3
 
     # add transition/transversion info
     if(isTRUE(progress))
@@ -159,12 +159,8 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
         p2 <- NULL
     }
     
-    # if requested output the data instead of ploting
-    if(isTRUE(dataOut))
-    {
-        return(list("main"=x, "expect"=y))
-    }
-
+    # Decide what to output
     finalPlot <- TvTi_alignPlot(p1=p1, p2=p2, p3=p3)
-    return(grid::grid.draw(finalPlot))
+    dataOut <- list("main"=x, "expect"=y)
+    output <- multi_selectOut(data=dataOut, plot=finalPlot, draw=TRUE, out=out)
 }

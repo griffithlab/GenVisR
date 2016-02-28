@@ -6,7 +6,7 @@
 \usage{
 cnView(x, y = NULL, z = NULL, genome = "hg19", chr = "chr1",
   CNscale = "absolute", ideogram_txtAngle = 45, ideogram_txtSize = 5,
-  plotLayer = NULL, ideogramLayer = NULL, dataOut = FALSE)
+  plotLayer = NULL, ideogramLayer = NULL, out = "plot")
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing copy number calls
@@ -43,11 +43,12 @@ the ideogram subplot.}
 \item{ideogramLayer}{Valid ggplot2 layer to be added to the ideogram
 sub-plot.}
 
-\item{dataOut}{Boolean specifying whether to output the data to be passed to
-ggplot instead of plotting.}
+\item{out}{Character vector specifying the the object to output, one of
+"data", "grob", or "plot", defaults to "plot" (see returns).}
 }
 \value{
-graphical output
+One of the following, a list of dataframes containing data to be
+plotted, a grob object, or a plot.
 }
 \description{
 Given a data frame construct a plot to display raw copy number calls for a

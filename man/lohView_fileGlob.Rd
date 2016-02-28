@@ -4,7 +4,7 @@
 \alias{lohView_fileGlob}
 \title{Grab data for lohView}
 \usage{
-lohView_fileGlob(path, fileExt, step, gender)
+lohView_fileGlob(path, fileExt, step, window_size, gender)
 }
 \arguments{
 \item{path}{character string specifying which directory contains
@@ -14,6 +14,9 @@ the sample information stored as datasets with columns "chromosome",
 \item{fileExt}{character string specifying the file extensions of files}
 
 \item{step}{integer with the length of divisions (bp) in chromosomes}
+
+\item{window_size}{Integer value specifying the size of the window in base
+pairs in which to calculate the mean Loss of Heterozygosity.}
 
 \item{gender}{vector of length equal to the number of samples, consisting of
 elements from the set {"M", "F"}}

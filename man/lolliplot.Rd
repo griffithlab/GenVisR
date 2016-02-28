@@ -11,8 +11,8 @@ lolliplot(x, y = NULL, z = NULL, fillCol = NULL, labelCol = NULL,
   obsB.rep.fact = 5000, obsB.rep.dist.lmt = 500, obsB.attr.fact = 0.1,
   obsB.adj.max = 0.1, obsB.adj.lmt = 0.5, obsB.iter.max = 50000,
   sideChain = FALSE, species = "hsapiens", maxLolliStack = NULL,
-  plotLayer = NULL, paletteA = NULL, paletteB = NULL, dataOut = FALSE,
-  host = "www.ensembl.org")
+  plotLayer = NULL, paletteA = NULL, paletteB = NULL,
+  host = "www.ensembl.org", out = "plot")
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing mutations. The
@@ -116,13 +116,14 @@ valid only if sideChain==FALSE.}
 \item{paletteB}{Character vector specifying colours for lollis representing
 mutations, valid only if argument is supplied to fillCol.}
 
-\item{dataOut}{Boolean specifying whether to output the data to be passed to
-ggplot instead of plotting.}
-
 \item{host}{Host to connect to for biomaRt queries (see details).}
+
+\item{out}{Character vector specifying the the object to output, one of
+"data", "grob", or "plot", defaults to "plot" (see returns).}
 }
 \value{
-object of class ggplot2
+One of the following, a list of dataframes containing data to be
+plotted, a grob object, or a plot.
 }
 \description{
 Given a data frame construct a plot displaying mutations on a transcript

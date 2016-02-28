@@ -20,8 +20,8 @@
 #' @param facet_lab_size Integer specifying the size of the faceted labels
 #' plotted.
 #' @param plotLayer Valid ggplot2 layer to be added to the plot.
-#' @param dataOut Boolean specifying whether to output the data to be passed to
-#' ggplot instead of plotting.
+#' @param out Character vector specifying the the object to output, one of
+#' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @param CNscale Character string specifying if copy number calls supplied are
 #' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
 #' "relative" or "absolute"
@@ -39,7 +39,8 @@
 #' 
 #' The `plotLayer` parameter can be used to add an additional layer to the
 #' ggplot2 graphic (see vignette).
-#' @return ggplot object
+#' @return One of the following, a list of dataframes containing data to be
+#' plotted, a grob object, or a plot.
 #' @importFrom reshape2 dcast
 #' @importFrom reshape2 melt
 #' @examples
@@ -49,7 +50,7 @@
 cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
                    CN_Loss_colour='#002EB8', CN_Gain_colour='#A30000',
                    x_title_size=12, y_title_size=12, facet_lab_size=10,
-                   plotLayer=NULL, dataOut=FALSE, CNscale="absolute")
+                   plotLayer=NULL, out="plot", CNscale="absolute")
 {
     # Perform quality check on input data
     data <- cnSpec_qual(x, y, genome, CNscale=CNscale)
@@ -124,13 +125,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
     }
     CN_data$sample <- factor(CN_data$sample, levels=sample_sorted)
     
-    # if requested output data instead of plotting
-    if(isTRUE(dataOut))
-    {
-        return(list(cnData=CN_data))
-    }
-    
-    # Construct the plot
+    # build the plot
     p1 <- cnSpec_buildMain(CN_data, plot_title=plot_title,
                            CN_low_colour=CN_Loss_colour,
                            CN_high_colour=CN_Gain_colour,
@@ -139,5 +134,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
                            facet_lab_size=facet_lab_size,
                            layers=plotLayer, CNscale=CNscale)
 
-    return(p1)
+    # Decide what to output
+    output <- multi_selectOut(data=list(cnData=CN_data), plot=p1, out=out)
+    return(output)
 }

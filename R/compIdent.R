@@ -10,6 +10,8 @@
 #' 1-base format and containing columns names "chr", "start", "end", "var",
 #' "name". Columns should correspond to chromosome, start, end, variant allele, 
 #' name of location.
+#' @param out Character vector specifying the the object to output, one of
+#' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @param debug Boolean specifying if test datasets should be used for
 #' debugging.
 #' @details
@@ -26,7 +28,8 @@
 #' For display and debugging purposes a debug parameter is available which will
 #' use predefined data instead of reading in bam files. Note that data in the
 #' debug parameter is only available at the afore mentioned 24 sites.
-#' @return graphical object
+#' @return One of the following, a list of dataframes containing data to be
+#' plotted, a grob object, or a plot.
 #' @examples
 #' # Read in BSgenome object (hg19)
 #' library(BSgenome.Hsapiens.UCSC.hg19)
@@ -36,7 +39,7 @@
 #' compIdent(genome=hg19, debug=TRUE)
 #' @export
 
-compIdent <- function(x, genome, target=NULL, debug=FALSE)
+compIdent <- function(x, genome, target=NULL, debug=FALSE, out="plot")
 {
     # Warn if target is null
     if(is.null(target))
@@ -71,9 +74,11 @@ compIdent <- function(x, genome, target=NULL, debug=FALSE)
     
     # Format the readcount tables into a form acceptable by compIdent_buildMain
     count_tables <- compIdent_format(count_tables)
-
+    
     # make an sample identity plot
     plot <- compIdent_buildMain(count_tables)
-
-    return(grid::grid.draw(plot))
+    
+    # Decide what to plot
+    output <- multi_selectOut(data=count_tables, plot=plot, draw=TRUE, out=out)
+    return(output)
 }

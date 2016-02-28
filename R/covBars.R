@@ -14,7 +14,10 @@
 #' @param facet_lab_size Integer specifying the size of the faceted labels
 #'  plotted.
 #' @param plotLayer Valid ggplot2 layer to be added to the plot.
-#' @return ggplot object
+#' @param out Character vector specifying the the object to output, one of
+#' "data", "grob", or "plot", defaults to "plot" (see returns).
+#' @return One of the following, a list of dataframes containing data to be
+#' plotted, a grob object, or a plot.
 #' @importFrom reshape2 melt
 #' @examples
 #' # Create data
@@ -25,7 +28,8 @@
 #' @export
 
 covBars <- function(x, colour=NULL, plot_title=NULL, x_title_size=12,
-                    y_title_size=12, facet_lab_size=10, plotLayer=NULL)
+                    y_title_size=12, facet_lab_size=10, plotLayer=NULL,
+                    out="plot")
 {
   # Perform quality check on input data
     dat <- covBars_qual(x, colour)
@@ -61,6 +65,8 @@ covBars <- function(x, colour=NULL, plot_title=NULL, x_title_size=12,
     p1 <- covBars_buildMain(xmelt, col=colour, plot_title=plot_title,
                             x_lab_size=x_title_size, y_lab_size=y_title_size,
                             facet_lab_size=facet_lab_size, layers=plotLayer)
-
-    return(p1)
+    
+    # Decide what to output
+    output <- multi_selectOut(data=xmelt, plot=p1, out=out)
+    return(output)
 }

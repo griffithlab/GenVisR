@@ -5,10 +5,10 @@
 \title{Plot LOH data}
 \usage{
 lohView(x = NULL, path = NULL, fileExt = NULL, y = NULL,
-  genome = "hg19", gender = NULL, step = 5e+05, window_size = 1250000,
+  genome = "hg19", gender = NULL, step = 1e+06, window_size = 2500000,
   normal = 50, gradient_midpoint = 20, gradient_low = "#ffffff",
   gradient_mid = "#b2b2ff", gradient_high = "#000000", theme_layer = NULL,
-  method = "slide")
+  method = "slide", out = "plot")
 }
 \arguments{
 \item{x}{object of class data frame with rows representing germline calls.
@@ -63,9 +63,13 @@ legends high value.}
 
 \item{method}{character string specifying the approach to be used for 
 displaying Loss of Heterozygosity, one of "tile" or "slide" (see details).}
+
+\item{out}{Character vector specifying the the object to output, one of
+"data", "grob", or "plot", defaults to "plot" (see returns).}
 }
 \value{
-ggplot object
+One of the following, a list of dataframes containing data to be
+plotted, a grob object, or a plot.
 }
 \description{
 Construct a graphic visualizing Loss of Heterozygosity in a cohort
