@@ -52,12 +52,12 @@ cnSpec_buildMain <- function(data_frame, plot_title=NULL,
                                               limits=c(0, 4),
                                               oob=scales::squish)
     } else if(CNscale == "relative") {
-        fill_graident <- scale_fill_gradientn("Copy Number",
+        fill_gradient <- scale_fill_gradientn("Copy Number",
                                               colours=c(CN_low_colour,
                                                         "white",
                                                         CN_high_colour),
                                               values=scales::rescale(c(-2, 0, 4)),
-                                              limits=c(0, 4),
+                                              limits=c(-2, 4),
                                               oob=scales::squish)
     }
 
