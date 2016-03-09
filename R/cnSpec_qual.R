@@ -88,7 +88,7 @@ cnSpec_qual <- function(x, y, genome, CNscale)
             warning(memo)
         }
     } else if(CNscale == "relative") {
-        next
+        # Do nothing
     } else {
         memo <- paste0("Did not recognize input to parameter CNscale",
                        " please specify one of \"relative\" or \"absolute\"!")
