@@ -2,18 +2,21 @@
 % Please edit documentation in R/waterfall_geneSort.R
 \name{waterfall_geneSort}
 \alias{waterfall_geneSort}
-\title{sort MAF File by gene}
+\title{sort waterfall file by gene}
 \usage{
-waterfall_geneSort(x)
+waterfall_geneSort(x, geneOrder = NULL)
 }
 \arguments{
-\item{x}{a data frame in annotation format}
+\item{x}{Data frame with columns names "gene", "trv_type".}
+
+\item{geneOrder}{Character vector specifying the order in which to plot
+genes.}
 }
 \value{
-a data frame sorted such that genes with more mutations are ordered
-first
+Character vector of ordered genes
 }
 \description{
-order a MAF file ranking genes with more mutations higher
+order a waterfall file ranking genes with more mutations higher if a gene
+order is unspecified.
 }
 

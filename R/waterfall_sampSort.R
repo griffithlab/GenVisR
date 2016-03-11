@@ -1,15 +1,34 @@
-#' sort samples in a MAF file
+#' sort samples in an internal waterfall file.
 #'
 #' perform a hiearchial sort on samples based on the presence of mutations in
-#' an ordered list of genes
+#' an ordered list of genes if a sample order is unspecified.
 #' @name waterfall_sampSort
 #' @param x a data frame in long format with column names "sample",
 #' "gene", "trv_type"
+#' @param sampOrder Character vector specifying the order of samples to plot.
 #' @return a vector of samples in a sorted order
 #' @importFrom reshape2 dcast
 
-waterfall_sampSort <- function(x)
+waterfall_sampSort <- function(x, sampOrder=NULL)
 {
+    # if a sample order is already defined plot that instead
+    if(!is.null(sampOrder))
+    {
+        sampOrder <- as.character(unique(sampOrder))
+        # determine if there are any new samples and give warning if true
+        new_samples <- x$sample[!x$sample %in% sampOrder]
+        if(length(new_samples) != 0)
+        {
+            memo <- paste0("The following samples were not detected in the ",
+                           "original data: ", toString(new_samples), " adding",
+                           " these to the plot!")
+            warning(memo)
+        }
+        
+        # return what was given originally
+        return(sampOrder)
+    }
+    
     # recast the data going from long format to wide format, values in this data
     # are counts of a mutation call
     wide_data <- reshape2::dcast(x, sample ~ gene, fun.aggregate = length,

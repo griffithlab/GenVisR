@@ -1,3 +1,8 @@
+CHANGES IN VERSION 0.99.19
+--------------------------
+- Added option for custom sort of gene/sample in waterfall plot
+- Added waterfall specific vignette
+
 CHANGES IN VERSION 0.99.18
 --------------------------
 - Minor bug fixes in cnSpec

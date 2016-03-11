@@ -1,6 +1,6 @@
 Package: GenVisR
 Title: Genomic Visualizations in R
-Version: 0.99.18
+Version: 0.99.19
 Authors@R: c(person(given="Zachary", family="Skidmore", email="zskidmor@genome.wustl.edu",
           role=c("aut", "cre")), person(given="Alex", family="Wagner", role="aut"),
           person(given="Robert", family="Lesurf", role="aut"), person(given="Katie",
@@ -19,8 +19,8 @@ License: GPL-3 + file LICENSE
 BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification, DNASeq
 LazyData: true
-Suggests: knitr, testthat, BSgenome.Hsapiens.UCSC.hg19, TxDb.Hsapiens.UCSC.hg19.knownGene,
-          roxygen2, RMySQL
+Suggests: BiocStyle, BSgenome.Hsapiens.UCSC.hg19, knitr, RMySQL, roxygen2,
+            testthat, TxDb.Hsapiens.UCSC.hg19.knownGene
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
 NeedsCompilation: no

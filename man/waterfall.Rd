@@ -11,8 +11,9 @@ waterfall(x, mainRecurCutoff = 0, mainGrid = TRUE, mainXlabel = FALSE,
   coverageSpace = 44100000, mutBurdenLayer = NULL, clinData = NULL,
   clinLegCol = 1, clinVarOrder = NULL, clinVarCol = NULL,
   clinLayer = NULL, sampRecurLayer = NULL, plotGenes = NULL,
-  plotSamples = NULL, maxGenes = NULL, rmvSilent = FALSE,
-  fileType = "MAF", variant_class_order = NULL, out = "plot")
+  geneOrder = NULL, plotSamples = NULL, sampOrder = NULL,
+  maxGenes = NULL, rmvSilent = FALSE, fileType = "MAF",
+  variant_class_order = NULL, out = "plot")
 }
 \arguments{
 \item{x}{Object of class data frame representing annotated mutations. The
@@ -94,8 +95,14 @@ to variables in the variable column of the data frame supplied to clinData
 \item{plotGenes}{Character vector specifying genes to plot. If not null genes
 not specified within this character vector are removed.}
 
+\item{geneOrder}{Character vector specifying the order in which to plot
+genes.}
+
 \item{plotSamples}{Character vector specifying samples to plot. If not null
 all other samples not specified within this parameter are removed.}
+
+\item{sampOrder}{Character vector specifying the order of the samples to
+plot.}
 
 \item{maxGenes}{Integer specifying the maximum number of genes to be plotted.
 Genes kept will be choosen based on the reccurence of mutations in samples.}
