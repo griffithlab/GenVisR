@@ -60,8 +60,12 @@
 #' @param sampRecurLayer Valid ggplot2 layer to be added to the left sub-plot.
 #' @param plotGenes Character vector specifying genes to plot. If not null genes
 #' not specified within this character vector are removed.
+#' @param geneOrder Character vector specifying the order in which to plot
+#' genes.
 #' @param plotSamples Character vector specifying samples to plot. If not null
 #' all other samples not specified within this parameter are removed.
+#' @param sampOrder Character vector specifying the order of the samples to
+#' plot.
 #' @param maxGenes Integer specifying the maximum number of genes to be plotted.
 #' Genes kept will be choosen based on the reccurence of mutations in samples.
 #' @param rmvSilent Boolean specifying if silent mutations should be removed
@@ -113,9 +117,9 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       coverageSpace=44100000, mutBurdenLayer=NULL,
                       clinData=NULL, clinLegCol=1, clinVarOrder=NULL,
                       clinVarCol=NULL, clinLayer=NULL, sampRecurLayer=NULL, 
-                      plotGenes=NULL, plotSamples=NULL, maxGenes=NULL, 
-                      rmvSilent=FALSE, fileType='MAF',
-                      variant_class_order=NULL, out="plot")
+                      plotGenes=NULL, geneOrder=NULL, plotSamples=NULL,
+                      sampOrder=NULL, maxGenes=NULL, rmvSilent=FALSE,
+                      fileType='MAF', variant_class_order=NULL, out="plot")
 {
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
@@ -164,7 +168,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
 
     # Use the max genes parameter to limit the number of genes plotted
     # and then reorder genes based on the frequency of mutations
-    gene_sorted <- waterfall_geneSort(data_frame)
+    gene_sorted <- waterfall_geneSort(data_frame, geneOrder)
     data_frame$gene <- factor(data_frame$gene, levels=gene_sorted)
     if(!is.null(maxGenes))
     {
@@ -173,7 +177,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     }
 
     # reorder the samples based on hiearchial sort on ordered gene list
-    sample_order <- waterfall_sampSort(data_frame)
+    sample_order <- waterfall_sampSort(data_frame, sampOrder)
     data_frame$sample <- factor(data_frame$sample, levels=sample_order)
 
     # Reorder the sample levels in data_frame2 to match the main plot's levels,

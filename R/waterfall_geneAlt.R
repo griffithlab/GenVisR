@@ -13,7 +13,7 @@ waterfall_geneAlt <- function(x, genes)
     # Perform quality checks
     if(typeof(genes) != 'character' & class(genes) != 'character')
     {
-        memo <- paste0("argument supplied to main.genes is not a character ",
+        memo <- paste0("argument supplied to plotGenes is not a character ",
                        "vector, attempting to coerce")
         warning(memo)
         genes <- as.character(genes)
@@ -21,7 +21,7 @@ waterfall_geneAlt <- function(x, genes)
 
     if(!all(toupper(genes) %in% toupper(x$gene)))
     {
-        memo <- paste0("genes supplied in main.genes contains an element not ",
+        memo <- paste0("genes supplied in plotGenes contains an element not ",
                        "found in x or it's subsequent subsets")
         warning(memo)
     }
