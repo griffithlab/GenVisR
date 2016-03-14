@@ -249,48 +249,16 @@ lolliplot(data, y=data2, fillCol='impact', labelCol='amino_acid_change')
 ```r
 # Load transcript meta data
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-```
-
-```
-## Error in library(TxDb.Hsapiens.UCSC.hg19.knownGene): there is no package called 'TxDb.Hsapiens.UCSC.hg19.knownGene'
-```
-
-```r
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-```
 
-```
-## Error in eval(expr, envir, enclos): object 'TxDb.Hsapiens.UCSC.hg19.knownGene' not found
-```
-
-```r
 # Load BSgenome
 library(BSgenome.Hsapiens.UCSC.hg19)
-```
-
-```
-## Error in library(BSgenome.Hsapiens.UCSC.hg19): there is no package called 'BSgenome.Hsapiens.UCSC.hg19'
-```
-
-```r
 genome <- BSgenome.Hsapiens.UCSC.hg19
-```
 
-```
-## Error in eval(expr, envir, enclos): object 'BSgenome.Hsapiens.UCSC.hg19' not found
-```
-
-```r
 # Define a region of interest 
 gr <- GRanges(seqnames=c("chr10"), ranges=IRanges(start=c(89622195), 
 end=c(89729532)), strand=strand(c("+")))
-```
 
-```
-## Error in eval(expr, envir, enclos): could not find function "GRanges"
-```
-
-```r
 # Create Data for input
 start <- c(89622194:89729524)
 end <- c(89622195:89729525)
@@ -311,9 +279,8 @@ data <- list("Sample A"=cov_input_A, "Sample B"=cov_input_B)
 genCov(data, txdb, gr, genome, gene_labelTranscriptSize=2, transform=NULL, base=NULL)
 ```
 
-```
-## Error in genCov_qual(x = x, txdb = txdb, gr = gr, genome = genome): object 'txdb' not found
-```
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png)
+
 
 Often it may be usefull to compress genomic space, genCov will perform such a compression via a log transform for each feature type,'Intron','CDS','UTR' specified by the parameter `transform`. The degree of compression can be set via the parameter `base` which will perform the appropriate log compression for the features specified in `transform`. This behavior will occur by default, to turn off compression set the `transform` and `base` parameters to NULL. Here we display `genCov` compression functionality with log-10 compression for intronic space, and log-2 compression for CDS and UTR regions. Further we choose to display a simplified representation of genomic features within the region of interest via the `reduce` parameter which will merge all genomic features within a region of interest into a single transcript.
 
@@ -322,10 +289,7 @@ Often it may be usefull to compress genomic space, genCov will perform such a co
 # Turn off feature compression and reduce gene transcripts
 genCov(data, txdb, gr, genome, transform=c("Intron", "CDS", "UTR"), base=c(10, 2, 2), reduce=TRUE)
 ```
-
-```
-## Error in genCov_qual(x = x, txdb = txdb, gr = gr, genome = genome): object 'txdb' not found
-```
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png)
 
 ### <a name="tvti"></a>TvTi (transition/transversion graphic)
 `TvTi` provides a framework for visualizing transversions and transitions for a given cohort. Input consists of a .maf (version 2.4) file containing sample and allele information (see .maf spec). Alternatively the `fileType` parameter can be set to "MGI" with the input supplied consisting of a data frame with column names "sample", "reference", and "variant". Files for the "MGI" format can be obtained via the [Genome Modeling System](https://GitHub.com/genome/gms). TvTi will remove indels and multinucleotide calls from the input and plot the proportion of Transition/Transversion types for each sample specified in the input file.
