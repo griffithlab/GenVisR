@@ -18,7 +18,7 @@ waterfall(x, mainRecurCutoff = 0, mainGrid = TRUE, mainXlabel = FALSE,
 \arguments{
 \item{x}{Object of class data frame representing annotated mutations. The
 data frame supplied must have one of the following sets of column names
-("Tumor_Sample_Barcode", "Hugo_Symbol", "Variant Classification") for
+("Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification") for
 fileType="MAF", ("sample","gene_name","trv_type") for fileType="MGI" or
 ("sample", "gene", "variant_class") for fileType="Custom". This columns
 should represent samples in a cohort, gene with mutation, and the mutation

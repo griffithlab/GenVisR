@@ -62,6 +62,30 @@ waterfall(inputData, fileType="Custom", variant_class_order = most_deleterious, 
 waterfall(inputData, fileType="Custom", variant_class_order = rev(most_deleterious), mainXlabel = TRUE)
 ```
 
+```{r kable 1, echo=FALSE, fig.cap="Hierarchy of variant sub types from most to least deleterious."}
+library(knitr)
+MGI <- c("nonsense", "frame_shift_del",
+         "frame_shift_ins", "splice_site_del",
+         "splice_site_ins", "splice_site",
+         "nonstop", "in_frame_del", "in_frame_ins",
+         "missense", "splice_region_del",
+         "splice_region_ins", "splice_region",
+         "5_prime_flanking_region",
+         "3_prime_flanking_region",
+         "3_prime_untranslated_region",
+         "5_prime_untranslated_region", "rna",
+         "intronic", "silent")
+MAF <- c("Nonsense_Mutation", "Frame_Shift_Ins",
+         "Frame_Shift_Del", "Translation_Start_Site",
+         "Splice_Site", "Nonstop_Mutation",
+         "In_Frame_Ins", "In_Frame_Del",
+         "Missense_Mutation", "5\'Flank",
+         "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron",
+         "IGR", "Silent", "Targeted_Region", "", "")
+
+kable(as.data.frame(cbind(MAF, MGI)))
+```
+
 ### Filtering options
 Parameters covered: `mainRecurCutoff`, `plotGenes`, `plotSamples`, `maxGenes`, `rmvSilent`
 

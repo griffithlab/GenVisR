@@ -1,3 +1,7 @@
+CHANGES IN VERSION 0.99.20
+--------------------------
+- Bug fix for new code introduced in 0.99.19
+
 CHANGES IN VERSION 0.99.19
 --------------------------
 - Added option for custom sort of gene/sample in waterfall plot
