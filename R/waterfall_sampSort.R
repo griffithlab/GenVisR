@@ -15,14 +15,17 @@ waterfall_sampSort <- function(x, sampOrder=NULL)
     if(!is.null(sampOrder))
     {
         sampOrder <- as.character(unique(sampOrder))
-        # determine if there are any new samples and give warning if true
-        new_samples <- x$sample[!x$sample %in% sampOrder]
+        
+        # determine if there are any new samples in sampOrder not in the data
+        # and remove if true
+        new_samples <- sampOrder[!sampOrder %in% levels(x$sample)]
         if(length(new_samples) != 0)
         {
             memo <- paste0("The following samples were not detected in the ",
-                           "original data: ", toString(new_samples), " adding",
-                           " these to the plot!")
+                           "original data: ", toString(new_samples),
+                           ", removing these samples from sampOrder!")
             warning(memo)
+            sampOrder <- sampOrder[!sampOrder %in% new_samples]
         }
         
         # return what was given originally

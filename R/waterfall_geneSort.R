@@ -18,11 +18,18 @@ waterfall_geneSort <- function(x, geneOrder=NULL)
         if(length(gene_to_rmv) == 0 & length(geneOrder) >= 1)
         {
             return(rev(geneOrder))
-        } else if(length(gene_to_rmv) == 0 & length(geneOrder) == 0) {
+        } else if(length(gene_to_rmv) == length(geneOrder)) {
             memo <- paste0("Did not find any genes supplied to the parameter",
                            " geneOrder in the input supplied to x, perhaps ",
                            " there is a case issue?")
             warning(memo)
+        } else if(length(gene_to_rmv) != length(geneOrder)) {
+            memo <- paste0("The following genes were not found in the input", 
+                           " supplied to parameter x: ", toString(gene_to_rmv),
+                           ", removing these from geneOrder!")
+            warning(memo)
+            gene_order <- geneOrder[geneOrder %in% unique(x$gene)]
+            return(rev(gene_order))
         }
     }
     

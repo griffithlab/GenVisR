@@ -17,3 +17,11 @@ test_that("waterfall_sampSort properly sorts samples based on a hierarchy", {
     expec <- c('A', 'TESTA')
     #expect_equal(out, expec)
 })
+
+test_that("waterfall_sampSort removes samples in sampOrder not found in primary input", {
+    x <- data.frame(sample=c('a', 'a', 'a', 'b', 'b', 'c'), gene=c('x', 'y', 'z', 'x', 'y', 'z'), trv_type=rep('missense', 6))
+    sample_order <- c("a", "b", "c", "d")
+    out <- suppressWarnings(waterfall_sampSort(x, sampOrder = sample_order))
+    expec <- c('a', 'b', 'c')
+    expect_equal(out, expec)
+})
