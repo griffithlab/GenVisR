@@ -58,7 +58,7 @@ library(GenVisR)
 ```
 
 ####<a name="install-github"></a>Install from GitHub 
-note: Requries R version 3.2.1
+note: Requries R version 3.2.2
 * Full instructions can be found here: https://GitHub.com/griffithlab/GenVisR
 
 1) Install the devtools package from CRAN
