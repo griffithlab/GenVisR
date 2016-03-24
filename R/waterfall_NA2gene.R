@@ -11,7 +11,7 @@ waterfall_NA2gene <- function(x)
 {
     # Get The gene with the most Mutations and add the NA samples to that gene
     # (ensures that the NAs are added in as gene with most mutations will always
-    # be plotted) i.e. makes sure that samples are plotted
+    # be plotted) i.e. makes sure that samples are plotted, happens with rmvSilent param
     
     # find top gene
     top_gene <- stats::na.omit(rev(x$gene))[1]
