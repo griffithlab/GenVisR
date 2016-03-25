@@ -4,13 +4,17 @@
 \alias{cnSpec_buildMain}
 \title{Construct CN cohort plot}
 \usage{
-cnSpec_buildMain(data_frame, plot_title = NULL, CN_low_colour = "#002EB8",
-  CN_high_colour = "#A30000", x_lab_size = 12, y_lab_size = 12,
-  facet_lab_size = 10, layers = NULL, CNscale = "absolute")
+cnSpec_buildMain(data_frame, dummy_data, plot_title = NULL,
+  CN_low_colour = "#002EB8", CN_high_colour = "#A30000", x_lab_size = 12,
+  y_lab_size = 12, facet_lab_size = 10, layers = NULL,
+  CNscale = "absolute")
 }
 \arguments{
 \item{data_frame}{object of class data frame containing columns chromosome,
 start, end, cn, sample}
+
+\item{dummy_data}{Object of class data frame containing columns chromosome,
+start, end, cn, sample. Used for defining chromosome boundaries}
 
 \item{plot_title}{character string for title of plot}
 

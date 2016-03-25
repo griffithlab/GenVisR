@@ -43,6 +43,8 @@
 #' plotted, a grob object, or a plot.
 #' @importFrom reshape2 dcast
 #' @importFrom reshape2 melt
+#' @importFrom stats na.omit
+#' @importFrom gtools mixedsort
 #' @examples
 #' cnSpec(LucCNseg, genome="hg19")
 #' @export
@@ -101,18 +103,23 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
     CN_data <- reshape2::dcast(x, chromosome + start + end ~ sample,
                                value.var = "segmean")
 
-    # Rbind fill the dummy and CN data and remove any chr appendices
-    CN_data <- plyr::rbind.fill(CN_data, UCSC_Chr_pos)
-    CN_data[is.na(CN_data)] <- NA
+    # Create the dummy data (make sure entire chromosome is plotted)
+    dummy_data <- lapply(unique(x$sample),
+                         function(sample, chr_pos) cbind(chr_pos, sample),
+                         UCSC_Chr_pos)
+    dummy_data <- do.call("rbind", dummy_data)
+    dummy_data$chromosome <- gsub('chr', '', dummy_data$chromosome)
+    
+    # Format the Copy Number data
     CN_data$chromosome <- gsub('chr', '', CN_data$chromosome)
-
-    # melt the data for ggplot2 call
     CN_data <- reshape2::melt(CN_data, id.vars=c('chromosome', 'start', 'end'))
+    CN_data <- stats::na.omit(CN_data)
     colnames(CN_data) <- c('chromosome', 'start', 'end', 'sample', 'cn')
-
+    
     # Change the order of chromosomes and samples (natural sort order)
-    chromosome_sorted <- as.vector(unique(CN_data$chromosome))
+    chromosome_sorted <- as.vector(unique(dummy_data$chromosome))
     chromosome_sorted <- gtools::mixedsort(chromosome_sorted)
+    dummy_data$chromosome <- factor(dummy_data$chromosome, levels=chromosome_sorted)
     CN_data$chromosome <- factor(CN_data$chromosome, levels=chromosome_sorted)
 
     # if x$sample was a factor plot that instead of sorting samples
@@ -126,7 +133,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
     CN_data$sample <- factor(CN_data$sample, levels=sample_sorted)
     
     # build the plot
-    p1 <- cnSpec_buildMain(CN_data, plot_title=plot_title,
+    p1 <- cnSpec_buildMain(CN_data, dummy_data, plot_title=plot_title,
                            CN_low_colour=CN_Loss_colour,
                            CN_high_colour=CN_Gain_colour,
                            x_lab_size=x_title_size,
