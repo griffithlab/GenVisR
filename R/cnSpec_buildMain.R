@@ -5,6 +5,8 @@
 #' @name cnSpec_buildMain
 #' @param data_frame object of class data frame containing columns chromosome,
 #' start, end, cn, sample
+#' @param dummy_data Object of class data frame containing columns chromosome,
+#' start, end, cn, sample. Used for defining chromosome boundaries
 #' @param plot_title character string for title of plot
 #' @param CN_low_colour character string specifying low value of colour gradient
 #' @param CN_high_colour character string specifying high value of colour
@@ -21,15 +23,14 @@
 #' @import ggplot2
 #' @importFrom scales squish
 #' @importFrom scales rescale
-#' @importFrom stats na.omit
 
-cnSpec_buildMain <- function(data_frame, plot_title=NULL,
+cnSpec_buildMain <- function(data_frame, dummy_data, plot_title=NULL,
                              CN_low_colour='#002EB8', CN_high_colour='#A30000',
                              x_lab_size=12, y_lab_size=12, facet_lab_size=10,
                              layers=NULL, CNscale="absolute")
 {
-    CN_data <- stats::na.omit(data_frame)
-    dummy_data <- data_frame
+    CN_data <- data_frame
+    dummy_data <- dummy_data
 
     # Define Theme of plot
     theme <- theme(strip.text.y=element_text(angle=0, size=facet_lab_size),
