@@ -29,6 +29,9 @@ waterfall_qual <- function(x, y, z, file_type, label_col)
         x <- waterfall_MGI2anno(x, label_col)
     } else if(toupper(file_type) == toupper("Custom")) {
         x <- waterfall_Custom2anno(x, label_col)
+    } else if(toupper(file_type) == toupper("VEP")) {
+        stop("We are working on this feature, check in upcoming verions!")
+        x <- waterfall_VEP2anno(x, label_col)
     } else {
         stop("Unrecognized file_type: ", file_type)
     }
