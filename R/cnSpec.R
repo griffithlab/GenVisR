@@ -74,7 +74,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
         temp2 <- y
         temp1$end <- temp$start
         temp2$start <- temp$end
-        UCSC_Chr_pos <- rbind(temp1, temp2)
+        UCSC_Chr_pos <- unique(rbind(temp1, temp2))
         
     } else if(is.null(y) && any(genome == preloaded)){
         message("genome specified is preloaded, retrieving data...")
@@ -142,6 +142,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
                            layers=plotLayer, CNscale=CNscale)
 
     # Decide what to output
-    output <- multi_selectOut(data=list(cnData=CN_data), plot=p1, out=out)
+    output <- multi_selectOut(data=list(cnData=CN_data, chrBound=dummy_data),
+                              plot=p1, out=out)
     return(output)
 }
