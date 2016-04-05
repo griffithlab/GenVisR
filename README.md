@@ -1,4 +1,4 @@
-<a href="http://bioconductor.org/packages/GenVisR/"><img src="figure/bioconductor_logo_rgb.jpg" alt="Bioconductor" height=82.92 width=288/></a>
+<a href="http://bioconductor.org/"><img src="figure/bioconductor_logo_rgb.jpg" alt="Bioconductor" height=82.92 width=288/></a>
 
 # GenVisR
 
