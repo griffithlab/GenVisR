@@ -33,7 +33,7 @@ covBars <- function(x, colour=NULL, plot_title=NULL, x_title_size=12,
                     out="plot")
 {
   # Perform quality check on input data
-    dat <- covBars_qual(x, colour)
+    dat <- covBars_qual(x)
     x <- dat[[1]]
 
     # resort the rows (increasing rowname as integer)

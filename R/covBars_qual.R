@@ -7,7 +7,7 @@
 #' the sample names
 #' @return a list of data frame and color vector
 
-covBars_qual <- function(x, col)
+covBars_qual <- function(x)
 {
     # Check that x is a matrix with at least 1 row
     if(!is.matrix(x))
@@ -47,5 +47,5 @@ covBars_qual <- function(x, col)
         }
     }
 
-    return(list(x, col))
+    return(list(x))
 }

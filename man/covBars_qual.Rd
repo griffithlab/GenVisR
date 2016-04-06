@@ -4,7 +4,7 @@
 \alias{covBars_qual}
 \title{Construct coverage cohort plot}
 \usage{
-covBars_qual(x, col)
+covBars_qual(x)
 }
 \arguments{
 \item{x}{object of class matrix containing rows for the coverage and columns
