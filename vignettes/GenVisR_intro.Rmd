@@ -325,7 +325,7 @@ dimnames=list(0:49,paste0("Sample",1:10)))
 covBars(x)
 ```
 
-By default a rainbow color scheme from red to violet is used. An alternate vector of colors can be supplied.
+By default the viridis color scheme is used. An alternate vector of colors can be supplied to the param `colour`.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
 covBars(x, colour=c("blue","grey","red"))

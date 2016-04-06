@@ -414,8 +414,7 @@ covBars(x)
 
 ![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17-1.png)
 
-By default a rainbow color scheme from red to violet is used. An alternate vector of colors can be supplied.
-
+By default the viridis color scheme is used. An alternate vector of colors can be supplied to the param `colour`.
 
 ```r
 covBars(x, colour=c("blue","grey","red"))
