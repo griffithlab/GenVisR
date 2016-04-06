@@ -1,3 +1,8 @@
+<!---
+available via: 
+<a href="http://bioconductor.org/"><img src="figure/bioconductor_logo_rgb.jpg" alt="Bioconductor" height=82.92 width=288/></a>)  
+-->
+
 # GenVisR
 
 Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
