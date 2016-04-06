@@ -9,8 +9,9 @@ covBars(x, colour = NULL, plot_title = NULL, x_title_size = 12,
   out = "plot")
 }
 \arguments{
-\item{x}{Object of class matrix with rows representing coverage achieved
-at bases and columns corresponding to each sample in the cohort.}
+\item{x}{Object of class matrix with rows representing the sequencing depth
+(i.e. number of reads) and columns corresponding to each sample in the cohort
+and elements of the matrix}
 
 \item{colour}{Character vector specifying colours to represent sequencing
 depth.}
