@@ -26,8 +26,13 @@ multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
     if(!is.null(clin.var.colour))
     {
         na_index <- which(grepl("^NA$", names(clin.var.colour)))
-        na_colour <- clin.var.colour[na_index]
-        clin.var.colour <- clin.var.colour[-na_index]
+        if(length(na_index) == 1)
+        {
+            na_colour <- clin.var.colour[na_index]
+            clin.var.colour <- clin.var.colour[-na_index]
+        } else {
+            na_colour <- NA
+        }
     } else {
         na_colour <- NA
     }
@@ -47,6 +52,8 @@ multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
                                               breaks=clin.var.order,
                                               values=viridis::viridis(length(unique(x$value))),
                                               na.value=na_colour)
+    } else {
+        clin_fill_colour <- geom_blank()
     }
 
     if(!is.null(clin.layers))
