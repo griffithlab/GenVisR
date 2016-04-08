@@ -13,6 +13,7 @@
 #' @param clin.layers additional ggplot2 layers to plot
 #' @return a grob object
 #' @import ggplot2
+#' @importFrom viridis viridis
 
 multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
                                 clin.var.order=NULL, clin.layers=NULL)
@@ -31,7 +32,8 @@ multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
                                               values=clin.var.colour)
     } else if(is.null(clin.var.colour) & !is.null(clin.var.order)) {
         clin_fill_colour <- scale_fill_manual(name="Clinical Data",
-                                              breaks=clin.var.order)
+                                              breaks=clin.var.order,
+                                              values=viridis::viridis(length(unique(x$value))))
     }
 
     if(!is.null(clin.layers))
@@ -56,15 +58,8 @@ multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
                    legend.position='right')
 
     # Define the main plot
-    if(!is.null(clin.var.colour))
-    {
-        p1 <- ggplot(x, aes_string(x='sample', y='variable', fill='value')) +
-        geom_tile() + theme + x_label + leg_guide + clin_fill_colour +
-        layers
-    } else {
-        p1 <- ggplot(x, aes_string(x='sample', y='variable', fill='value')) +
-        geom_tile() + theme + x_label + leg_guide + layers
-    }
+    p1 <- ggplot(x, aes_string(x='sample', y='variable', fill='value')) +
+    geom_tile() + theme + x_label + leg_guide + clin_fill_colour + layers
 
     return(p1)
 }
