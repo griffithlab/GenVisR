@@ -21,19 +21,32 @@ multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
     # Define parameters
     x_label <- xlab(paste0("Sample n=", length(unique(x$sample))))
     leg_guide <- guides(fill=guide_legend(ncol=clin.legend.col))
+    
+    # Set the clinical variable order and colour
+    if(!is.null(clin.var.colour))
+    {
+        na_index <- which(grepl("^NA$", names(clin.var.colour)))
+        na_colour <- clin.var.colour[na_index]
+        clin.var.colour <- clin.var.colour[-na_index]
+    } else {
+        na_colour <- NA
+    }
 
     if(!is.null(clin.var.colour) & is.null(clin.var.order))
     {
         clin_fill_colour <- scale_fill_manual(name="Clinical Data",
-                                              values=clin.var.colour)
+                                              values=clin.var.colour,
+                                              na.value=na_colour)
     } else if(!is.null(clin.var.colour) & !is.null(clin.var.order)) {
         clin_fill_colour <- scale_fill_manual(name="Clinical Data",
                                               breaks=clin.var.order,
-                                              values=clin.var.colour)
+                                              values=clin.var.colour,
+                                              na.value=na_colour)
     } else if(is.null(clin.var.colour) & !is.null(clin.var.order)) {
         clin_fill_colour <- scale_fill_manual(name="Clinical Data",
                                               breaks=clin.var.order,
-                                              values=viridis::viridis(length(unique(x$value))))
+                                              values=viridis::viridis(length(unique(x$value))),
+                                              na.value=na_colour)
     }
 
     if(!is.null(clin.layers))
