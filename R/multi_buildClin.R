@@ -26,6 +26,7 @@ multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
     if(!is.null(clin.var.colour))
     {
         na_index <- which(grepl("^NA$", names(clin.var.colour)))
+        # check that there is only na value
         if(length(na_index) == 1)
         {
             na_colour <- clin.var.colour[na_index]
