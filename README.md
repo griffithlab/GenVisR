@@ -69,7 +69,7 @@ biocLite("GenVisR")
 
 1.  Install system requirements (may not be neccessary)
 
--   GenVisR imports a number of R packages that have common system requirements, these may already be installed depending on you're system. Reading messages during the GenVisR install will provide instructions, on "vanilla" ubuntu the following command will install all of these system requirements.
+-   GenVisR imports a number of R packages that have common system requirements, these may already be installed depending on your system. Reading messages during the GenVisR install will provide instructions, on "vanilla" ubuntu the following command will install all of these system requirements.
 
 ``` bash
 # Example command on a vanilla UBUNTU install
@@ -85,7 +85,7 @@ note: Requries R version &gt;= 3.2.2
 
 1.  Install system requirements (may not be neccessary)
 
--   GenVisR imports a number of R packages that have common system requirements, these may already be installed depending on you're system. Reading messages during the GenVisR install will provide instructions, on "vanilla" ubuntu the following command will install all of these system requirements.
+-   GenVisR imports a number of R packages that have common system requirements, these may already be installed depending on your system. Reading messages during the GenVisR install will provide instructions, on "vanilla" ubuntu the following command will install all of these system requirements.
 
 ``` bash
 # Example command on a vanilla UBUNTU install
@@ -275,7 +275,8 @@ library(BSgenome.Hsapiens.UCSC.hg19)
 genome <- BSgenome.Hsapiens.UCSC.hg19
 
 # Define a region of interest
-gr <- GRanges(seqnames = c("chr10"), ranges = IRanges(start = c(89622195), end = c(89729532)), strand = strand(c("+")))
+gr <- GRanges(seqnames = c("chr10"), ranges = IRanges(start = c(89622195), end = c(89729532)), 
+    strand = strand(c("+")))
 
 # Create Data for input
 start <- c(89622194:89729524)
@@ -294,7 +295,8 @@ cov_input_B <- as.data.frame(cbind(chr, start, end, cov))
 data <- list(`Sample A` = cov_input_A, `Sample B` = cov_input_B)
 
 # Call genCov
-genCov(data, txdb, gr, genome, gene_labelTranscriptSize = 2, transform = NULL, base = NULL)
+genCov(data, txdb, gr, genome, gene_labelTranscriptSize = 2, transform = NULL, 
+    base = NULL)
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-15-1.png)<!-- -->
@@ -303,7 +305,8 @@ Often it may be usefull to compress genomic space, genCov will perform such a co
 
 ``` r
 # Turn off feature compression and reduce gene transcripts
-genCov(data, txdb, gr, genome, transform = c("Intron", "CDS", "UTR"), base = c(10, 2, 2), reduce = TRUE)
+genCov(data, txdb, gr, genome, transform = c("Intron", "CDS", "UTR"), base = c(10, 
+    2, 2), reduce = TRUE)
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-16-1.png)<!-- -->
@@ -323,8 +326,8 @@ TvTi(brcaMAF, lab_txtAngle=75, fileType="MAF")
 
 ``` r
 # Plot the frequency with a different color pallete
-TvTi(brcaMAF, type = "Frequency", palette = c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"), lab_txtAngle = 75, 
-    fileType = "MAF")
+TvTi(brcaMAF, type = "Frequency", palette = c("#77C55D", "#A461B4", "#C1524B", 
+    "#93B5BB", "#4F433F", "#BFA753"), lab_txtAngle = 75, fileType = "MAF")
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-18-1.png)<!-- -->
@@ -333,8 +336,8 @@ If there are prior expectations about the transition/transversion rate the user 
 
 ``` r
 # Create a named vector of apriori expectations
-expec <- c(`A->C or T->G (TV)` = 0.066, `A->G or T->C (TI)` = 0.217, `A->T or T->A (TV)` = 0.065, `G->A or C->T (TI)` = 0.4945, 
-    `G->C or C->G (TV)` = 0.0645, `G->T or C->A (TV)` = 0.093)
+expec <- c(`A->C or T->G (TV)` = 0.066, `A->G or T->C (TI)` = 0.217, `A->T or T->A (TV)` = 0.065, 
+    `G->A or C->T (TI)` = 0.4945, `G->C or C->G (TV)` = 0.0645, `G->T or C->A (TV)` = 0.093)
 
 # Call TvTi with the additional data
 TvTi(brcaMAF, y = expec, lab_txtAngle = 45, fileType = "MAF")
@@ -368,14 +371,17 @@ cnView provides a method for visualizing raw copy number calls focused on either
 # Create data
 chromosome <- "chr14"
 coordinate <- sort(sample(0:106455000, size = 2000, replace = FALSE))
-cn <- c(rnorm(300, mean = 3, sd = 0.2), rnorm(700, mean = 2, sd = 0.2), rnorm(1000, mean = 3, sd = 0.2))
+cn <- c(rnorm(300, mean = 3, sd = 0.2), rnorm(700, mean = 2, sd = 0.2), rnorm(1000, 
+    mean = 3, sd = 0.2))
 data <- as.data.frame(cbind(chromosome, coordinate, cn))
 
 # Call cnView with basic input
 cnView(data, chr = "chr14", genome = "hg19", ideogram_txtSize = 4)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-22-1.png)<!-- -->NULL
+$plot ![](README_files/figure-markdown_github/unnamed-chunk-22-1.png)<!-- --> $features start end GC width Type Upper Lower Mid segStart 38563.1 13.39821 19.70199 0.4050633 79 CDS 1.0 -1.0 0.0 4.00000 38563.2 24.17146 30.58085 0.3411765 85 CDS 1.0 -1.0 0.0 4.00000 38563.3 35.07782 40.56967 0.2666667 45 CDS 1.0 -1.0 0.0 4.00000 38563.4 44.30909 49.76852 0.3863636 44 CDS 1.0 -1.0 0.0 4.00000 38563.5 53.05250 60.95336 0.4016736 239 CDS 1.0 -1.0 0.0 4.00000 38563.6 90.17269 97.32244 0.4014085 142 CDS 1.0 -1.0 0.0 4.00000 38563.7 101.07008 108.45379 0.4371257 167 CDS 1.0 -1.0 0.0 4.00000 38563.8 111.91227 119.72606 0.3377778 225 CDS 1.0 -1.0 0.0 4.00000 38563.9 123.34598 130.88514 0.3978495 186 CDS 1.0 -1.0 0.0 4.00000 38563.10 4.00000 13.39821 0.7160853 1032 UTR 0.5 -0.5 0.0 4.00000 38563.11 130.88514 142.02635 0.3345444 3303 UTR 0.5 -0.5 0.0 4.00000 38564.1 4.00000 19.70199 0.6939694 1111 UTR 2.7 1.7 2.2 4.00000 38564.2 24.17146 30.58085 0.3411765 85 UTR 2.7 1.7 2.2 4.00000 38564.3 44.30909 49.76852 0.3863636 44 UTR 2.7 1.7 2.2 4.00000 38564.4 53.05250 60.95336 0.4016736 239 UTR 2.7 1.7 2.2 4.00000 38564.5 64.92459 72.23748 0.4528302 159 UTR 2.7 1.7 2.2 4.00000 38564.6 90.17269 97.32244 0.4014085 142 UTR 2.7 1.7 2.2 4.00000 38564.7 101.07008 108.45379 0.4371257 167 UTR 2.7 1.7 2.2 4.00000 38564.8 111.91227 119.72606 0.3377778 225 UTR 2.7 1.7 2.2 4.00000 38564.9 123.34598 142.02635 0.3379192 3489 UTR 2.7 1.7 2.2 4.00000 38565 75.88073 86.67026 0.4011299 1770 UTR 4.9 3.9 4.4 75.88073 segEnd txname 38563.1 142.02635 uc001kfb.3 38563.2 142.02635 uc001kfb.3 38563.3 142.02635 uc001kfb.3 38563.4 142.02635 uc001kfb.3 38563.5 142.02635 uc001kfb.3 38563.6 142.02635 uc001kfb.3 38563.7 142.02635 uc001kfb.3 38563.8 142.02635 uc001kfb.3 38563.9 142.02635 uc001kfb.3 38563.10 142.02635 uc001kfb.3 38563.11 142.02635 uc001kfb.3 38564.1 142.02635 uc021pvw.1 38564.2 142.02635 uc021pvw.1 38564.3 142.02635 uc021pvw.1 38564.4 142.02635 uc021pvw.1 38564.5 142.02635 uc021pvw.1 38564.6 142.02635 uc021pvw.1 38564.7 142.02635 uc021pvw.1 38564.8 142.02635 uc021pvw.1 38564.9 142.02635 uc021pvw.1 38565 86.67026 uc001kfc.1
+
+$master start end width Type width.init trans\_start 38563.1011 89622195 89623194 3.000000 Intron 1000 1.00000 38563.10 89623195 89624226 9.398207 UTR 1111 4.00000 38563.1 89624227 89624305 6.303781 CDS 79 13.39821 38563.101 89624306 89653781 4.469469 Intron 29476 19.70199 38563.2 89653782 89653866 6.409391 CDS 85 24.17146 38564.2 89653867 89653866 0.000000 UTR 85 30.58085 38563.102 89653867 89685269 4.496971 Intron 31403 30.58085 38563.3 89685270 89685314 5.491853 CDS 45 35.07782 38563.103 89685315 89690802 3.739414 Intron 5488 40.56967 38563.4 89690803 89690846 5.459432 CDS 44 44.30909 38564.3 89690847 89690846 0.000000 UTR 44 49.76852 38563.104 89690847 89692769 3.283979 Intron 1923 49.76852 38563.5 89692770 89693008 7.900867 CDS 239 53.05250 38564.4 89693009 89693008 0.000000 UTR 239 60.95336 38563.105 89693009 89702367 3.971229 Intron 9359 60.95336 38564.5 89702368 89702526 7.312883 UTR 159 64.92459 38563.106 89702527 89706924 3.643255 Intron 4398 72.23748 38565 89706925 89708694 10.789534 UTR 1770 75.88073 38563.107 89708695 89711874 3.502427 Intron 3180 86.67026 38563.6 89711875 89712016 7.149747 CDS 142 90.17269 38564.6 89712017 89712016 0.000000 UTR 142 97.32244 38563.108 89712017 89717609 3.747645 Intron 5593 97.32244 38563.7 89717610 89717776 7.383704 CDS 167 101.07008 38564.7 89717777 89717776 0.000000 UTR 167 108.45379 38563.109 89717777 89720650 3.458487 Intron 2874 108.45379 38563.8 89720651 89720875 7.813781 CDS 225 111.91227 38564.8 89720876 89720875 0.000000 UTR 225 119.72606 38563.1010 89720876 89725043 3.619928 Intron 4168 119.72606 38563.9 89725044 89725229 7.539159 CDS 186 123.34598 38564.9 89725230 89728532 11.141209 UTR 3489 130.88514 38563.1012 89728533 89729532 3.000000 Intron 1000 142.02635 trans\_end c.ratio 38563.1011 4.00000 41.359330 38563.10 13.39821 14.667761 38563.1 19.70199 1.554965 38563.101 24.17146 818.290325 38563.2 30.58085 1.645496 38564.2 30.58085 Inf 38563.102 35.07782 866.454563 38563.3 40.56967 1.016690 38563.103 44.30909 182.098050 38563.4 49.76852 1.000000 38564.3 49.76852 Inf 38563.104 53.05250 72.656359 38563.5 60.95336 3.753340 38564.4 60.95336 Inf 38563.105 64.92459 292.414713 38564.5 72.23748 2.697760 38563.106 75.88073 149.782261 38565 86.67026 20.354730 38563.107 90.17269 112.655595 38563.6 97.32244 2.464293 38564.6 97.32244 Inf 38563.108 101.07008 185.174487 38563.7 108.45379 2.806318 38564.7 108.45379 Inf 38563.109 111.91227 103.108721 38563.8 119.72606 3.572860 38564.8 119.72606 Inf 38563.1010 123.34598 142.863921 38563.9 130.88514 3.061151 38564.9 142.02635 38.856475 38563.1012 145.02635 41.359330
 
 `cnView` obtains ideogram information and chromosomal boundaries either via a preloaded genome or the UCSC sql database if it is available. In the interest of flexibility the user also has the option of specifying cytogenetic information to the argument `y`. This input should take the form of a data frame with column names "chrom", "chromStart", "chromEnd", "name", "gieStain". This format mirrors what is retrievable via the aforementioned MySQL database.
 
@@ -385,17 +391,20 @@ If it is desired, `cnView` has the ability to overlay segment calls on the plot.
 # create copy number data
 chromosome <- "chr14"
 coordinate <- sort(sample(0:106455000, size = 2000, replace = FALSE))
-cn <- c(rnorm(300, mean = 3, sd = 0.2), rnorm(700, mean = 2, sd = 0.2), rnorm(1000, mean = 3, sd = 0.2))
+cn <- c(rnorm(300, mean = 3, sd = 0.2), rnorm(700, mean = 2, sd = 0.2), rnorm(1000, 
+    mean = 3, sd = 0.2))
 data <- as.data.frame(cbind(chromosome, coordinate, cn))
 
 # create segment data
-dataSeg <- data.frame(chromosome = c(14, 14, 14), start = coordinate[c(1, 301, 1001)], end = coordinate[c(300, 1000, 
-    2000)], segmean = c(3, 2, 3))
+dataSeg <- data.frame(chromosome = c(14, 14, 14), start = coordinate[c(1, 301, 
+    1001)], end = coordinate[c(300, 1000, 2000)], segmean = c(3, 2, 3))
 # call cnView with included segment data
 cnView(data, z = dataSeg, chr = "chr14", genome = "hg19", ideogram_txtSize = 4)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-23-1.png)<!-- -->NULL
+$plot ![](README_files/figure-markdown_github/unnamed-chunk-23-1.png)<!-- --> $features start end GC width Type Upper Lower Mid segStart 38563.1 13.39821 19.70199 0.4050633 79 CDS 1.0 -1.0 0.0 4.00000 38563.2 24.17146 30.58085 0.3411765 85 CDS 1.0 -1.0 0.0 4.00000 38563.3 35.07782 40.56967 0.2666667 45 CDS 1.0 -1.0 0.0 4.00000 38563.4 44.30909 49.76852 0.3863636 44 CDS 1.0 -1.0 0.0 4.00000 38563.5 53.05250 60.95336 0.4016736 239 CDS 1.0 -1.0 0.0 4.00000 38563.6 90.17269 97.32244 0.4014085 142 CDS 1.0 -1.0 0.0 4.00000 38563.7 101.07008 108.45379 0.4371257 167 CDS 1.0 -1.0 0.0 4.00000 38563.8 111.91227 119.72606 0.3377778 225 CDS 1.0 -1.0 0.0 4.00000 38563.9 123.34598 130.88514 0.3978495 186 CDS 1.0 -1.0 0.0 4.00000 38563.10 4.00000 13.39821 0.7160853 1032 UTR 0.5 -0.5 0.0 4.00000 38563.11 130.88514 142.02635 0.3345444 3303 UTR 0.5 -0.5 0.0 4.00000 38564.1 4.00000 19.70199 0.6939694 1111 UTR 2.7 1.7 2.2 4.00000 38564.2 24.17146 30.58085 0.3411765 85 UTR 2.7 1.7 2.2 4.00000 38564.3 44.30909 49.76852 0.3863636 44 UTR 2.7 1.7 2.2 4.00000 38564.4 53.05250 60.95336 0.4016736 239 UTR 2.7 1.7 2.2 4.00000 38564.5 64.92459 72.23748 0.4528302 159 UTR 2.7 1.7 2.2 4.00000 38564.6 90.17269 97.32244 0.4014085 142 UTR 2.7 1.7 2.2 4.00000 38564.7 101.07008 108.45379 0.4371257 167 UTR 2.7 1.7 2.2 4.00000 38564.8 111.91227 119.72606 0.3377778 225 UTR 2.7 1.7 2.2 4.00000 38564.9 123.34598 142.02635 0.3379192 3489 UTR 2.7 1.7 2.2 4.00000 38565 75.88073 86.67026 0.4011299 1770 UTR 4.9 3.9 4.4 75.88073 segEnd txname 38563.1 142.02635 uc001kfb.3 38563.2 142.02635 uc001kfb.3 38563.3 142.02635 uc001kfb.3 38563.4 142.02635 uc001kfb.3 38563.5 142.02635 uc001kfb.3 38563.6 142.02635 uc001kfb.3 38563.7 142.02635 uc001kfb.3 38563.8 142.02635 uc001kfb.3 38563.9 142.02635 uc001kfb.3 38563.10 142.02635 uc001kfb.3 38563.11 142.02635 uc001kfb.3 38564.1 142.02635 uc021pvw.1 38564.2 142.02635 uc021pvw.1 38564.3 142.02635 uc021pvw.1 38564.4 142.02635 uc021pvw.1 38564.5 142.02635 uc021pvw.1 38564.6 142.02635 uc021pvw.1 38564.7 142.02635 uc021pvw.1 38564.8 142.02635 uc021pvw.1 38564.9 142.02635 uc021pvw.1 38565 86.67026 uc001kfc.1
+
+$master start end width Type width.init trans\_start 38563.1011 89622195 89623194 3.000000 Intron 1000 1.00000 38563.10 89623195 89624226 9.398207 UTR 1111 4.00000 38563.1 89624227 89624305 6.303781 CDS 79 13.39821 38563.101 89624306 89653781 4.469469 Intron 29476 19.70199 38563.2 89653782 89653866 6.409391 CDS 85 24.17146 38564.2 89653867 89653866 0.000000 UTR 85 30.58085 38563.102 89653867 89685269 4.496971 Intron 31403 30.58085 38563.3 89685270 89685314 5.491853 CDS 45 35.07782 38563.103 89685315 89690802 3.739414 Intron 5488 40.56967 38563.4 89690803 89690846 5.459432 CDS 44 44.30909 38564.3 89690847 89690846 0.000000 UTR 44 49.76852 38563.104 89690847 89692769 3.283979 Intron 1923 49.76852 38563.5 89692770 89693008 7.900867 CDS 239 53.05250 38564.4 89693009 89693008 0.000000 UTR 239 60.95336 38563.105 89693009 89702367 3.971229 Intron 9359 60.95336 38564.5 89702368 89702526 7.312883 UTR 159 64.92459 38563.106 89702527 89706924 3.643255 Intron 4398 72.23748 38565 89706925 89708694 10.789534 UTR 1770 75.88073 38563.107 89708695 89711874 3.502427 Intron 3180 86.67026 38563.6 89711875 89712016 7.149747 CDS 142 90.17269 38564.6 89712017 89712016 0.000000 UTR 142 97.32244 38563.108 89712017 89717609 3.747645 Intron 5593 97.32244 38563.7 89717610 89717776 7.383704 CDS 167 101.07008 38564.7 89717777 89717776 0.000000 UTR 167 108.45379 38563.109 89717777 89720650 3.458487 Intron 2874 108.45379 38563.8 89720651 89720875 7.813781 CDS 225 111.91227 38564.8 89720876 89720875 0.000000 UTR 225 119.72606 38563.1010 89720876 89725043 3.619928 Intron 4168 119.72606 38563.9 89725044 89725229 7.539159 CDS 186 123.34598 38564.9 89725230 89728532 11.141209 UTR 3489 130.88514 38563.1012 89728533 89729532 3.000000 Intron 1000 142.02635 trans\_end c.ratio 38563.1011 4.00000 41.359330 38563.10 13.39821 14.667761 38563.1 19.70199 1.554965 38563.101 24.17146 818.290325 38563.2 30.58085 1.645496 38564.2 30.58085 Inf 38563.102 35.07782 866.454563 38563.3 40.56967 1.016690 38563.103 44.30909 182.098050 38563.4 49.76852 1.000000 38564.3 49.76852 Inf 38563.104 53.05250 72.656359 38563.5 60.95336 3.753340 38564.4 60.95336 Inf 38563.105 64.92459 292.414713 38564.5 72.23748 2.697760 38563.106 75.88073 149.782261 38565 86.67026 20.354730 38563.107 90.17269 112.655595 38563.6 97.32244 2.464293 38564.6 97.32244 Inf 38563.108 101.07008 185.174487 38563.7 108.45379 2.806318 38564.7 108.45379 Inf 38563.109 111.91227 103.108721 38563.8 119.72606 3.572860 38564.8 119.72606 Inf 38563.1010 123.34598 142.863921 38563.9 130.88514 3.061151 38564.9 142.02635 38.856475 38563.1012 145.02635 41.359330
 
 ### covBars (sequencing coverage cohort)
 
@@ -403,7 +412,8 @@ cnView(data, z = dataSeg, chr = "chr14", genome = "hg19", ideogram_txtSize = 4)
 
 ``` r
 # Example input to x
-x <- matrix(sample(1e+05, 500), nrow = 50, ncol = 10, dimnames = list(0:49, paste0("Sample", 1:10)))
+x <- matrix(sample(1e+05, 500), nrow = 50, ncol = 10, dimnames = list(0:49, 
+    paste0("Sample", 1:10)))
 
 covBars(x)
 ```
@@ -427,8 +437,8 @@ covBars(x, colour = c("blue", "grey", "red"))
 xstart <- seq(0, 4990000, length.out = 500)
 xloss <- rep(runif(10, 0, 0.6), rep(50, 10))/1.5
 xloss <- xloss + jitter(xloss, amount = 0.002)
-x <- data.frame(chromosome = rep(paste0("chr", 1:5), rep(500, 5)), start = xstart, end = xstart + 10000, loss = xloss, 
-    gain = (1 - xloss))
+x <- data.frame(chromosome = rep(paste0("chr", 1:5), rep(500, 5)), start = xstart, 
+    end = xstart + 10000, loss = xloss, gain = (1 - xloss))
 
 # Plot the data
 cnFreq(x)
@@ -498,7 +508,8 @@ txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 genome <- BSgenome.Hsapiens.UCSC.hg19
 
 # need Granges object
-gr <- GRanges(seqnames = c("chr10"), ranges = IRanges(start = c(89622195), end = c(89729532)), strand = strand(c("+")))
+gr <- GRanges(seqnames = c("chr10"), ranges = IRanges(start = c(89622195), end = c(89729532)), 
+    strand = strand(c("+")))
 
 # Plot and call the graphic
 p1 <- geneViz(txdb, gr, genome)
@@ -523,7 +534,8 @@ For the majority of plots there is a layer parameter, this allows the user to sp
 
 ``` r
 library(ggplot2)
-plot_theme <- theme(axis.text.x = element_blank(), axis.title.x = element_blank(), axis.ticks.x = element_blank())
+plot_theme <- theme(axis.text.x = element_blank(), axis.title.x = element_blank(), 
+    axis.ticks.x = element_blank())
 
 cnFreq(LucCNseg, plotLayer = plot_theme)
 ```
@@ -543,29 +555,45 @@ sessionInfo()
     ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
     ## 
     ## attached base packages:
-    ## [1] stats4    parallel  stats     graphics  grDevices utils     datasets  methods   base     
+    ## [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+    ## [8] methods   base     
     ## 
     ## other attached packages:
-    ##  [1] BSgenome.Hsapiens.UCSC.hg19_1.4.0       BSgenome_1.39.4                        
-    ##  [3] rtracklayer_1.31.7                      Biostrings_2.39.12                     
-    ##  [5] XVector_0.11.7                          TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2
-    ##  [7] GenomicFeatures_1.23.27                 AnnotationDbi_1.33.7                   
-    ##  [9] Biobase_2.31.3                          GenomicRanges_1.23.24                  
-    ## [11] GenomeInfoDb_1.7.6                      IRanges_2.5.40                         
-    ## [13] S4Vectors_0.9.43                        BiocGenerics_0.17.3                    
-    ## [15] reshape2_1.4.1                          knitr_1.12.3                           
-    ## [17] BiocStyle_1.9.7                         GenVisR_0.99.20                        
+    ##  [1] BSgenome.Hsapiens.UCSC.hg19_1.4.0      
+    ##  [2] BSgenome_1.39.4                        
+    ##  [3] rtracklayer_1.31.7                     
+    ##  [4] Biostrings_2.39.12                     
+    ##  [5] XVector_0.11.7                         
+    ##  [6] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2
+    ##  [7] GenomicFeatures_1.23.27                
+    ##  [8] AnnotationDbi_1.33.7                   
+    ##  [9] Biobase_2.31.3                         
+    ## [10] GenomicRanges_1.23.24                  
+    ## [11] GenomeInfoDb_1.7.6                     
+    ## [12] IRanges_2.5.40                         
+    ## [13] S4Vectors_0.9.43                       
+    ## [14] BiocGenerics_0.17.3                    
+    ## [15] reshape2_1.4.1                         
+    ## [16] knitr_1.12.3                           
+    ## [17] BiocStyle_1.9.7                        
+    ## [18] GenVisR_0.99.20                        
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_0.12.3                 highr_0.5.1                 formatR_1.3                
-    ##  [4] plyr_1.8.3                  bitops_1.0-6                viridis_0.3.4              
-    ##  [7] tools_3.3.0                 zlibbioc_1.17.1             biomaRt_2.27.2             
-    ## [10] digest_0.6.9                evaluate_0.8.3              RSQLite_1.0.0              
-    ## [13] gtable_0.2.0                DBI_0.3.1                   yaml_2.1.13                
-    ## [16] gridExtra_2.2.1             stringr_1.0.0               gtools_3.5.0               
-    ## [19] grid_3.3.0                  FField_0.1.0                XML_3.98-1.4               
-    ## [22] BiocParallel_1.5.21         rmarkdown_0.9.5             ggplot2_2.1.0              
-    ## [25] magrittr_1.5                htmltools_0.3.5             scales_0.4.0               
-    ## [28] Rsamtools_1.23.6            GenomicAlignments_1.7.20    SummarizedExperiment_1.1.22
-    ## [31] colorspace_1.2-6            labeling_0.3                stringi_1.0-1              
-    ## [34] RCurl_1.95-4.8              munsell_0.4.3
+    ##  [1] Rcpp_0.12.3                 highr_0.5.1                
+    ##  [3] formatR_1.3                 plyr_1.8.3                 
+    ##  [5] bitops_1.0-6                viridis_0.3.4              
+    ##  [7] tools_3.3.0                 zlibbioc_1.17.1            
+    ##  [9] biomaRt_2.27.2              digest_0.6.9               
+    ## [11] evaluate_0.8.3              RSQLite_1.0.0              
+    ## [13] gtable_0.2.0                DBI_0.3.1                  
+    ## [15] yaml_2.1.13                 gridExtra_2.2.1            
+    ## [17] stringr_1.0.0               gtools_3.5.0               
+    ## [19] grid_3.3.0                  FField_0.1.0               
+    ## [21] XML_3.98-1.4                BiocParallel_1.5.21        
+    ## [23] rmarkdown_0.9.5             ggplot2_2.1.0              
+    ## [25] magrittr_1.5                htmltools_0.3.5            
+    ## [27] scales_0.4.0                Rsamtools_1.23.6           
+    ## [29] GenomicAlignments_1.7.20    SummarizedExperiment_1.1.22
+    ## [31] colorspace_1.2-6            labeling_0.3               
+    ## [33] stringi_1.0-1               RCurl_1.95-4.8             
+    ## [35] munsell_0.4.3

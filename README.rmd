@@ -25,11 +25,11 @@ note: Requires R version >= 3.3.0 currently in beta
 
 * Full instructions can be found here: http://bioconductor.org/packages/devel/bioc/html/GenVisR.html
 
-1) Install R 3.3.0
+1. Install R 3.3.0
 
-* Follow the installation guide here: http://bioconductor.org/developers/how-to/useDevel/
++ Follow the installation guide here: http://bioconductor.org/developers/how-to/useDevel/
 
-2) Install the latest BiocInstaller
+2. Install the latest BiocInstaller
 
 ```{r, eval=FALSE}
 # Repeat the command below until there is no "BiocInstaller"
@@ -40,16 +40,16 @@ source("https://bioconductor.org/biocLite.R")
 BiocInstaller::biocValid()
 ```
 
-3) Install GenVisR
+3. Install GenVisR
 
 ```{r, eval=FALSE}
 source("https://bioconductor.org/biocLite.R")
 biocLite("GenVisR")
 ```
 
-4) Install system requirements (may not be neccessary)
+4. Install system requirements (may not be neccessary)
 
-* GenVisR imports a number of R packages that have common system requirements, these may already be installed depending on you're system. Reading messages during the GenVisR install will provide instructions, on "vanilla" ubuntu the following command will install all of these system requirements.
++ GenVisR imports a number of R packages that have common system requirements, these may already be installed depending on your system. Reading messages during the GenVisR install will provide instructions, on "vanilla" ubuntu the following command will install all of these system requirements.
 
 ```{bash, eval=FALSE}
 # Example command on a vanilla UBUNTU install
@@ -57,14 +57,14 @@ sudo apt-get update
 sudo apt-get install libssl-dev libcurl4-openssl-dev libxml2-dev default-jdk
 ```
 
-* repeat the GenVisR install command in step 3.
++ repeat the GenVisR install command in step 3.
 
 #### Install from GitHub 
 note: Requries R version >= 3.2.2
 
-1) Install system requirements (may not be neccessary)
+1. Install system requirements (may not be neccessary)
 
-* GenVisR imports a number of R packages that have common system requirements, these may already be installed depending on you're system. Reading messages during the GenVisR install will provide instructions, on "vanilla" ubuntu the following command will install all of these system requirements.
++ GenVisR imports a number of R packages that have common system requirements, these may already be installed depending on your system. Reading messages during the GenVisR install will provide instructions, on "vanilla" ubuntu the following command will install all of these system requirements.
 
 ```{bash, eval=FALSE}
 # Example command on a vanilla UBUNTU install
@@ -72,19 +72,19 @@ sudo apt-get update
 sudo apt-get install libssl-dev libcurl4-openssl-dev libxml2-dev default-jdk
 ```
 
-2) Install the devtools package from CRAN
+2. Install the devtools package from CRAN
 ```{r, eval=FALSE}
 # note that devtools requires libssl-dev, see step 1
 install.packages("devtools")
 ```
 
-3) Install Bioconductor dependencies
+3. Install Bioconductor dependencies
 ```{r, eval=FALSE}
 source("http://bioconductor.org/biocLite.R")
 biocLite(c("AnnotationDbi", "biomaRt", "Biostrings", "GenomicFeatures", "GenomicRanges", "Rsamtools"))
 ```
 
-4) Install GenVisR
+4. Install GenVisR
 ```{r, eval=FALSE}
 devtools::install_GitHub("griffithlab/GenVisR")
 ```
