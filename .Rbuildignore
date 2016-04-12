@@ -2,6 +2,7 @@
 ^\.Rproj\.user$
 .gitignore
 .DS_Store
-figure
-instructions
 .git
+README.md
+README.rmd
+README_files
