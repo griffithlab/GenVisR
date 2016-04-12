@@ -298,7 +298,7 @@ TvTi(brcaMAF, y=expec, lab_txtAngle=45, fileType="MAF")
 
 cnSpec produces a plot displaying copy number segments at a cohort level. Basic input consists of a data frame with column names 'chromosome', 'start', 'end' 'segmean' and 'sample' with rows denoting segments with copy number alterations. A UCSC genome is also required (defaults to 'hg19') to determine chromosomal boundaries. cnSpec will produce a grid faceted on chromosome and sample displaying all CN segment calls in the input. Here we use the attached data set LucCNseg containing copy number segment calls for 4 samples from whole genome sequencing data.
 
-```{r, fig.keep='last', fig.width=10, fig.height=4.5, message=TRUE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=4.5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
 # Call cnSpec with minimum required inputs
 cnSpec(LucCNseg, genome="hg19")
 ```
