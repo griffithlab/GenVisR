@@ -129,7 +129,7 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
 
     # Decide what to output
     dataOut <- list(main=x, dummyData=dummyData, segments=z)
-    if(!exists("p1"))
+    if(!exists("p1", where="package:GenVisR"))
     {
         p1 <- cnView_align(chromosome_plot, CN_plot)
         output <- multi_selectOut(data=dataOut, plot=p1, draw=TRUE, out=out)

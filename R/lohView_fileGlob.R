@@ -50,10 +50,10 @@ lohView_fileGlob <- function(path, fileExt, step, window_size, gender)
             next
         }
 
-        if (!exists("dataset"))
+        if (!exists("dataset", where="package:GenVisR"))
         {
             dataset <- data
-        } else if(exists("dataset")) {
+        } else if(exists("dataset", where="package:GenVisR")) {
             temp <- data
             dataset <- rbind(dataset, temp)
             rm(temp)
