@@ -1,7 +1,7 @@
 #' Plot LOH data
 #'
 #' Construct a graphic visualizing Loss of Heterozygosity in a cohort
-#' @name lohView
+#' @name lohSpec
 #' @param x object of class data frame with rows representing germline calls.
 #' The data frame must contain columns with the following names "chromosome",
 #' "position", "n_vaf", "t_vaf", "sample". required if path is set to NULL (see
@@ -44,8 +44,8 @@
 #' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @return One of the following, a list of dataframes containing data to be
 #' plotted, a grob object, or a plot.
-#' @details lohView is intended to plot the loss of heterozygosity (LOH) within
-#' a sample. As such lohView expects input data to contain only LOH calls. Input
+#' @details lohSpec is intended to plot the loss of heterozygosity (LOH) within
+#' a sample. As such lohSpec expects input data to contain only LOH calls. Input
 #' can be supplied as a single data frame given to the argument x with rows
 #' containing germline calls and variables giving the chromosome, position, 
 #' normal variant allele frequency, tumor variant allele frequency, and the
@@ -57,7 +57,7 @@
 #' to "tile" mean LOH is calculated based on the window_size argument with
 #' windows being placed next to each other. If the method is set to slide the
 #' widnow will slide and calculate the LOH based on the step parameter.
-#' In order to ensure the entire chromosome is plotted lohView requries the
+#' In order to ensure the entire chromosome is plotted lohSpec requries the
 #' location of chromosome boundaries for a given genome assembly. As a
 #' convenience this information is available for the following genomes "hg19",
 #' "hg38", "mm9", "mm10", "rn5" and can be tetrieved by supplying one of the
@@ -70,10 +70,10 @@
 #' @importFrom gtools mixedsort
 #' @examples 
 #' # plot loh within the example dataset
-#' lohView(x=HCC1395_Germline)
+#' lohSpec(x=HCC1395_Germline)
 #' @export
 
-lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
+lohSpec <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                     gender=NULL, step=1000000, window_size=2500000, 
                     normal=50, gradient_midpoint=20, gradient_low="#ffffff",
                     gradient_mid="#b2b2ff", gradient_high="#000000",
@@ -88,7 +88,7 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                            "is supplied to path")
             stop(memo)
         }
-        x <- lohView_fileGlob(path=path, fileExt=fileExt, step=step, 
+        x <- lohSpec_fileGlob(path=path, fileExt=fileExt, step=step, 
                               window_size=window_size, gender=gender)        
     }
     if (is.null(path)) {
@@ -102,7 +102,7 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
     }
 
     # Data Quality Check
-    input <- lohView_qual(x, y, genome)
+    input <- lohSpec_qual(x, y, genome)
     x <- input[[1]]
     y <- input[[2]]
 
@@ -136,12 +136,12 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
     # Produce dataset with loh mean absolute differences 
     if (toupper(method) == 'SLIDE') {
         # Calculate loh via sliding window
-        loh <- lohView_slidingWindow(loh_data=x, step, window_size, normal)
+        loh <- lohSpec_slidingWindow(loh_data=x, step, window_size, normal)
     }
     else if(toupper(method) == 'TILE') {
         # Calculate loh via tiled window
         ## Insert code
-        loh <- lohView_tileWindow(loh_data=x, window_size, normal)
+        loh <- lohSpec_tileWindow(loh_data=x, window_size, normal)
     }
     else {
         memo <- paste0("Did not recognize input to parameter method.", 
@@ -174,7 +174,7 @@ lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
     loh$sample <- factor(loh$sample, levels=samples)
     
     #build  the plot
-    loh_plot <- lohView_buildMain(loh, dummyData=chr_pos,
+    loh_plot <- lohSpec_buildMain(loh, dummyData=chr_pos,
                                   gradient_midpoint=gradient_midpoint,
                                   gradient_low=gradient_low,
                                   gradient_mid=gradient_mid,

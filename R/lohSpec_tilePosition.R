@@ -1,7 +1,7 @@
 #' Obtain window information
 #' 
 #' Calculate window positions to perform LOH calculation
-#' @name lohView_tilePosition
+#' @name lohSpec_tilePosition
 #' @param out object of class dataframe with columns 'chromosome', 
 #' 'position', 'n_vaf', 't_vaf', and 'sample'
 #' @param window_size integer with the size of the sliding window (bp) to be 
@@ -10,7 +10,7 @@
 #' from each sample to perform LOH calculations
 
 
-lohView_tilePosition <- function(out, window_size)
+lohSpec_tilePosition <- function(out, window_size)
 {
     ## Tiling function
     window <- lapply(out, function(x) {

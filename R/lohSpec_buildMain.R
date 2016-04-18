@@ -1,7 +1,7 @@
 #' Plot LOH data
 #'
 #' Build a ggplot2 object displaying calculated LOH data
-#' @name lohView_buildMain
+#' @name lohSpec_buildMain
 #' @param x object of class dataframe with loh difference
 #' calculations and column names "window_start", "window_stop", "chromosome",
 #' "sample", and "loh_diff"
@@ -21,7 +21,7 @@
 #' @return object of class ggplot2
 #' @import ggplot2
 
-lohView_buildMain <- function(x, dummyData,
+lohSpec_buildMain <- function(x, dummyData,
                               gradient_midpoint=gradient_midpoint,
                               gradient_low=gradient_low,
                               gradient_mid=gradient_mid,
