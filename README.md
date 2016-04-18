@@ -587,8 +587,8 @@ sessionInfo()
     ## [19] grid_3.3.0                  FField_0.1.0               
     ## [21] XML_3.98-1.4                BiocParallel_1.5.21        
     ## [23] rmarkdown_0.9.5             ggplot2_2.1.0              
-    ## [25] magrittr_1.5                scales_0.4.0               
-    ## [27] Rsamtools_1.23.6            htmltools_0.3.5            
+    ## [25] magrittr_1.5                htmltools_0.3.5            
+    ## [27] Rsamtools_1.23.6            scales_0.4.0               
     ## [29] GenomicAlignments_1.7.20    SummarizedExperiment_1.1.22
     ## [31] colorspace_1.2-6            labeling_0.3               
     ## [33] stringi_1.0-1               RCurl_1.95-4.8             
