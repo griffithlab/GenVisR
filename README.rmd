@@ -394,7 +394,7 @@ ideoView(data, chromosome='chr1', txtSize=4)
 
 ### lohSpec (Loss of Heterozygosity Spectrum)
 `lohSpec` obtains mean absolute LOH difference between tumor VAF and a default normal VAF parameter set at 50 for all calls made within a specified window length. Input data should include column names "chromosome", "position", "n_vaf", "t_vaf", "sample". If the `method` specified is "tile", mean LOH difference will be plotted for adjacent windows across the entire genome for multiple samples. If the`method` specified is "slide", mean LOH difference for overlapping windows will be plotted over a `step` sized window. When `gender` is NULL, LOH calculations will be excluded from both the X and Y chromosome for all samples. When the `gender` of each sample is specified, LOH calculations will be performed on the X chromosome, along with all autosomes for all samples. If the user does not provide loh information for any chromosome-sample pair, lohSpec will plot a white rectangle in for that region in the genome. 
-```{r, fig.keep='last', fig.width=11, fig.height=5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
 
 # Call lohSpec with basic input 
 lohSpec(x=HCC1395_Germline)
@@ -404,7 +404,7 @@ lohSpec(x=HCC1395_Germline)
 
 `lohView` provides a method for visualizing Loss of Heterozygoisty focused on either a single chromosome or all chromosomes for a single sample. Input consists of a data frame with column names "chromosome", "position", "n_vaf", "t_vaf" and "sample" as well as a specification of which chromosome to plot specified via the parameter `chr` and which genome assembly should be used for chromosome boundaries `genome`. Input should be restricted to "Germline" calls only! The algorithm will produce an ideogram on the top track and plot normal and tumor variant allele fraction derived from the columns "n_vaf" and "t_vaf" beneath. Here we demonstrate `lohView`on data from the HCC1395 Cell Line for chromosome 5.
 
-```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=11, fig.height=5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
 
 # Call lohView with basic input, make sure input contains only Germline calls
 lohView(HCC1395_Germline, chr='chr5', genome='hg19', ideogram_txtSize=4)
