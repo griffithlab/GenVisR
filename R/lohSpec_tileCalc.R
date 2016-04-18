@@ -29,10 +29,10 @@ lohSpec_tileCalc <- function(window_data, normal)
             data$loh_diff_avg <- mean(data$loh_diff)
             
             ## Merge the datasets for each sample
-            if(!exists("new_loh_data", where="package:GenVisR")) {
+            if(!exists("new_loh_data", inherits=FALSE)) {
                 new_loh_data <- data
             }
-            if(exists("new_loh_data", where="package:GenVisR")) {
+            if(exists("new_loh_data", inherits=FALSE)) {
                 temp <- data
                 new_loh_data <- rbind(new_loh_data, temp)
                 rm(temp)

@@ -20,6 +20,8 @@
         -   [ideoView (ideogram graphic)](#ideoview-ideogram-graphic)
         -   [lohSpec (Loss of
             Heterozygosity Spectrum)](#lohspec-loss-of-heterozygosity-spectrum)
+        -   [lohView (Loss of
+            Heterozygosity View)](#lohview-loss-of-heterozygosity-view)
         -   [compIdent (snp
             identity graphic)](#compident-snp-identity-graphic)
         -   [geneViz
@@ -475,6 +477,18 @@ lohSpec(x = HCC1395_Germline)
 
 ![](README_files/figure-markdown_github/unnamed-chunk-29-1.png)<!-- -->
 
+### lohView (Loss of Heterozygosity View)
+
+`lohView` provides a method for visualizing Loss of Heterozygoisty focused on either a single chromosome or all chromosomes for a single sample. Input consists of a data frame with column names "chromosome", "position", "n\_vaf", "t\_vaf" and "sample" as well as a specification of which chromosome to plot specified via the parameter `chr` and which genome assembly should be used for chromosome boundaries `genome`. Input should be restricted to "Germline" calls only! The algorithm will produce an ideogram on the top track and plot normal and tumor variant allele fraction derived from the columns "n\_vaf" and "t\_vaf" beneath. Here we demonstrate `lohView`on data from the HCC1395 Cell Line for chromosome 5.
+
+``` r
+# Call lohView with basic input, make sure input contains only Germline
+# calls
+lohView(HCC1395_Germline, chr = "chr5", genome = "hg19", ideogram_txtSize = 4)
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-30-1.png)<!-- -->NULL
+
 ### compIdent (snp identity graphic)
 
 `compIdent` produces a plot comparing samples based on identity snp variant allele frequency (VAF) values. The graphic displays VAF values at genomic locations given via the parameter `target`. If no argument is supplied to `target` the algorithm will default to 24 biallelic identity snps from the hg19 genome assembly identified by "pengelly et al. Genome Med. 2013, PMID 24070238". `compIdent` expects a data frame with rows specifying samples and columns providing sample names and bam file locations given to parameter `x`. Please note that compIdent will not index bam files and will look for a .bai file for the associated bam.
@@ -490,7 +504,7 @@ hg19 <- BSgenome.Hsapiens.UCSC.hg19
 compIdent(genome = hg19, debug = TRUE)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-30-1.png)<!-- -->NULL
+![](README_files/figure-markdown_github/unnamed-chunk-31-1.png)<!-- -->NULL
 
 ### geneViz (Transcript Represenation)
 
@@ -512,7 +526,7 @@ p1 <- geneViz(txdb, gr, genome)
 p1[[1]]
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-31-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-32-1.png)<!-- -->
 
 Hints
 -----
@@ -555,22 +569,22 @@ sessionInfo()
     ## [8] methods   base     
     ## 
     ## other attached packages:
-    ##  [1] BSgenome.Hsapiens.UCSC.hg19_1.4.0      
-    ##  [2] BSgenome_1.39.4                        
-    ##  [3] rtracklayer_1.31.7                     
-    ##  [4] Biostrings_2.39.12                     
-    ##  [5] XVector_0.11.7                         
-    ##  [6] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2
-    ##  [7] GenomicFeatures_1.23.27                
-    ##  [8] AnnotationDbi_1.33.7                   
-    ##  [9] Biobase_2.31.3                         
-    ## [10] GenomicRanges_1.23.24                  
-    ## [11] GenomeInfoDb_1.7.6                     
-    ## [12] IRanges_2.5.40                         
-    ## [13] S4Vectors_0.9.43                       
-    ## [14] BiocGenerics_0.17.3                    
-    ## [15] reshape2_1.4.1                         
-    ## [16] GenVisR_0.99.20                        
+    ##  [1] GenVisR_0.99.20                        
+    ##  [2] BSgenome.Hsapiens.UCSC.hg19_1.4.0      
+    ##  [3] BSgenome_1.39.4                        
+    ##  [4] rtracklayer_1.31.7                     
+    ##  [5] Biostrings_2.39.12                     
+    ##  [6] XVector_0.11.7                         
+    ##  [7] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2
+    ##  [8] GenomicFeatures_1.23.27                
+    ##  [9] AnnotationDbi_1.33.7                   
+    ## [10] Biobase_2.31.3                         
+    ## [11] GenomicRanges_1.23.24                  
+    ## [12] GenomeInfoDb_1.7.6                     
+    ## [13] IRanges_2.5.40                         
+    ## [14] S4Vectors_0.9.43                       
+    ## [15] BiocGenerics_0.17.3                    
+    ## [16] reshape2_1.4.1                         
     ## [17] knitr_1.12.3                           
     ## [18] BiocStyle_1.9.7                        
     ## 
@@ -580,16 +594,18 @@ sessionInfo()
     ##  [5] bitops_1.0-6                viridis_0.3.4              
     ##  [7] tools_3.3.0                 zlibbioc_1.17.1            
     ##  [9] digest_0.6.9                biomaRt_2.27.2             
-    ## [11] evaluate_0.8.3              RSQLite_1.0.0              
-    ## [13] gtable_0.2.0                DBI_0.3.1                  
-    ## [15] yaml_2.1.13                 gridExtra_2.2.1            
-    ## [17] stringr_1.0.0               gtools_3.5.0               
-    ## [19] grid_3.3.0                  FField_0.1.0               
-    ## [21] XML_3.98-1.4                BiocParallel_1.5.21        
-    ## [23] rmarkdown_0.9.5             ggplot2_2.1.0              
-    ## [25] magrittr_1.5                htmltools_0.3.5            
-    ## [27] Rsamtools_1.23.6            scales_0.4.0               
-    ## [29] GenomicAlignments_1.7.20    SummarizedExperiment_1.1.22
-    ## [31] colorspace_1.2-6            labeling_0.3               
-    ## [33] stringi_1.0-1               RCurl_1.95-4.8             
-    ## [35] munsell_0.4.3
+    ## [11] evaluate_0.8.3              memoise_1.0.0              
+    ## [13] RSQLite_1.0.0               gtable_0.2.0               
+    ## [15] DBI_0.3.1                   yaml_2.1.13                
+    ## [17] gridExtra_2.2.1             withr_1.0.1                
+    ## [19] roxygen2_5.0.1              stringr_1.0.0              
+    ## [21] devtools_1.10.0             gtools_3.5.0               
+    ## [23] grid_3.3.0                  FField_0.1.0               
+    ## [25] XML_3.98-1.4                BiocParallel_1.5.21        
+    ## [27] rmarkdown_0.9.5             ggplot2_2.1.0              
+    ## [29] magrittr_1.5                htmltools_0.3.5            
+    ## [31] Rsamtools_1.23.6            scales_0.4.0               
+    ## [33] GenomicAlignments_1.7.20    SummarizedExperiment_1.1.22
+    ## [35] colorspace_1.2-6            labeling_0.3               
+    ## [37] stringi_1.0-1               RCurl_1.95-4.8             
+    ## [39] munsell_0.4.3
