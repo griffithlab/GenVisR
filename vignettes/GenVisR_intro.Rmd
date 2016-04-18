@@ -372,6 +372,16 @@ ideoView(data, chromosome='chr1', txtSize=4)
 lohSpec(x=HCC1395_Germline)
 ```
 
+### lohView (Loss of Heterozygosity View)
+
+`lohView` provides a method for visualizing Loss of Heterozygoisty focused on either a single chromosome or all chromosomes for a single sample. Input consists of a data frame with column names "chromosome", "position", "n_vaf", "t_vaf" and "sample" as well as a specification of which chromosome to plot specified via the parameter `chr` and which genome assembly should be used for chromosome boundaries `genome`. Input should be restricted to "Germline" calls only! The algorithm will produce an ideogram on the top track and plot normal and tumor variant allele fraction derived from the columns "n_vaf" and "t_vaf" beneath. Here we demonstrate `lohView`on data from the HCC1395 Cell Line for chromosome 5.
+
+```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+
+# Call lohView with basic input, make sure input contains only Germline calls
+lohView(HCC1395_Germline, chr='chr5', genome='hg19', ideogram_txtSize=4)
+```
+
 ### compIdent (snp identity graphic)
 
 `compIdent` produces a plot comparing samples based on identity snp variant allele frequency (VAF) values. The graphic displays VAF values at genomic locations given via the parameter `target`. If no argument is supplied to `target` the algorithm will default to 24 biallelic identity snps from the hg19 genome assembly identified by "pengelly et al. Genome Med. 2013, PMID 24070238". `compIdent` expects a data frame with rows specifying samples and columns providing sample names and bam file locations given to parameter `x`. Please note that compIdent will not index bam files and will look for a .bai file for the associated bam.

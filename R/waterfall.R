@@ -268,7 +268,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     }
 
     # Decide what to output
-    if(!exists("pA", where="package:GenVisR"))
+    if(!exists("pA", inherits=FALSE))
     {
         pA <- waterfall_align(p2, p1, p3)
     }
