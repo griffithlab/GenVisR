@@ -1,7 +1,7 @@
 #' Calculate loh difference
 #' 
 #' Obtain LOH on an entire chromsomes from samples in a cohort
-#' @name lohView_tileCalc
+#' @name lohSpec_tileCalc
 #' @param window_data object of class data frame with columns "chromosome", 
 #' "position", "n_vaf", "t_vaf", "sample", "bin", "window_start", "window_stop"
 #' @param normal integer specifying the subtraction value from tumor VAF
@@ -9,7 +9,7 @@
 #' and column names "window_start", "window_stop", "chromosome", "position", 
 #' "n_vaf", "t_vaf", "sample", "loh_diff"
 
-lohView_tileCalc <- function(window_data, normal)
+lohSpec_tileCalc <- function(window_data, normal)
 {
     
     ## Tile function to calculate LOH    

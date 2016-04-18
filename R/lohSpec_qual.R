@@ -1,7 +1,7 @@
-#' Check input to lohView
+#' Check input to lohSpec
 #'
-#' Perform data quality checks on input supplied to lohView
-#' @name lohView_qual
+#' Perform data quality checks on input supplied to lohSpec
+#' @name lohSpec_qual
 #' @param x object of class data frame with columns 'chromosome', 'position',
 #' 'n_vaf', 't_vaf', 'sample'
 #' @param y object of class data frame with columns 'chromosome', 'start',
@@ -11,7 +11,7 @@
 #' input data is based
 #' @return list of inputs passing basic quality controls
 
-lohView_qual <- function(x, y, genome)
+lohSpec_qual <- function(x, y, genome)
 {
     # check input data to x
     if(!is.data.frame(x))

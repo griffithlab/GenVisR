@@ -1,7 +1,7 @@
 #' Calculate loh difference
 #' 
 #' Obtain LOH on an entire chromsomes from samples in a cohort
-#' @name lohView_lohCalc
+#' @name lohSpec_lohCalc
 #' @param window_data object of class data frame with columns 
 #' 'window_start' and 'window_stop
 #' @param out object of class dataframe with columns 'chromosome', 
@@ -11,7 +11,7 @@
 #' and column names "window_start", "window_stop", "chromosome", "position", 
 #' "n_vaf", "t_vaf", "sample", "loh_diff"
 
-lohView_lohCalc <- function(window_data, out, normal)
+lohSpec_lohCalc <- function(window_data, out, normal)
     
 {
     ## Set each list as a dataframe

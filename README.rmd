@@ -392,12 +392,12 @@ data <- cytoGeno[cytoGeno$genome == 'hg38',]
 ideoView(data, chromosome='chr1', txtSize=4)
 ```
 
-### lohView (mean absolute LOH difference)
-`lohView` obtains mean absolute LOH differene between tumor VAF and a default normal VAF parameter set at 50 for all calls made within a specified window length. Input data should include column names "chromosome", "position", "n_vaf", "t_vaf", "sample". If the `method` specified is "tile", mean LOH difference will be plotted for adjacent windows across the entire genome for multiple samples. If the`method` specified is "slide", mean LOH difference for overlapping windows will be plotted over a `step` sized window. When `gender` is NULL, LOH calculations will be excluded from both the X and Y chromosome for all samples. When the `gender` of each sample is specified, LOH calculations will be performed on the X chromosome, along with all autosomes for all samples. If the user does not provide loh information for any chromosome-sample pair, lohView will plot a white rectangle in for that region in the genome. 
+### lohSpec (Loss of Heterozygosity Spectrum)
+`lohSpec` obtains mean absolute LOH difference between tumor VAF and a default normal VAF parameter set at 50 for all calls made within a specified window length. Input data should include column names "chromosome", "position", "n_vaf", "t_vaf", "sample". If the `method` specified is "tile", mean LOH difference will be plotted for adjacent windows across the entire genome for multiple samples. If the`method` specified is "slide", mean LOH difference for overlapping windows will be plotted over a `step` sized window. When `gender` is NULL, LOH calculations will be excluded from both the X and Y chromosome for all samples. When the `gender` of each sample is specified, LOH calculations will be performed on the X chromosome, along with all autosomes for all samples. If the user does not provide loh information for any chromosome-sample pair, lohSpec will plot a white rectangle in for that region in the genome. 
 ```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
 
-# Call lohView with basic input 
-lohView(x=HCC1395_Germline)
+# Call lohSpec with basic input 
+lohSpec(x=HCC1395_Germline)
 ```
 
 ### compIdent (snp identity graphic)

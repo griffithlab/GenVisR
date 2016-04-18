@@ -18,8 +18,8 @@
         -   [cnFreq (proportional copy
             number alterations)](#cnfreq-proportional-copy-number-alterations)
         -   [ideoView (ideogram graphic)](#ideoview-ideogram-graphic)
-        -   [lohView (mean absolute
-            LOH difference)](#lohview-mean-absolute-loh-difference)
+        -   [lohSpec (Loss of
+            Heterozygosity Spectrum)](#lohspec-loss-of-heterozygosity-spectrum)
         -   [compIdent (snp
             identity graphic)](#compident-snp-identity-graphic)
         -   [geneViz
@@ -464,13 +464,13 @@ ideoView(data, chromosome = "chr1", txtSize = 4)
 
 ![](README_files/figure-markdown_github/unnamed-chunk-28-1.png)<!-- -->
 
-### lohView (mean absolute LOH difference)
+### lohSpec (Loss of Heterozygosity Spectrum)
 
-`lohView` obtains mean absolute LOH differene between tumor VAF and a default normal VAF parameter set at 50 for all calls made within a specified window length. Input data should include column names "chromosome", "position", "n\_vaf", "t\_vaf", "sample". If the `method` specified is "tile", mean LOH difference will be plotted for adjacent windows across the entire genome for multiple samples. If the`method` specified is "slide", mean LOH difference for overlapping windows will be plotted over a `step` sized window. When `gender` is NULL, LOH calculations will be excluded from both the X and Y chromosome for all samples. When the `gender` of each sample is specified, LOH calculations will be performed on the X chromosome, along with all autosomes for all samples. If the user does not provide loh information for any chromosome-sample pair, lohView will plot a white rectangle in for that region in the genome.
+`lohSpec` obtains mean absolute LOH difference between tumor VAF and a default normal VAF parameter set at 50 for all calls made within a specified window length. Input data should include column names "chromosome", "position", "n\_vaf", "t\_vaf", "sample". If the `method` specified is "tile", mean LOH difference will be plotted for adjacent windows across the entire genome for multiple samples. If the`method` specified is "slide", mean LOH difference for overlapping windows will be plotted over a `step` sized window. When `gender` is NULL, LOH calculations will be excluded from both the X and Y chromosome for all samples. When the `gender` of each sample is specified, LOH calculations will be performed on the X chromosome, along with all autosomes for all samples. If the user does not provide loh information for any chromosome-sample pair, lohSpec will plot a white rectangle in for that region in the genome.
 
 ``` r
-# Call lohView with basic input
-lohView(x = HCC1395_Germline)
+# Call lohSpec with basic input
+lohSpec(x = HCC1395_Germline)
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-29-1.png)<!-- -->
@@ -570,9 +570,9 @@ sessionInfo()
     ## [13] S4Vectors_0.9.43                       
     ## [14] BiocGenerics_0.17.3                    
     ## [15] reshape2_1.4.1                         
-    ## [16] knitr_1.12.3                           
-    ## [17] BiocStyle_1.9.7                        
-    ## [18] GenVisR_0.99.20                        
+    ## [16] GenVisR_0.99.20                        
+    ## [17] knitr_1.12.3                           
+    ## [18] BiocStyle_1.9.7                        
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] Rcpp_0.12.3                 highr_0.5.1                

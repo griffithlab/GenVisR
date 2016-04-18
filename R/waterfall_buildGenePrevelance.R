@@ -36,7 +36,7 @@ waterfall_buildGenePrevelance <- function(data_frame, layers=NULL)
     y_limits <- ylim(100, 0)
     y_label <- ylab('% Samples With Mutation')
     legend <- scale_fill_manual(name="Translational Effect",
-                                values=c("Non Synonymous"="red", "Synonymous"="blue"),
+                                values=c("Non Synonymous"="blue", "Synonymous"="red"),
                                 breaks=c('Synonymous', 'Non Synonymous'),
                                 drop=FALSE)
 
