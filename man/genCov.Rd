@@ -10,7 +10,7 @@ genCov(x, txdb, gr, genome, reduce = FALSE, gene_colour = NULL,
   lab2plot_ratio = c(1, 10), cov_colour = "blue", cov_plotType = "point",
   cov_plotLayer = NULL, base = c(10, 2, 2), transform = c("Intron", "CDS",
   "UTR"), gene_labelTranscript = TRUE, gene_labelTranscriptSize = 4,
-  gene_isoformSel = NULL, out = "plot")
+  gene_isoformSel = NULL, out = "plot", subsample = FALSE)
 }
 \arguments{
 \item{x}{Named list with list elements containing data frames
@@ -80,8 +80,12 @@ name text in the gene plot.}
 \item{gene_isoformSel}{Character vector specifying the names
 (from the txdb object) of isoforms within the region of interest to display.}
 
-\item{out}{Character vector specifying the the object to output, one of
+\item{out}{Character vector specifying the object to output, one of
 "data", "grob", or "plot", defaults to "plot" (see returns).}
+
+\item{subsample}{Boolean value specifying whether to reduce the provided
+coverage data to a subset of approximately 1000 points. Used to generate
+sparse plots that use less disk space and are faster to render.}
 }
 \value{
 One of the following, a list of dataframes containing data to be
