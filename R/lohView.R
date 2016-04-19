@@ -3,9 +3,9 @@
 #' Given a data frame construct a plot to display Loss of Heterozygosity for
 #' specific chromosomes.
 #' @name lohView
-#' @param x object of class data frame with rows representing Germline calls.
-#' The data frame must contain columns with the following names "chromosome",
-#' "position", "n_vaf", "t_vaf", "sample".
+#' @param x object of class data frame with rows representing Heterozygous
+#' Germline calls. The data frame must contain columns with the following names 
+#' "chromosome", "position", "n_vaf", "t_vaf", "sample".
 #' @param y Object of class data frame with rows representing cytogenetic bands
 #' for a chromosome. The data frame must contain columns with the following
 #' names "chrom", "chromStart", "chromEnd", "name", "gieStain" for plotting the

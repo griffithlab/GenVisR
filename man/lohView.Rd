@@ -9,9 +9,9 @@ lohView(x, y = NULL, genome = "hg19", chr = "chr1",
   ideogramLayer = NULL, out = "plot")
 }
 \arguments{
-\item{x}{object of class data frame with rows representing Germline calls.
-The data frame must contain columns with the following names "chromosome",
-"position", "n_vaf", "t_vaf", "sample".}
+\item{x}{object of class data frame with rows representing Heterozygous
+Germline calls. The data frame must contain columns with the following names 
+"chromosome", "position", "n_vaf", "t_vaf", "sample".}
 
 \item{y}{Object of class data frame with rows representing cytogenetic bands
 for a chromosome. The data frame must contain columns with the following
