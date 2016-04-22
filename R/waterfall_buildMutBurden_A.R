@@ -22,7 +22,7 @@ waterfall_buildMutBurden_A <- function(x, coverage_space, layers=NULL)
 
     # Add Legend
     legend <- scale_fill_manual(name="Translational Effect",
-                                values=c("red", "blue"),
+                                values=c("Synonymous"="red", "Non Synonymous"="blue"),
                                 breaks=c("Synonymous", "Non Synonymous"),
                                 drop=FALSE)
 

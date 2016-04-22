@@ -101,37 +101,37 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
     colnames(fakeEnd) <- c("chromosome", "coordinate")
     dummyData <- rbind(fakeStart, fakeEnd)
     dummyData$chromosome <- as.factor(dummyData$chromosome)
-    dummyData <- cnView_subsetChr(dummyData, chr)
+    dummyData <- multi_subsetChr(dummyData, chr)
 
     # Plot all chromosomes at once if specified
     if(chr == 'all')
     {
         # plot the graphic
         p1 <- cnView_buildMain(x, z=z, dummyData, chr=chr)
+    } else {
+        # plot chromosome
+        chromosome_plot <- ideoView(cytobands, chromosome=chr,
+                                    txtAngle=ideogram_txtAngle,
+                                    txtSize=ideogram_txtSize,
+                                    plotLayer=ideogramLayer)
+        
+        # if requested plot only selected chromosome
+        x <- multi_subsetChr(x, chr)
+        if(!is.null(z))
+        {
+            z <- multi_subsetChr(z, chr)
+        }
+        
+        # build the plot
+        CN_plot <- cnView_buildMain(x, dummyData, z=z, chr=chr, CNscale=CNscale,
+                                    layers=plotLayer)
     }
-
-    # plot chromosome
-    chromosome_plot <- ideoView(cytobands, chromosome=chr,
-                                txtAngle=ideogram_txtAngle,
-                                txtSize=ideogram_txtSize,
-                                plotLayer=ideogramLayer)
-
-    # if requested plot only selected chromosome
-    x <- cnView_subsetChr(x, chr)
-    if(!is.null(z))
-    {
-        z <- cnView_subsetChr(z, chr)
-    }
-    
-    # build the plot
-    CN_plot <- cnView_buildMain(x, dummyData, z=z, chr=chr, CNscale=CNscale,
-                                layers=plotLayer)
 
     # Decide what to output
-    dataOut <- list(main=x, dummyData=dummyData, segments=z)
-    if(!exists("p1"))
+    dataOut <- list(main=x, dummyData=dummyData, segments=z, cytobands=cytobands)
+    if(!exists("p1", inherits=FALSE))
     {
-        p1 <- cnView_align(chromosome_plot, CN_plot)
+        p1 <- multi_align(chromosome_plot, CN_plot)
         output <- multi_selectOut(data=dataOut, plot=p1, draw=TRUE, out=out)
     } else {
         output <- multi_selectOut(data=dataOut, plot=p1, draw=FALSE, out=out)

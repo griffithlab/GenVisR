@@ -2,40 +2,24 @@
 % Please edit documentation in R/lohView_buildMain.R
 \name{lohView_buildMain}
 \alias{lohView_buildMain}
-\title{Plot LOH data}
+\title{construct loh plot}
 \usage{
-lohView_buildMain(x, dummyData, gradient_midpoint = gradient_midpoint,
-  gradient_low = gradient_low, gradient_mid = gradient_mid,
-  gradient_high = gradient_high, theme_layer = theme_layer)
+lohView_buildMain(x, y, chr, layers = NULL)
 }
 \arguments{
-\item{x}{object of class dataframe with loh difference
-calculations and column names "window_start", "window_stop", "chromosome",
-"sample", and "loh_diff"}
+\item{x}{a data frame with columns chromosome, position, n_vaf, t_vaf, sample}
 
-\item{dummyData}{object of class dataframe with column names "chromosome",
-"start", "end" specifying chromosome boundaries}
+\item{y}{a data frame with columns chromosome, coordinate for plotting
+chromosome boundaries}
 
-\item{gradient_midpoint}{object of class numeric specifying the midpoint
-for legend's gradient scale}
+\item{chr}{a character string specifying chromosome}
 
-\item{gradient_low}{object of class character for hex color code for
-gradient's lower values}
-
-\item{gradient_mid}{object of class character for hex color code for
-gradient's middle values}
-
-\item{gradient_high}{object of class character for hex color code for
-gradient's upper values}
-
-\item{theme_layer}{ggplot theme object specifying parameters for non data
-elements
-for the legend's parameters}
+\item{layers}{additional ggplot2 layers to add}
 }
 \value{
-object of class ggplot2
+ggplot2 object
 }
 \description{
-Build a ggplot2 object displaying calculated LOH data
+given a loh data frame plot points in ggplot
 }
 

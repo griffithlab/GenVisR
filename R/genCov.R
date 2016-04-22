@@ -49,8 +49,11 @@
 #' name text in the gene plot.
 #' @param gene_isoformSel Character vector specifying the names
 #' (from the txdb object) of isoforms within the region of interest to display.
-#' @param out Character vector specifying the the object to output, one of
+#' @param out Character vector specifying the object to output, one of
 #' "data", "grob", or "plot", defaults to "plot" (see returns).
+#' @param subsample Boolean value specifying whether to reduce the provided
+#' coverage data to a subset of approximately 1000 points. Used to generate
+#' sparse plots that use less disk space and are faster to render.
 #' @details genCov is a function designed construct a series of tracks based on 
 #' a TxDb object giving transcript features, and coverage data supplied to
 #' parameter `x`. The function will look at a region of interest specified by
@@ -116,7 +119,8 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
                    base=c(10, 2, 2),
                    transform=c("Intron", "CDS", "UTR"),
                    gene_labelTranscript=TRUE,
-                   gene_labelTranscriptSize=4, gene_isoformSel=NULL, out="plot")
+                   gene_labelTranscriptSize=4, gene_isoformSel=NULL, out="plot",
+                   subsample=FALSE)
 {
     # Perform data quality checks
     data <- genCov_qual(x=x, txdb=txdb, gr=gr, genome=genome)
@@ -145,7 +149,6 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
         if(length(idx)){
           x <- x[idx,]
         }
-        
         return(x)
     }
     
@@ -196,6 +199,30 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
 
         # set flag to not display x axis labels
         display_x_axis <- FALSE
+    }
+    
+    
+    if(subsample){
+        transform.coordinates <- function(master_row, x, tx.graph.width){
+            lt <- x$start <= master_row$trans_end
+            gt <- x$end >= master_row$trans_start
+            idx = which(lt & gt)
+            x.sub <- x[idx,]
+            width <- dim(x.sub)[1]
+            adjusted.width <- round(1000 * (master_row$width / tx.graph.width))
+            if( width > adjusted.width){
+                s <- seq.int(from = 1, to = width, length.out = adjusted.width)
+                x.sub <- x.sub[s,]
+            }
+            return(x.sub)
+        }
+        perform_subsample <- function(x, master){
+            tx.graph.width <- sum(master$width)
+            y <- plyr::adply(master, 1, transform.coordinates, x=x, tx.graph.width=tx.graph.width)
+            y
+        }
+        
+        coverage_data <- lapply(coverage_data, perform_subsample, master=master)
     }
 
     # obtain coverage plots for the data input as a list

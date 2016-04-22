@@ -1,12 +1,12 @@
-#' align cn plots on x axis
+#' align CN/LOH plots on x axis
 #'
-#' given a chromosome and cn plot align plot widths
-#' @name cnView_align
+#' given a chromosome and CN/LOH plot align plot widths
+#' @name multi_align
 #' @param p1 ggplot object of chromosome
-#' @param p2 ggplot object of CN
+#' @param p2 ggplot object of CN or LOH
 #' @return ggplot object
 
-cnView_align <- function(p1, p2)
+multi_align <- function(p1, p2)
 {
     # define the ggplot's as grobs and create a blank plot
     gA <- ggplot2::ggplotGrob(p1)

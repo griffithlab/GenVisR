@@ -13,6 +13,7 @@
 #' @param clin.layers additional ggplot2 layers to plot
 #' @return a grob object
 #' @import ggplot2
+#' @importFrom viridis viridis
 
 multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
                                 clin.var.order=NULL, clin.layers=NULL)
@@ -20,18 +21,40 @@ multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
     # Define parameters
     x_label <- xlab(paste0("Sample n=", length(unique(x$sample))))
     leg_guide <- guides(fill=guide_legend(ncol=clin.legend.col))
+    
+    # Set the clinical variable order and colour
+    if(!is.null(clin.var.colour))
+    {
+        na_index <- which(grepl("^NA$", names(clin.var.colour)))
+        # check that there is only na value
+        if(length(na_index) == 1)
+        {
+            na_colour <- clin.var.colour[na_index]
+            clin.var.colour <- clin.var.colour[-na_index]
+        } else {
+            na_colour <- NA
+        }
+    } else {
+        na_colour <- NA
+    }
 
     if(!is.null(clin.var.colour) & is.null(clin.var.order))
     {
         clin_fill_colour <- scale_fill_manual(name="Clinical Data",
-                                              values=clin.var.colour)
+                                              values=clin.var.colour,
+                                              na.value=na_colour)
     } else if(!is.null(clin.var.colour) & !is.null(clin.var.order)) {
         clin_fill_colour <- scale_fill_manual(name="Clinical Data",
                                               breaks=clin.var.order,
-                                              values=clin.var.colour)
+                                              values=clin.var.colour,
+                                              na.value=na_colour)
     } else if(is.null(clin.var.colour) & !is.null(clin.var.order)) {
         clin_fill_colour <- scale_fill_manual(name="Clinical Data",
-                                              breaks=clin.var.order)
+                                              breaks=clin.var.order,
+                                              values=viridis::viridis(length(unique(x$value))),
+                                              na.value=na_colour)
+    } else {
+        clin_fill_colour <- geom_blank()
     }
 
     if(!is.null(clin.layers))
@@ -56,15 +79,8 @@ multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
                    legend.position='right')
 
     # Define the main plot
-    if(!is.null(clin.var.colour))
-    {
-        p1 <- ggplot(x, aes_string(x='sample', y='variable', fill='value')) +
-        geom_tile() + theme + x_label + leg_guide + clin_fill_colour +
-        layers
-    } else {
-        p1 <- ggplot(x, aes_string(x='sample', y='variable', fill='value')) +
-        geom_tile() + theme + x_label + leg_guide + layers
-    }
+    p1 <- ggplot(x, aes_string(x='sample', y='variable', fill='value')) +
+    geom_tile() + theme + x_label + leg_guide + clin_fill_colour + layers
 
     return(p1)
 }

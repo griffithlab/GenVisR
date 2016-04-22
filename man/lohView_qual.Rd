@@ -2,25 +2,24 @@
 % Please edit documentation in R/lohView_qual.R
 \name{lohView_qual}
 \alias{lohView_qual}
-\title{Check input to lohView}
+\title{check input to lohView}
 \usage{
 lohView_qual(x, y, genome)
 }
 \arguments{
-\item{x}{object of class data frame with columns 'chromosome', 'position',
-'n_vaf', 't_vaf', 'sample'}
+\item{x}{object of class data frame with rows representing germline calls.
+The data frame must contain columns with the following names "chromosome",
+"position", "n_vaf", "t_vaf", "sample".}
 
-\item{y}{object of class data frame with columns 'chromosome', 'start',
-'end' specifying chromosomal boundaries for a genome assembly
-(required if genome is not specified)}
+\item{y}{a data frame with columns "chrom", "chromStart", "chromEnd", "name",
+"gieStain"}
 
-\item{genome}{character string specifying the genome assembly from which
-input data is based}
+\item{genome}{character string specifying UCSC genome to use}
 }
 \value{
-list of inputs passing basic quality controls
+a list of data frames passing quality checks
 }
 \description{
-Perform data quality checks on input supplied to lohView
+Perform a data quality check for inputs to lohView
 }
 

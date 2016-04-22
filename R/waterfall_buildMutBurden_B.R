@@ -27,6 +27,7 @@ waterfall_buildMutBurden_B <- function(x, layers=NULL)
                                 values=c("Non Synonymous"="blue",
                                          "Synonymous"="red",
                                          "Undefined"="black"),
+                                breaks=c("Synonymous", "Non Synonymous", "Undefined"),
                                 drop=FALSE)
 
     if(!is.null(layers))

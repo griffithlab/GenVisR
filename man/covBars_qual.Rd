@@ -4,13 +4,11 @@
 \alias{covBars_qual}
 \title{Construct coverage cohort plot}
 \usage{
-covBars_qual(x, col)
+covBars_qual(x)
 }
 \arguments{
 \item{x}{object of class matrix containing rows for the coverage and columns
 the sample names}
-
-\item{col}{vector of colors for the coverage bars}
 }
 \value{
 a list of data frame and color vector

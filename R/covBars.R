@@ -3,8 +3,9 @@
 #' Given a matrix construct a plot to display sequencing depth acheived
 #' as percentage bars for a cohort of samples.
 #' @name covBars
-#' @param x Object of class matrix with rows representing coverage achieved
-#' at bases and columns corresponding to each sample in the cohort.
+#' @param x Object of class matrix with rows representing the sequencing depth
+#' (i.e. number of reads) and columns corresponding to each sample in the cohort
+#' and elements of the matrix
 #' @param colour Character vector specifying colours to represent sequencing
 #' depth.
 #' @param plot_title Character string specifying the title to display on the
@@ -32,9 +33,8 @@ covBars <- function(x, colour=NULL, plot_title=NULL, x_title_size=12,
                     out="plot")
 {
   # Perform quality check on input data
-    dat <- covBars_qual(x, colour)
+    dat <- covBars_qual(x)
     x <- dat[[1]]
-    colour <- dat[[2]]
 
     # resort the rows (increasing rowname as integer)
     x <- x[order(as.numeric(rownames(x))),]

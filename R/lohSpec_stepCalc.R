@@ -1,14 +1,14 @@
 #' Obtain average loh within each step 
 #' 
 #' Calculate avverage LOH within each step
-#' @name lohView_stepCalc
+#' @name lohSpec_stepCalc
 #' @param final_dataset object of class dataframe with columns 'window_start', 
 #' 'window_stop', 'chromosome', 'position', 'n_vaf', 't_vaf', 'sample', and 
 #' 'loh_diff_avg'
 #' @param step integer with the length of divisions (bp) in chromosomes
 #' @return list containing avg loh calculations for each step interval 
 
-lohView_stepCalc <- function(final_dataset, step) {
+lohSpec_stepCalc <- function(final_dataset, step) {
     ## Remove irrelevant columns
     loh_df1 <- lapply(final_dataset, function(x) 
         x[!(names(x) %in% c("n_vaf", "t_vaf"))])

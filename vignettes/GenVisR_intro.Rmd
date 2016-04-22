@@ -12,7 +12,7 @@ vignette: >
 
 # GenVisR
 
-Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
+Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics supporting multiple species and focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
 
 ## Installation Instructions 
 GenVisr is an R package available via Bioconductor (version 3.3) and via GitHub. GenVisR currently resides on the devel branch of Bioconductor and will be added to the release branch at the next the next Bioconductor release cycle (spring 2016). To install GenVisR from the Bioconductor devel branch it is neccessary to install the R and bioconductor devel versions. Briefly the steps are as follows:
@@ -325,7 +325,7 @@ dimnames=list(0:49,paste0("Sample",1:10)))
 covBars(x)
 ```
 
-By default a rainbow color scheme from red to violet is used. An alternate vector of colors can be supplied.
+By default the viridis color scheme is used. An alternate vector of colors can be supplied to the param `colour`.
 
 ```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
 covBars(x, colour=c("blue","grey","red"))
@@ -364,12 +364,22 @@ data <- cytoGeno[cytoGeno$genome == 'hg38',]
 ideoView(data, chromosome='chr1', txtSize=4)
 ```
 
-### lohView (mean absolute LOH difference)
-`lohView` obtains mean absolute LOH differene between tumor VAF and a default normal VAF parameter set at 50 for all calls made within a specified window length. Input data should include column names "chromosome", "position", "n_vaf", "t_vaf", "sample". If the `method` specified is "tile", mean LOH difference will be plotted for adjacent windows across the entire genome for multiple samples. If the`method` specified is "slide", mean LOH difference for overlapping windows will be plotted over a `step` sized window. When `gender` is NULL, LOH calculations will be excluded from both the X and Y chromosome for all samples. When the `gender` of each sample is specified, LOH calculations will be performed on the X chromosome, along with all autosomes for all samples. If the user does not provide loh information for any chromosome-sample pair, lohView will plot a white rectangle in for that region in the genome. 
+### lohSpec (Loss of Heterozygosity Spectrum)
+`lohSpec` obtains mean absolute LOH difference between tumor VAF and a default normal VAF parameter set at 50 for all calls made within a specified window length. Input data should include column names "chromosome", "position", "n_vaf", "t_vaf", "sample". If the `method` specified is "tile", mean LOH difference will be plotted for adjacent windows across the entire genome for multiple samples. If the`method` specified is "slide", mean LOH difference for overlapping windows will be plotted over a `step` sized window. When `gender` is NULL, LOH calculations will be excluded from both the X and Y chromosome for all samples. When the `gender` of each sample is specified, LOH calculations will be performed on the X chromosome, along with all autosomes for all samples. If the user does not provide loh information for any chromosome-sample pair, lohSpec will plot a white rectangle in for that region in the genome. 
 ```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
 
-# Call lohView with basic input 
-lohView(x=HCC1395_Germline)
+# Call lohSpec with basic input 
+lohSpec(x=HCC1395_Germline)
+```
+
+### lohView (Loss of Heterozygosity View)
+
+`lohView` provides a method for visualizing Loss of Heterozygoisty focused on either a single chromosome or all chromosomes for a single sample. Input consists of a data frame with column names "chromosome", "position", "n_vaf", "t_vaf" and "sample" as well as a specification of which chromosome to plot specified via the parameter `chr` and which genome assembly should be used for chromosome boundaries `genome`. Input should be restricted to "Heterozygous Germline" calls only! The algorithm will produce an ideogram on the top track and plot normal and tumor variant allele fraction derived from the columns "n_vaf" and "t_vaf" beneath. Here we demonstrate `lohView`on data from the HCC1395 Cell Line for chromosome 5.
+
+```{r, fig.keep='last', fig.width=11, fig.height=5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+
+# Call lohView with basic input, make sure input contains only Germline calls
+lohView(HCC1395_Germline, chr='chr5', genome='hg19', ideogram_txtSize=4)
 ```
 
 ### compIdent (snp identity graphic)

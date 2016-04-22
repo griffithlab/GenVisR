@@ -1,8 +1,8 @@
-#' Grab data for lohView
+#' Grab data for lohSpec
 #'
 #' Look in the specified file path and grab data with the proper extension for
-#' lohView
-#' @name lohView_fileGlob
+#' lohSpec
+#' @name lohSpec_fileGlob
 #' @param path character string specifying which directory contains
 #' the sample information stored as datasets with columns "chromosome",
 #' "position", "n_vaf", "t_vaf", and "sample" (required if x is not specified)
@@ -12,10 +12,10 @@
 #' elements from the set {"M", "F"}
 #' @param window_size Integer value specifying the size of the window in base
 #' pairs in which to calculate the mean Loss of Heterozygosity.
-#' @return object of class data frame from data specified in path for lohView
+#' @return object of class data frame from data specified in path for lohSpec
 #' @importFrom utils read.delim
 
-lohView_fileGlob <- function(path, fileExt, step, window_size, gender)
+lohSpec_fileGlob <- function(path, fileExt, step, window_size, gender)
 {
     # Obtain file names with the tumor and normal vaf values
     fileNames <- Sys.glob(paste0(path, '*.', fileExt))
@@ -50,10 +50,10 @@ lohView_fileGlob <- function(path, fileExt, step, window_size, gender)
             next
         }
 
-        if (!exists("dataset"))
+        if (!exists("dataset", inherits=FALSE))
         {
             dataset <- data
-        } else if(exists("dataset")) {
+        } else if(exists("dataset", inherits=FALSE)) {
             temp <- data
             dataset <- rbind(dataset, temp)
             rm(temp)

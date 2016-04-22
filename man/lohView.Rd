@@ -2,67 +2,37 @@
 % Please edit documentation in R/lohView.R
 \name{lohView}
 \alias{lohView}
-\title{Plot LOH data}
+\title{Construct LOH chromosome plot}
 \usage{
-lohView(x = NULL, path = NULL, fileExt = NULL, y = NULL,
-  genome = "hg19", gender = NULL, step = 1e+06, window_size = 2500000,
-  normal = 50, gradient_midpoint = 20, gradient_low = "#ffffff",
-  gradient_mid = "#b2b2ff", gradient_high = "#000000", theme_layer = NULL,
-  method = "slide", out = "plot")
+lohView(x, y = NULL, genome = "hg19", chr = "chr1",
+  ideogram_txtAngle = 45, ideogram_txtSize = 5, plotLayer = NULL,
+  ideogramLayer = NULL, out = "plot")
 }
 \arguments{
-\item{x}{object of class data frame with rows representing germline calls.
-The data frame must contain columns with the following names "chromosome",
-"position", "n_vaf", "t_vaf", "sample". required if path is set to NULL (see
-details).}
+\item{x}{object of class data frame with rows representing Heterozygous
+Germline calls. The data frame must contain columns with the following names 
+"chromosome", "position", "n_vaf", "t_vaf", "sample".}
 
-\item{path}{Character string specifying the path to a directory containing
-germline calls for each sample. Germline calls are expected to be stored as
-tab-seperated files which contain the following column names "chromosome", 
-"position", "n_vaf", "t_vaf", and "sample". required if x is set to null
-(see details).}
-
-\item{fileExt}{Character string specifying the file extensions of files
-within the path specified. Required if argument is supplied to path
-(see details).}
-
-\item{y}{Object of class data frame with rows representing chromosome
-boundaries for a genome assembly. The data frame must contain columns with
-the following names "chromosome", "start", "end" (optional: see details).}
+\item{y}{Object of class data frame with rows representing cytogenetic bands
+for a chromosome. The data frame must contain columns with the following
+names "chrom", "chromStart", "chromEnd", "name", "gieStain" for plotting the
+ideogram (optional: see details).}
 
 \item{genome}{Character string specifying a valid UCSC genome (see details).}
 
-\item{gender}{Character vector of length equal to the number of samples,
-consisting of elements from the set {"M", "F"}. Used to suppress the plotting
-of allosomes where appropriate.}
+\item{chr}{Character string specifying which chromosome to plot one of
+"chr..." or "all"}
 
-\item{step}{Integer value specifying the step size (i.e. the number of base
-pairs to move the window). required when method is set to slide
-(see details).}
+\item{ideogram_txtAngle}{Integer specifying the angle of cytogenetic labels
+on the ideogram subplot.}
 
-\item{window_size}{Integer value specifying the size of the window in base
-pairs in which to calculate the mean Loss of Heterozygosity (see details).}
+\item{ideogram_txtSize}{Integer specifying the size of cytogenetic labels on
+the ideogram subplot.}
 
-\item{normal}{Numeric value within the range 0-50 specifying the expected
-normal variant allele frequency to be used in Loss of Heterozygosity 
-calculations. defaults to 50\%}
+\item{plotLayer}{Valid ggplot2 layer to be added to the copy number plot.}
 
-\item{gradient_midpoint}{Numeric value specifying the midpoint 
-for the legend's gradient scale.}
-
-\item{gradient_low}{Character string specifying the colour for 
-gradient legends low value}
-
-\item{gradient_mid}{Character string specifying the colour for gradient
-legends midpoint value.}
-
-\item{gradient_high}{Character string specifying the colour for gradient
-legends high value.}
-
-\item{theme_layer}{Valid ggpot2 layer to be added to the plot.}
-
-\item{method}{character string specifying the approach to be used for 
-displaying Loss of Heterozygosity, one of "tile" or "slide" (see details).}
+\item{ideogramLayer}{Valid ggplot2 layer to be added to the ideogram
+sub-plot.}
 
 \item{out}{Character vector specifying the the object to output, one of
 "data", "grob", or "plot", defaults to "plot" (see returns).}
@@ -72,35 +42,26 @@ One of the following, a list of dataframes containing data to be
 plotted, a grob object, or a plot.
 }
 \description{
-Construct a graphic visualizing Loss of Heterozygosity in a cohort
+Given a data frame construct a plot to display Loss of Heterozygosity for
+specific chromosomes.
 }
 \details{
-lohView is intended to plot the loss of heterozygosity (LOH) within
-a sample. As such lohView expects input data to contain only LOH calls. Input
-can be supplied as a single data frame given to the argument x with rows
-containing germline calls and variables giving the chromosome, position, 
-normal variant allele frequency, tumor variant allele frequency, and the
-sample. In lieu of this format a series of .tsv files can be supplied via the 
-path and fileExt arguments. If this method is choosen samples will be infered
-from the file names. In both cases columns containing the variant allele
-frequency for normal and tumor samples should range from 0-100.
-Two methods exist to calculate and display LOH events. If the method is set
-to "tile" mean LOH is calculated based on the window_size argument with
-windows being placed next to each other. If the method is set to slide the
-widnow will slide and calculate the LOH based on the step parameter.
-In order to ensure the entire chromosome is plotted lohView requries the
-location of chromosome boundaries for a given genome assembly. As a
-convenience this information is available for the following genomes "hg19",
-"hg38", "mm9", "mm10", "rn5" and can be tetrieved by supplying one of the
-afore mentioned assemblies via the 'genome'paramter. If an argument is
-supplied to the 'genome' parameter and is unrecognized a query to the UCSC
-MySQL database will be attempted to obtain the required information. If
-chromosome boundary locations are unavailable for a given assembly this
-information can be supplied to the 'y' parameter which has priority over the
-'genome' parameter.
+lohView is able to plot in two modes specified via the `chr`
+parameter, these modes are single chromosome view in which an ideogram is
+displayed and genome view where chromosomes are faceted. For the single
+chromosome view cytogenetic band information is required giving the
+coordinate, stain, and name of each band. As a convenience GenVisR stores
+this information for the following genomes "hg19", "hg38", "mm9", "mm10", and
+"rn5". If the genome assembly supplied to the `genome` parameter is not one
+of the 5 afore mentioned genome assemblies GenVisR will attempt to query the
+UCSC MySQL database to retrieve this information. Alternatively the user can
+manually supply this information as a data frame to the `y` parameter, input
+to the `y` parameter take precedence of input to `genome`.
+
+A word of caution, users are advised to only use Germline calls in input to `x`, failure to do so will result in a misleading visual!
 }
 \examples{
-# plot loh within the example dataset
-lohView(x=HCC1395_Germline)
+# Plot loh for chromosome 5
+lohView(HCC1395_Germline, chr='chr5', genome='hg19', ideogram_txtSize=4)
 }
 

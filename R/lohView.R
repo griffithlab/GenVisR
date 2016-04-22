@@ -1,187 +1,122 @@
-#' Plot LOH data
+#' Construct LOH chromosome plot
 #'
-#' Construct a graphic visualizing Loss of Heterozygosity in a cohort
+#' Given a data frame construct a plot to display Loss of Heterozygosity for
+#' specific chromosomes.
 #' @name lohView
-#' @param x object of class data frame with rows representing germline calls.
-#' The data frame must contain columns with the following names "chromosome",
-#' "position", "n_vaf", "t_vaf", "sample". required if path is set to NULL (see
-#' details).
-#' @param y Object of class data frame with rows representing chromosome
-#' boundaries for a genome assembly. The data frame must contain columns with
-#' the following names "chromosome", "start", "end" (optional: see details).
+#' @param x object of class data frame with rows representing Heterozygous
+#' Germline calls. The data frame must contain columns with the following names 
+#' "chromosome", "position", "n_vaf", "t_vaf", "sample".
+#' @param y Object of class data frame with rows representing cytogenetic bands
+#' for a chromosome. The data frame must contain columns with the following
+#' names "chrom", "chromStart", "chromEnd", "name", "gieStain" for plotting the
+#' ideogram (optional: see details).
 #' @param genome Character string specifying a valid UCSC genome (see details).
-#' @param gender Character vector of length equal to the number of samples,
-#' consisting of elements from the set {"M", "F"}. Used to suppress the plotting
-#' of allosomes where appropriate.
-#' @param path Character string specifying the path to a directory containing
-#' germline calls for each sample. Germline calls are expected to be stored as
-#' tab-seperated files which contain the following column names "chromosome", 
-#' "position", "n_vaf", "t_vaf", and "sample". required if x is set to null
-#' (see details).
-#' @param fileExt Character string specifying the file extensions of files
-#' within the path specified. Required if argument is supplied to path
-#' (see details).
-#' @param step Integer value specifying the step size (i.e. the number of base
-#' pairs to move the window). required when method is set to slide
-#' (see details).
-#' @param window_size Integer value specifying the size of the window in base
-#' pairs in which to calculate the mean Loss of Heterozygosity (see details).
-#' @param normal Numeric value within the range 0-50 specifying the expected
-#' normal variant allele frequency to be used in Loss of Heterozygosity 
-#' calculations. defaults to 50\%
-#' @param gradient_midpoint Numeric value specifying the midpoint 
-#' for the legend's gradient scale.
-#' @param gradient_low Character string specifying the colour for 
-#' gradient legends low value
-#' @param gradient_mid Character string specifying the colour for gradient
-#' legends midpoint value.
-#' @param gradient_high Character string specifying the colour for gradient
-#' legends high value.
-#' @param theme_layer Valid ggpot2 layer to be added to the plot.
-#' @param method character string specifying the approach to be used for 
-#' displaying Loss of Heterozygosity, one of "tile" or "slide" (see details).
+#' @param chr Character string specifying which chromosome to plot one of
+#' "chr..." or "all"
+#' @param ideogram_txtAngle Integer specifying the angle of cytogenetic labels
+#' on the ideogram subplot.
+#' @param ideogram_txtSize Integer specifying the size of cytogenetic labels on
+#' the ideogram subplot.
+#' @param plotLayer Valid ggplot2 layer to be added to the copy number plot.
+#' @param ideogramLayer Valid ggplot2 layer to be added to the ideogram
+#' sub-plot.
 #' @param out Character vector specifying the the object to output, one of
 #' "data", "grob", or "plot", defaults to "plot" (see returns).
+#' @details lohView is able to plot in two modes specified via the `chr`
+#' parameter, these modes are single chromosome view in which an ideogram is
+#' displayed and genome view where chromosomes are faceted. For the single
+#' chromosome view cytogenetic band information is required giving the
+#' coordinate, stain, and name of each band. As a convenience GenVisR stores
+#' this information for the following genomes "hg19", "hg38", "mm9", "mm10", and
+#' "rn5". If the genome assembly supplied to the `genome` parameter is not one
+#' of the 5 afore mentioned genome assemblies GenVisR will attempt to query the
+#' UCSC MySQL database to retrieve this information. Alternatively the user can
+#' manually supply this information as a data frame to the `y` parameter, input
+#' to the `y` parameter take precedence of input to `genome`.
+#' 
+#' A word of caution, users are advised to only use Germline calls in input to `x`, failure to do so will result in a misleading visual!
+#' @examples
+#' # Plot loh for chromosome 5
+#' lohView(HCC1395_Germline, chr='chr5', genome='hg19', ideogram_txtSize=4)
 #' @return One of the following, a list of dataframes containing data to be
 #' plotted, a grob object, or a plot.
-#' @details lohView is intended to plot the loss of heterozygosity (LOH) within
-#' a sample. As such lohView expects input data to contain only LOH calls. Input
-#' can be supplied as a single data frame given to the argument x with rows
-#' containing germline calls and variables giving the chromosome, position, 
-#' normal variant allele frequency, tumor variant allele frequency, and the
-#' sample. In lieu of this format a series of .tsv files can be supplied via the 
-#' path and fileExt arguments. If this method is choosen samples will be infered
-#' from the file names. In both cases columns containing the variant allele
-#' frequency for normal and tumor samples should range from 0-100.
-#' Two methods exist to calculate and display LOH events. If the method is set
-#' to "tile" mean LOH is calculated based on the window_size argument with
-#' windows being placed next to each other. If the method is set to slide the
-#' widnow will slide and calculate the LOH based on the step parameter.
-#' In order to ensure the entire chromosome is plotted lohView requries the
-#' location of chromosome boundaries for a given genome assembly. As a
-#' convenience this information is available for the following genomes "hg19",
-#' "hg38", "mm9", "mm10", "rn5" and can be tetrieved by supplying one of the
-#' afore mentioned assemblies via the 'genome'paramter. If an argument is
-#' supplied to the 'genome' parameter and is unrecognized a query to the UCSC
-#' MySQL database will be attempted to obtain the required information. If
-#' chromosome boundary locations are unavailable for a given assembly this
-#' information can be supplied to the 'y' parameter which has priority over the
-#' 'genome' parameter. 
-#' @importFrom gtools mixedsort
-#' @examples 
-#' # plot loh within the example dataset
-#' lohView(x=HCC1395_Germline)
+#' @importFrom stats aggregate
 #' @export
 
-lohView <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
-                    gender=NULL, step=1000000, window_size=2500000, 
-                    normal=50, gradient_midpoint=20, gradient_low="#ffffff",
-                    gradient_mid="#b2b2ff", gradient_high="#000000",
-                    theme_layer=NULL, method="slide", out="plot")
+lohView <- function(x, y=NULL, genome='hg19', chr='chr1',
+                   ideogram_txtAngle=45, ideogram_txtSize=5, plotLayer=NULL,
+                   ideogramLayer=NULL, out="plot")
 {
-    # Grab data if necessary
-    if(!is.null(path))
-    {
-        if(is.null(fileExt))
-        {
-            memo <- paste0("argument required to variable fileExt if argument ",
-                           "is supplied to path")
-            stop(memo)
-        }
-        x <- lohView_fileGlob(path=path, fileExt=fileExt, step=step, 
-                              window_size=window_size, gender=gender)        
-    }
-    if (is.null(path)) {
-        if (is.null(gender) == FALSE) {
-            x <- x[x$chromosome !="Y",]
-        }
-        if(is.null(gender) == TRUE) {
-            x <- x[(x$chromosome != "X" &
-                             x$chromosome != "Y"),]
-        }
-    }
-
-    # Data Quality Check
+    # Perform a basic quality check
     input <- lohView_qual(x, y, genome)
     x <- input[[1]]
     y <- input[[2]]
-
-    # Obtain dummy data for genome
-    preloaded <- c('hg38', 'hg19', 'mm10', 'mm9', 'rn5')
-    if(!is.null(y))
+    
+    # Obtain Cytogenetic Band information
+    # use y input or query UCSC for the data if it's not preloaded
+    preloaded <- c("hg38", "hg19", "mm10", "mm9", "rn5")
+    if(is.null(y) && any(genome == preloaded))
     {
-        message("detected input to y, using supplied positions for chromosome
-                boundaries")
-        chr_pos <- y
-    } else if(is.null(y) && any(genome == preloaded)) {
         message("genome specified is preloaded, retrieving data...")
-        chr_pos <- GenVisR::cytoGeno[GenVisR::cytoGeno$genome == genome,]
-        chr_pos <- multi_chrBound(chr_pos)
+        cytobands <- GenVisR::cytoGeno[GenVisR::cytoGeno$genome == genome,]
+        cytobands <- cytobands[,-which(colnames(cytobands) == "genome")]
+    } else if(is.null(y)) {
+        # Obtain data for UCSC genome and extract relevant columns
+        memo <- paste0("attempting to query UCSC mySQL database for chromosome",
+                       " positions and cytogenetic information")
+        message(memo)
+        cytobands <- suppressWarnings(multi_cytobandRet(genome=genome))
     } else {
-        message("attempting to query UCSC sql database for chromosome
-                positions")
-        cyto_data <- suppressWarnings(multi_cytobandRet(genome))
-        chr_pos <- multi_chrBound(cyto_data)
+        memo <- paste0("Detected argument supplied to y.. using y for", 
+                       "position and cytogenetic information")
+        message(memo)
+        cytobands <- y
     }
-
-    # Quality check for dummy data
-    if(nrow(chr_pos) < 1)
+    
+    # Create Dummy data and add to x for proper plot dimensions
+    fakeStart <- stats::aggregate(data=cytobands, FUN=min, chromStart~chrom)
+    colnames(fakeStart) <- c("chromosome", "coordinate")
+    fakeEnd <- stats::aggregate(data=cytobands, FUN=max, chromEnd~chrom)
+    colnames(fakeEnd) <- c("chromosome", "coordinate")
+    dummyData <- rbind(fakeStart, fakeEnd)
+    dummyData$chromosome <- as.factor(dummyData$chromosome)
+    dummyData <- multi_subsetChr(dummyData, chr)
+    
+    # Format the main data in x
+    x <- reshape2::melt(x, id.vars=c("chromosome", "position", "sample"))
+    colnames(x) <- c("chromosome", "position", "sample", "Tissue", "vaf")
+    x$Tissue <- sapply(as.character(x$Tissue),
+                       function(x) switch(x, "n_vaf"="Normal", "t_vaf"="Tumor"))
+    x$Tissue <- as.factor(x$Tissue)
+    
+    # Plot all chromosomes at once if specified
+    if(chr == 'all')
     {
-        memo <- paste0("Could not retrieve chromosome boundaries from",
-                       " UCSC, please specify this information via ",
-                       "the y paramter")
-        stop(memo)
+        # plot the graphic
+        p1 <- lohView_buildMain(x, dummyData, chr=chr)
+    } else {
+        # plot chromosome
+        chromosome_plot <- ideoView(cytobands, chromosome=chr,
+                                    txtAngle=ideogram_txtAngle,
+                                    txtSize=ideogram_txtSize,
+                                    plotLayer=ideogramLayer)
+        
+        # if requested plot only selected chromosome
+        x <- multi_subsetChr(x, chr)
+        
+        # build the plot
+        LOH_plot <- lohView_buildMain(x, dummyData, chr=chr, layers=plotLayer)
     }
-    
-    # Produce dataset with loh mean absolute differences 
-    if (toupper(method) == 'SLIDE') {
-        # Calculate loh via sliding window
-        loh <- lohView_slidingWindow(loh_data=x, step, window_size, normal)
-    }
-    else if(toupper(method) == 'TILE') {
-        # Calculate loh via tiled window
-        ## Insert code
-        loh <- lohView_tileWindow(loh_data=x, window_size, normal)
-    }
-    else {
-        memo <- paste0("Did not recognize input to parameter method.", 
-                       "Please specify one of \"Tile\" or \"Slide\".")
-        stop(memo)
-    }
-    
-    # set order of x axis labels in plot
-    chromosomes <- gtools::mixedsort(as.character(unique(loh$chromosome)))
-    
-    # remove X and/or Y chromosomes
-    if (is.null(gender) == FALSE) {
-        chromosomes <- chromosomes[chromosomes != "Y"]
-        chr_pos <- chr_pos[(chr_pos$chromosome != "chrY"),]
-        loh <- loh[loh$chromosome != "Y",]
-    }
-    if (is.null(gender) == TRUE) {
-        chromosomes <- chromosomes[chromosomes != "X" & chromosomes != "Y"]
-        chr_pos <- chr_pos[(chr_pos$chromosome != "chrX" & 
-                                                chr_pos$chromosome != "chrY"),]
-        loh <- loh[(loh$chromosome != "Y" & loh$chromosome != "X"),]
-    }
-    loh$chromosome <- factor(loh$chromosome, levels=chromosomes)
-    chr_pos_levels <- gtools::mixedsort(as.character(unique(chr_pos$chromosome)))
-    chr_pos$chromosome <- 
-        factor(chr_pos$chromosome, levels=chr_pos_levels)
-    
-    # set order of y axis labels in plot
-    samples <- gtools::mixedsort(as.character(unique(loh$sample)))
-    loh$sample <- factor(loh$sample, levels=samples)
-    
-    #build  the plot
-    loh_plot <- lohView_buildMain(loh, dummyData=chr_pos,
-                                  gradient_midpoint=gradient_midpoint,
-                                  gradient_low=gradient_low,
-                                  gradient_mid=gradient_mid,
-                                  gradient_high=gradient_high,
-                                  theme_layer=theme_layer)
     
     # Decide what to output
-    output <- multi_selectOut(data=loh, plot=loh_plot, draw=FALSE, out=out)
+    dataOut <- list(main=x, dummyData=dummyData, cytobands=cytobands)
+    if(exists("LOH_plot", inherits=FALSE))
+    {
+        p1 <- multi_align(chromosome_plot, LOH_plot)
+        output <- multi_selectOut(data=dataOut, plot=p1, draw=TRUE, out=out)
+    } else {
+        output <- multi_selectOut(data=dataOut, plot=p1, draw=FALSE, out=out)
+    }
+    
     return(output)
 }

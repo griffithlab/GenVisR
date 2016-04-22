@@ -1,7 +1,7 @@
 #' Obtain window information
 #' 
 #' Calculate window positions to perform LOH calculation
-#' @name lohView_windowPosition
+#' @name lohSpec_windowPosition
 #' @param out object of class dataframe with columns 'chromosome', 
 #' 'position', 'n_vaf', 't_vaf', and 'sample'
 #' @param step integer with the length of divisions (bp) in chromosomes
@@ -11,7 +11,7 @@
 #' from each sample to perform LOH calculations
 
 
-lohView_windowPosition <- function(out, step, window_size)
+lohSpec_windowPosition <- function(out, step, window_size)
 {
     window <- lapply(out, function(x) {
         ## Calculate the number of windows necessary for each list
