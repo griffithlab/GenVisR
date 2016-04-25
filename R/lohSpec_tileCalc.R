@@ -17,7 +17,7 @@ lohSpec_tileCalc <- function(window_data, normal)
     total <- lapply(window_data, function(x) {
         ## Get the tumor vaf difference from 50
         t_vaf <- x$t_vaf
-        diff <- abs(t_vaf-50)
+        diff <- abs(t_vaf-.50)
         x$loh_diff <- diff
         
         ## Obtain the bin values 

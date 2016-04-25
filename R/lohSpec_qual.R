@@ -26,7 +26,22 @@ lohSpec_qual <- function(x, y, genome)
         stop('Did not detect required column names in x, required columns are: '
              , paste0(x_col, sep="\t"))
     }
-
+    
+    # Check that values supplied in vaf columns are in the expected range
+    if(any(x$nvaf > 1 | x$t_vaf > 1)) {
+        memo <- paste("Detected values in either the normal or tumor variant",
+                      "allele fraction columns above 1. Values supplied should",
+                      "be a proportion between 0-1!")
+        stop(memo)
+    }
+    
+    if(any(x$n_vaf < .4 | x$n_vaf > .6)) {
+        memo <- paste("Detected values with a variant allele fraction either",
+                      "above .6 or below .4 in the normal. Please ensure",
+                      "variants supplied are heterozygous in the normal!")
+        warning(memo)
+    }
+    
     # Check chromosome column in x
     if(!all(grepl("^chr", x$chromosome)))
     {
