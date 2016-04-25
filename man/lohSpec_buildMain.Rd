@@ -4,9 +4,7 @@
 \alias{lohSpec_buildMain}
 \title{Plot LOH data}
 \usage{
-lohSpec_buildMain(x, dummyData, gradient_midpoint = gradient_midpoint,
-  gradient_low = gradient_low, gradient_mid = gradient_mid,
-  gradient_high = gradient_high, theme_layer = theme_layer)
+lohSpec_buildMain(x, dummyData, colourScheme = "inferno", plotLayer = NULL)
 }
 \arguments{
 \item{x}{object of class dataframe with loh difference
@@ -16,20 +14,10 @@ calculations and column names "window_start", "window_stop", "chromosome",
 \item{dummyData}{object of class dataframe with column names "chromosome",
 "start", "end" specifying chromosome boundaries}
 
-\item{gradient_midpoint}{object of class numeric specifying the midpoint
-for legend's gradient scale}
+\item{colourScheme}{Character vector specifying the colour scale to use from
+the viridis package. One of "viridis", "magma", "plasma", or "inferno".}
 
-\item{gradient_low}{object of class character for hex color code for
-gradient's lower values}
-
-\item{gradient_mid}{object of class character for hex color code for
-gradient's middle values}
-
-\item{gradient_high}{object of class character for hex color code for
-gradient's upper values}
-
-\item{theme_layer}{ggplot theme object specifying parameters for non data
-elements
+\item{plotLayer}{Valid ggplot2 layer to be added to the plot.
 for the legend's parameters}
 }
 \value{

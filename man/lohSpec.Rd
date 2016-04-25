@@ -6,9 +6,8 @@
 \usage{
 lohSpec(x = NULL, path = NULL, fileExt = NULL, y = NULL,
   genome = "hg19", gender = NULL, step = 1e+06, window_size = 2500000,
-  normal = 0.5, gradient_midpoint = 0.2, gradient_low = "#ffffff",
-  gradient_mid = "#b2b2ff", gradient_high = "#000000", theme_layer = NULL,
-  method = "slide", out = "plot")
+  normal = 0.5, gradient_midpoint = 0.2, colourScheme = "inferno",
+  plotLayer = NULL, method = "slide", out = "plot")
 }
 \arguments{
 \item{x}{object of class data frame with rows representing germline calls.
@@ -47,19 +46,10 @@ pairs in which to calculate the mean Loss of Heterozygosity (see details).}
 normal variant allele frequency to be used in Loss of Heterozygosity 
 calculations. defaults to 50\%}
 
-\item{gradient_midpoint}{Numeric value specifying the midpoint 
-for the legend's gradient scale.}
+\item{colourScheme}{Character vector specifying the colour scale to use from
+the viridis package. One of "viridis", "magma", "plasma", or "inferno".}
 
-\item{gradient_low}{Character string specifying the colour for 
-gradient legends low value}
-
-\item{gradient_mid}{Character string specifying the colour for gradient
-legends midpoint value.}
-
-\item{gradient_high}{Character string specifying the colour for gradient
-legends high value.}
-
-\item{theme_layer}{Valid ggpot2 layer to be added to the plot.}
+\item{plotLayer}{Valid ggpot2 layer to be added to the plot.}
 
 \item{method}{character string specifying the approach to be used for 
 displaying Loss of Heterozygosity, one of "tile" or "slide" (see details).}

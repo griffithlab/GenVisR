@@ -7,32 +7,21 @@
 #' "sample", and "loh_diff"
 #' @param dummyData object of class dataframe with column names "chromosome",
 #' "start", "end" specifying chromosome boundaries
-#' @param gradient_midpoint object of class numeric specifying the midpoint
-#' for legend's gradient scale
-#' @param gradient_low object of class character for hex color code for
-#' gradient's lower values
-#' @param gradient_mid object of class character for hex color code for
-#' gradient's middle values
-#' @param gradient_high object of class character for hex color code for
-#' gradient's upper values
-#' @param theme_layer ggplot theme object specifying parameters for non data
-#' elements
+#' @param colourScheme Character vector specifying the colour scale to use from
+#' the viridis package. One of "viridis", "magma", "plasma", or "inferno".
+#' @param plotLayer Valid ggplot2 layer to be added to the plot.
 #' for the legend's parameters
 #' @return object of class ggplot2
 #' @import ggplot2
+#' @importFrom viridis scale_fill_viridis
 
-lohSpec_buildMain <- function(x, dummyData,
-                              gradient_midpoint=gradient_midpoint,
-                              gradient_low=gradient_low,
-                              gradient_mid=gradient_mid,
-                              gradient_high=gradient_high,
-                              theme_layer=theme_layer)
+lohSpec_buildMain <- function(x, dummyData, colourScheme="inferno",
+                              plotLayer=NULL)
 {
     # define dummy data which will be chromosome boundaries, these are plotted
     # but are transparent and will not appear in the plot
     dummy_data <- geom_rect(data=dummyData, aes_string(xmin='start', xmax='end',
-                                                       ymin=-1, ymax=1),
-                            alpha=0)
+                                                       ymin=-1, ymax=1),alpha=0)
     # Define the main plot
     data <- geom_rect(data=x, aes_string(xmin='window_start',
                                          xmax='window_stop',
@@ -51,29 +40,29 @@ lohSpec_buildMain <- function(x, dummyData,
 
     # Define plot aesthetics
     BWscheme <- theme_bw()
-
-    if(!is.null(theme_layer))
+    plotTheme <- theme(axis.ticks.x=element_blank(),
+                       axis.text.x=element_blank(),
+                       axis.ticks.y=element_blank(),
+                       axis.text.y=element_blank(),
+                       panel.grid.major=element_blank(),
+                       panel.grid.minor=element_blank())
+    
+    # plot an additional layer if specified
+    if(!is.null(plotLayer))
     {
-        plot_theme <- theme_layer
+        plotLayer <- plotLayer
     } else {
-        plot_theme <- theme(axis.ticks.x=element_blank(),
-                            axis.text.x=element_blank(),
-                            axis.ticks.y=element_blank(),
-                            axis.text.y=element_blank(),
-                            panel.grid.major=element_blank(),
-                            panel.grid.minor=element_blank())
+        plotLayer <- geom_blank()
     }
-
-    LOHgradient <-scale_fill_gradient2(midpoint = gradient_midpoint,
-                                       guide = "colourbar",
-                                       high = gradient_high,
-                                       mid = gradient_mid,
-                                       low = gradient_low,
-                                       space = 'Lab')
+    
+    # Define colour rame
+    LOHgradient <- viridis::scale_fill_viridis("Avg. VAF Difference",
+                                               option=colourScheme)
 
     # Build the plot
-    p1 <- ggplot() + dummy_data + data + facet + x_scale + y_scale + 
-        lab_x + lab_y + BWscheme + LOHgradient + plot_theme
+    tmp <- data.frame(x=0, y=0)
+    p1 <- ggplot(data=tmp, aes(y=0)) + dummy_data + data + facet + x_scale + y_scale + 
+        lab_x + lab_y + BWscheme + LOHgradient + plotTheme + plotLayer
      
     return(p1)
 }
