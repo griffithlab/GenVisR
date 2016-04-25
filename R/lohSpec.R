@@ -75,7 +75,11 @@
 
 lohSpec <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                     gender=NULL, step=1000000, window_size=2500000, 
+<<<<<<< HEAD
                     normal=50, gradient_midpoint=.2, gradient_low="#ffffff",
+=======
+                    normal=.50, gradient_midpoint=.20, gradient_low="#ffffff",
+>>>>>>> 8b4a5a0fe97c6f24663e75992c61eef1c210b2a2
                     gradient_mid="#b2b2ff", gradient_high="#000000",
                     theme_layer=NULL, method="slide", out="plot")
 {
