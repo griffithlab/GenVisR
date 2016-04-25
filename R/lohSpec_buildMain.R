@@ -72,8 +72,8 @@ lohSpec_buildMain <- function(x, dummyData,
                                        space = 'Lab')
 
     # Build the plot
-    p1 <- ggplot() + dummy_data + data + facet + x_scale + y_scale + lab_x +
-        lab_y + BWscheme + LOHgradient + plot_theme
+    p1 <- ggplot() + dummy_data + data + facet + x_scale + y_scale + 
+        lab_x + lab_y + BWscheme + LOHgradient + plot_theme
      
     return(p1)
 }
