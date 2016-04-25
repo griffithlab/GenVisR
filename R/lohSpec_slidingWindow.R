@@ -39,7 +39,9 @@ lohSpec_slidingWindow <- function(loh_data, step, window_size, normal)
     
     ## Combine the lists into a single dataframe
     loh_dataset <- plyr::ldply(df, data.frame)
-    colnames(loh_dataset) <- c("window_start", "window_stop", "chromosome", "sample", "loh_diff_avg")
+    colnames(loh_dataset) <- c("window_start", "window_stop", "chromosome", 
+                               "sample", "loh_diff_avg")
+    loh_dataset$loh_diff_avg <- loh_dataset$loh_diff_avg/100
     
     return(loh_dataset)
 }

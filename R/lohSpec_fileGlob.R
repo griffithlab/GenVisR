@@ -73,10 +73,10 @@ lohSpec_fileGlob <- function(path, fileExt, step, window_size, gender)
                 for (i in 1:length(chrDiff)) {
                     if(is.null(gender)==TRUE) {
                         d1 <- c(as.numeric(chrDiff[i]), step, 50, 50, 
-                                as.character(sample))
+                                as.character(sample[r]))
                         d2 <- c(as.numeric(chrDiff[i]), 
                                 step + window_size, 50, 50, 
-                                as.character(sample))
+                                as.character(sample[r]))
                         df <- data.frame(rbind(df, d1, d2))
                     }
                     if(is.null(gender)==FALSE) {
