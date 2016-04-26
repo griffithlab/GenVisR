@@ -4,10 +4,14 @@
 \alias{compIdent_buildMain}
 \title{Compare sample identities}
 \usage{
-compIdent_buildMain(x)
+compIdent_buildMain(x, mainLayer = NULL, covLayer = NULL)
 }
 \arguments{
 \item{x}{Data frame of vaf for each sample}
+
+\item{mainLayer}{Valid ggplot2 layer for altering the main plot.}
+
+\item{covLayer}{Valid ggplot2 layer for altering the coverage plot.}
 }
 \value{
 ggplot2 grob object
