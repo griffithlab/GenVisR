@@ -69,8 +69,8 @@
 
 lohSpec <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                     gender=NULL, step=1000000, window_size=2500000, 
-                    normal=.50, gradient_midpoint=.20, colourScheme="inferno",
-                    plotLayer=NULL, method="slide", out="plot")
+                    normal=.50, colourScheme="inferno", plotLayer=NULL,
+                    method="slide", out="plot")
 {
     # Grab data if necessary
     if(!is.null(path))
