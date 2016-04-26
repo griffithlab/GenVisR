@@ -4,7 +4,8 @@
 \alias{compIdent}
 \title{Construct identity snp comparison plot}
 \usage{
-compIdent(x, genome, target = NULL, debug = FALSE, out = "plot")
+compIdent(x, genome, target = NULL, debug = FALSE, mainLayer = NULL,
+  covLayer = NULL, out = "plot")
 }
 \arguments{
 \item{x}{data frame with rows representing samples and column names 
@@ -20,6 +21,10 @@ name of location.}
 
 \item{debug}{Boolean specifying if test datasets should be used for
 debugging.}
+
+\item{mainLayer}{Valid ggplot2 layer for altering the main plot.}
+
+\item{covLayer}{Valid ggplot2 layer for altering the coverage plot.}
 
 \item{out}{Character vector specifying the the object to output, one of
 "data", "grob", or "plot", defaults to "plot" (see returns).}

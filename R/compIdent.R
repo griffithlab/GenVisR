@@ -10,6 +10,8 @@
 #' 1-base format and containing columns names "chr", "start", "end", "var",
 #' "name". Columns should correspond to chromosome, start, end, variant allele, 
 #' name of location.
+#' @param mainLayer Valid ggplot2 layer for altering the main plot.
+#' @param covLayer Valid ggplot2 layer for altering the coverage plot.
 #' @param out Character vector specifying the the object to output, one of
 #' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @param debug Boolean specifying if test datasets should be used for
@@ -39,7 +41,8 @@
 #' compIdent(genome=hg19, debug=TRUE)
 #' @export
 
-compIdent <- function(x, genome, target=NULL, debug=FALSE, out="plot")
+compIdent <- function(x, genome, target=NULL, debug=FALSE, mainLayer=NULL,
+                      covLayer=NULL, out="plot")
 {
     # Warn if target is null
     if(is.null(target))
@@ -76,7 +79,8 @@ compIdent <- function(x, genome, target=NULL, debug=FALSE, out="plot")
     count_tables <- compIdent_format(count_tables)
     
     # make an sample identity plot
-    plot <- compIdent_buildMain(count_tables)
+    plot <- compIdent_buildMain(count_tables, mainLayer=mainLayer,
+                                covLayer=covLayer)
     
     # Decide what to plot
     output <- multi_selectOut(data=count_tables, plot=plot, draw=TRUE, out=out)
