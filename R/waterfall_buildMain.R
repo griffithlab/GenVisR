@@ -76,7 +76,7 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
                      "IGR"='#F2B079', "Silent"='#888811',
                      "Targeted_Region"='#FDF31C')
     } else if(toupper(file_type) == toupper('Custom')) {
-        memo <- paste0("Defining a palette in main.pallete is recommended ",
+        memo <- paste0("Defining a palette in mainPallete is recommended ",
                        "when file_type is set to \"Custom\", defaulting to ",
                        "a predefined palette with 20 levels")
         warning(memo)

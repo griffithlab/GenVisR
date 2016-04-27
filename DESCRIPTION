@@ -1,14 +1,14 @@
 Package: GenVisR
 Title: Genomic Visualizations in R
 Version: 0.99.20
-Authors@R: c(person(given="Zachary", family="Skidmore", email="zskidmor@genome.wustl.edu",
+Authors@R: c(person(given="Zachary", family="Skidmore", email="zlskidmore@gmail.com",
           role=c("aut", "cre")), person(given="Alex", family="Wagner", role="aut"),
           person(given="Robert", family="Lesurf", role="aut"), person(given="Katie",
           family="Campbell", role="aut"), person(given="Jason", family="Kunisaki",
           email="kunisakijh@gmail.com", role="aut"), person(given="Obi", family="Griffith",
           email="ogriffit@genome.wustl.edu", role="aut"), person(given="Malachi", family="Griffith",
           email="mgriffit@genome.wustl.edu", role="aut"))
-Maintainer: Zachary Skidmore <zskidmor@genome.wustl.edu>
+Maintainer: Zachary Skidmore <zlskidmore@gmail.com>
 Description: Produce highly customizable publication quality graphics for genomic data
           primarily at the cohort level.
 Depends: R (>= 3.2.2)

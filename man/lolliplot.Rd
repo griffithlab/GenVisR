@@ -171,6 +171,6 @@ data <- as.data.frame(cbind(data, 'ENST00000269305'))
 colnames(data) <- c('gene', 'amino_acid_change', 'transcript_name')
 
 # Call lolliplot
-lolliplot(data)
+#lolliplot(data)
 }
 
