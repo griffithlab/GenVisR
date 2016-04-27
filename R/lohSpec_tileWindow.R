@@ -29,6 +29,7 @@ lohSpec_tileWindow <- function(loh_data, window_size, normal)
     ## Combine the lists into a single dataframe
     loh_dataset <- plyr::ldply(final_dataset, data.frame)
     loh_dataset <- loh_dataset[!duplicated(loh_dataset),]
+    loh_dataset$loh_diff_avg <- loh_dataset$loh_diff_avg
     
     return(loh_dataset)
 }

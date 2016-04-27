@@ -29,15 +29,9 @@
 #' @param normal Numeric value within the range 0-50 specifying the expected
 #' normal variant allele frequency to be used in Loss of Heterozygosity 
 #' calculations. defaults to 50\%
-#' @param gradient_midpoint Numeric value specifying the midpoint 
-#' for the legend's gradient scale.
-#' @param gradient_low Character string specifying the colour for 
-#' gradient legends low value
-#' @param gradient_mid Character string specifying the colour for gradient
-#' legends midpoint value.
-#' @param gradient_high Character string specifying the colour for gradient
-#' legends high value.
-#' @param theme_layer Valid ggpot2 layer to be added to the plot.
+#' @param colourScheme Character vector specifying the colour scale to use from
+#' the viridis package. One of "viridis", "magma", "plasma", or "inferno".
+#' @param plotLayer Valid ggpot2 layer to be added to the plot.
 #' @param method character string specifying the approach to be used for 
 #' displaying Loss of Heterozygosity, one of "tile" or "slide" (see details).
 #' @param out Character vector specifying the the object to output, one of
@@ -75,9 +69,8 @@
 
 lohSpec <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
                     gender=NULL, step=1000000, window_size=2500000, 
-                    normal=50, gradient_midpoint=20, gradient_low="#ffffff",
-                    gradient_mid="#b2b2ff", gradient_high="#000000",
-                    theme_layer=NULL, method="slide", out="plot")
+                    normal=.50, colourScheme="inferno", plotLayer=NULL,
+                    method="slide", out="plot")
 {
     # Grab data if necessary
     if(!is.null(path))
@@ -175,11 +168,8 @@ lohSpec <- function(x=NULL, path=NULL, fileExt=NULL, y=NULL, genome='hg19',
     
     #build  the plot
     loh_plot <- lohSpec_buildMain(loh, dummyData=chr_pos,
-                                  gradient_midpoint=gradient_midpoint,
-                                  gradient_low=gradient_low,
-                                  gradient_mid=gradient_mid,
-                                  gradient_high=gradient_high,
-                                  theme_layer=theme_layer)
+                                  colourScheme=colourScheme,
+                                  plotLayer=plotLayer)
     
     # Decide what to output
     output <- multi_selectOut(data=loh, plot=loh_plot, draw=FALSE, out=out)

@@ -4,15 +4,20 @@
 #' information to compare multiple sample identities
 #' @name compIdent_buildMain
 #' @param x Data frame of vaf for each sample
+#' @param mainLayer Valid ggplot2 layer for altering the main plot.
+#' @param covLayer Valid ggplot2 layer for altering the coverage plot.
 #' @return ggplot2 grob object
 #' @import ggplot2
-#' @importFrom gtable gtable_add_rows
+#' @importFrom grid unit.pmax
+#' @importFrom gridExtra rbind.gtable
 #' @importFrom gridExtra arrangeGrob
+#' @importFrom gtable gtable_add_rows
+#' @importFrom gtable gtable_add_grob
 #' @importFrom scales log10_trans
 
-compIdent_buildMain <- function(x)
+compIdent_buildMain <- function(x, mainLayer=NULL, covLayer=NULL)
 {
-    # Plot VAF for main plot
+    ############### Plot VAF for main plot ###################
     main <- ggplot(x, aes_string(x='name', y='vaf', 
                                  colour='sample', fill='sample'))
     plotVAF <- geom_point(size=5, position=position_dodge(width=0.5))
@@ -28,9 +33,17 @@ compIdent_buildMain <- function(x)
                           plot.margin=unit(c(1, 1, 0, 1), "cm"),
                           axis.title.x=element_blank(),
                           axis.ticks=element_blank())
+    
+    # set layer and grab the size of the axis.text.x theme param if it exists
+    if(!is.null(mainLayer)){
+        layerA <- mainLayer
+        x_axis_text_size <- layerA$axis.text.x$size
+    } else {
+        layerA <- geom_blank()
+    }
 
     p1 <- main + plotVAF + title + y_axis + x_axis + y_label + plot_theme_A +
-        plot_theme_B
+        plot_theme_B + layerA
 
     # Move x-axis labels (i.e. variant base) to top of main plot
     p1 <- ggplotGrob(p1)
@@ -48,27 +61,28 @@ compIdent_buildMain <- function(x)
                                        r=panel$r)
     p1 <- p1[-(panel$b+2),]
 
-    # produce a plot of Reference Bases
-    refBases <- x[x$sample == x$sample[1],]$getref
-    name <- x[x$sample == x$sample[1],]$name
-    tmp <- as.data.frame(cbind(name, refBases))
-
-    tmp <- ggplot(tmp, aes_string(x='name', y=1, label='refBases'))
-    tmp <- tmp + geom_blank() 
-    tmp <- tmp + xlab("Reference Base")
-    tmp <- tmp + theme_bw()
-    tmp <- tmp + theme(plot.margin=unit(c(0,1,0,1), "cm"),
-                       axis.title.x=element_text(size=14, vjust=1),
-                       axis.title.y=element_blank(),
-                       axis.text.y = element_blank(),
-                       axis.text.x = element_blank(),
-                       axis.ticks=element_blank(),
-                       panel.grid.major=element_blank(),
-                       panel.grid.minor=element_blank(),
-                       panel.border=element_blank())
-    tmp <- tmp + geom_text()
-
-    # produce a coverage plot
+    ####### produce a plot of Reference Bases and add to p1 #################
+    
+    # create plot
+    tmp <- ggplot(x, aes_string(x='name')) +
+        scale_x_discrete(labels=as.list(x$getref)) +
+        xlab("Reference Base") + theme_bw()
+    
+    # set layer if requested
+    if(!is.null(mainLayer)){
+        layerA <- mainLayer
+    } else {
+        layerA <- geom_blank()
+    }
+    tmp <- tmp + layerA
+    
+    # convert the tmp plot to a tablegrob extract relevant elements
+    # and bind to p1
+    tmp <- ggplotGrob(tmp)
+    tmp <- tmp[4:6,] # dev note: this hard coding should be replaced
+    p1 <- gridExtra::rbind.gtable(p1, tmp)
+    
+    ############# produce a coverage plot ##################
     main2 <- ggplot(x, aes_string(x='name', y='total_reads',
                                   fill='sample', colour='sample'))
     plotCov <- geom_bar(stat="identity", position="dodge")
@@ -81,16 +95,25 @@ compIdent_buildMain <- function(x)
                      panel.grid.major.x = element_blank(),
                      panel.grid.minor.x=element_line(colour="grey"),
                      plot.margin=unit(c(0,1,1,1), "cm"))
-    p2 <- main2 + plotCov + x_label + y_label + y_axis + theme_bw() + theme_A
+    
+    # set layer
+    if(!is.null(covLayer)){
+        layerB <- covLayer
+    } else {
+        layerB <- geom_blank()
+    }
+    
+    p2 <- main2 + plotCov + x_label + y_label + y_axis + theme_bw() +
+        theme_A + layerB
 
-    # Ensure plot widths are identical
-    p2 <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p2))
-    p2$widths <- p1$widths
-    tmp <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(tmp))
-    tmp$widths <- p1$widths
+    ############### Ensure plot widths are identical and plot ################
+    p2 <- ggplotGrob(p2)
+    maxwidth = grid::unit.pmax(p1$widths[2:5,], p2$widths[2:5,])
+    p1$widths[2:5] <- as.list(maxwidth)
+    p2$widths[2:5] <- as.list(maxwidth)
 
     # Plot all
-    final <- gridExtra::arrangeGrob(p1, tmp, p2, heights=c(60, 10, 40))
+    final <- gridExtra::arrangeGrob(p1, p2, heights=c(60, 40))
 
     return(final)
 }

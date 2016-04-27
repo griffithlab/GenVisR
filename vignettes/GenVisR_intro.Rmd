@@ -65,7 +65,7 @@ devtools::install_GitHub("griffithlab/GenVisR")
 
 ### waterfall (mutation overview graphic) 
 `waterfall` provides a method of visualizing the mutational landscape of a cohort. The input to `waterfall` consists of a data frame derived from either a .maf (version 2.4) file or a file in MGI annotation format (obtained from The [Genome Modeling System](https://GitHub.com/genome/gms)) specified via the `fileType` parameter. `waterfall` will display the mutation occurrence and type in the main panel while showing the mutation burden and the percentage of samples with a mutation in the top and side sub-plots. Conflicts arising from multiple mutations in the same gene/sample cell are resolved by a hierarchical removal of mutations keeping the most deleterious as defined by the order of the "mutation type" legend. Briefly this hierarchy is as follows with the most deleterious defined first:
-```{r kable 1, echo=FALSE}
+```{r kable 1, echo=FALSE, error=TRUE}
 library(knitr)
 MGI <- c("nonsense", "frame_shift_del",
          "frame_shift_ins", "splice_site_del",
@@ -93,14 +93,14 @@ Occasionally a situation may arise in which it may be desireable to run `waterfa
 
 To view the general behavior of `waterfall` we use the `brcaMAF` data structure available within GenVisR. This data structure is a truncated MAF file consisting of 50 samples from the TCGA project corresponding to [Breast invasive carcinoma](https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files#TCGAMAFFiles-BRCA:Breastinvasivecarcinoma) [(complete data from TCGA public web portal)](https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf).
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, error=TRUE}
 # Plot the mutation landscape
 waterfall(brcaMAF, fileType="MAF")
 ```
 
 This type of view is of limited use without expanding the graphic device given the large number of genes. Often it is beneficial to reduce the number of cells in the plot by limiting the number of genes plotted. There are three ways to accomplish this, the `mainRecurCutoff` parameter accepts a numeric value between 0 and 1 and will remove genes from the data which do not have at least x proportion of samples mutated. For example if it were desireable to plot those genes with mutations in >= 6% of samples:
 
-```{r, fig.keep='last', fig.width=10, fig.height=7, message=FALSE, warning=FALSE, results='hide', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=7, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # Load GenVisR and set seed
 library(GenVisR)
 set.seed(383)
@@ -111,21 +111,21 @@ waterfall(brcaMAF, mainRecurCutoff=.06)
 
 Alternatively one can set a maximum number of genes to plot via the `maxGenes` parameter which will select the top x recurrently mutated genes. In addition specific genes of interest can be displayed using the `plotGenes` parameter. This parameter accepts a case insensitive character vector of genes present in the data and will subset the data on those genes. For example, if it was desirable to plot only the following genes "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
 
-```{r, fig.keep='last', fig.width=10, fig.height=7, message=FALSE, warning=FALSE, results='hide', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=7, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # Plot only the specified genes
 waterfall(brcaMAF, plotGenes=c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
 ```
 
 It is important to note that the mutation burden sub plot does not change during these subsets, this is calculated directly from the input via the formula: $mutations\ in\ sample/coverage\ space * 1000000$. The coverage space defaults to the size in base pairs of the "SeqCap EZ Human Exome Library v2.0". This default can be changed via the parameter `coverageSpace`. This calculation is only meant to be a rough estimate as actual coverage space can vary from sample to sample, for a more accurate calculation the user has the option to supply an optional argument via the parameter `mutBurden` supplying the users own calculation of mutation burden for each sample. This should be a data frame with column names 'sample', 'mut_burden' taking the following form:
 
-```{r kable, echo=FALSE, tidy=TRUE}
+```{r kable, echo=FALSE, tidy=TRUE, error=TRUE}
 kable(as.data.frame(cbind(sample=as.character(brcaMAF[1:10,16]),
                           mut_burden=as.numeric(rnorm(10, mean=2, sd=.5)))))
 ```
 
 In addition to specifying the mutation burden the user also has the ability to plot additional clinical data. The clinical data supplied should be a data frame in "long" format with column names "sample", "variable", "value". It is recommended to use the `melt` function in the package [reshape2](http://cran.r-project.org/web/packages/reshape2/index.html) to coerce data into this format. Here we add clinical data to be plotted and specify a custom order and colours for these variables putting these values in two columns within the clinical plot legend:
 
-```{r, fig.keep='last', fig.width=12, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE}
+```{r, fig.keep='last', fig.width=12, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # Create clinical data
 subtype <- c('lumA', 'lumB', 'her2', 'basal', 'normal')
 subtype <- sample(subtype, 50, replace=TRUE)
@@ -159,7 +159,7 @@ Occasionally there may be samples not represented within the .maf file (due to a
 
 It should be noted that to ensure the most accurate graphic representation the ensembl annotation version for the "amino_acid_change" column supplied by the user and that which is used for the biomaRt queries should be identical.
 
-```{r, fig.keep='last', fig.width=12, fig.height=4.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE}
+```{r, fig.keep='last', fig.width=12, fig.height=4.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # Create input data
 data <- brcaMAF[brcaMAF$Hugo_Symbol == 'TP53',c('Hugo_Symbol', 'amino_acid_change_WU')]
 data <- as.data.frame(cbind(data, 'ENST00000269305'))
@@ -171,7 +171,7 @@ lolliplot(data)
 
 In an effort to maintain a high degree of flexibility the user has the option of selecting columns on which to fill and label. The parameters `fillCol` and `labelCol` allow this behavior by taking column names on which to fill and label respectively. Additionally one can plot the amino acid sidechain information in lieu of protein domains.
 
-```{r, fig.keep='last', fig.width=12, fig.height=4.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE}
+```{r, fig.keep='last', fig.width=12, fig.height=4.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # Add additional columns to the data
 data$gender <- sample(c("Male", "Female"), 15, replace=TRUE)
 data$impact <- sample(c("Low", "Medium", "High"), 15, replace=TRUE)
@@ -182,7 +182,7 @@ lolliplot(data, fillCol='gender', labelCol='impact', sideChain=TRUE)
 
 The user has the option of plotting an additional track in the area underneath the protein track via the parameter `y`. Input for this additional layer consists of a data frame with column names "transcript_name" and "amino_acid_change" in p. notation. If input to parameter `y` is supplied to `lolliplot` and the `fillCol` and/or `labelCol` parameters are specified (see above) lolliplot will look for the columns in both data frames supplied to `x` and `y` and act accordingly. Note that input to parameter `y` must be from the same transcript as specified in the data frame supplied to parameter `x`.
 
-```{r, fig.keep='last', fig.width=12, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE}
+```{r, fig.keep='last', fig.width=12, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # Create additional data
 data2 <- data.frame("transcript_name"="ENST00000269305",
                     "amino_acid_change"="p.Q331*")
@@ -197,7 +197,7 @@ lolliplot(data, y=data2, fillCol='impact', labelCol='amino_acid_change')
 
 `genCov` provides a methodology for viewing coverage information in relation to a gene track. It takes a named list of data frames with each data frame containing column names "end" and "cov" and rows corresponding to coordinates within the region of interest. Additional required arguments are a GRanges object specifying the region of interest, a BSgenome for gc content calculation, and a TxDb object containing transcription metadata (see the package [Granges](http://www.bioconductor.org/packages/release/bioc/html/GenomicRanges.html) for more information). `genCov` will plot a genomic features track and align coverage data in the list to the plot. It is recommended to use [bedtools multicov](http://bedtools.readthedocs.org/en/latest/content/tools/multicov.html) to obtain coverage information for a region of interest. We demonstrate `genCov` functionality using pseudo-data containing coverage information for the gene PTEN.
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # Load transcript meta data
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
@@ -232,7 +232,7 @@ genCov(data, txdb, gr, genome, gene_labelTranscriptSize=2, transform=NULL, base=
 
 Often it may be usefull to compress genomic space, genCov will perform such a compression via a log transform for each feature type,'Intron','CDS','UTR' specified by the parameter `transform`. The degree of compression can be set via the parameter `base` which will perform the appropriate log compression for the features specified in `transform`. This behavior will occur by default, to turn off compression set the `transform` and `base` parameters to NULL. Here we display `genCov` compression functionality with log-10 compression for intronic space, and log-2 compression for CDS and UTR regions. Further we choose to display a simplified representation of genomic features within the region of interest via the `reduce` parameter which will merge all genomic features within a region of interest into a single transcript.
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # Turn off feature compression and reduce gene transcripts
 genCov(data, txdb, gr, genome, transform=c("Intron", "CDS", "UTR"), base=c(10, 2, 2), reduce=TRUE)
 ```
@@ -240,14 +240,14 @@ genCov(data, txdb, gr, genome, transform=c("Intron", "CDS", "UTR"), base=c(10, 2
 ### TvTi (transition/transversion graphic)
 `TvTi` provides a framework for visualizing transversions and transitions for a given cohort. Input consists of a .maf (version 2.4) file containing sample and allele information (see .maf spec). Alternatively the `fileType` parameter can be set to "MGI" with the input supplied consisting of a data frame with column names "sample", "reference", and "variant". Files for the "MGI" format can be obtained via the [Genome Modeling System](https://GitHub.com/genome/gms). TvTi will remove indels and multinucleotide calls from the input and plot the proportion of Transition/Transversion types for each sample specified in the input file.
 
-```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide'}
+```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide', error=TRUE}
 # Call TvTi
 TvTi(brcaMAF, lab_txtAngle=75, fileType="MAF")
 ```
 
 `TvTi` will also plot the observed frequency of each Transition/Transversion type in lieu of proportion if the `type` parameter is set to "Frequency". Here we plot the observed frequency from `brcaMAF` and change the default colors of the plot. When modifying the color palette via the `palette` parameter specify a character vector of length 6 containing a new color for each Transition/Transversion type.
 
-```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE}
+```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # Plot the frequency with a different color pallete
 TvTi(brcaMAF, type='Frequency', 
 palette=c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753"), 
@@ -256,7 +256,7 @@ lab_txtAngle=75, fileType="MAF")
 
 If there are prior expectations about the transition/transversion rate the user can specify that information via the parameter `y` which takes a named vector with names corresponding to each transition/transversion type. The vector must be of length 6 with names "A->C or T->G (TV)", "A->G or T->C (TI)", "A->T or T->A (TV)", "G->A or C->T (TI)", "G->C or C->G (TV)", and "G->T or C->A (TV)". The Resulting plot will contain an additional subplot corresponding to the apriori expectations.
 
-```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE}
+```{r, fig.keep='last', fig.width=11, fig.height=5.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # Create a named vector of apriori expectations
 expec <- c("A->C or T->G (TV)"=.066, "A->G or T->C (TI)"=.217,
            "A->T or T->A (TV)"=.065, "G->A or C->T (TI)"=.4945,
@@ -270,14 +270,14 @@ TvTi(brcaMAF, y=expec, lab_txtAngle=45, fileType="MAF")
 
 cnSpec produces a plot displaying copy number segments at a cohort level. Basic input consists of a data frame with column names 'chromosome', 'start', 'end' 'segmean' and 'sample' with rows denoting segments with copy number alterations. A UCSC genome is also required (defaults to 'hg19') to determine chromosomal boundaries. cnSpec will produce a grid faceted on chromosome and sample displaying all CN segment calls in the input. Here we use the attached data set LucCNseg containing copy number segment calls for 4 samples from whole genome sequencing data.
 
-```{r, fig.keep='last', fig.width=10, fig.height=4.5, message=TRUE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=4.5, message=TRUE, warning=FALSE, results='asis', tidy=TRUE, error=TRUE}
 # Call cnSpec with minimum required inputs
 cnSpec(LucCNseg, genome="hg19")
 ```
 
 By default a few select genomes are included as part of GenVisR, these are "hg38", "hg19", "mm10", "mm9", "rn5". If input into `genome` is not one of the previously mentioned genomes cnSpec will attempt to query the UCSC sql database to obtain chromosomal boundary information. This has been built in as a convenience, if internet connectivity is an issue, or if copy number segment calls are derived from an assembly not supported by UCSC the user can specify chromosomal boundaries via the argument `y`. This should take the form of a data frame with column names "chromosome", "start", "end" with rows providing positions for each chromosome. An example of this is provided in the included data set hg19chr.
 
-```{r, eval=FALSE, tidy=TRUE}
+```{r, eval=FALSE, tidy=TRUE, error=TRUE}
 # Call cnSpec with the y parameter
 cnSpec(LucCNseg, y=hg19chr)
 ```
@@ -285,7 +285,7 @@ cnSpec(LucCNseg, y=hg19chr)
 ### cnView (copy altered single sample graphic)
 cnView provides a method for visualizing raw copy number calls focused on either a single chromosome or all chromosomes. Unlike the majority of plots within GenVisR cnView is intended to be used for a single sample. Input consists of a data frame with column names "chromosome", "coordinate", "cn", and "p_value" (optional) as well as a specification of which chromosome to plot specified via the parameter `chr` and which genome assembly should be used for chromosome boundaries `genome`. The algorithm will produce an ideogram on the top track and plot copy number calls beneath. If a "p_value" column is present in the input data cnView will create a transparency value for all calls/observations based on that column with less significant calls having a higher transparency. Eliminating the "p_value" column will terminate this behavior. Here we demonstrate `cnView` pseudo-data for chromosome 14.
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE, error=TRUE}
 # Create data
 chromosome <- 'chr14'
 coordinate <- sort(sample(0:106455000, size=2000, replace=FALSE))
@@ -300,7 +300,7 @@ cnView(data, chr='chr14', genome='hg19', ideogram_txtSize=4)
 
 If it is desired, `cnView` has the ability to overlay segment calls on the plot. This is achieved by providing a data frame with column names: "chromosome", "start", "end", and "segmean" to the argument `z`. We demonstrate this functionality via pseudo-data.
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE, error=TRUE}
 # create copy number data
 chromosome <- 'chr14'
 coordinate <- sort(sample(0:106455000, size=2000, replace=FALSE))
@@ -317,7 +317,7 @@ cnView(data, z=dataSeg, chr='chr14', genome='hg19', ideogram_txtSize=4)
 
 `covBars` produces a plot displaying sequencing coverage at a cohort level. Basic input consists of a matrix with columns representing samples, rows denoting sequencing depth (i.e. reads of depth), and elements of the matrix representing the number of bases with x depth for x sample.
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=TRUE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=TRUE, warning=FALSE, results='asis', tidy=TRUE, error=TRUE}
 # Example input to x
 x <- matrix(sample(100000,500), nrow=50, ncol=10, 
 dimnames=list(0:49,paste0("Sample",1:10)))
@@ -327,7 +327,7 @@ covBars(x)
 
 By default the viridis color scheme is used. An alternate vector of colors can be supplied to the param `colour`.
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE, error=TRUE}
 covBars(x, colour=c("blue","grey","red"))
 ```
 
@@ -335,7 +335,7 @@ covBars(x, colour=c("blue","grey","red"))
 
 `cnFreq` produces a plot displaying the proportion (default) or frequency of copy number losses/gains at a cohort level. Basic input consists of a data frame with rows representing the proportion of CN losses/gains across the genome (default), or actual CN values.
 
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=TRUE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=TRUE, warning=FALSE, results='asis', tidy=TRUE, error=TRUE}
 # Example input to x
 xstart <- seq(0,4990000,length.out=500)
 xloss <- rep(runif(10,0,0.6),rep(50,10))/1.5
@@ -349,14 +349,14 @@ cnFreq(x)
 
 An alternate long data frame format with actual copy number values may be used. The default cutoffs for loss and gain are 1.5 and 2.5 respectively.
 
-```{r, eval=FALSE, tidy=TRUE}
+```{r, eval=FALSE, tidy=TRUE, error=TRUE}
 cnFreq(LucCNseg)
 ```
 
 ### ideoView (ideogram graphic)
 The user has the ability to plot an ideogram representative of the chromosome of interest for a given assembly via the function `ideoView`. Basic input consists of a data frame with column names: "chrom", "chromStart", "chromEnd", "name", "gieStain" mirroring the format retrievable from the UCSC sql database, and a chromosome for which to display `chromsome`. Here we use the preloaded genome hg38 in the attached data set cytoGeno.
 
-```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis', tidy=TRUE, error=TRUE}
 # Obtain cytogenetic information for the genome of interest
 data <- cytoGeno[cytoGeno$genome == 'hg38',]
 
@@ -366,7 +366,7 @@ ideoView(data, chromosome='chr1', txtSize=4)
 
 ### lohSpec (Loss of Heterozygosity Spectrum)
 `lohSpec` obtains mean absolute LOH difference between tumor VAF and a default normal VAF parameter set at 50 for all calls made within a specified window length. Input data should include column names "chromosome", "position", "n_vaf", "t_vaf", "sample". If the `method` specified is "tile", mean LOH difference will be plotted for adjacent windows across the entire genome for multiple samples. If the`method` specified is "slide", mean LOH difference for overlapping windows will be plotted over a `step` sized window. When `gender` is NULL, LOH calculations will be excluded from both the X and Y chromosome for all samples. When the `gender` of each sample is specified, LOH calculations will be performed on the X chromosome, along with all autosomes for all samples. If the user does not provide loh information for any chromosome-sample pair, lohSpec will plot a white rectangle in for that region in the genome. 
-```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=11, fig.height=3, message=FALSE, warning=FALSE, results='asis', tidy=TRUE, error=TRUE}
 
 # Call lohSpec with basic input 
 lohSpec(x=HCC1395_Germline)
@@ -376,7 +376,7 @@ lohSpec(x=HCC1395_Germline)
 
 `lohView` provides a method for visualizing Loss of Heterozygoisty focused on either a single chromosome or all chromosomes for a single sample. Input consists of a data frame with column names "chromosome", "position", "n_vaf", "t_vaf" and "sample" as well as a specification of which chromosome to plot specified via the parameter `chr` and which genome assembly should be used for chromosome boundaries `genome`. Input should be restricted to "Heterozygous Germline" calls only! The algorithm will produce an ideogram on the top track and plot normal and tumor variant allele fraction derived from the columns "n_vaf" and "t_vaf" beneath. Here we demonstrate `lohView`on data from the HCC1395 Cell Line for chromosome 5.
 
-```{r, fig.keep='last', fig.width=11, fig.height=5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=11, fig.height=5, message=FALSE, warning=FALSE, results='asis', tidy=TRUE, error=TRUE}
 
 # Call lohView with basic input, make sure input contains only Germline calls
 lohView(HCC1395_Germline, chr='chr5', genome='hg19', ideogram_txtSize=4)
@@ -388,7 +388,7 @@ lohView(HCC1395_Germline, chr='chr5', genome='hg19', ideogram_txtSize=4)
 
 Here we show the behavior of `compIdent` using a predefined dataset of vaf values accessible via the debut parameter (for debugging and display purposes only). In an ideal case we would expect to see similar vaf values for samples from the same origin at all 24 target sites providing a usefull method for identifying sample mix ups. Occasionally as seen here for the HCC1395 breast cancer cell line copy number alterations can skew the results making a sample seem unrelated.
 
-```{r, fig.keep='last', fig.width=11, fig.height=8, message=FALSE, warning=FALSE, results='asis', tidy=TRUE}
+```{r, fig.keep='last', fig.width=11, fig.height=8, message=FALSE, warning=FALSE, results='asis', tidy=TRUE, error=TRUE}
 # Read in BSgenome object (hg19)
 library(BSgenome.Hsapiens.UCSC.hg19)
 hg19 <- BSgenome.Hsapiens.UCSC.hg19
@@ -400,7 +400,7 @@ compIdent(genome=hg19, debug=TRUE)
 ### geneViz (Transcript Represenation)
 It is also possible to plot just a gene of interest identified by specifying a Txdb object, GRanges object, and a BSgenome via a call to `geneViz`. The algorithm will plot genomic features for a single gene bounded by the Granges object overlaying gc content calculations over those features obtained from the provided BSgenome. Note that geneViz will output the plot and additional supplemental information used in the plot generation as a list, to call the plot call the first element of the list.
 
-```{r, fig.keep='last', fig.width=10, fig.height=5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE}
+```{r, fig.keep='last', fig.width=10, fig.height=5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # need transcript data for reference
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 
@@ -420,7 +420,7 @@ p1[[1]]
 
 Due to the complex nature and variability of the graphics produced by GenVisR it is recommended that the user adjust the graphics device size for all outputs manually. If not given enough space within the graphics device grob objects will start to collide This can be done via the following:
 
-```{r, eval=FALSE, tidy=TRUE}
+```{r, eval=FALSE, tidy=TRUE, error=TRUE}
 pdf(file="plot.pdf", height=8, width=14)
 # Call a GenVisR function
 waterfall(brcaMAF)
@@ -429,7 +429,7 @@ dev.off()
 
 For the majority of plots there is a layer parameter, this allows the user to specify an additional ggplot2 layer. Using this parameter one could perform a variety of tasks including modifying the theme to control label text size, adding titles to plots, etc. Here we suppress all x-axis labels:
 
-```{r, eval=FALSE, tidy=TRUE}
+```{r, eval=FALSE, tidy=TRUE, error=TRUE}
 library(ggplot2)
 plot_theme <- theme(axis.text.x=element_blank(),
                     axis.title.x=element_blank(),
@@ -440,6 +440,6 @@ cnFreq(LucCNseg, plotLayer=plot_theme)
 
 ## Session Info
 
-```{r, tidy=TRUE}
+```{r, tidy=TRUE, error=TRUE}
 sessionInfo()
 ```

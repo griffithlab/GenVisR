@@ -5,6 +5,8 @@
 #' @param p1 ggplot object of chromosome
 #' @param p2 ggplot object of CN or LOH
 #' @return ggplot object
+#' @importFrom grid unit.pmax
+#' @importFrom gridExtra arrangeGrob
 
 multi_align <- function(p1, p2)
 {
