@@ -4,7 +4,7 @@
 \alias{waterfall_MGI2anno}
 \title{Convert MGI File}
 \usage{
-waterfall_MGI2anno(x, label_col)
+waterfall_MGI2anno(x, label_col, variant_class_order)
 }
 \arguments{
 \item{x}{a data frame in MGI internal format}

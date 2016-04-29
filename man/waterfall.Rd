@@ -18,11 +18,16 @@ waterfall(x, mainRecurCutoff = 0, mainGrid = TRUE, mainXlabel = FALSE,
 \arguments{
 \item{x}{Object of class data frame representing annotated mutations. The
 data frame supplied must have one of the following sets of column names
-("Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification") for
-fileType="MAF", ("sample","gene_name","trv_type") for fileType="MGI" or
-("sample", "gene", "variant_class") for fileType="Custom". This columns
-should represent samples in a cohort, gene with mutation, and the mutation
-type respectively.}
+("Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification",
+"Chromosome", "Start_Position", "End_Position", "Reference_Allele",
+"Tumor_Seq_Allele2") for fileType="MAF", ("sample","gene_name","trv_type",
+"chromosome_name", "start", "stop", "reference", "variant") for
+fileType="MGI", ("IND", "SYMBOL", "Consequence", "Location", "Allele") for
+fileType="VEP" (these may be fields in a column called Extra) or
+("sample", "gene", "variant_class", "key") for fileType="Custom". These 
+columns should represent samples in a cohort, gene with mutation, the
+mutation type and a unique id for a genomic event respectively
+(see waterfall function vignette).}
 
 \item{mainRecurCutoff}{Numeric value between 0 and 1 specifying a
 mutation recurrence cutoff. Genes which do not have mutations in the
@@ -137,8 +142,8 @@ mutations occur in the same cell the most deleterious mutation is given
 priority (see vignette for default priority). If the fileType parameter is
 set to "Custom" the user most supply this priority via the
 `variant_class_order` parameter with the highest priorities occuring first.
-Additionally this parameter will override the default orders of MGI and MAF
-file types.
+Additionally this parameter will override the default orders of MGI, MAF and
+VEP file types.
 
 Various data subsets are allowed via the waterfall function (see above), all
 of these subsets will occur independently of the mutation burden calculation.

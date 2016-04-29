@@ -10,7 +10,8 @@ waterfall_hierarchyTRV(x, file_type, variant_class_order)
 \item{x}{a data frame in long format with columns sample, gene,
 trv_type}
 
-\item{file_type}{The type of file to act on one of 'MAF", "MGI", "Custom"}
+\item{file_type}{The type of file to act on one of 'MAF", "MGI", "VEP",
+"Custom"}
 
 \item{variant_class_order}{character vector giving the hierarchical order of
 mutation types to plot}

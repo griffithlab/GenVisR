@@ -4,7 +4,7 @@
 \alias{waterfall_MAF2anno}
 \title{Convert MAF File}
 \usage{
-waterfall_MAF2anno(x, label_col)
+waterfall_MAF2anno(x, label_col, variant_class_order)
 }
 \arguments{
 \item{x}{a data frame in MAF format}
