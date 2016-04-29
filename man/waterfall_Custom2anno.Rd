@@ -4,11 +4,11 @@
 \alias{waterfall_Custom2anno}
 \title{Convert Custom File}
 \usage{
-waterfall_Custom2anno(x, label_col)
+waterfall_Custom2anno(x, label_col, variant_class_order)
 }
 \arguments{
-\item{x}{a data frame with columns having values for sample, gene, mutation
-type}
+\item{x}{Object of class data frame with rows representing mutations and
+containing columns "key, "sample", "gene", "variant_class".}
 
 \item{label_col}{Character string specifying the column name of a
 label column (optional)}

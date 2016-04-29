@@ -4,7 +4,7 @@
 \alias{waterfall_qual}
 \title{Check input to mutSpec}
 \usage{
-waterfall_qual(x, y, z, file_type, label_col)
+waterfall_qual(x, y, z, file_type, label_col, variant_class_order)
 }
 \arguments{
 \item{x}{a data frame in annotation format}
@@ -15,8 +15,10 @@ waterfall_qual(x, y, z, file_type, label_col)
 
 \item{file_type}{Character string specifying the input format to expect in x}
 
-\item{label_col}{Character string specifying the column name of a label
-column}
+\item{label_col}{Character string specifying the column name of a label}
+
+\item{variant_class_order}{Character vector specifying the hierarchical order
+of mutation types to plot}
 }
 \value{
 a list of data frames passing quality checks

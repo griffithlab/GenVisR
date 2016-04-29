@@ -8,11 +8,13 @@
 waterfall_calcMutFreq <- function(x)
 {
     message("Calculating frequency of mutations...")
+    
     # Change trv_type calls to either synonymous or non synonymous,
     # for use in the mutation per Mb plot
+    silent_mut <- c("synonymous_variant", "silent")
     x$trv_type <- as.character(x$trv_type)
-    x$trv_type[toupper(x$trv_type) != toupper('silent')] <- 'Non Synonymous'
-    x$trv_type[toupper(x$trv_type) == toupper('silent')] <- 'Synonymous'
+    x$trv_type[!toupper(x$trv_type) %in% toupper(silent_mut)] <- 'Non Synonymous'
+    x$trv_type[toupper(x$trv_type) %in% toupper(silent_mut)] <- 'Synonymous'
     x$trv_type <- factor(x$trv_type, levels=c('Synonymous', 'Non Synonymous'))
 
     # Obtain a data frame of mutation counts on the sample level

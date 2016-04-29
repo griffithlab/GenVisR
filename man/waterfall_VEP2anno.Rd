@@ -4,7 +4,7 @@
 \alias{waterfall_VEP2anno}
 \title{Convert VEP File}
 \usage{
-waterfall_VEP2anno(x, label_col)
+waterfall_VEP2anno(x, label_col, variant_class_order)
 }
 \arguments{
 \item{x}{a data frame in VEP format}

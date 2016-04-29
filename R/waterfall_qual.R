@@ -7,10 +7,11 @@
 #' @param z a data frame containing mutation burden information or a null object
 #' @param file_type Character string specifying the input format to expect in x
 #' @param label_col Character string specifying the column name of a label
-#' column
+#' @param variant_class_order Character vector specifying the hierarchical order
+#' of mutation types to plot
 #' @return a list of data frames passing quality checks
 
-waterfall_qual <- function(x, y, z, file_type, label_col)
+waterfall_qual <- function(x, y, z, file_type, label_col, variant_class_order)
 {
     # print message statement
     message("Checking if input is properly formatted...")
@@ -24,14 +25,13 @@ waterfall_qual <- function(x, y, z, file_type, label_col)
     # Convert file type to internal format
     if(toupper(file_type) == toupper("MAF"))
     {
-        x <- waterfall_MAF2anno(x, label_col)
+        x <- waterfall_MAF2anno(x, label_col, variant_class_order)
     } else if(toupper(file_type) == toupper("MGI")) {
-        x <- waterfall_MGI2anno(x, label_col)
+        x <- waterfall_MGI2anno(x, label_col, variant_class_order)
     } else if(toupper(file_type) == toupper("Custom")) {
-        x <- waterfall_Custom2anno(x, label_col)
+        x <- waterfall_Custom2anno(x, label_col, variant_class_order)
     } else if(toupper(file_type) == toupper("VEP")) {
-        stop("We are working on this feature, check in upcoming verions!")
-        x <- waterfall_VEP2anno(x, label_col)
+        x <- waterfall_VEP2anno(x, label_col, variant_class_order)
     } else {
         stop("Unrecognized file_type: ", file_type)
     }

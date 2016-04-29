@@ -1,10 +1,12 @@
 test_that("waterfall_qual returns a list with three elements", {
-    x <- data.frame(sample='samp1', gene_name='egfr', trv_type='missense')
+    x <- data.frame(sample='samp1', gene_name='egfr', trv_type='missense',
+                    chromosome_name=1, start=1, stop=1, reference="A",
+                    variant="T")
     y <- NULL
     z <- NULL
     file_type <- 'MGI'
     label_col <- NULL
-    out <- waterfall_qual(x, y, z, file_type, label_col)
+    out <- waterfall_qual(x, y, z, file_type, label_col, variant_class_order=NULL)
     
     expect_equal(length(out), 3)
     expect_is(out, 'list')
@@ -14,7 +16,7 @@ test_that("waterfall_qual checks input to file_type is valid", {
     x <- data.frame(sample='samp1', gene_name='egfr', trv_type='missense')
     y <- NULL
     z <- NULL
-    file_type <- 'TGI'
+    file_type <- 'INCORRECT'
     label_col <- NULL
     
     expect_error(waterfall_qual(x, y, z, file_type, label_col), "Unrecognized")
@@ -51,25 +53,9 @@ test_that("waterfall_qual verifies input is of proper class", {
 test_that("waterfall_qual verifies correct columns are in input", {
     
     # Check x
-    x <- data.frame(incorrect='samp1', gene_name='egfr', trv_type='missense')
-    y <- NULL
-    z <- NULL
-    file_type <- 'MGI'
-    label_col <- NULL
-    
-    expect_error(waterfall_qual(x, y, z, file_type, label_col),
-                 'Did not detect')
-    
-    x <- data.frame(sample='samp1', incorrect='egfr', trv_type='missense')
-    y <- NULL
-    z <- NULL
-    file_type <- 'MGI'
-    label_col <- NULL
-    
-    expect_error(waterfall_qual(x, y, z, file_type, label_col),
-                 'Did not detect')
-    
-    x <- data.frame(sample='samp1', gene_name='egfr', incorrect='missense')
+    x <- data.frame(INCORRECT='samp1', gene_name='egfr', trv_type='missense',
+                    chromosome_name=1, start=1, stop=1, reference="A",
+                    variant="T") 
     y <- NULL
     z <- NULL
     file_type <- 'MGI'
