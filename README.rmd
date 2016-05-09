@@ -17,77 +17,17 @@ Intuitively visualizing and interpreting data from high-throughput genomic techn
 
 Read the pre print [bioRxiv paper](http://biorxiv.org/content/early/2016/03/25/043604)!
 
-## Installation Instructions 
-GenVisr is an R package available via Bioconductor (version 3.3) and via GitHub. GenVisR currently resides on the devel branch of Bioconductor and will be added to the release branch at the next the next Bioconductor release cycle (spring 2016). To install GenVisR from the Bioconductor devel branch it is neccessary to install the R and bioconductor devel versions. Briefly the steps are as follows:
+## Install from Bioconductor 
 
-#### Install from Bioconductor 
-note: Requires R version >= 3.3.0 currently in beta
+For the majority of users we recommend installing GenVisR from the release branch of Bioconductor, Installation instructions using this method can be found on the [GenVisR landing page](http://bioconductor.org/packages/GenVisR/) on Bioconductor.
 
-* Full instructions can be found here: http://bioconductor.org/packages/devel/bioc/html/GenVisR.html
+Please note that GenVisR imports a few packages that have "system requirements", in most cases these requirements will already be installed. If they are not please follow the instructions to install these packages given in the R terminal. Briefly these packages are: "libcurl4-openssl-dev" and "libxml2-dev"
 
-1. Install R 3.3.0
+## Development
 
-+ Follow the installation guide here: http://bioconductor.org/developers/how-to/useDevel/
+Development for GenVisR occurs on the griffith lab github repository available [here](https://github.com/griffithlab/GenVisR). For users wishing to contribute to development we recommend cloning the GenVisR repo there and submitting a pull request. Please note that development occurs on the R version that will be available at each Bioconductor release cycle. This ensures that GenVisR will be stable for each Bioconductor release but it may necessitate developers download R-devel.
 
-2. Install the latest BiocInstaller
-
-```{r, eval=FALSE}
-# Repeat the command below until there is no "BiocInstaller"
-remove.packages("BiocInstaller")
-
-# Install the current version
-source("https://bioconductor.org/biocLite.R")
-BiocInstaller::biocValid()
-```
-
-3. Install GenVisR
-
-```{r, eval=FALSE}
-source("https://bioconductor.org/biocLite.R")
-biocLite("GenVisR")
-```
-
-4. Install system requirements (may not be neccessary)
-
-+ GenVisR imports a number of R packages that have common system requirements, these may already be installed depending on your system. Reading messages during the GenVisR install will provide instructions, on "vanilla" ubuntu the following command will install all of these system requirements.
-
-```{bash, eval=FALSE}
-# Example command on a vanilla UBUNTU install
-sudo apt-get update
-sudo apt-get install libssl-dev libcurl4-openssl-dev libxml2-dev default-jdk
-```
-
-+ repeat the GenVisR install command in step 3.
-
-#### Install from GitHub 
-note: Requries R version >= 3.2.2
-
-1. Install system requirements (may not be neccessary)
-
-+ GenVisR imports a number of R packages that have common system requirements, these may already be installed depending on your system. Reading messages during the GenVisR install will provide instructions, on "vanilla" ubuntu the following command will install all of these system requirements.
-
-```{bash, eval=FALSE}
-# Example command on a vanilla UBUNTU install
-sudo apt-get update
-sudo apt-get install libssl-dev libcurl4-openssl-dev libxml2-dev default-jdk
-```
-
-2. Install the devtools package from CRAN
-```{r, eval=FALSE}
-# note that devtools requires libssl-dev, see step 1
-install.packages("devtools")
-```
-
-3. Install Bioconductor dependencies
-```{r, eval=FALSE}
-source("http://bioconductor.org/biocLite.R")
-biocLite(c("AnnotationDbi", "biomaRt", "Biostrings", "GenomicFeatures", "GenomicRanges", "Rsamtools"))
-```
-
-4. Install GenVisR
-```{r, eval=FALSE}
-devtools::install_GitHub("griffithlab/GenVisR")
-```
+We also encourage users to report bugs and suggest enhancements to GenVisR on the github issue page available [here](https://github.com/griffithlab/GenVisR/issues):
 
 ## Functions 
 
