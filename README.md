@@ -32,7 +32,7 @@
 GenVisR
 =======
 
-Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
+Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics supporting multiple species and focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
 
 Read the pre print [bioRxiv paper](http://biorxiv.org/content/early/2016/03/25/043604)!
 
@@ -479,7 +479,7 @@ lohSpec(x = HCC1395_Germline)
 
 ### lohView (Loss of Heterozygosity View)
 
-`lohView` provides a method for visualizing Loss of Heterozygoisty focused on either a single chromosome or all chromosomes for a single sample. Input consists of a data frame with column names "chromosome", "position", "n\_vaf", "t\_vaf" and "sample" as well as a specification of which chromosome to plot specified via the parameter `chr` and which genome assembly should be used for chromosome boundaries `genome`. Input should be restricted to "Germline" calls only! The algorithm will produce an ideogram on the top track and plot normal and tumor variant allele fraction derived from the columns "n\_vaf" and "t\_vaf" beneath. Here we demonstrate `lohView`on data from the HCC1395 Cell Line for chromosome 5.
+`lohView` provides a method for visualizing Loss of Heterozygoisty focused on either a single chromosome or all chromosomes for a single sample. Input consists of a data frame with column names "chromosome", "position", "n\_vaf", "t\_vaf" and "sample" as well as a specification of which chromosome to plot specified via the parameter `chr` and which genome assembly should be used for chromosome boundaries `genome`. Input should be restricted to "Heterozygous Germline" calls only! The algorithm will produce an ideogram on the top track and plot normal and tumor variant allele fraction derived from the columns "n\_vaf" and "t\_vaf" beneath. Here we demonstrate `lohView`on data from the HCC1395 Cell Line for chromosome 5.
 
 ``` r
 # Call lohView with basic input, make sure input contains only Germline
@@ -557,7 +557,7 @@ Session Info
 sessionInfo()
 ```
 
-    ## R version 3.3.0 beta (2016-03-30 r70407)
+    ## R version 3.3.0 (2016-05-03)
     ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
     ## Running under: OS X 10.11.2 (El Capitan)
     ## 
@@ -569,43 +569,41 @@ sessionInfo()
     ## [8] methods   base     
     ## 
     ## other attached packages:
-    ##  [1] GenVisR_0.99.20                        
-    ##  [2] BSgenome.Hsapiens.UCSC.hg19_1.4.0      
-    ##  [3] BSgenome_1.39.4                        
-    ##  [4] rtracklayer_1.31.7                     
-    ##  [5] Biostrings_2.39.12                     
-    ##  [6] XVector_0.11.7                         
-    ##  [7] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2
-    ##  [8] GenomicFeatures_1.23.27                
-    ##  [9] AnnotationDbi_1.33.7                   
-    ## [10] Biobase_2.31.3                         
-    ## [11] GenomicRanges_1.23.24                  
-    ## [12] GenomeInfoDb_1.7.6                     
-    ## [13] IRanges_2.5.40                         
-    ## [14] S4Vectors_0.9.43                       
-    ## [15] BiocGenerics_0.17.3                    
-    ## [16] reshape2_1.4.1                         
+    ##  [1] BSgenome.Hsapiens.UCSC.hg19_1.4.0      
+    ##  [2] BSgenome_1.39.5                        
+    ##  [3] rtracklayer_1.31.10                    
+    ##  [4] Biostrings_2.39.14                     
+    ##  [5] XVector_0.11.8                         
+    ##  [6] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2
+    ##  [7] GenomicFeatures_1.23.31                
+    ##  [8] AnnotationDbi_1.33.15                  
+    ##  [9] Biobase_2.31.3                         
+    ## [10] GenomicRanges_1.23.27                  
+    ## [11] GenomeInfoDb_1.7.6                     
+    ## [12] IRanges_2.5.46                         
+    ## [13] S4Vectors_0.9.52                       
+    ## [14] BiocGenerics_0.17.5                    
+    ## [15] reshape2_1.4.1                         
+    ## [16] GenVisR_0.99.20                        
     ## [17] knitr_1.12.3                           
-    ## [18] BiocStyle_1.9.7                        
+    ## [18] BiocStyle_1.99.11                      
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_0.12.3                 highr_0.5.1                
-    ##  [3] formatR_1.3                 plyr_1.8.3                 
-    ##  [5] bitops_1.0-6                viridis_0.3.4              
+    ##  [1] Rcpp_0.12.4.5               formatR_1.3                
+    ##  [3] plyr_1.8.3                  highr_0.5.1                
+    ##  [5] viridis_0.3.4               bitops_1.0-6               
     ##  [7] tools_3.3.0                 zlibbioc_1.17.1            
-    ##  [9] digest_0.6.9                biomaRt_2.27.2             
-    ## [11] evaluate_0.8.3              memoise_1.0.0              
-    ## [13] RSQLite_1.0.0               gtable_0.2.0               
-    ## [15] DBI_0.3.1                   yaml_2.1.13                
-    ## [17] gridExtra_2.2.1             withr_1.0.1                
-    ## [19] roxygen2_5.0.1              stringr_1.0.0              
-    ## [21] devtools_1.10.0             gtools_3.5.0               
-    ## [23] grid_3.3.0                  FField_0.1.0               
-    ## [25] XML_3.98-1.4                BiocParallel_1.5.21        
-    ## [27] rmarkdown_0.9.5             ggplot2_2.1.0              
-    ## [29] magrittr_1.5                htmltools_0.3.5            
-    ## [31] Rsamtools_1.23.6            scales_0.4.0               
-    ## [33] GenomicAlignments_1.7.20    SummarizedExperiment_1.1.22
-    ## [35] colorspace_1.2-6            labeling_0.3               
-    ## [37] stringi_1.0-1               RCurl_1.95-4.8             
-    ## [39] munsell_0.4.3
+    ##  [9] biomaRt_2.27.2              digest_0.6.9               
+    ## [11] RSQLite_1.0.0               evaluate_0.9               
+    ## [13] gtable_0.2.0                DBI_0.3.1                  
+    ## [15] yaml_2.1.13                 gridExtra_2.2.1            
+    ## [17] stringr_1.0.0               gtools_3.5.0               
+    ## [19] grid_3.3.0                  FField_0.1.0               
+    ## [21] BiocParallel_1.5.22         XML_3.98-1.4               
+    ## [23] rmarkdown_0.9.5             ggplot2_2.1.0              
+    ## [25] magrittr_1.5                GenomicAlignments_1.7.21   
+    ## [27] Rsamtools_1.23.11           scales_0.4.0               
+    ## [29] htmltools_0.3.5             SummarizedExperiment_1.1.27
+    ## [31] colorspace_1.2-6            labeling_0.3               
+    ## [33] stringi_1.0-1               RCurl_1.95-4.8             
+    ## [35] munsell_0.4.3
