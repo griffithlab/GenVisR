@@ -14,52 +14,20 @@ vignette: >
 
 Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics supporting multiple species and focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
 
-## Installation Instructions 
-GenVisr is an R package available via Bioconductor (version 3.3) and via GitHub. GenVisR currently resides on the devel branch of Bioconductor and will be added to the release branch at the next the next Bioconductor release cycle (spring 2016). To install GenVisR from the Bioconductor devel branch it is neccessary to install the R and bioconductor devel versions. Briefly the steps are as follows:
+Read the pre print [bioRxiv paper](http://biorxiv.org/content/early/2016/03/25/043604)!
 
-#### Install from Bioconductor 
-note: Requires R version 3.3.0 (devel)
 
-* Full instructions can be found here: http://bioconductor.org/packages/devel/bioc/html/GenVisR.html
+## Install from Bioconductor 
 
-1) Install R-devel (version 3.3.0)
+For the majority of users we recommend installing GenVisR from the release branch of Bioconductor, Installation instructions using this method can be found on the [GenVisR landing page](http://bioconductor.org/packages/GenVisR/) on Bioconductor.
 
-* Follow the installation guide here: http://bioconductor.org/developers/how-to/useDevel/
+Please note that GenVisR imports a few packages that have "system requirements", in most cases these requirements will already be installed. If they are not please follow the instructions to install these packages given in the R terminal. Briefly these packages are: "libcurl4-openssl-dev" and "libxml2-dev"
 
-2) Install the latest BiocInstaller
+## Development
 
-```R
-# Repeat the command below until there is no "BiocInstaller"
-remove.packages("BiocInstaller")
+Development for GenVisR occurs on the griffith lab github repository available [here](https://github.com/griffithlab/GenVisR). For users wishing to contribute to development we recommend cloning the GenVisR repo there and submitting a pull request. Please note that development occurs on the R version that will be available at each Bioconductor release cycle. This ensures that GenVisR will be stable for each Bioconductor release but it may necessitate developers download R-devel.
 
-# Install the current version
-source("https://bioconductor.org/biocLite.R")
-BiocInstaller::biocValid()
-```
-
-3) Install GenVisR
-
-```R
-source("https://bioconductor.org/biocLite.R")
-biocLite("GenVisR")
-```
-#### Install from GitHub 
-note: Requries R version 3.2.2
-* Full instructions can be found here: https://GitHub.com/griffithlab/GenVisR
-
-1) Install the devtools package from CRAN
-```R
-install.packages("devtools")
-```
-2) Install Bioconductor dependencies
-```R
-source("http://bioconductor.org/biocLite.R")
-biocLite(c("AnnotationDbi", "biomaRt", "Biostrings", "GenomicFeatures", "GenomicRanges", "Rsamtools"))
-```
-3) Install GenVisR
-```R
-devtools::install_GitHub("griffithlab/GenVisR")
-```
+We also encourage users to report bugs and suggest enhancements to GenVisR on the github issue page available [here](https://github.com/griffithlab/GenVisR/issues):
 
 ## Functions 
 
