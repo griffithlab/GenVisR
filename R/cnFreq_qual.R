@@ -59,7 +59,7 @@ cnFreq_qual <- function(x)
                            " output may be incorrect!")
             warning(memo)
         }
-        if(any(!sapply(tmp, function(x) x[,3] %in% tmp_vector))){
+        if(any(!sapply(tmp, function(x) x[,3] %in% tmp_vec))){
             memo <- paste0("Input to x must have consistent windows across samples",
                            " output may be incorrect!")
             warning(memo)            
