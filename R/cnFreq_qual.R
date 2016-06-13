@@ -50,6 +50,22 @@ cnFreq_qual <- function(x)
         x$end <- as.integer(as.character(x$end))
         x$segmean <- as.numeric(as.character(x$segmean))
         x$sample <- as.factor(x$sample)
+        
+        # also make sure windows are consistent (this is temporary)
+        tmp_vec <- x$end
+        tmp <- split(x$sample, x$sample)
+        if(!all(sapply(tmp, length) == length(tmp[[1]]))){
+            memo <- paste0("Input to x must have consistent windows across samples",
+                           " output may be incorrect!")
+            warning(memo)
+        }
+        if(any(!sapply(tmp, function(x) x[,3] %in% tmp_vector))){
+            memo <- paste0("Input to x must have consistent windows across samples",
+                           " output may be incorrect!")
+            warning(memo)            
+        }
+        rm(tmp)
+        rm(tmp_vec)
     } else {
         memo <- paste0("Did not detect correct columns in argument supplied",
                        " to x!")
