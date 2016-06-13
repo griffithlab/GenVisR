@@ -522,14 +522,14 @@ sessionInfo()
     ## [15] reshape2_1.4.1                         
     ## [16] knitr_1.13                             
     ## [17] BiocStyle_2.0.1                        
-    ## [18] GenVisR_1.1.3                          
+    ## [18] GenVisR_1.1.5                          
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] Rcpp_0.12.5                highr_0.6                 
     ##  [3] formatR_1.4                plyr_1.8.3                
     ##  [5] bitops_1.0-6               viridis_0.3.4             
     ##  [7] tools_3.3.0                zlibbioc_1.18.0           
-    ##  [9] biomaRt_2.28.0             digest_0.6.9              
+    ##  [9] digest_0.6.9               biomaRt_2.28.0            
     ## [11] evaluate_0.9               RSQLite_1.0.0             
     ## [13] gtable_0.2.0               DBI_0.4-1                 
     ## [15] yaml_2.1.13                gridExtra_2.2.1           
@@ -537,8 +537,8 @@ sessionInfo()
     ## [19] grid_3.3.0                 FField_0.1.0              
     ## [21] XML_3.98-1.4               BiocParallel_1.6.1        
     ## [23] rmarkdown_0.9.6            ggplot2_2.1.0             
-    ## [25] magrittr_1.5               scales_0.4.0              
-    ## [27] Rsamtools_1.24.0           htmltools_0.3.5           
+    ## [25] magrittr_1.5               htmltools_0.3.5           
+    ## [27] Rsamtools_1.24.0           scales_0.4.0              
     ## [29] GenomicAlignments_1.8.0    SummarizedExperiment_1.2.1
     ## [31] colorspace_1.2-6           labeling_0.3              
     ## [33] stringi_1.0-1              RCurl_1.95-4.8            

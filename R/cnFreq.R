@@ -7,7 +7,8 @@
 #' CN losses/gains across the genome (default), or actual CN values. The former
 #' option must contain columns with the following names "chromosome", "start",
 #' "end", "gain", and "loss", and the latter option must contain column names
-#' "chromosome", "start", "end", "segmean", and "sample".
+#' "chromosome", "start", "end", "segmean", and "sample". Windows supplied must
+#' be consistent across samples!
 #' @param CN_low_cutoff Numeric value representing the point at or below which
 #' copy number alterations are considered losses. Only used if x represents CN
 #' values.

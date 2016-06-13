@@ -13,7 +13,7 @@
 lohView_buildMain <- function(x, y, chr, layers=NULL)
 {
     # Define various parameters of the plot
-    dummy_data <- geom_point(data=y, mapping=aes_string(x='coordinate', y=50),
+    dummy_data <- geom_point(data=y, mapping=aes_string(x='coordinate', y=0),
                              alpha=0)
     
     theme <- theme(axis.text.x=element_text(angle=30, hjust=1))
