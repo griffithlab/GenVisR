@@ -35,7 +35,7 @@ GenVisR
 
 Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics supporting multiple species and focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
 
-Read the pre print [bioRxiv paper](http://biorxiv.org/content/early/2016/03/25/043604)!
+Read the published [Bioinformatics paper](http://bioinformatics.oxfordjournals.org/content/early/2016/06/09/bioinformatics.btw325.short?rss=1)!
 
 Install from Bioconductor
 -------------------------
@@ -101,7 +101,7 @@ set.seed(383)
 waterfall(brcaMAF, mainRecurCutoff = 0.06)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-2-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-2-1.png)
 
 Alternatively one can set a maximum number of genes to plot via the `maxGenes` parameter which will select the top x recurrently mutated genes. In addition specific genes of interest can be displayed using the `plotGenes` parameter. This parameter accepts a case insensitive character vector of genes present in the data and will subset the data on those genes. For example, if it was desirable to plot only the following genes "PIK3CA", "TP53", "USH2A", "MLL3", AND "BRCA1":
 
@@ -110,7 +110,7 @@ Alternatively one can set a maximum number of genes to plot via the `maxGenes` p
 waterfall(brcaMAF, plotGenes = c("PIK3CA", "TP53", "USH2A", "MLL3", "BRCA1"))
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-3-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-3-1.png)
 
 It is important to note that the mutation burden sub plot does not change during these subsets, this is calculated directly from the input via the formula: \(mutations\ in\ sample/coverage\ space * 1000000\). The coverage space defaults to the size in base pairs of the "SeqCap EZ Human Exome Library v2.0". This default can be changed via the parameter `coverageSpace`. This calculation is only meant to be a rough estimate as actual coverage space can vary from sample to sample, for a more accurate calculation the user has the option to supply an optional argument via the parameter `mutBurden` supplying the users own calculation of mutation burden for each sample. This should be a data frame with column names 'sample', 'mut\_burden' taking the following form:
 
@@ -150,7 +150,7 @@ waterfall(brcaMAF, clinDat = clinical, clinVarCol = c(lumA = "blue4", lumB = "de
     "lumB", "her2", "basal", "normal", "20-30", "31-50", "51-60", "61+"))
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 Occasionally there may be samples not represented within the .maf file (due to a lack of mutations). It may still be desirable to plot these samples. To accomplish this simply add the relevant samples into the appropriate column before loading the data and leave the rest of the columns as NA. Alternatively the user can specify a list of samples to plot via the `plotSamples` parameter which will accept samples not in the input data.
 
@@ -170,7 +170,7 @@ colnames(data) <- c("gene", "amino_acid_change", "transcript_name")
 lolliplot(data)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-5-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
 In an effort to maintain a high degree of flexibility the user has the option of selecting columns on which to fill and label. The parameters `fillCol` and `labelCol` allow this behavior by taking column names on which to fill and label respectively. Additionally one can plot the amino acid sidechain information in lieu of protein domains.
 
@@ -183,7 +183,7 @@ data$impact <- sample(c("Low", "Medium", "High"), 15, replace = TRUE)
 lolliplot(data, fillCol = "gender", labelCol = "impact", sideChain = TRUE)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-6-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 The user has the option of plotting an additional track in the area underneath the protein track via the parameter `y`. Input for this additional layer consists of a data frame with column names "transcript\_name" and "amino\_acid\_change" in p. notation. If input to parameter `y` is supplied to `lolliplot` and the `fillCol` and/or `labelCol` parameters are specified (see above) lolliplot will look for the columns in both data frames supplied to `x` and `y` and act accordingly. Note that input to parameter `y` must be from the same transcript as specified in the data frame supplied to parameter `x`.
 
@@ -195,7 +195,7 @@ data2 <- data.frame(transcript_name = "ENST00000269305", amino_acid_change = "p.
 lolliplot(data, y = data2, fillCol = "impact", labelCol = "amino_acid_change")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-7-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 `lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data in an attempt to achieve a reasonable degree of separation between points. Suitable defaults have been set for the majority of use cases. On occasion the user may need to manually adjust the force field parameters especially if the number of points to apply the model to is large. This can be done for both upper and lower tracks individually via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
 
@@ -237,7 +237,7 @@ genCov(data, txdb, gr, genome, gene_labelTranscriptSize = 2, transform = NULL,
     base = NULL)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-8-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 Often it may be usefull to compress genomic space, genCov will perform such a compression via a log transform for each feature type,'Intron','CDS','UTR' specified by the parameter `transform`. The degree of compression can be set via the parameter `base` which will perform the appropriate log compression for the features specified in `transform`. This behavior will occur by default, to turn off compression set the `transform` and `base` parameters to NULL. Here we display `genCov` compression functionality with log-10 compression for intronic space, and log-2 compression for CDS and UTR regions. Further we choose to display a simplified representation of genomic features within the region of interest via the `reduce` parameter which will merge all genomic features within a region of interest into a single transcript.
 
@@ -247,7 +247,7 @@ genCov(data, txdb, gr, genome, transform = c("Intron", "CDS", "UTR"), base = c(1
     2, 2), reduce = TRUE)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ### TvTi (transition/transversion graphic)
 
@@ -258,7 +258,7 @@ genCov(data, txdb, gr, genome, transform = c("Intron", "CDS", "UTR"), base = c(1
 TvTi(brcaMAF, lab_txtAngle=75, fileType="MAF")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-10-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
 `TvTi` will also plot the observed frequency of each Transition/Transversion type in lieu of proportion if the `type` parameter is set to "Frequency". Here we plot the observed frequency from `brcaMAF` and change the default colors of the plot. When modifying the color palette via the `palette` parameter specify a character vector of length 6 containing a new color for each Transition/Transversion type.
 
@@ -268,7 +268,7 @@ TvTi(brcaMAF, type = "Frequency", palette = c("#77C55D", "#A461B4", "#C1524B",
     "#93B5BB", "#4F433F", "#BFA753"), lab_txtAngle = 75, fileType = "MAF")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-11-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 If there are prior expectations about the transition/transversion rate the user can specify that information via the parameter `y` which takes a named vector with names corresponding to each transition/transversion type. The vector must be of length 6 with names "A-&gt;C or T-&gt;G (TV)", "A-&gt;G or T-&gt;C (TI)", "A-&gt;T or T-&gt;A (TV)", "G-&gt;A or C-&gt;T (TI)", "G-&gt;C or C-&gt;G (TV)", and "G-&gt;T or C-&gt;A (TV)". The Resulting plot will contain an additional subplot corresponding to the apriori expectations.
 
@@ -281,7 +281,7 @@ expec <- c(`A->C or T->G (TV)` = 0.066, `A->G or T->C (TI)` = 0.217, `A->T or T-
 TvTi(brcaMAF, y = expec, lab_txtAngle = 45, fileType = "MAF")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 ### cnSpec (copy altered cohort graphic)
 
@@ -292,7 +292,7 @@ cnSpec produces a plot displaying copy number segments at a cohort level. Basic 
 cnSpec(LucCNseg, genome = "hg19")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
 By default a few select genomes are included as part of GenVisR, these are "hg38", "hg19", "mm10", "mm9", "rn5". If input into `genome` is not one of the previously mentioned genomes cnSpec will attempt to query the UCSC sql database to obtain chromosomal boundary information. This has been built in as a convenience, if internet connectivity is an issue, or if copy number segment calls are derived from an assembly not supported by UCSC the user can specify chromosomal boundaries via the argument `y`. This should take the form of a data frame with column names "chromosome", "start", "end" with rows providing positions for each chromosome. An example of this is provided in the included data set hg19chr.
 
@@ -317,7 +317,7 @@ data <- as.data.frame(cbind(chromosome, coordinate, cn))
 cnView(data, chr = "chr14", genome = "hg19", ideogram_txtSize = 4)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-15-1.png)<!-- -->NULL
+![](README_files/figure-markdown_github/unnamed-chunk-15-1.png)NULL
 
 `cnView` obtains ideogram information and chromosomal boundaries either via a preloaded genome or the UCSC sql database if it is available. In the interest of flexibility the user also has the option of specifying cytogenetic information to the argument `y`. This input should take the form of a data frame with column names "chrom", "chromStart", "chromEnd", "name", "gieStain". This format mirrors what is retrievable via the aforementioned MySQL database.
 
@@ -338,7 +338,7 @@ dataSeg <- data.frame(chromosome = c(14, 14, 14), start = coordinate[c(1, 301,
 cnView(data, z = dataSeg, chr = "chr14", genome = "hg19", ideogram_txtSize = 4)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-16-1.png)<!-- -->NULL
+![](README_files/figure-markdown_github/unnamed-chunk-16-1.png)NULL
 
 ### covBars (sequencing coverage cohort)
 
@@ -352,7 +352,7 @@ x <- matrix(sample(1e+05, 500), nrow = 50, ncol = 10, dimnames = list(0:49,
 covBars(x)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-17-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-17-1.png)
 
 By default the viridis color scheme is used. An alternate vector of colors can be supplied to the param `colour`.
 
@@ -360,7 +360,7 @@ By default the viridis color scheme is used. An alternate vector of colors can b
 covBars(x, colour = c("blue", "grey", "red"))
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-18-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-18-1.png)
 
 ### cnFreq (proportional copy number alterations)
 
@@ -380,7 +380,7 @@ cnFreq(x)
 
     ## Detected "chr" in the chromosome column of x... proceeding
 
-![](README_files/figure-markdown_github/unnamed-chunk-19-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 An alternate long data frame format with actual copy number values may be used. The default cutoffs for loss and gain are 1.5 and 2.5 respectively.
 
@@ -400,7 +400,7 @@ data <- cytoGeno[cytoGeno$genome == "hg38", ]
 ideoView(data, chromosome = "chr1", txtSize = 4)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-21-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-21-1.png)
 
 ### lohSpec (Loss of Heterozygosity Spectrum)
 
@@ -411,7 +411,7 @@ ideoView(data, chromosome = "chr1", txtSize = 4)
 lohSpec(x = HCC1395_Germline)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-22-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-22-1.png)
 
 ### lohView (Loss of Heterozygosity View)
 
@@ -423,7 +423,7 @@ lohSpec(x = HCC1395_Germline)
 lohView(HCC1395_Germline, chr = "chr5", genome = "hg19", ideogram_txtSize = 4)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-23-1.png)<!-- -->NULL
+![](README_files/figure-markdown_github/unnamed-chunk-23-1.png)NULL
 
 ### compIdent (snp identity graphic)
 
@@ -440,7 +440,7 @@ hg19 <- BSgenome.Hsapiens.UCSC.hg19
 compIdent(genome = hg19, debug = TRUE)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-24-1.png)<!-- -->NULL
+![](README_files/figure-markdown_github/unnamed-chunk-24-1.png)NULL
 
 ### geneViz (Transcript Represenation)
 
@@ -462,7 +462,7 @@ p1 <- geneViz(txdb, gr, genome)
 p1[[1]]
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-25-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-25-1.png)
 
 Hints
 -----
@@ -495,7 +495,7 @@ sessionInfo()
 
     ## R version 3.3.0 (2016-05-03)
     ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-    ## Running under: OS X 10.11.2 (El Capitan)
+    ## Running under: OS X 10.11.5 (El Capitan)
     ## 
     ## locale:
     ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -506,40 +506,40 @@ sessionInfo()
     ## 
     ## other attached packages:
     ##  [1] BSgenome.Hsapiens.UCSC.hg19_1.4.0      
-    ##  [2] BSgenome_1.39.5                        
-    ##  [3] rtracklayer_1.31.10                    
-    ##  [4] Biostrings_2.39.14                     
-    ##  [5] XVector_0.11.8                         
+    ##  [2] BSgenome_1.40.0                        
+    ##  [3] rtracklayer_1.32.0                     
+    ##  [4] Biostrings_2.40.0                      
+    ##  [5] XVector_0.12.0                         
     ##  [6] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2
-    ##  [7] GenomicFeatures_1.23.31                
-    ##  [8] AnnotationDbi_1.33.15                  
-    ##  [9] Biobase_2.31.3                         
-    ## [10] GenomicRanges_1.23.27                  
-    ## [11] GenomeInfoDb_1.7.6                     
-    ## [12] IRanges_2.5.46                         
-    ## [13] S4Vectors_0.9.52                       
-    ## [14] BiocGenerics_0.17.5                    
+    ##  [7] GenomicFeatures_1.24.1                 
+    ##  [8] AnnotationDbi_1.34.1                   
+    ##  [9] Biobase_2.32.0                         
+    ## [10] GenomicRanges_1.24.0                   
+    ## [11] GenomeInfoDb_1.8.1                     
+    ## [12] IRanges_2.6.0                          
+    ## [13] S4Vectors_0.10.0                       
+    ## [14] BiocGenerics_0.18.0                    
     ## [15] reshape2_1.4.1                         
-    ## [16] GenVisR_0.99.20                        
-    ## [17] knitr_1.12.3                           
-    ## [18] BiocStyle_1.99.11                      
+    ## [16] knitr_1.13                             
+    ## [17] BiocStyle_2.0.1                        
+    ## [18] GenVisR_1.1.3                          
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_0.12.4.5               formatR_1.3                
-    ##  [3] plyr_1.8.3                  highr_0.5.1                
-    ##  [5] viridis_0.3.4               bitops_1.0-6               
-    ##  [7] tools_3.3.0                 zlibbioc_1.17.1            
-    ##  [9] biomaRt_2.27.2              digest_0.6.9               
-    ## [11] RSQLite_1.0.0               evaluate_0.9               
-    ## [13] gtable_0.2.0                DBI_0.3.1                  
-    ## [15] yaml_2.1.13                 gridExtra_2.2.1            
-    ## [17] stringr_1.0.0               gtools_3.5.0               
-    ## [19] grid_3.3.0                  FField_0.1.0               
-    ## [21] BiocParallel_1.5.22         XML_3.98-1.4               
-    ## [23] rmarkdown_0.9.5             ggplot2_2.1.0              
-    ## [25] magrittr_1.5                GenomicAlignments_1.7.21   
-    ## [27] Rsamtools_1.23.11           scales_0.4.0               
-    ## [29] htmltools_0.3.5             SummarizedExperiment_1.1.27
-    ## [31] colorspace_1.2-6            labeling_0.3               
-    ## [33] stringi_1.0-1               RCurl_1.95-4.8             
+    ##  [1] Rcpp_0.12.5                highr_0.6                 
+    ##  [3] formatR_1.4                plyr_1.8.3                
+    ##  [5] bitops_1.0-6               viridis_0.3.4             
+    ##  [7] tools_3.3.0                zlibbioc_1.18.0           
+    ##  [9] biomaRt_2.28.0             digest_0.6.9              
+    ## [11] evaluate_0.9               RSQLite_1.0.0             
+    ## [13] gtable_0.2.0               DBI_0.4-1                 
+    ## [15] yaml_2.1.13                gridExtra_2.2.1           
+    ## [17] stringr_1.0.0              gtools_3.5.0              
+    ## [19] grid_3.3.0                 FField_0.1.0              
+    ## [21] XML_3.98-1.4               BiocParallel_1.6.1        
+    ## [23] rmarkdown_0.9.6            ggplot2_2.1.0             
+    ## [25] magrittr_1.5               scales_0.4.0              
+    ## [27] Rsamtools_1.24.0           htmltools_0.3.5           
+    ## [29] GenomicAlignments_1.8.0    SummarizedExperiment_1.2.1
+    ## [31] colorspace_1.2-6           labeling_0.3              
+    ## [33] stringi_1.0-1              RCurl_1.95-4.8            
     ## [35] munsell_0.4.3
