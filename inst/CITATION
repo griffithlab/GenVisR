@@ -2,7 +2,7 @@ citHeader("To cite GenVisR, please use:")
 
 citEntry(
         entry = "article",
-        journal = "bioRxiv",
+        journal = "Bioinformatics",
         year = "2016",
         title = "GenVisR: Genomic Visualizations in R",
         author = personList(as.person("Zachary L. Skidmore"),
@@ -14,5 +14,5 @@ citEntry(
                             as.person("Malachi Griffith")),
         textVersion = paste("Skidmore et al. 2016",
                             "GenVisR: Genomic Visualizations in R",
-                            "bioRxiv doi: 10.1101/043604")
+                            "Bioinformatics doi: 10.1093/bioinformatics/btw325")
 )
