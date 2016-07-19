@@ -1,20 +1,19 @@
 ################################################################################
 ############################ Class Definition ##################################
-
 setClass("MutationAnnotationFormat",
          representation=representation(
                                        "path"="character",
                                        "version"="numeric",
-                                       "data1"="data.table"
+                                       "data_file"="data.table"
          ),
          validity=function(object){
-             cat("********** MutationAnnotationFormat: inspector **********")
+             cat("!!!!! MutationAnnotationFormat~Inspector !!!!!\n")
              expected_col <- c("Hugo_Symbol", "Chromosome", "Start_position", "End_position",
                                "Variant_Classification", "Reference_Allele", "Tumor_Seq_Allele1",
                                "Tumor_Seq_Allele2", "Tumor_Sample_Barcode")
-             if(!all(expected_col %in% colnames(object@data1))){
+             if(!all(expected_col %in% colnames(object@data_file))){
                  memo <- paste("Missing the following required columns:",
-                               toString(expected_col[!expected_col %in% colnames(object@data1)]))
+                               toString(expected_col[!expected_col %in% colnames(object@data_file)]))
                  stop(memo)
          }else{}
              return(TRUE)
@@ -28,6 +27,7 @@ setMethod(
     f="initialize",
     signature="MutationAnnotationFormat",
     definition=function(.Object, path, version, verbose){
+        cat("!!!!! MutationAnnotationFormat~Initalizer !!!!!\n")
         ##### Read in the file from the specified path ####
         # read the main data1
         mafdata1 <- suppressWarnings(data.table::fread(input=path,
@@ -58,39 +58,43 @@ setMethod(
             mafObject <- methods::new("MutationAnnotationFormat_v2.3", path=path,
                                       version=mafVersion, data1=mafdata1)
         }else if(mafVersion == 2.4){
-            mafObject <- methods::new("MutationAnnotationFormat_v2.4", path=path,
-                                      version=mafVersion, data1=mafdata1)
+            mafObject <- MutationAnnotationFormat_v2.4(path=path,
+                                                       version=mafVersion,
+                                                       data_file=mafdata1)
         }else{
             
         }
         
         mafObject <- as.MutationAnnotationFormat(mafObject)
+        validObject(.Object)
+        return(.Object)
     }
 )
 
 ################################################################################
 ######################### Constructor ##########################################
 MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
+    cat("!!!!! MutationAnnotationFormat~Constructor !!!!!\n")
     new("MutationAnnotationFormat", path=path, version=version, verbose=verbose)
 }
 
 ################################################################################
 ################## additional Generics and Methods #############################
 
-setGeneric(
-    name="as.MutationAnnotationFormat",
-    def=function(object){standardGeneric("as.MutationAnnotationFormat")}
-)
-
-setMethod(
-    f="as.MutationAnnotationFormat",
-    signature="MutationAnnotationFormat_v2.4",
-    definition=function(object){
-        colnames(object@data) <- c("Hugo_Symbol", "Chromosome", "Start_position", "End_position",
-                                    "Variant_Classification", "Reference_Allele", "Tumor_Seq_Allele1",
-                                    "Tumor_Seq_Allele2", "Tumor_Sample_Barcode")
-        return(object)
-    }
-)
+# setGeneric(
+#     name="as.MutationAnnotationFormat",
+#     def=function(object){standardGeneric("as.MutationAnnotationFormat")}
+# )
+# 
+# setMethod(
+#     f="as.MutationAnnotationFormat",
+#     signature="MutationAnnotationFormat_v2.4",
+#     definition=function(object){
+#         colnames(object@data) <- c("Hugo_Symbol", "Chromosome", "Start_position", "End_position",
+#                                     "Variant_Classification", "Reference_Allele", "Tumor_Seq_Allele1",
+#                                     "Tumor_Seq_Allele2", "Tumor_Sample_Barcode")
+#         return(object)
+#     }
+# )
 
 #MutationAnnotationFormat(path="~/Desktop/tcga_laml.maf")
