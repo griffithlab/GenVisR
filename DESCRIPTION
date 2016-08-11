@@ -9,20 +9,161 @@ Authors@R: c(person(given="Zachary", family="Skidmore", email="zlskidmore@gmail.
           email="ogriffit@genome.wustl.edu", role="aut"), person(given="Malachi", family="Griffith",
           email="mgriffit@genome.wustl.edu", role="aut"))
 Maintainer: Zachary Skidmore <zlskidmore@gmail.com>
-Description: Produce highly customizable publication quality graphics for genomic data
-          primarily at the cohort level.
-Depends: R (>= 3.2.2), methods
-Imports: AnnotationDbi, biomaRt, BiocGenerics, Biostrings, DBI, FField, GenomicFeatures, GenomicRanges,
-         ggplot2 (>= 0.9.2), grid, gridExtra, gtable, gtools, IRanges,
-         plyr (>= 1.8.3), reshape2, Rsamtools, scales, stats, utils, viridis
+Description: Produce highly customizable publication quality graphics for
+    genomic data primarily at the cohort level.
+Depends:
+    R (>= 3.2.2),
+    methods
+Imports:
+    AnnotationDbi,
+    biomaRt,
+    BiocGenerics,
+    Biostrings,
+    DBI,
+    FField,
+    GenomicFeatures,
+    GenomicRanges,
+    ggplot2 (>= 0.9.2),
+    grid,
+    gridExtra,
+    gtable,
+    gtools,
+    IRanges,
+    plyr (>= 1.8.3),
+    reshape2,
+    Rsamtools,
+    scales,
+    stats,
+    utils,
+    viridis
 License: GPL-3 + file LICENSE
 BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification, DNASeq
 LazyData: true
-Suggests: BiocStyle, BSgenome.Hsapiens.UCSC.hg19, knitr, RMySQL, roxygen2,
-            testthat, TxDb.Hsapiens.UCSC.hg19.knownGene
+Suggests:
+    BiocStyle,
+    BSgenome.Hsapiens.UCSC.hg19,
+    knitr,
+    RMySQL,
+    roxygen2,
+    testthat,
+    TxDb.Hsapiens.UCSC.hg19.knownGene
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
 NeedsCompilation: no
-Author: Zachary Skidmore [aut, cre], Alex Wagner [aut], Robert Lesurf [aut], Katie Campbell
-          [aut], Jason Kunisaki [aut], Obi Griffith [aut], Malachi Griffith [aut]
+Author: Zachary Skidmore [aut, cre], Alex Wagner [aut], Robert Lesurf [aut],
+    Katie Campbell [aut], Jason Kunisaki [aut], Obi Griffith [aut], Malachi Griffith
+    [aut]
+Collate:
+    'AllGenerics.R'
+    'GenVisR.R'
+    'MutationAnnotationFormat_Virtual-class.R'
+    'MutationAnnotationFormat.R'
+    'MutationAnnotationFormat_v2.4.R'
+    'TvTi.R'
+    'TvTi_alignPlot.R'
+    'TvTi_annoTransTranv.R'
+    'TvTi_buildMain.R'
+    'TvTi_calcTransTranvFreq.R'
+    'TvTi_convMaf.R'
+    'TvTi_qual.R'
+    'TvTi_rmIndel.R'
+    'TvTi_rmMnuc.R'
+    'cnFreq.R'
+    'cnFreq_buildMain.R'
+    'cnFreq_qual.R'
+    'cnSpec.R'
+    'cnSpec_buildMain.R'
+    'cnSpec_qual.R'
+    'cnView.R'
+    'cnView_buildMain.R'
+    'cnView_qual.R'
+    'compIdent.R'
+    'compIdent_bamRcnt.R'
+    'compIdent_bamRcnt_qual.R'
+    'compIdent_buildMain.R'
+    'compIdent_format.R'
+    'covBars.R'
+    'covBars_buildMain.R'
+    'covBars_qual.R'
+    'genCov.R'
+    'genCov_alignPlot.R'
+    'genCov_assign_ggplotGrob_height.R'
+    'genCov_assign_ggplotGrob_width.R'
+    'genCov_buildCov.R'
+    'genCov_buildTrack.R'
+    'genCov_extr_ggplotGrob_height.R'
+    'genCov_extr_ggplotGrob_width.R'
+    'genCov_qual.R'
+    'genCov_trackViz.R'
+    'geneViz.R'
+    'geneViz_Granges2dataframe.R'
+    'geneViz_buildGene.R'
+    'geneViz_calcGC.R'
+    'geneViz_cdsFromTXID.R'
+    'geneViz_extrCDS.R'
+    'geneViz_extrUTR.R'
+    'geneViz_formatUTR.R'
+    'geneViz_formatcds.R'
+    'geneViz_mapCoordSpace.R'
+    'geneViz_mapCovCoordSpace.R'
+    'geneViz_mergeRegions.R'
+    'geneViz_mergeTypeRegions.R'
+    'geneViz_mergeTypes.R'
+    'ideoView.R'
+    'ideoView_buildMain.R'
+    'ideoView_formatCytobands.R'
+    'ideoView_qual.R'
+    'lohSpec.R'
+    'lohSpec_buildMain.R'
+    'lohSpec_fileGlob.R'
+    'lohSpec_lohCalc.R'
+    'lohSpec_qual.R'
+    'lohSpec_slidingWindow.R'
+    'lohSpec_stepCalc.R'
+    'lohSpec_tileCalc.R'
+    'lohSpec_tilePosition.R'
+    'lohSpec_tileWindow.R'
+    'lohSpec_windowPosition.R'
+    'lohView.R'
+    'lohView_buildMain.R'
+    'lohView_qual.R'
+    'lolliplot.R'
+    'lolliplot_AA2sidechain.R'
+    'lolliplot_Codon2AA.R'
+    'lolliplot_DNAconv.R'
+    'lolliplot_buildMain.R'
+    'lolliplot_constructGene.R'
+    'lolliplot_dodgeCoordX.R'
+    'lolliplot_dodgeCoordY.R'
+    'lolliplot_fetchDomain.R'
+    'lolliplot_mutationObs.R'
+    'lolliplot_qual.R'
+    'lolliplot_reduceLolli.R'
+    'lolliplot_transcriptID2codingSeq.R'
+    'multi_align.R'
+    'multi_buildClin.R'
+    'multi_chrBound.R'
+    'multi_cytobandRet.R'
+    'multi_selectOut.R'
+    'multi_subsetChr.R'
+    'waterfall.R'
+    'waterfall_Custom2anno.R'
+    'waterfall_MAF2anno.R'
+    'waterfall_MGI2anno.R'
+    'waterfall_NA2gene.R'
+    'waterfall_VEP2anno.R'
+    'waterfall_align.R'
+    'waterfall_buildGenePrevelance.R'
+    'waterfall_buildMain.R'
+    'waterfall_buildMutBurden_A.R'
+    'waterfall_buildMutBurden_B.R'
+    'waterfall_calcMutFreq.R'
+    'waterfall_geneAlt.R'
+    'waterfall_geneRecurCutoff.R'
+    'waterfall_geneSort.R'
+    'waterfall_hierarchyTRV.R'
+    'waterfall_qual.R'
+    'waterfall_rmvSilent.R'
+    'waterfall_sampAlt.R'
+    'waterfall_sampSort.R'

@@ -10,30 +10,13 @@
 #' @slot sample data.table object with columns "Tumor_Sample_Barcode"
 #' @slot meta data.table object containing additional information
 #' @exportClass MutationAnnotationFormat
+#' @include MutationAnnotationFormat_Virtual-class.R
 #' @importFrom data.table data.table
 #' @import methods
 setClass("MutationAnnotationFormat",
-         representation=representation(
-                                       "path"="character",
-                                       "version"="numeric",
-                                       "position"="data.table",
-                                       "mutation"="data.table",
-                                       "sample"="data.table",
-                                       "meta"="data.table"
-         ),
-         validity=function(object){
-             cat("!!!!! MutationAnnotationFormat~Inspector !!!!!\n")
-         #     expected_col <- c("Hugo_Symbol", "Chromosome", "Start_position", "End_position",
-         #                       "Variant_Classification", "Reference_Allele", "Tumor_Seq_Allele1",
-         #                       "Tumor_Seq_Allele2", "Tumor_Sample_Barcode")
-         #     if(!all(expected_col %in% colnames(object@data_file))){
-         #         memo <- paste("Missing the following required columns:",
-         #                       toString(expected_col[!expected_col %in% colnames(object@data_file)]))
-         #         stop(memo)
-         # }else{}
-             return(TRUE)
-         }
-         
+         representation=representation(path="character",
+                                       version="numeric",
+                                       mafObject="MutationAnnotationFormat_Virtual")
 )
 
 #' Initalizer method of MutationAnnotationFormat class
@@ -81,12 +64,10 @@ setMethod(
                                                        mafData=mafData)
         }else{}
         browser()
-        .Object@path <- getPath(mafObject)
-        .Object@version <- getVersion(mafObject)
-        .Object@data_file <- getDataFile(mafObject)
-        .Object@postion <- getPosition(mafObject)
+        .Object@path <- path
+        .Object@version <- mafVersion
+        .Object@mafObject <- mafObject
         
-        validObject(.Object)
         return(.Object)
     }
 )

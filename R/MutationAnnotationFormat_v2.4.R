@@ -5,17 +5,29 @@
 #' @rdname MutationAnnotationFormat_v2.4-class
 #' @slot position test
 setClass("MutationAnnotationFormat_v2.4",
-         contains="MutationAnnotationFormat",
+         contains="MutationAnnotationFormat_Virtual",
          validity=function(object){
              cat("!!!!! MutationAnnotationFormat_v2.4~Inspector !!!!!\n")
-             # expected_col <- c("Hugo_Symbol", "Chromosome", "Start_Position", "End_Position",
-             #                   "Variant_Classification", "Reference_Allele", "Tumor_Seq_Allele1",
-             #                   "Tumor_Seq_Allele2", "Tumor_Sample_Barcode")
-             # if(!all(expected_col %in% colnames(object@data_file))){
-             #     memo <- paste("Missing the following required columns:",
-             #                   toString(expected_col[!expected_col %in% colnames(object@data_file)]))
-             #     stop(memo)
-             #}else{}
+             expecPositionNames <- c("Chromosome", "Start_Position", "End_Position", "Strand")
+             expecMutationNames <- c("Variant_Classification", "Variant_Type", "Reference_Allele",
+                                     "Tumor_Seq_Allele1", "Tumor_Seq_Allele2")
+             expecSampleNames <- c("Tumor_Sample_Barcode")
+             
+             if(!all(expecPositionNames %in% colnames(object@position))){
+                 memo <- paste("Missing the following required columns in slot position:",
+                               toString(expected_col[!expecPositionNames %in% colnames(object@position)]))
+                 stop(memo)
+             }
+             if(!all(expecMutationNames %in% colnames(object@mutation))){
+                 memo <- paste("Missing the following required columns in slot mutation:",
+                               toString(expected_col[!expecMutationNames %in% colnames(object@mutation)]))
+                 stop(memo)
+             }
+             if(!all(expecSampleNames %in% colnames(object@sample))){
+                 memo <- paste("Missing the following required columns in slot sample:",
+                               toString(expected_col[!expecSampleNames %in% colnames(object@sample)]))
+                 stop(memo)
+             }
              return(TRUE)
          }
 )
@@ -30,9 +42,6 @@ setMethod(
     definition=function(.Object, mafPath, mafVersion, mafData){
 
         cat("!!!!! MutationAnnotationVersion_v2.4~Initalizer !!!!!\n")
-        .Object@path <- mafPath
-        .Object@version <- mafVersion
-        
         positionColNames <- c("Chromosome", "Start_Position", "End_Position", "Strand")
         .Object@position <- mafData[,positionColNames, with=FALSE]
         
@@ -44,7 +53,7 @@ setMethod(
         
         metaColNames <- !colnames(mafData) %in% c(positionColNames, mutationColNames, sampleColNames)
         .Object@meta <- mafData[,metaColNames, with=FALSE]
-        
+
         validObject(.Object)
         return(.Object)
     }
@@ -60,52 +69,4 @@ MutationAnnotationFormat_v2.4 <- function(mafPath, mafVersion, mafData){
     new("MutationAnnotationFormat_v2.4", mafPath=mafPath, mafVersion=mafVersion,
         mafData=mafData)
 }
-
-setMethod(
-    f="getPath",
-    signature="MutationAnnotationFormat_v2.4",
-    definition=function(object){
-        return(object@path)
-    }
-)
-
-setMethod(
-    f="getVersion",
-    signature="MutationAnnotationFormat_v2.4",
-    definition=function(object){
-        return(object@version)
-    }
-)
-
-setMethod(
-    f="getPosition",
-    signature="MutationAnnotationFormat_v2.4",
-    definition=function(object){
-        return(object@position)
-    }
-)
-
-setMethod(
-    f="getMutation",
-    signature="MutationAnnotationFormat_v2.4",
-    definition=function(object){
-        return(object@mutation)
-    }
-)
-
-setMethod(
-    f="getSample",
-    signature="MutationAnnotationFormat_v2.4",
-    definition=function(object){
-        return(object@Sample)
-    }
-)
-
-setMethod(
-    f="getMeta",
-    signature="MutationAnnotationFormat_v2.4",
-    definition=function(object){
-        return(object@meta)
-    }
-)
 
