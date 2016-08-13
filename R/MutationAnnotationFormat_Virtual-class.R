@@ -1,3 +1,15 @@
+#' Class MutationAnnotationFormat_Virtual
+#' 
+#' An S4 class to act as a virtual class for MutationAnnotationFormat version sub-classes.
+#' @name MutationAnnotationFormat_Virtual-class
+#' @rdname MutationAnnotationFormat_Virtual-class
+#' @slot position data.table object holding genomic positions.
+#' @slot mutation data.table object holding mutation status data.
+#' @slot sample data.table object holding sample data.
+#' @slot meta data.table object holding all other meta data.
+#' @importFrom data.table data.table
+#' @import methods
+
 setClass(
     Class="MutationAnnotationFormat_Virtual",
     representation=representation(position="data.table",

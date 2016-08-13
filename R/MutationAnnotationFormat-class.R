@@ -1,29 +1,28 @@
 #' Class MutationAnnotationFormat
 #' 
-#' An S4 class to represent data in mutation annotation format
+#' An S4 class acting as a container for MutationAnnotationFormat version sub-classes.
 #' @name MutationAnnotationFormat-class
 #' @rdname MutationAnnotationFormat-class
-#' @slot path String specifying the path of the MAF file read in.
-#' @slot version String specifying the version of the MAF file.
-#' @slot position data.table object with columns "Chromosome", "Start_Position", "End_Position" and "Strand"
-#' @slot mutation data.table object with columns "Variant_Classification", "Variant_Type", "Reference_Allele", "Tumor_Seq_Allele1", "Tumor_Seq_Allele2"
-#' @slot sample data.table object with columns "Tumor_Sample_Barcode"
-#' @slot meta data.table object containing additional information
+#' @slot path Character string specifying the path of the MAF file read in.
+#' @slot version Numeric value specifying the version of the MAF file.
+#' @slot mafObject MutationAnnotationFormat object which inherits from
+#' MutationAnnotationFormat_Virtual class.
 #' @exportClass MutationAnnotationFormat
 #' @include MutationAnnotationFormat_Virtual-class.R
-#' @importFrom data.table data.table
 #' @import methods
+
 setClass("MutationAnnotationFormat",
          representation=representation(path="character",
                                        version="numeric",
                                        mafObject="MutationAnnotationFormat_Virtual")
 )
 
-#' Initalizer method of MutationAnnotationFormat class
+#' Initalizer method for the MutationAnnotationFormat container class
 #' 
 #' @name MutationAnnotationFormat
 #' @rdname MutationAnnotationFormat-class
 #' @importFrom data.table fread
+
 setMethod(
     f="initialize",
     signature="MutationAnnotationFormat",
@@ -45,24 +44,23 @@ setMethod(
             mafVersion <- version
         }
 
-        ##### Create the appropriate child of parent MutationAnnotationFormat ######
+        ##### Obtain the appropriate MutationAnnotationFormat sub-class ######
         if(mafVersion == 1.0){
-            mafObject <- new("MutationAnnotationFormat_v1.0", path=path,
-                             version=mafVersion, data1=mafdata1)
+            mafObject <- MutationAnnotationFormat_v1.0(mafData=mafData)
         }else if(mafVersion == 2.0){
-            mafObject <- new("MutationAnnotationFormat_v2.0", path=path,
-                             version=mafVersion, data1=mafdata1)
+            mafObject <- MutationAnnotationFormat_v2.0(mafData=mafData)
         }else if(mafVersion == 2.1){
-            mafObject <- new("MutationAnnotationFormat_v2.1", path=path,
-                             version=mafVersion, data1=mafdata1)
+            mafObject <- MutationAnnotationFormat_v2.1(mafData=mafData)
         }else if(mafVersion == 2.3){
-            mafObject <- new("MutationAnnotationFormat_v2.3", path=path,
-                             version=mafVersion, data1=mafdata1)
+            mafObject <- MutationAnnotationFormat_v2.3(mafData=mafData)
         }else if(mafVersion == 2.4){
-            mafObject <- MutationAnnotationFormat_v2.4(mafPath=path,
-                                                       mafVersion=mafVersion,
-                                                       mafData=mafData)
-        }else{}
+            mafObject <- MutationAnnotationFormat_v2.4(mafData=mafData)
+        }else{
+            memo <- paste("The maf version:", toString(mafVersion),
+                          "is currently unsupported. Make a feature request on",
+                          "https://github/griffithlab/GenVisR!")
+            stop(memo)
+        }
         browser()
         .Object@path <- path
         .Object@version <- mafVersion
@@ -72,16 +70,17 @@ setMethod(
     }
 )
 
-#' Constructor for MutationAnnotationFormat
+#' Constructor for the MutationAnnotationFormat container class.
 #' 
 #' @name MutationAnnotationFormat
 #' @rdname MutationAnnotationFormat-class
 #' @param path String specifying the path to a MAF file.
 #' @param version String specifying the version of the MAF file, if set to auto
-#' the version will be grabbed from the header in the MAF file.
+#' the version will be obtained from the header in the MAF file.
 #' @param verbose Boolean specifying if progress should be reported while reading
 #' in the MAF file.
 #' @export
+
 MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
     cat("!!!!! MutationAnnotationFormat~Constructor !!!!!\n")
     new("MutationAnnotationFormat", path=path, version=version, verbose=verbose)
