@@ -16,7 +16,7 @@
 setClass("MutationAnnotationFormat_v2.2",
          contains="MutationAnnotationFormat_Virtual",
          validity=function(object){
-             cat("!!!!! MutationAnnotationFormat_v2.2~Inspector !!!!!\n")
+             cat("!!!!! MutationAnnotationFormat_v2.2~Inspector !!!!!f\n")
              expecPositionNames <- c("Chromosome", "Start_Position", "End_Position", "Strand")
              expecMutationNames <- c("Variant_Classification", "Variant_Type", "Reference_Allele",
                                      "Tumor_Seq_Allele1", "Tumor_Seq_Allele2")

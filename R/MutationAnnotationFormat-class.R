@@ -10,7 +10,6 @@
 #' @exportClass MutationAnnotationFormat
 #' @include MutationAnnotationFormat_Virtual-class.R
 #' @import methods
-
 setClass("MutationAnnotationFormat",
          representation=representation(path="character",
                                        version="numeric",
@@ -22,7 +21,6 @@ setClass("MutationAnnotationFormat",
 #' @name MutationAnnotationFormat
 #' @rdname MutationAnnotationFormat-class
 #' @importFrom data.table fread
-
 setMethod(
     f="initialize",
     signature="MutationAnnotationFormat",
@@ -51,17 +49,18 @@ setMethod(
             mafObject <- MutationAnnotationFormat_v2.0(mafData=mafData)
         }else if(mafVersion == 2.1){
             mafObject <- MutationAnnotationFormat_v2.1(mafData=mafData)
+        }else if(mafVersion == 2.2){
+            mafObject <- MutationAnnotationFormat_v2.2(mafData=mafData)
         }else if(mafVersion == 2.3){
             mafObject <- MutationAnnotationFormat_v2.3(mafData=mafData)
-        }else if(mafVersion == 2.4){
+        }else if(mafVersion == 2.4 ){
             mafObject <- MutationAnnotationFormat_v2.4(mafData=mafData)
         }else{
             memo <- paste("The maf version:", toString(mafVersion),
                           "is currently unsupported. Make a feature request on",
-                          "https://github/griffithlab/GenVisR!")
+                          "https://github.com/griffithlab/GenVisR!")
             stop(memo)
         }
-        browser()
         .Object@path <- path
         .Object@version <- mafVersion
         .Object@mafObject <- mafObject
@@ -80,8 +79,43 @@ setMethod(
 #' @param verbose Boolean specifying if progress should be reported while reading
 #' in the MAF file.
 #' @export
-
 MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
     cat("!!!!! MutationAnnotationFormat~Constructor !!!!!\n")
     new("MutationAnnotationFormat", path=path, version=version, verbose=verbose)
 }
+
+#' @rdname getPosition-methods
+#' @aliases getPosition,MutationAnnotationFormat
+setMethod(f="getPosition",
+          signature="MutationAnnotationFormat",
+          definition=function(object, ...){
+              positions <- getPosition(object@mafObject)
+              return(positions)
+          })
+
+#' @rdname getMutation-methods
+#' @aliases getMutation,MutationAnnotationFormat
+setMethod(f="getMutation",
+          signature="MutationAnnotationFormat",
+          definition=function(object, ...){
+              mutations <- getMutation(object@mafObject)
+              return(mutations)
+          })
+
+#' @rdname getSample-methods
+#' @aliases getSample,MutationAnnotationFormat
+setMethod(f="getSample",
+          signature="MutationAnnotationFormat",
+          definition=function(object, ...){
+              sample <- getSample(object@mafObject)
+              return(sample)
+          })
+
+#' @rdname getMeta-methods
+#' @aliases getMeta,MutationAnnotationFormat
+setMethod(f="getMeta",
+          signature="MutationAnnotationFormat",
+          definition=function(object, ...){
+              meta <- getMeta(object@mafObject)
+              return(meta)
+          })

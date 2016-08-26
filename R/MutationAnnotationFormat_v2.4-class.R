@@ -12,7 +12,6 @@
 #' @slot meta data.table object containing meta data.
 #' @include MutationAnnotationFormat_Virtual-class.R
 #' @import methods
-
 setClass("MutationAnnotationFormat_v2.4",
          contains="MutationAnnotationFormat_Virtual",
          validity=function(object){
@@ -21,7 +20,7 @@ setClass("MutationAnnotationFormat_v2.4",
              expecMutationNames <- c("Variant_Classification", "Variant_Type", "Reference_Allele",
                                      "Tumor_Seq_Allele1", "Tumor_Seq_Allele2")
              expecSampleNames <- c("Tumor_Sample_Barcode")
-             
+
              if(!all(expecPositionNames %in% colnames(object@position))){
                  memo <- paste("Missing the following required columns in slot position:",
                                toString(expected_col[!expecPositionNames %in% colnames(object@position)]))
@@ -45,7 +44,6 @@ setClass("MutationAnnotationFormat_v2.4",
 #' 
 #' @name MutationAnnotationFormat_v2.4
 #' @rdname MutationAnnotationFormat_v2.4-class
-
 setMethod(
     f="initialize",
     signature="MutationAnnotationFormat_v2.4",
@@ -76,9 +74,7 @@ setMethod(
 #' @rdname MutationAnnotationFormat_v2.4-class
 #' @param mafData data.table object containing a maf file conforming to the
 #' version 2.4 specification.
-
 MutationAnnotationFormat_v2.4 <- function(mafData){
     cat("!!!!! MutationAnnotationFormat_v2.4~Constructor !!!!!\n")
     new("MutationAnnotationFormat_v2.4", mafData=mafData)
 }
-
