@@ -74,6 +74,7 @@ Collate:
     'TvTi_qual.R'
     'TvTi_rmIndel.R'
     'TvTi_rmMnuc.R'
+    'Waterfall-class.R'
     'cnFreq.R'
     'cnFreq_buildMain.R'
     'cnFreq_qual.R'
