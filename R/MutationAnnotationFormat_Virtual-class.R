@@ -7,7 +7,7 @@
 #' @slot mutation data.table object holding mutation status data.
 #' @slot sample data.table object holding sample data.
 #' @slot meta data.table object holding all other meta data.
-#' @importFrom data.table data.table
+#' @importClassesFrom data.table data.table
 #' @import methods
 setClass(
     Class="MutationAnnotationFormat_Virtual",

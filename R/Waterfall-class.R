@@ -11,6 +11,9 @@
 #' @slot Data list of data.table objects storing the plotted data.
 #' @exportClass Waterfall
 #' @import methods
+#' @importFrom gtable gtable
+
+methods::setOldClass("gtable")
 setClass("Waterfall",
          representation=representation(plotA="gtable",
                                        plotB="gtable",
@@ -24,10 +27,12 @@ setClass("Waterfall",
 #' 
 #' @name Waterfall
 #' @rdname Waterfall-class
-setMethod(f="initalize",
+setMethod(f="initialize",
           signature="Waterfall",
           definition=function(.Object, input){
               
+              # convert to waterfall format
+              primaryData <- "test"
           })
 
 #' Constructor for the Waterfall class.

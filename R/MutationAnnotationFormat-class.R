@@ -119,3 +119,12 @@ setMethod(f="getMeta",
               meta <- getMeta(object@mafObject)
               return(meta)
           })
+
+#' #' @rdname toWaterfall-methods
+#' #' @aliases toWaterfall,MutationAnnotationFormat
+#' #' @noRd
+#' setMethod(f="toWaterfall",
+#'           signature="MutationAnnotationFormat",
+#'           definition=function(object, ...){
+#'               
+#'           })
