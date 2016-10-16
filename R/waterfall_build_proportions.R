@@ -9,7 +9,6 @@ waterfall_build_proportions <- function(data_frame, layers) {
             axis.title.x = element_blank(),
             panel.background = element_blank(),
             panel.grid.minor = element_blank(),
-            plot.background = element_blank()) 
-        # + layers
+            plot.background = element_blank()) + layers
     p5
 }
