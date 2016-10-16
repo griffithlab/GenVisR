@@ -169,6 +169,8 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
 
     p5 <- waterfall_build_proportions(
       data_frame = data_frame, 
+      plot_palette = mainPalette,
+      file_type = fileType,
       layers = proportions_layers
     )
 
