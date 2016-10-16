@@ -120,7 +120,9 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       plotGenes=NULL, geneOrder=NULL, plotSamples=NULL,
                       sampOrder=NULL, maxGenes=NULL, rmvSilent=FALSE,
                       fileType='MAF', variant_class_order=NULL, out="plot",
-                      proportions_layers = NULL)
+                      proportions_layers = NULL,
+                      section_heights = if(missing(p4)) c(1, 4, 1.2) 
+                      else c(1, 4, 1.2, 0.5))
 {
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
@@ -271,14 +273,13 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                               clin.layers=clinLayer)
 
         # Align all plots and return as 1 plot
-        pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p4 = p4, p5 = p5)
+        pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p4 = p4, p5 = p5, 
+          section_heights)
         return(grid::grid.draw(pA))
-    }
-
-    # Decide what to output
-    if(!exists("pA", inherits=FALSE))
+    } else 
     {
-        pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p5 = p5)
+        pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p5 = p5,
+          section_heights)
     }
     dataOut <- list("main"=data_frame,
                     "mutation_count"=data_frame2,
