@@ -42,7 +42,10 @@ waterfall_build_proportions <- function(data_frame, plot_palette, file_type, lay
     p5 <- ggplot(data_frame, aes(x = sample, fill = trv_type)) + 
         geom_bar(position = "fill", width = 0.95) + 
         scale_y_continuous(name = "% of total mutations", labels = percent_format()) + 
-        scale_fill_manual(name="Mutation Type", values=palette) + 
+        scale_fill_manual(name="Mutation Type", 
+            values=palette
+            , breaks = rev(if (is.null(names(palette))) levels(trv_type) else names(palette))
+            ) + 
         guides(fill = guide_legend(title = "Mutation type", ncol = 2)) +
         theme(
             axis.ticks.x = element_blank(),
