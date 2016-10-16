@@ -7,15 +7,17 @@
 #' @param p2 ggplot object displaying mutation burden on gene
 #' @param p3 ggplot object displaying mutation burden on sample
 #' @param p4 ggplot object displaying clinical information "optional"
+#' @param p5 ggplot object displaying proportion of mutation types "optional"
 #' @return a grob object
 #' @importFrom gridExtra arrangeGrob
 
-waterfall_align <- function(p2, p1, p3, p4)
+waterfall_align <- function(p2, p1, p3, p4, p5)
 {
     # define the ggplot's as grobs and create a blank plot
     gA <- suppressWarnings(ggplot2::ggplotGrob(p2))
     gB <- ggplot2::ggplotGrob(p1)
     gC <- ggplot2::ggplotGrob(p3)
+    gE <- ggplot2::ggplotGrob(p5)
     blankPanel <- grid::grid.rect(gp=grid::gpar(col="white"))
     if(!missing(p4))
     {
@@ -25,32 +27,40 @@ waterfall_align <- function(p2, p1, p3, p4)
     # Adjust the grob widths so p1 and p3 plots line up
     if(!missing(p4))
     {
-        maxwidth = grid::unit.pmax(gB$widths[2:5,],
-                                   gC$widths[2:5,],
-                                   gD$widths[2:5,])
+        maxwidth <- grid::unit.pmax(gB$widths[2:5, ],
+                                   gC$widths[2:5, ],
+                                   gD$widths[2:5, ],
+                                   gE$widths[2:5, ])
         gC$widths[2:5] <- as.list(maxwidth)
         gB$widths[2:5] <- as.list(maxwidth)
         gD$widths[2:5] <- as.list(maxwidth)
+        gE$widths[2:5] <- as.list(maxwidth)
     } else {
-        maxwidth = grid::unit.pmax(gB$widths[2:5,], gC$widths[2:5,])
+        maxwidth <- grid::unit.pmax(
+            gB$widths[2:5,], 
+            gC$widths[2:5,], 
+            gE$widths[2:5, ])
         gC$widths[2:5] <- as.list(maxwidth)
         gB$widths[2:5] <- as.list(maxwidth)
+        gE$widths[2:5] <- as.list(maxwidth)
     }
 
     # Adjust the grob heights so p1, and p2 plots line up
-    maxheight = grid::unit.pmax(gA$heights[2:5,], gB$heights[2:5,])
+    maxheight <- grid::unit.pmax(gA$heights[2:5,], gB$heights[2:5,])
     gA$heights[2:5] <- as.list(maxheight)
     gB$heights[2:5] <- as.list(maxheight)
 
     # plot the grobs with grid.arrange
     if(!missing(p4))
     {
-        p1 <- gridExtra::arrangeGrob(blankPanel, gC, gA, gB, blankPanel, gD,
-                                     ncol=2, nrow=3, widths=c(.8,4),
-                                     heights=c(1,4,1.2))
+        p1 <- gridExtra::arrangeGrob(blankPanel, gC, gA, gB, blankPanel, gE,
+            blankPanel, gD,
+                                     ncol=2, nrow=4, widths=c(.8, 4),
+                                     heights=c(1,4, 1, 1))
     } else {
-        p1 <- gridExtra::arrangeGrob(blankPanel, gC, gA, gB, ncol=2, nrow=2,
-                                     widths=c(1,4), heights=c(1,4))
+        p1 <- gridExtra::arrangeGrob(blankPanel, gC, gA, gB, blankPanel, gE, 
+                                    ncol=2, nrow=3,
+                                    widths=c(1,4, 1.2), heights=c(1,4))
     }
 
     return(p1)

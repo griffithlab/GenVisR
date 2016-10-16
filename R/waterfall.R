@@ -119,7 +119,8 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       clinVarCol=NULL, clinLayer=NULL, sampRecurLayer=NULL, 
                       plotGenes=NULL, geneOrder=NULL, plotSamples=NULL,
                       sampOrder=NULL, maxGenes=NULL, rmvSilent=FALSE,
-                      fileType='MAF', variant_class_order=NULL, out="plot")
+                      fileType='MAF', variant_class_order=NULL, out="plot",
+                      proportions_layers = NULL)
 {
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
@@ -165,6 +166,11 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
 
     # Subset the data based on the recurrence of mutations at the gene level
     data_frame <- waterfall_geneRecurCutoff(data_frame, mainRecurCutoff)
+
+    p5 <- waterfall_build_proportions(
+      data_frame = data_frame, 
+      layers = proportions_layers
+    )
 
     # Use the max genes parameter to limit the number of genes plotted
     # and then reorder genes based on the frequency of mutations
@@ -263,14 +269,14 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                               clin.layers=clinLayer)
 
         # Align all plots and return as 1 plot
-        pA <- waterfall_align(p2, p1, p3, p4)
+        pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p4 = p4, p5 = p5)
         return(grid::grid.draw(pA))
     }
 
     # Decide what to output
     if(!exists("pA", inherits=FALSE))
     {
-        pA <- waterfall_align(p2, p1, p3)
+        pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p5 = p5)
     }
     dataOut <- list("main"=data_frame,
                     "mutation_count"=data_frame2,
