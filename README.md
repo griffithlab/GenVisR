@@ -33,9 +33,11 @@
 GenVisR
 =======
 
-Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics supporting multiple species and focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
+Please cite: "Skidmore et al. 2016 GenVisR: Genomic Visualizations in R Bioinformatics 32, 3012-3014" [pubmed](https://www.ncbi.nlm.nih.gov/pubmed/27288499)
 
-Please cite the published [Bioinformatics paper](http://bioinformatics.oxfordjournals.org/content/early/2016/06/09/bioinformatics.btw325.short?rss=1)!
+[Bioconductor](https://bioconductor.org/packages/release/bioc/html/GenVisR.html)
+
+Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics supporting multiple species and focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
 
 Install from Bioconductor
 -------------------------
