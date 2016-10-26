@@ -163,4 +163,5 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
     finalPlot <- TvTi_alignPlot(p1=p1, p2=p2, p3=p3)
     dataOut <- list("main"=x, "expect"=y)
     output <- multi_selectOut(data=dataOut, plot=finalPlot, draw=TRUE, out=out)
+    return(output)
 }
