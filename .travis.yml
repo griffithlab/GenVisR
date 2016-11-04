@@ -1,5 +1,7 @@
 language: r
-r: bioc-release
+r: 
+  - bioc-release
+  - bioc-devel
 sudo: required
 warnings_are_errors: true
 
