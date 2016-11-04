@@ -21,7 +21,9 @@ waterfall_align <- function(p2, p1, p3, p4, p5,
     gA <- suppressWarnings(ggplot2::ggplotGrob(p2))
     gB <- ggplot2::ggplotGrob(p1)
     gC <- ggplot2::ggplotGrob(p3)
-    gE <- ggplot2::ggplotGrob(p5)
+    if (!is.null(p5)) {
+        gE <- ggplot2::ggplotGrob(p5)
+    }
     blankPanel <- grid::grid.rect(gp=grid::gpar(col="white"))
     if(!missing(p4))
     {
@@ -31,22 +33,34 @@ waterfall_align <- function(p2, p1, p3, p4, p5,
     # Adjust the grob widths so p1 and p3 plots line up
     if(!missing(p4))
     {
-        maxwidth <- grid::unit.pmax(gB$widths[2:5, ],
-                                   gC$widths[2:5, ],
-                                   gD$widths[2:5, ],
-                                   gE$widths[2:5, ])
+        if (!is.null(p5)) {
+            maxwidth <- grid::unit.pmax(gB$widths[2:5, ],
+                                       gC$widths[2:5, ],
+                                       gD$widths[2:5, ],
+                                       gE$widths[2:5, ])
+            gE$widths[2:5] <- as.list(maxwidth)
+        } else {   
+            maxwidth <- grid::unit.pmax(gB$widths[2:5, ],
+                                       gC$widths[2:5, ],
+                                       gD$widths[2:5, ]
+                                       )
+        }
         gC$widths[2:5] <- as.list(maxwidth)
         gB$widths[2:5] <- as.list(maxwidth)
         gD$widths[2:5] <- as.list(maxwidth)
-        gE$widths[2:5] <- as.list(maxwidth)
     } else {
-        maxwidth <- grid::unit.pmax(
-            gB$widths[2:5,], 
-            gC$widths[2:5,], 
-            gE$widths[2:5, ])
+        if (!is.null(p5)) {
+            maxwidth <- grid::unit.pmax(gB$widths[2:5, ],
+                                       gC$widths[2:5, ],
+                                       gE$widths[2:5, ])
+            gE$widths[2:5] <- as.list(maxwidth)
+        } else {   
+            maxwidth <- grid::unit.pmax(gB$widths[2:5, ],
+                                       gC$widths[2:5, ]
+                                       )
+        }
         gC$widths[2:5] <- as.list(maxwidth)
         gB$widths[2:5] <- as.list(maxwidth)
-        gE$widths[2:5] <- as.list(maxwidth)
     }
 
     # Adjust the grob heights so p1, and p2 plots line up
@@ -57,13 +71,27 @@ waterfall_align <- function(p2, p1, p3, p4, p5,
     # plot the grobs with grid.arrange
     if(!missing(p4))
     {
-        p1 <- gridExtra::arrangeGrob(blankPanel, gC, gA, gB, blankPanel, gE,
-                                     blankPanel, gD,
-                                     ncol=2, nrow=4, widths=c(.8, 4),
+        if (!is.null(p5)) {
+            nrows <- 4
+            grobs <- list(blankPanel, gC, gA, gB, blankPanel, gE, blankPanel, gD)
+        } else {
+            nrows <- 3
+            grobs <- list(blankPanel, gC, gA, gB, blankPanel, gD)
+        }
+        p1 <- gridExtra::arrangeGrob(grobs = grobs
+                                     ncol=2, nrow=nrows, widths=c(.8, 4),
                                      heights=section_heights)
     } else {
-        p1 <- gridExtra::arrangeGrob(blankPanel, gC, gA, gB, blankPanel, gE, 
-                                     ncol=2, nrow=3,
+        if (!is.null(p5)) {
+            nrows <- 3
+            grobs <- list(blankPanel, gC, gA, gB, blankPanel, gE)
+        } else {
+            grobs <- list(blankPanel, gC, gA, gB)
+            nrows <- 2
+        }
+
+        p1 <- gridExtra::arrangeGrob(grobs = grobs,
+                                     ncol=2, nrow=nrows,
                                      widths=section_heights, heights=c(1,4))
     }
 

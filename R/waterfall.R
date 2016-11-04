@@ -124,6 +124,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       plotGenes=NULL, geneOrder=NULL, plotSamples=NULL,
                       sampOrder=NULL, maxGenes=NULL, rmvSilent=FALSE,
                       fileType='MAF', variant_class_order=NULL, out="plot",
+                      plot_proportions = FALSE,
                       proportions_layer = NULL,
                       section_heights = NULL)
 {
@@ -172,12 +173,14 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     # Subset the data based on the recurrence of mutations at the gene level
     data_frame <- waterfall_geneRecurCutoff(data_frame, mainRecurCutoff)
 
-    p5 <- waterfall_build_proportions(
-      data_frame = data_frame, 
-      plot_palette = mainPalette,
-      file_type = fileType,
-      layers = proportions_layer
-    )
+    if (plot_proportions) {
+        p5 <- waterfall_build_proportions(
+          data_frame = data_frame, 
+          plot_palette = mainPalette,
+          file_type = fileType,
+          layers = proportions_layer
+        )
+    } else p5 <- NULL
 
     # Use the max genes parameter to limit the number of genes plotted
     # and then reorder genes based on the frequency of mutations
