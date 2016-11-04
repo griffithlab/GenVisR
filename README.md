@@ -33,9 +33,11 @@
 GenVisR
 =======
 
-Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics supporting multiple species and focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
+Please cite: "Skidmore et al. 2016 GenVisR: Genomic Visualizations in R Bioinformatics 32, 3012-3014" [pubmed](https://www.ncbi.nlm.nih.gov/pubmed/27288499)
 
-Read the published [Bioinformatics paper](http://bioinformatics.oxfordjournals.org/content/early/2016/06/09/bioinformatics.btw325.short?rss=1)!
+[Bioconductor](https://bioconductor.org/packages/release/bioc/html/GenVisR.html)
+
+Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. "Genomic Visualizations in R" (GenVisR) attempts to alleviate this burden by providing highly customizable publication-quality graphics supporting multiple species and focused primarily on a cohort level (i.e., multiple samples/patients). GenVisR attempts to maintain a high degree of flexibility while leveraging the abilities of ggplot2 and bioconductor to achieve this goal.
 
 Install from Bioconductor
 -------------------------
@@ -495,7 +497,7 @@ sessionInfo()
 
     ## R version 3.3.0 (2016-05-03)
     ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-    ## Running under: OS X 10.11.5 (El Capitan)
+    ## Running under: OS X 10.11.6 (El Capitan)
     ## 
     ## locale:
     ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -506,40 +508,40 @@ sessionInfo()
     ## 
     ## other attached packages:
     ##  [1] BSgenome.Hsapiens.UCSC.hg19_1.4.0      
-    ##  [2] BSgenome_1.40.0                        
-    ##  [3] rtracklayer_1.32.0                     
-    ##  [4] Biostrings_2.40.0                      
+    ##  [2] BSgenome_1.40.1                        
+    ##  [3] rtracklayer_1.32.1                     
+    ##  [4] Biostrings_2.40.2                      
     ##  [5] XVector_0.12.0                         
     ##  [6] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2
-    ##  [7] GenomicFeatures_1.24.1                 
-    ##  [8] AnnotationDbi_1.34.1                   
+    ##  [7] GenomicFeatures_1.24.4                 
+    ##  [8] AnnotationDbi_1.34.4                   
     ##  [9] Biobase_2.32.0                         
-    ## [10] GenomicRanges_1.24.0                   
-    ## [11] GenomeInfoDb_1.8.1                     
-    ## [12] IRanges_2.6.0                          
-    ## [13] S4Vectors_0.10.0                       
+    ## [10] GenomicRanges_1.24.2                   
+    ## [11] GenomeInfoDb_1.8.3                     
+    ## [12] IRanges_2.6.1                          
+    ## [13] S4Vectors_0.10.2                       
     ## [14] BiocGenerics_0.18.0                    
     ## [15] reshape2_1.4.1                         
-    ## [16] knitr_1.13                             
-    ## [17] BiocStyle_2.0.1                        
-    ## [18] GenVisR_1.1.5                          
+    ## [16] GenVisR_1.1.5                          
+    ## [17] knitr_1.13                             
+    ## [18] BiocStyle_2.0.2                        
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_0.12.5                highr_0.6                 
-    ##  [3] formatR_1.4                plyr_1.8.3                
-    ##  [5] bitops_1.0-6               viridis_0.3.4             
+    ##  [1] Rcpp_0.12.6                formatR_1.4               
+    ##  [3] plyr_1.8.4                 highr_0.6                 
+    ##  [5] viridis_0.3.4              bitops_1.0-6              
     ##  [7] tools_3.3.0                zlibbioc_1.18.0           
-    ##  [9] digest_0.6.9               biomaRt_2.28.0            
-    ## [11] evaluate_0.9               RSQLite_1.0.0             
+    ##  [9] biomaRt_2.28.0             digest_0.6.9              
+    ## [11] RSQLite_1.0.0              evaluate_0.9              
     ## [13] gtable_0.2.0               DBI_0.4-1                 
     ## [15] yaml_2.1.13                gridExtra_2.2.1           
     ## [17] stringr_1.0.0              gtools_3.5.0              
     ## [19] grid_3.3.0                 FField_0.1.0              
-    ## [21] XML_3.98-1.4               BiocParallel_1.6.1        
-    ## [23] rmarkdown_0.9.6            ggplot2_2.1.0             
-    ## [25] magrittr_1.5               htmltools_0.3.5           
+    ## [21] BiocParallel_1.6.3         XML_3.98-1.4              
+    ## [23] rmarkdown_1.0.2            ggplot2_2.1.0             
+    ## [25] magrittr_1.5               GenomicAlignments_1.8.4   
     ## [27] Rsamtools_1.24.0           scales_0.4.0              
-    ## [29] GenomicAlignments_1.8.0    SummarizedExperiment_1.2.1
+    ## [29] htmltools_0.3.5            SummarizedExperiment_1.2.3
     ## [31] colorspace_1.2-6           labeling_0.3              
-    ## [33] stringi_1.0-1              RCurl_1.95-4.8            
+    ## [33] stringi_1.1.1              RCurl_1.95-4.8            
     ## [35] munsell_0.4.3

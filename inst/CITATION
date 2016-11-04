@@ -12,7 +12,9 @@ citEntry(
                             as.person("Jason Kunisaki"),
                             as.person("Obi L. Griffith"),
                             as.person("Malachi Griffith")),
+	volume = "32",
+	pages = c(3012:3014),
         textVersion = paste("Skidmore et al. 2016",
                             "GenVisR: Genomic Visualizations in R",
-                            "Bioinformatics doi: 10.1093/bioinformatics/btw325")
+                            "Bioinformatics 32, 3012-3014")
 )
