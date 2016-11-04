@@ -78,6 +78,7 @@
 #' (see details and vignette).
 #' @param out Character vector specifying the the object to output, one of
 #' "data", "grob", or "plot", defaults to "plot" (see returns).
+#' @param plot_proportions Plot mutational profile layer?
 #' @param proportions_layer ggplot2 layer(s) to be added to the mutational 
 #'      profile plot
 #' @param section_heights Heights of each section. Must be the same length as 
@@ -280,12 +281,12 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
 
         # Align all plots and return as 1 plot
         pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p4 = p4, p5 = p5, 
-          section_heights)
+          section_heights = section_heights)
         return(grid::grid.draw(pA))
     } else 
     {
         pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p5 = p5,
-          section_heights)
+          section_heights = section_heights)
     }
     dataOut <- list("main"=data_frame,
                     "mutation_count"=data_frame2,
