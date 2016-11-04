@@ -8,6 +8,7 @@
 #' @param p3 ggplot object displaying mutation burden on sample
 #' @param p4 ggplot object displaying clinical information "optional"
 #' @param p5 ggplot object displaying proportion of mutation types "optional"
+#' @param section_heights Heights of each section (should sum to one)
 #' @return a grob object
 #' @importFrom gridExtra arrangeGrob
 
