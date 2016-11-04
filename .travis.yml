@@ -2,5 +2,14 @@ language: r
 sudo: false
 warnings_are_errors: true
 
+bioc_packages:
+  - AnnotationDbi
+  - biomaRt
+  - BiocGenerics
+  - Biostrings
+  - GenomicFeatures
+  - GenomicRanges,
+  - Rsamtools
+
 after_success:
   - Rscript -e 'library(covr);codecov()'
