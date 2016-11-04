@@ -78,7 +78,7 @@ waterfall_align <- function(p2, p1, p3, p4, p5,
             nrows <- 3
             grobs <- list(blankPanel, gC, gA, gB, blankPanel, gD)
         }
-        p1 <- gridExtra::arrangeGrob(grobs = grobs
+        p1 <- gridExtra::arrangeGrob(grobs = grobs,
                                      ncol=2, nrow=nrows, widths=c(.8, 4),
                                      heights=section_heights)
     } else {
