@@ -1,7 +1,7 @@
 language: r
 r: bioc-release
 sudo: required
-warnings_are_errors: false
+warnings_are_errors: true
 
 bioc_packages:
   - BiocInstaller
