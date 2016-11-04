@@ -1,3 +1,5 @@
+#'  @title Build mutational profile plot
+#' 
 #' @param data_frame input data.frame
 #' @param plot_palette Color palette to use
 #' @param file_type MAF, etc

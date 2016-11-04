@@ -219,8 +219,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                 sort = "custom",
                 sample_order_input = sample_order,
                 layers = proportions_layer,
-                return_plot = TRUE,
-                title_x_axis = prop_x_label
+                return_plot = TRUE
             )
             if (prop_x_label) p5 <- p5 + xlab(paste0('Sample (n=', nlevels(data_frame$sample), ')'))
         }

@@ -53,6 +53,7 @@
 #' @param clinLayer Valid ggplot2 layer to be added to the clinical sub-plot.
 #' @param progress Boolean specifying if progress bar should be displayed for
 #' the function.
+#' @param sample_order_input Sample orders to be used
 #' @param layers ggplot object to be added to proportions plot
 #' @param return_plot Return as ggplot object? Only returns main plot
 #' @details TvTi is a function designed to display proportion or frequency
@@ -74,8 +75,7 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
                  tvtiLayer=NULL, expecLayer=NULL,
                  sort='none', clinLegCol=NULL, clinVarCol=NULL,
                  clinVarOrder=NULL, clinLayer=NULL, progress=TRUE, out="plot",
-                 sample_order_input, layers = NULL, return_plot = FALSE,
-                 title_x_axis)
+                 sample_order_input, layers = NULL, return_plot = FALSE)
 { 
     # Perform quality checks
     output <- TvTi_qual(x, y, clinData, file_type=fileType)
@@ -131,8 +131,7 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
                              x_axis_text_angle=lab_txtAngle,
                              palette=palette, label_x_axis=lab_Xaxis,
                              tvti.layers=tvtiLayer, expec.layers=NULL,
-                             title_x_axis = if(!missing(title_x_axis)) title_x_axis 
-                                else TRUE
+                             title_x_axis = TRUE
                                 )
     }
    

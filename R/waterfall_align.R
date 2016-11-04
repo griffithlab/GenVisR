@@ -16,13 +16,13 @@ waterfall_align <- function(p2, p1, p3, p4, p5,
     section_heights) {
     if (missing(section_heights)) {    
         if (missing(p4)) {
-            if (missing(p5)) {
+            if (is.null(p5)) {
                 section_heights <- c(1, 4)
             } else {
                 section_heights <- c(1, 4, 0.5)
             }
         } else {
-            if (missing(p5)) {
+            if (is.null(p5)) {
                 section_heights <- c(1, 4, 0.5)
             } else {
                 section_heights <- c(1, 4, 1.2, 0.5)
