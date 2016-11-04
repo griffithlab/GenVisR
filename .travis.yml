@@ -4,6 +4,7 @@ sudo: required
 warnings_are_errors: false
 
 bioc_packages:
+  - BiocInstaller
   - AnnotationDbi
   - biomaRt
   - BiocGenerics
