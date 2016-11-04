@@ -13,9 +13,22 @@
 #' @importFrom gridExtra arrangeGrob
 
 waterfall_align <- function(p2, p1, p3, p4, p5, 
-    section_heights = if(missing(p4)) c(1, 4, 1.2) 
-                      else c(1, 4, 1.2, 0.5)) 
-{
+    section_heights) {
+    if (missing(section_heights)) {    
+        if (missing(p4)) {
+            if (missing(p5)) {
+                section_heights <- c(1, 4)
+            } else {
+                section_heights <- c(1, 4, 0.5)
+            }
+        } else {
+            if (missing(p5)) {
+                section_heights <- c(1, 4, 0.5)
+            } else {
+                section_heights <- c(1, 4, 1.2, 0.5)
+            }
+        }
+    }
 
     # define the ggplot's as grobs and create a blank plot
     gA <- suppressWarnings(ggplot2::ggplotGrob(p2))
@@ -89,10 +102,9 @@ waterfall_align <- function(p2, p1, p3, p4, p5,
             grobs <- list(blankPanel, gC, gA, gB)
             nrows <- 2
         }
-
         p1 <- gridExtra::arrangeGrob(grobs = grobs,
                                      ncol=2, nrow=nrows,
-                                     widths=section_heights, heights=c(1,4))
+                                     widths=c(0.8, 4), heights=section_heights)
     }
 
     return(p1)

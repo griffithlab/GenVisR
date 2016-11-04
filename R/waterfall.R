@@ -81,6 +81,8 @@
 #' @param plot_proportions Plot mutational profile layer?
 #' @param proportions_layer ggplot2 layer(s) to be added to the mutational 
 #'      profile plot
+#' @param proportions_type Which type of proportions plot to use? Can be 
+#'  "trv_type" or "TvTi" currently
 #' @param section_heights Heights of each section. Must be the same length as 
 #'  the number of vertical section
 #' @details waterfall is a function designed to visualize the mutations seen in
@@ -126,8 +128,8 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       sampOrder=NULL, maxGenes=NULL, rmvSilent=FALSE,
                       fileType='MAF', variant_class_order=NULL, out="plot",
                       plot_proportions = FALSE,
-                      proportions_layer = NULL,
-                      section_heights = NULL)
+                      proportions_layer = NULL, proportions_type = "TRV_TYPE",
+                      section_heights)
 {
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
@@ -174,15 +176,6 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     # Subset the data based on the recurrence of mutations at the gene level
     data_frame <- waterfall_geneRecurCutoff(data_frame, mainRecurCutoff)
 
-    if (plot_proportions) {
-        p5 <- waterfall_build_proportions(
-          data_frame = data_frame, 
-          plot_palette = mainPalette,
-          file_type = fileType,
-          layers = proportions_layer
-        )
-    } else p5 <- NULL
-
     # Use the max genes parameter to limit the number of genes plotted
     # and then reorder genes based on the frequency of mutations
     gene_sorted <- waterfall_geneSort(data_frame, geneOrder)
@@ -196,6 +189,42 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     # reorder the samples based on hiearchial sort on ordered gene list
     sample_order <- waterfall_sampSort(data_frame, sampOrder)
     data_frame$sample <- factor(data_frame$sample, levels=sample_order)
+
+    if (plot_proportions) {
+        prop_x_label <- is.null(clinData)
+        if (toupper(proportions_type) == "TRV_TYPE") {
+            p5 <- waterfall_build_proportions(
+                data_frame = inputDat[[1]], 
+                plot_palette = mainPalette,
+                file_type = fileType,
+                layers = proportions_layer,
+                x_label = prop_x_label
+            )
+        } else if (toupper(proportions_type) == "TVTI") {
+            if (is.null(proportions_layer)) {
+                proportions_layer <- theme(
+                    axis.ticks.x = element_blank(),
+                    axis.text.x = element_blank(),
+                    axis.ticks.y = element_blank(),
+                    axis.text.y = element_blank(),
+                    panel.background = element_blank(),
+                    panel.border = element_blank(),
+                    panel.grid.minor = element_blank(),
+                    plot.background = element_blank()
+                )
+            }
+            p5 <- TvTi(
+                x,
+                fileType = fileType,
+                sort = "custom",
+                sample_order_input = sample_order,
+                layers = proportions_layer,
+                return_plot = TRUE,
+                title_x_axis = prop_x_label
+            )
+            if (prop_x_label) p5 <- p5 + xlab(paste0('Sample (n=', nlevels(data_frame$sample), ')'))
+        }
+    } else p5 <- NULL
 
     # Reorder the sample levels in data_frame2 to match the main plot's levels,
     # and then plot the top margin plot
@@ -238,30 +267,19 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     data_frame <- waterfall_NA2gene(data_frame)
 
     # Plot the Heatmap
-    if(is.null(clinData))
-    {
-        p1 <- waterfall_buildMain(data_frame, grid=mainGrid,
-                                  label_x=mainXlabel,
-                                  gene_label_size=main_geneLabSize,
-                                  file_type=fileType,
-                                  drop_mutation=mainDropMut,
-                                  plot_x_title=TRUE,
-                                  plot_label=main.plot_label_flag,
-                                  plot_label_size=mainLabelSize,
-                                  plot_palette=mainPalette, layers=mainLayer,
-                                  plot_label_angle=mainLabelAngle)
-    } else if(!is.null(clinData)) {
-        p1 <- waterfall_buildMain(data_frame, grid=mainGrid,
-                                  label_x=mainXlabel,
-                                  gene_label_size=main_geneLabSize,
-                                  file_type=fileType,
-                                  drop_mutation=mainDropMut,
-                                  plot_x_title=FALSE,
-                                  plot_label=main.plot_label_flag,
-                                  plot_label_size=mainLabelSize,
-                                  plot_palette=mainPalette, layers=mainLayer,
-                                  plot_label_angle=mainLabelAngle)
-    }
+    plot_x_title <- !is.null(clinData) && !plot_proportions
+
+    p1 <- waterfall_buildMain(data_frame, grid=mainGrid,
+                              label_x=mainXlabel,
+                              gene_label_size=main_geneLabSize,
+                              file_type=fileType,
+                              drop_mutation=mainDropMut,
+                              plot_x_title=plot_x_title,
+                              plot_label=main.plot_label_flag,
+                              plot_label_size=mainLabelSize,
+                              plot_palette=mainPalette, layers=mainLayer,
+                              plot_label_angle=mainLabelAngle)
+    
 
     # Plot any clinical data if it is specified
     if(!is.null(clinData))
