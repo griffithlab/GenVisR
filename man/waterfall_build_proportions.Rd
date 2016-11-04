@@ -21,4 +21,7 @@ waterfall_build_proportions(data_frame, plot_palette, file_type, layers,
 \value{
 a ggplot object
 }
+\description{
+Builds a ggplot object showing individuals' mutational profile
+}
 

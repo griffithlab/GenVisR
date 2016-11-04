@@ -6,6 +6,8 @@
 #' @param layers layer(s) to add to this plot object
 #' @param x_label label this plot?
 #' 
+#' @description Builds a ggplot object showing individuals' mutational profile
+#' 
 #' @return a ggplot object
 #' 
 waterfall_build_proportions <- function(data_frame, plot_palette, file_type, layers,
