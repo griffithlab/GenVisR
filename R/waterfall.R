@@ -125,8 +125,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       sampOrder=NULL, maxGenes=NULL, rmvSilent=FALSE,
                       fileType='MAF', variant_class_order=NULL, out="plot",
                       proportions_layer = NULL,
-                      section_heights = if(missing(p4)) c(1, 4, 1.2) 
-                      else c(1, 4, 1.2, 0.5))
+                      section_heights = NULL)
 {
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,

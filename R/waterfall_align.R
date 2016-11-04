@@ -13,7 +13,8 @@
 #' @importFrom gridExtra arrangeGrob
 
 waterfall_align <- function(p2, p1, p3, p4, p5, 
-    section_heights) 
+    section_heights = if(missing(p4)) c(1, 4, 1.2) 
+                      else c(1, 4, 1.2, 0.5)) 
 {
 
     # define the ggplot's as grobs and create a blank plot
