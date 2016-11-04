@@ -1,6 +1,8 @@
 #' select_palette
 #' 
-#' @param file_type
+#' @title Helper function to select a colour palette
+#' 
+#' @param file_type Which file tyoe is used?
 #' 
 #' @return A vector of colours to be used as palette
 select_palette <- function(file_type) {

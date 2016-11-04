@@ -2,12 +2,12 @@
 % Please edit documentation in R/waterfall_select_palette.R
 \name{select_palette}
 \alias{select_palette}
-\title{select_palette}
+\title{Helper function to select a colour palette}
 \usage{
 select_palette(file_type)
 }
 \arguments{
-\item{file_type}{}
+\item{file_type}{Which file tyoe is used?}
 }
 \value{
 A vector of colours to be used as palette

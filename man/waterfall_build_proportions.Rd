@@ -2,7 +2,7 @@
 % Please edit documentation in R/waterfall_build_proportions.R
 \name{waterfall_build_proportions}
 \alias{waterfall_build_proportions}
-\title{@title Build mutational profile plot}
+\title{Build mutational profile plot}
 \usage{
 waterfall_build_proportions(data_frame, plot_palette, file_type, layers,
   x_label)
@@ -20,8 +20,5 @@ waterfall_build_proportions(data_frame, plot_palette, file_type, layers,
 }
 \value{
 a ggplot object
-}
-\description{
-@title Build mutational profile plot
 }
 
