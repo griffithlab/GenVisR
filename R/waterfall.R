@@ -78,6 +78,10 @@
 #' (see details and vignette).
 #' @param out Character vector specifying the the object to output, one of
 #' "data", "grob", or "plot", defaults to "plot" (see returns).
+#' @param proportions_layer ggplot2 layer(s) to be added to the mutational 
+#'      profile plot
+#' @param section_heights Heights of each section. Must be the same length as 
+#'  the number of vertical section
 #' @details waterfall is a function designed to visualize the mutations seen in
 #' a cohort. The function takes a data frame with appropriate column names (see
 #' fileType parameter) and plots the mutations within. In cases where multiple
@@ -120,7 +124,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       plotGenes=NULL, geneOrder=NULL, plotSamples=NULL,
                       sampOrder=NULL, maxGenes=NULL, rmvSilent=FALSE,
                       fileType='MAF', variant_class_order=NULL, out="plot",
-                      proportions_layers = NULL,
+                      proportions_layer = NULL,
                       section_heights = if(missing(p4)) c(1, 4, 1.2) 
                       else c(1, 4, 1.2, 0.5))
 {
@@ -173,7 +177,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
       data_frame = data_frame, 
       plot_palette = mainPalette,
       file_type = fileType,
-      layers = proportions_layers
+      layers = proportions_layer
     )
 
     # Use the max genes parameter to limit the number of genes plotted
