@@ -16,6 +16,8 @@ waterfall_align(p2, p1, p3, p4, p5, section_heights)
 \item{p4}{ggplot object displaying clinical information "optional"}
 
 \item{p5}{ggplot object displaying proportion of mutation types "optional"}
+
+\item{section_heights}{Heights of each section (should sum to one)}
 }
 \value{
 a grob object
