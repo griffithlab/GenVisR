@@ -10,7 +10,7 @@ bioc_packages:
   - BiocGenerics
   - Biostrings
   - GenomicFeatures
-  - GenomicRanges,
+  - GenomicRanges
   - Rsamtools
 
 after_success:
