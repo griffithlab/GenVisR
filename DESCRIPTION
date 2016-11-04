@@ -14,7 +14,7 @@ Description: Produce highly customizable publication quality graphics for genomi
 Depends: R (>= 3.3.0)
 Imports: AnnotationDbi, biomaRt, BiocGenerics, Biostrings, DBI, FField, GenomicFeatures, GenomicRanges,
          ggplot2 (>= 0.9.2), grid, gridExtra, gtable, gtools, IRanges,
-         plyr (>= 1.8.3), reshape2, Rsamtools, scales, stats, utils, viridis
+         plyr (>= 1.8.3), reshape2, Rsamtools, scales, stats, utils, viridis, knitr
 License: GPL-3 + file LICENSE
 BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification, DNASeq
