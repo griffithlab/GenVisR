@@ -14,7 +14,7 @@ waterfall(x, mainRecurCutoff = 0, mainGrid = TRUE, mainXlabel = FALSE,
   geneOrder = NULL, plotSamples = NULL, sampOrder = NULL,
   maxGenes = NULL, rmvSilent = FALSE, fileType = "MAF",
   variant_class_order = NULL, out = "plot", proportions_layer = NULL,
-  section_heights = if (missing(p4)) c(1, 4, 1.2) else c(1, 4, 1.2, 0.5))
+  section_heights = NULL)
 }
 \arguments{
 \item{x}{Object of class data frame representing annotated mutations. The

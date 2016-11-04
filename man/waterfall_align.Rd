@@ -4,7 +4,8 @@
 \alias{waterfall_align}
 \title{align plots}
 \usage{
-waterfall_align(p2, p1, p3, p4, p5, section_heights)
+waterfall_align(p2, p1, p3, p4, p5, section_heights = if (missing(p4)) c(1, 4,
+  1.2) else c(1, 4, 1.2, 0.5))
 }
 \arguments{
 \item{p2}{ggplot object displaying mutation burden on gene}
