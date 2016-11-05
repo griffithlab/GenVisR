@@ -50,48 +50,40 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
     }
 
     # Declare the appropriate palette
-    if(!is.null(plot_palette)) {
-        palette <- plot_palette
-    } else {
-        palette <- select_palette(file_type)
-    }
+    palette <- waterfall_select_palette(file_type = file_type, 
+        custom_palette = plot_palette)
+    breaks_labels <- waterfall_palette_names(palette,
+        file_type, data_frame)
+    breaks <- breaks_labels[["breaks"]]
+    labels <- breaks_labels[["labels"]]
 
-    # Create breaks specific and labels for specified file type
-    if(toupper(file_type) == toupper('MGI'))
-    {
-        # gsub("(\\d)_", "\\1'", names(palette))
-        # gsub("(^_\\s)(\\w)", toupper("\\2"), names(palette))
-        
-        # Create Legend labels
-        breaks <- c("nonsense", "frame_shift_del", "frame_shift_ins",
-                    "splice_site_del", "splice_site_ins", "splice_site",
-                    "nonstop", "in_frame_del", "in_frame_ins", "missense",
-                    "splice_region_del", "splice_region_ins",
-                    "splice_region", "5_prime_flanking_region",
-                    "3_prime_flanking_region", "3_prime_untranslated_region",
-                    "5_prime_untranslated_region", "rna", "intronic", "silent")
-        labels <- c("Nonsense", "Frame Shift Deletion", "Frame Shift Insertion",
-                    "Splice Site Deletion", "Splice Site Insertion",
-                    "Splice Site", "Stop Loss", "In Frame Deletion",
-                    "In Frame Insertion", "Missense", "Splice Region Insertion",
-                    "Splice Region Deletion", "Splice Region",
-                    "5' Flank", "3' Flank", "3' UTR", "5' UTR", "RNA",
-                    "Intronic", "Silent")
-    } else if(toupper(file_type) == toupper('MAF')) {
-        # Create Legend Labels
-        breaks <- c("Nonsense_Mutation", "Frame_Shift_Ins", "Frame_Shift_Del",
-                    "In_Frame_Ins", "In_Frame_Del", "Nonstop_Mutation",
-                    "Translation_Start_Site", "Splice_Site", "Missense_Mutation",
-                    "5\'Flank", "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron",
-                    "IGR", "Silent", "Targeted_Region")
-        labels <- c("Nonsense", "Frame Shift Insertion", "Frame Shift Deletion",
-                    "In Frame Insertion", "In Frame Deletion", "Nonstop",
-                    "Translation Start Site", "Splice Site", "Missense",
-                    "5' Flank", "3' Flank", "5' UTR", "3' UTR", "RNA", "Intron",
-                    "Intergenic Region", "Silent", "Targeted Region")
-    } else if(toupper(file_type) == toupper('Custom')) {
-        breaks <- levels(data_frame$trv_type)
-        labels <- breaks
+    waterfall_palette_names <- function(palette, file_type, data_frame) {
+        # Create breaks specific and labels for specified file type
+        ## Create labels and breaks from 
+        ## names of palette to avoid ordering issues       
+        if(toupper(file_type) == toupper('MGI'))
+        {
+            breaks <- names(palette)
+
+            labels <- gsub("(\\d)_prime", "\\1'", breaks)
+            labels <- gsub("untranslated_region", "UTR", labels)
+            labels <- gsub("flanking_region", "Flank", labels)
+            labels <- gsub("_", " ", labels)
+            labels <- gsub("del$", "deletion", labels)
+            labels <- gsub("ins$", "insertion", labels)
+            labels <- gsub("prime ", "", labels)
+            labels <- gsub("(rna)", "\\U\\1", labels, perl = TRUE)
+            labels <- gsub("\\b([a-z])", "\\U\\1", labels, perl = TRUE)
+        } else if(toupper(file_type) == toupper('MAF')) {
+            breaks <- names(palette)
+            labels <- gsub("_", " ", breaks)
+            labels <- gsub("'", "' ", labels)
+        } else if(toupper(file_type) == toupper('Custom')) {
+            breaks <- levels(data_frame[["trv_type"]])
+            labels <- breaks
+        }
+        list("breaks" = breaks,
+            "labels" = labels)
     }
 
     if(drop_mutation == TRUE)
