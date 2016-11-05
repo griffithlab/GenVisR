@@ -131,8 +131,7 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
                              x_axis_text_angle=lab_txtAngle,
                              palette=palette, label_x_axis=lab_Xaxis,
                              tvti.layers=tvtiLayer, expec.layers=NULL,
-                             title_x_axis = TRUE
-                                )
+                             title_x_axis = TRUE)
     }
    
     
@@ -150,8 +149,7 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
                              x_axis_text_angle=lab_txtAngle,
                              palette=palette, label_x_axis=lab_Xaxis,
                              tvti.layers=tvtiLayer, expec.layers=NULL,
-                             title_x_axis=FALSE
-                             )
+                             title_x_axis=FALSE)
     } else {
         p3 <- NULL
     }
