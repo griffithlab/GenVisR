@@ -1,4 +1,5 @@
 ^.*\.Rproj$
+\.travis\.yml
 ^\.Rproj\.user$
 .gitignore
 .DS_Store

@@ -16,10 +16,19 @@ waterfall_buildMutBurden_B <- function(x, layers=NULL)
                      levels=c("Synonymous", "Non Synonymous", "Undefined"))
 
     # Define Theme
-    theme <- theme(axis.ticks.x=element_blank(),
-                   axis.text.x=element_blank(),
-                   axis.title.x=element_blank(),
-                   legend.title=element_text(size=14))
+    theme <- theme(axis.ticks.x = element_blank(),
+                   axis.text.x = element_blank(),
+                   axis.title.x = element_blank(),
+                   legend.title = element_text(size=14),
+                   axis.text.y = element_text(colour = "black"),
+                   axis.title.y = element_text(colour = "black"),
+                   panel.background = element_blank(),
+                   # panel.grid.minor.y = element_line(colour = "black"),
+                   panel.grid.major.y = element_line(colour = "grey80"),
+                   panel.grid.minor.x = element_blank(),
+                   panel.grid.major.x = element_blank(),
+                   panel.border = element_rect(fill = NA)
+            )
 
     # Define additional parameters
     y_label <- ylab("Mutation Burden")
@@ -30,18 +39,12 @@ waterfall_buildMutBurden_B <- function(x, layers=NULL)
                                 breaks=c("Synonymous", "Non Synonymous", "Undefined"),
                                 drop=FALSE)
 
-    if(!is.null(layers))
-    {
-        layers <- layers
-    } else {
-        layers <- geom_blank()
-    }
 
     bar <- geom_bar(stat='identity', alpha=.75, width=1)
 
     # ggplot2 call
     p1 <- ggplot(x, aes_string(x='sample', y='mut_burden', fill='Type')) + bar +
-    theme_bw() + theme + y_label + legend + layers
+        theme + y_label + legend + layers
 
     return(p1)
 }
