@@ -202,15 +202,22 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
             )
         } else if (toupper(proportions_type) == "TVTI") {
             if (is.null(proportions_layer)) {
-                proportions_layer <- theme(
-                    axis.ticks.x = element_blank(),
-                    axis.text.x = element_blank(),
-                    axis.ticks.y = element_blank(),
-                    axis.text.y = element_blank(),
-                    panel.background = element_blank(),
-                    panel.border = element_blank(),
-                    panel.grid.minor = element_blank(),
-                    plot.background = element_blank()
+                proportions_layer <- list(
+                    theme(
+                        axis.ticks.x = element_blank(),
+                        axis.text.x = element_blank(),
+                        axis.ticks.y = element_blank(),
+                        axis.text.y = element_blank(),
+                        panel.background = element_blank(),
+                        panel.border = element_blank(),
+                        panel.grid.minor = element_blank(),
+                        plot.background = element_blank()
+                    ),
+                    scale_y_continuous(
+                        name = "Proportion", 
+                        labels = scales::percent_format()
+                    ),
+                    guides(fill = guide_legend(ncol = 2))
                 )
             }
             p5 <- TvTi(

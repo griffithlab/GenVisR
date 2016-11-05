@@ -24,18 +24,18 @@ waterfall_build_proportions <- function(data_frame, plot_palette,
     p5 <- ggplot(data_frame, aes_string(x = 'sample', fill = 'trv_type')) + 
         geom_bar(position = "fill", width = 0.95) + 
         scale_y_continuous(
-            name = "% of total mutations", 
+            name = "Proportion", 
             labels = scales::percent_format()) + 
         scale_fill_manual(name="Mutation Type", 
             values=palette, 
             breaks = breaks,
             labels = labels
             ) + 
-        guides(fill = guide_legend(title = "Mutation type", ncol = 2)) +
+        guides(fill = guide_legend(title = "Mutation Type", ncol = 2)) +
         theme(
             axis.ticks.x = element_blank(),
-            axis.text.x = if (x_label) element_text() else element_blank(),
-            axis.title.x = element_blank(),
+            axis.text.x =  element_blank(),
+            axis.title.x =if (x_label) element_text() else element_blank(),
             axis.text.y = element_text(colour = "black"),
             axis.title.y = element_text(colour = "black"),
             panel.background = element_blank(),

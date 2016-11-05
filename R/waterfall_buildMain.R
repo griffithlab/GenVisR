@@ -57,35 +57,6 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
     breaks <- breaks_labels[["breaks"]]
     labels <- breaks_labels[["labels"]]
 
-    waterfall_palette_names <- function(palette, file_type, data_frame) {
-        # Create breaks specific and labels for specified file type
-        ## Create labels and breaks from 
-        ## names of palette to avoid ordering issues       
-        if(toupper(file_type) == toupper('MGI'))
-        {
-            breaks <- names(palette)
-
-            labels <- gsub("(\\d)_prime", "\\1'", breaks)
-            labels <- gsub("untranslated_region", "UTR", labels)
-            labels <- gsub("flanking_region", "Flank", labels)
-            labels <- gsub("_", " ", labels)
-            labels <- gsub("del$", "deletion", labels)
-            labels <- gsub("ins$", "insertion", labels)
-            labels <- gsub("prime ", "", labels)
-            labels <- gsub("(rna)", "\\U\\1", labels, perl = TRUE)
-            labels <- gsub("\\b([a-z])", "\\U\\1", labels, perl = TRUE)
-        } else if(toupper(file_type) == toupper('MAF')) {
-            breaks <- names(palette)
-            labels <- gsub("_", " ", breaks)
-            labels <- gsub("'", "' ", labels)
-        } else if(toupper(file_type) == toupper('Custom')) {
-            breaks <- levels(data_frame[["trv_type"]])
-            labels <- breaks
-        }
-        list("breaks" = breaks,
-            "labels" = labels)
-    }
-
     if(drop_mutation == TRUE)
     {
         # Create Legend
