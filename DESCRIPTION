@@ -20,7 +20,7 @@ BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification, DNASeq
 LazyData: true
 Suggests: BiocStyle, BSgenome.Hsapiens.UCSC.hg19, knitr, RMySQL, roxygen2,
-            testthat, TxDb.Hsapiens.UCSC.hg19.knownGene
+            testthat, TxDb.Hsapiens.UCSC.hg19.knownGene, rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
 NeedsCompilation: no
