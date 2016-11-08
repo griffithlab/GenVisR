@@ -273,8 +273,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     data_frame <- waterfall_NA2gene(data_frame)
 
     # Plot the Heatmap
-    #plot_x_title <- !is.null(clinData) && !plot_proportions
-    plot_x_title <- ifelse(!is.null(clinData) || plot_proportions, FALSE, TRUE)
+    plot_x_title <- !(!is.null(clinData) || plot_proportions)
 
     p1 <- waterfall_buildMain(data_frame, grid=mainGrid,
                               label_x=mainXlabel,
