@@ -131,6 +131,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       proportions_layer = NULL, proportions_type = "TRV_TYPE",
                       section_heights)
 {
+  
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
                                label_col=mainLabelCol)
