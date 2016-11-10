@@ -1,6 +1,7 @@
-CHANGES IN VERSION 1.1.5
+CHANGES IN VERSION 1.4.0
 --------------------------
 
-- added clarification for use of cnFreq (cnFreq requires consistent windows across samples!)
-- minor documentation changes
-- bug fix for lohView VAF values are no longer assumed to be from 0-100 and may range from 0-1
+- Added new functionality to waterfall()
+- Transitions and transverions can be plotted as a waterfall subplot
+- mutation type proportions can now be plotted as a waterfall subplot
+- minor bug fixes to waterfall
