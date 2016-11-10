@@ -19,7 +19,11 @@ waterfall_build_proportions <- function(data_frame, plot_palette,
     breaks <- breaks_labels[["breaks"]]
     labels <- breaks_labels[["labels"]]
 
-    if (x_label) x_label_obj <- xlab(paste0('Sample (n=', nlevels(data_frame$sample), ')'))
+    if (x_label) {
+        x_label_obj <- xlab(paste0('Sample (n=', nlevels(data_frame$sample), ')'))
+    } else {
+        x_label_obj <- geom_blank()
+    }
 
     p5 <- ggplot(data_frame, aes_string(x = 'sample', fill = 'trv_type')) + 
         geom_bar(position = "fill", width = 0.95) + 
