@@ -13,7 +13,8 @@ waterfall(x, mainRecurCutoff = 0, mainGrid = TRUE, mainXlabel = FALSE,
   clinLayer = NULL, sampRecurLayer = NULL, plotGenes = NULL,
   geneOrder = NULL, plotSamples = NULL, sampOrder = NULL,
   maxGenes = NULL, rmvSilent = FALSE, fileType = "MAF",
-  variant_class_order = NULL, out = "plot")
+  variant_class_order = NULL, out = "plot", plot_proportions = FALSE,
+  proportions_layer = NULL, proportions_type = "TRV_TYPE", section_heights)
 }
 \arguments{
 \item{x}{Object of class data frame representing annotated mutations. The
@@ -120,6 +121,17 @@ of mutation types to plot, required if file_type == "Custom"
 
 \item{out}{Character vector specifying the the object to output, one of
 "data", "grob", or "plot", defaults to "plot" (see returns).}
+
+\item{plot_proportions}{Plot mutational profile layer?}
+
+\item{proportions_layer}{ggplot2 layer(s) to be added to the mutational 
+profile plot}
+
+\item{proportions_type}{Which type of proportions plot to use? Can be 
+"trv_type" or "TvTi" currently}
+
+\item{section_heights}{Heights of each section. Must be the same length as 
+the number of vertical section}
 }
 \value{
 One of the following, a list of dataframes containing data to be

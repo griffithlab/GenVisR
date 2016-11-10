@@ -53,6 +53,9 @@
 #' @param clinLayer Valid ggplot2 layer to be added to the clinical sub-plot.
 #' @param progress Boolean specifying if progress bar should be displayed for
 #' the function.
+#' @param sample_order_input Sample orders to be used
+#' @param layers ggplot object to be added to proportions plot
+#' @param return_plot Return as ggplot object? Only returns main plot
 #' @details TvTi is a function designed to display proportion or frequency
 #' of transitions and transversion seen in a data frame supplied to parameter x.
 #' @examples
@@ -71,7 +74,8 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
                            '#99D594', '#3288BD'),
                  tvtiLayer=NULL, expecLayer=NULL,
                  sort='none', clinLegCol=NULL, clinVarCol=NULL,
-                 clinVarOrder=NULL, clinLayer=NULL, progress=TRUE, out="plot")
+                 clinVarOrder=NULL, clinLayer=NULL, progress=TRUE, out="plot",
+                 sample_order_input, layers = NULL, return_plot = FALSE)
 { 
     # Perform quality checks
     output <- TvTi_qual(x, y, clinData, file_type=fileType)
@@ -103,11 +107,14 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
         sample_order <- sample_order[sample_order$Prop != 0,]
         sample_order <- unique(sample_order$sample)
         x$sample <- factor(x$sample, levels=sample_order)
+    } else if(toupper(sort) == toupper("custom")) {
+        sample_order <- sample_order_input
+        x$sample <- factor(x$sample, levels = sample_order)
     } else if(toupper(sort) == toupper('none')){
         sample_order <- levels(x$sample)
     } else {
         memo <-paste0(sort, " is not a valid parameter for sort, please",
-                      " specify one of \"sample\", \"tvti\", \"none\"")
+                      " specify one of \"sample\", \"tvti\", \"custom\", \"none\"")
         stop(memo)
     }
 
@@ -124,7 +131,7 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
                              x_axis_text_angle=lab_txtAngle,
                              palette=palette, label_x_axis=lab_Xaxis,
                              tvti.layers=tvtiLayer, expec.layers=NULL,
-                             title_x_axis=TRUE)    
+                             title_x_axis = TRUE)
     }
    
     
@@ -158,9 +165,14 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
     } else {
         p2 <- NULL
     }
-    
+    p1 <- p1 + layers
     # Decide what to output
-    finalPlot <- TvTi_alignPlot(p1=p1, p2=p2, p3=p3)
-    dataOut <- list("main"=x, "expect"=y)
-    output <- multi_selectOut(data=dataOut, plot=finalPlot, draw=TRUE, out=out)
+    if (return_plot) {
+        return(p1)
+    } else {
+        finalPlot <- TvTi_alignPlot(p1=p1, p2=p2, p3=p3)
+        dataOut <- list("main"=x, "expect"=y)
+        output <- multi_selectOut(data=dataOut, plot=finalPlot, draw=TRUE, out=out)
+        return(output)
+    }
 }

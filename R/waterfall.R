@@ -78,6 +78,13 @@
 #' (see details and vignette).
 #' @param out Character vector specifying the the object to output, one of
 #' "data", "grob", or "plot", defaults to "plot" (see returns).
+#' @param plot_proportions Plot mutational profile layer?
+#' @param proportions_layer ggplot2 layer(s) to be added to the mutational 
+#'      profile plot
+#' @param proportions_type Which type of proportions plot to use? Can be 
+#'  "trv_type" or "TvTi" currently
+#' @param section_heights Heights of each section. Must be the same length as 
+#'  the number of vertical section
 #' @details waterfall is a function designed to visualize the mutations seen in
 #' a cohort. The function takes a data frame with appropriate column names (see
 #' fileType parameter) and plots the mutations within. In cases where multiple
@@ -119,8 +126,12 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       clinVarCol=NULL, clinLayer=NULL, sampRecurLayer=NULL, 
                       plotGenes=NULL, geneOrder=NULL, plotSamples=NULL,
                       sampOrder=NULL, maxGenes=NULL, rmvSilent=FALSE,
-                      fileType='MAF', variant_class_order=NULL, out="plot")
+                      fileType='MAF', variant_class_order=NULL, out="plot",
+                      plot_proportions = FALSE,
+                      proportions_layer = NULL, proportions_type = "TRV_TYPE",
+                      section_heights)
 {
+  
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
                                label_col=mainLabelCol)
@@ -180,6 +191,51 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     sample_order <- waterfall_sampSort(data_frame, sampOrder)
     data_frame$sample <- factor(data_frame$sample, levels=sample_order)
 
+    if (plot_proportions) {
+        prop_x_label <- is.null(clinData)
+        if (toupper(proportions_type) == "TRV_TYPE") {
+            prop_dat <- inputDat[[1]]
+            prop_dat[["sample"]] <- factor(prop_dat[["sample"]], 
+              levels = sample_order)
+            p5 <- waterfall_build_proportions(
+                data_frame = prop_dat, 
+                plot_palette = mainPalette,
+                file_type = fileType,
+                layers = proportions_layer,
+                x_label = prop_x_label
+            )
+        } else if (toupper(proportions_type) == "TVTI") {
+            if (is.null(proportions_layer)) {
+                proportions_layer <- list(
+                    theme(
+                        axis.ticks.x = element_blank(),
+                        axis.text.x = element_blank(),
+                        axis.ticks.y = element_blank(),
+                        axis.text.y = element_blank(),
+                        panel.background = element_blank(),
+                        panel.border = element_blank(),
+                        panel.grid.minor = element_blank(),
+                        plot.background = element_blank()
+                    ),
+                    scale_y_continuous(
+                        name = "Proportion", 
+                        labels = scales::percent_format()
+                    ),
+                    guides(fill = guide_legend(ncol = 2))
+                )
+            }
+            p5 <- TvTi(
+                x,
+                fileType = fileType,
+                sort = "custom",
+                sample_order_input = sample_order,
+                layers = proportions_layer,
+                return_plot = TRUE
+            )
+            if (prop_x_label) p5 <- p5 + xlab(paste0('Sample (n=', nlevels(data_frame$sample), ')'))
+        }
+    } else p5 <- NULL
+
     # Reorder the sample levels in data_frame2 to match the main plot's levels,
     # and then plot the top margin plot
     if(isTRUE(plotMutBurden))
@@ -221,30 +277,19 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     data_frame <- waterfall_NA2gene(data_frame)
 
     # Plot the Heatmap
-    if(is.null(clinData))
-    {
-        p1 <- waterfall_buildMain(data_frame, grid=mainGrid,
-                                  label_x=mainXlabel,
-                                  gene_label_size=main_geneLabSize,
-                                  file_type=fileType,
-                                  drop_mutation=mainDropMut,
-                                  plot_x_title=TRUE,
-                                  plot_label=main.plot_label_flag,
-                                  plot_label_size=mainLabelSize,
-                                  plot_palette=mainPalette, layers=mainLayer,
-                                  plot_label_angle=mainLabelAngle)
-    } else if(!is.null(clinData)) {
-        p1 <- waterfall_buildMain(data_frame, grid=mainGrid,
-                                  label_x=mainXlabel,
-                                  gene_label_size=main_geneLabSize,
-                                  file_type=fileType,
-                                  drop_mutation=mainDropMut,
-                                  plot_x_title=FALSE,
-                                  plot_label=main.plot_label_flag,
-                                  plot_label_size=mainLabelSize,
-                                  plot_palette=mainPalette, layers=mainLayer,
-                                  plot_label_angle=mainLabelAngle)
-    }
+    plot_x_title <- !(!is.null(clinData) || plot_proportions)
+
+    p1 <- waterfall_buildMain(data_frame, grid=mainGrid,
+                              label_x=mainXlabel,
+                              gene_label_size=main_geneLabSize,
+                              file_type=fileType,
+                              drop_mutation=mainDropMut,
+                              plot_x_title=plot_x_title,
+                              plot_label=main.plot_label_flag,
+                              plot_label_size=mainLabelSize,
+                              plot_palette=mainPalette, layers=mainLayer,
+                              plot_label_angle=mainLabelAngle)
+    
 
     # Plot any clinical data if it is specified
     if(!is.null(clinData))
@@ -263,14 +308,13 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                               clin.layers=clinLayer)
 
         # Align all plots and return as 1 plot
-        pA <- waterfall_align(p2, p1, p3, p4)
+        pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p4 = p4, p5 = p5, 
+          section_heights = section_heights)
         return(grid::grid.draw(pA))
-    }
-
-    # Decide what to output
-    if(!exists("pA", inherits=FALSE))
+    } else 
     {
-        pA <- waterfall_align(p2, p1, p3)
+        pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p5 = p5,
+          section_heights = section_heights)
     }
     dataOut <- list("main"=data_frame,
                     "mutation_count"=data_frame2,
