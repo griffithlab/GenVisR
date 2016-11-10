@@ -131,6 +131,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       proportions_layer = NULL, proportions_type = "TRV_TYPE",
                       section_heights)
 {
+  
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
                                label_col=mainLabelCol)
@@ -193,8 +194,11 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     if (plot_proportions) {
         prop_x_label <- is.null(clinData)
         if (toupper(proportions_type) == "TRV_TYPE") {
+            prop_dat <- inputDat[[1]]
+            prop_dat[["sample"]] <- factor(prop_dat[["sample"]], 
+              levels = sample_order)
             p5 <- waterfall_build_proportions(
-                data_frame = inputDat[[1]], 
+                data_frame = prop_dat, 
                 plot_palette = mainPalette,
                 file_type = fileType,
                 layers = proportions_layer,
@@ -273,7 +277,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     data_frame <- waterfall_NA2gene(data_frame)
 
     # Plot the Heatmap
-    plot_x_title <- !is.null(clinData) && !plot_proportions
+    plot_x_title <- !(!is.null(clinData) || plot_proportions)
 
     p1 <- waterfall_buildMain(data_frame, grid=mainGrid,
                               label_x=mainXlabel,
