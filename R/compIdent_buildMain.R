@@ -108,7 +108,7 @@ compIdent_buildMain <- function(x, mainLayer=NULL, covLayer=NULL)
 
     ############### Ensure plot widths are identical and plot ################
     p2 <- ggplotGrob(p2)
-    maxwidth = grid::unit.pmax(p1$widths[2:5,], p2$widths[2:5,])
+    maxwidth = grid::unit.pmax(p1$widths, p2$widths[2:5,])
     p1$widths[2:5] <- as.list(maxwidth)
     p2$widths[2:5] <- as.list(maxwidth)
 
