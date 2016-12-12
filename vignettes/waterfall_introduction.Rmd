@@ -274,7 +274,7 @@ It may be desireable to emphasize different aspects of the waterfall plot for ex
 
 ```{r, fig.keep='last', fig.width=14, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
 # Increase the subplot size to be equal with the main plot
-waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainDropMut=TRUE, section_heights=c(1, 1, 1))
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainDropMut=TRUE, section_heights=c(1, 1))
 ```
 
 For users with a familiarity with `ggplot2` the option exists to add a single layer to all subplots in waterfall giving control over virtually all aesthetic aspects of the plot. The parameters for this control are `mainLayer`, `mutBurdenLayer`, `clinLayer`, `proportions_layer` and will add a ggplot2 layer to the main, mutation burden and clinical plot respectively. This parameter is recommended only for advance use as it may have unintential consequences (see ggplot2 docs for help).

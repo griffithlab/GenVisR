@@ -1,3 +1,7 @@
+CHANGES IN VERSION 1.4.1
+------------------------
+- patch to fix alignments due to ggplot2 update
+
 CHANGES IN VERSION 1.4.0
 --------------------------
 
