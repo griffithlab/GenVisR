@@ -18,9 +18,9 @@ TvTi_alignPlot <- function(p1=NULL, p2=NULL, p3=NULL)
         # convert expected plot to grob
         gB <- ggplot2::ggplotGrob(p2)
         
-        maxheight = grid::unit.pmax(gA$heights[2:5,], gB$heights[2:5,])
-        gA$heights[2:5] <- as.list(maxheight)
-        gB$heights[2:5] <- as.list(maxheight)
+        maxheight = grid::unit.pmax(gA$heights, gB$heights)
+        gA$heights <- as.list(maxheight)
+        gB$heights <- as.list(maxheight)
     }
     
     # adjust the grob widths so p1 and p3 line up if p3 exists
@@ -30,9 +30,9 @@ TvTi_alignPlot <- function(p1=NULL, p2=NULL, p3=NULL)
         gC <- ggplot2::ggplotGrob(p3)
         gD <- grid::grid.rect(gp=grid::gpar(col="white"))
         
-        maxwidth = grid::unit.pmax(gA$widths[2:5,], gC$widths[2:5,])
-        gA$widths[2:5] <- as.list(maxwidth)
-        gC$widths[2:5] <- as.list(maxwidth)        
+        maxwidth = grid::unit.pmax(gA$widths, gC$widths)
+        gA$widths <- as.list(maxwidth)
+        gC$widths <- as.list(maxwidth)        
     }
 
     # Build the final plot

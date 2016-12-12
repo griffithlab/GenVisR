@@ -47,39 +47,39 @@ waterfall_align <- function(p2, p1, p3, p4, p5,
     if(!missing(p4))
     {
         if (!is.null(p5)) {
-            maxwidth <- grid::unit.pmax(gB$widths[2:5, ],
-                                       gC$widths[2:5, ],
-                                       gD$widths[2:5, ],
-                                       gE$widths[2:5, ])
-            gE$widths[2:5] <- as.list(maxwidth)
+            maxwidth <- grid::unit.pmax(gB$widths,
+                                       gC$widths,
+                                       gD$widths,
+                                       gE$widths)
+            gE$widths <- as.list(maxwidth)
         } else {   
-            maxwidth <- grid::unit.pmax(gB$widths[2:5, ],
-                                       gC$widths[2:5, ],
-                                       gD$widths[2:5, ]
+            maxwidth <- grid::unit.pmax(gB$widths,
+                                       gC$widths,
+                                       gD$widths
                                        )
         }
-        gC$widths[2:5] <- as.list(maxwidth)
-        gB$widths[2:5] <- as.list(maxwidth)
-        gD$widths[2:5] <- as.list(maxwidth)
+        gC$widths <- as.list(maxwidth)
+        gB$widths <- as.list(maxwidth)
+        gD$widths <- as.list(maxwidth)
     } else {
         if (!is.null(p5)) {
-            maxwidth <- grid::unit.pmax(gB$widths[2:5, ],
-                                       gC$widths[2:5, ],
-                                       gE$widths[2:5, ])
-            gE$widths[2:5] <- as.list(maxwidth)
+            maxwidth <- grid::unit.pmax(gB$widths,
+                                       gC$widths,
+                                       gE$widths)
+            gE$widths <- as.list(maxwidth)
         } else {   
-            maxwidth <- grid::unit.pmax(gB$widths[2:5, ],
-                                       gC$widths[2:5, ]
+            maxwidth <- grid::unit.pmax(gB$widths,
+                                       gC$widths
                                        )
         }
-        gC$widths[2:5] <- as.list(maxwidth)
-        gB$widths[2:5] <- as.list(maxwidth)
+        gC$widths <- as.list(maxwidth)
+        gB$widths <- as.list(maxwidth)
     }
 
     # Adjust the grob heights so p1, and p2 plots line up
-    maxheight <- grid::unit.pmax(gA$heights[2:5,], gB$heights[2:5,])
-    gA$heights[2:5] <- as.list(maxheight)
-    gB$heights[2:5] <- as.list(maxheight)
+    maxheight <- grid::unit.pmax(gA$heights, gB$heights)
+    gA$heights <- as.list(maxheight)
+    gB$heights <- as.list(maxheight)
 
     # plot the grobs with grid.arrange
     if(!missing(p4))
