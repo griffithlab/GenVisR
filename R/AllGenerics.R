@@ -45,13 +45,14 @@ setGeneric(
     def=function(object, ...){standardGeneric("getMeta", ...)}
 )
 
-#' #' Method toWaterfall
-#' #' 
-#' #' @name toWaterfall
-#' #' @rdname toWaterfall-methods
-#' #' @noRd
-#' #' @return data.table object formatted for input to waterfall
-#' setGeneric(
-#'     name="toWaterfall",
-#'     def=function(object, ...){standardGeneric("toWaterfall", ...)}
-#' )
+#' Method toWaterfall
+#'
+#' @name toWaterfall
+#' @rdname toWaterfall-methods
+#' @noRd
+#' @return data.table object formatted for input to waterfall
+setGeneric(
+    name="toWaterfall",
+    def=function(object, ...){standardGeneric("toWaterfall", ...)}
+)
+

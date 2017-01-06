@@ -120,11 +120,12 @@ setMethod(f="getMeta",
               return(meta)
           })
 
-#' #' @rdname toWaterfall-methods
-#' #' @aliases toWaterfall,MutationAnnotationFormat
-#' #' @noRd
-#' setMethod(f="toWaterfall",
-#'           signature="MutationAnnotationFormat",
-#'           definition=function(object, ...){
-#'               
-#'           })
+#' @rdname toWaterfall-methods
+#' @aliases toWaterfall,MutationAnnotationFormat
+#' @noRd
+setMethod(f="toWaterfall",
+          signature="MutationAnnotationFormat",
+          definition=function(object, ...){
+              return(object)
+          })
+
