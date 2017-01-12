@@ -4,7 +4,7 @@
 \alias{waterfall_buildGenePrevelance}
 \title{plot mutation recurrence in genes}
 \usage{
-waterfall_buildGenePrevelance(data_frame, layers = NULL)
+waterfall_buildGenePrevelance(data_frame, layers = NULL, palette)
 }
 \arguments{
 \item{data_frame}{a data frame in MAF format}

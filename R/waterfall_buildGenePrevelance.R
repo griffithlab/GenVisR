@@ -8,16 +8,16 @@
 #' @importFrom plyr count
 #' @importFrom stats na.omit
 
-waterfall_buildGenePrevelance <- function(data_frame, layers=NULL)
+waterfall_buildGenePrevelance <- function(data_frame, layers=NULL, palette)
 {
-    # Convert all silent mutations to Synonymous, and all else to non-synonymous
-    data_frame$trv_type <- as.character(data_frame$trv_type)
-    data_frame$trv_type[toupper(data_frame$trv_type) != toupper('silent')] <-
-    'Non Synonymous'
-    data_frame$trv_type[toupper(data_frame$trv_type) == toupper('silent')] <-
-    'Synonymous'
-    data_frame$trv_type <- factor(data_frame$trv_type,
-                                  levels=c('Synonymous', 'Non Synonymous'))
+    # # Convert all silent mutations to Synonymous, and all else to non-synonymous
+    # data_frame$trv_type <- as.character(data_frame$trv_type)
+    # data_frame$trv_type[toupper(data_frame$trv_type) != toupper('silent')] <-
+    # 'Non Synonymous'
+    # data_frame$trv_type[toupper(data_frame$trv_type) == toupper('silent')] <-
+    # 'Synonymous'
+    # data_frame$trv_type <- factor(data_frame$trv_type,
+    #                               levels=c('Synonymous', 'Non Synonymous'))
 
     # Define the number of samples for the Percentage calculation
     # (Note: to pass a variable outside of aes into aes it needs to be
@@ -36,8 +36,8 @@ waterfall_buildGenePrevelance <- function(data_frame, layers=NULL)
     y_limits <- ylim(100, 0)
     y_label <- ylab('% Samples With Mutation')
     legend <- scale_fill_manual(name="Translational Effect",
-                                values=c("Non Synonymous"="blue", "Synonymous"="red"),
-                                breaks=c('Synonymous', 'Non Synonymous'),
+                                values=palette[["palette"]],
+                                breaks=palette[["breaks"]],
                                 drop=FALSE)
 
     if(!is.null(layers))

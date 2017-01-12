@@ -176,6 +176,15 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
 
     # Subset the data based on the recurrence of mutations at the gene level
     data_frame <- waterfall_geneRecurCutoff(data_frame, mainRecurCutoff)
+    
+    # define a pallete
+    palette <- waterfall_select_palette(file_type = fileType, 
+                                        custom_palette = mainPalette)
+    breaks_labels <- waterfall_palette_names(palette,
+                                             fileType, data_frame)
+    breaks <- breaks_labels[["breaks"]]
+    labels <- breaks_labels[["labels"]]
+    palette <- list(palette=palette, breaks=breaks, labels=labels)
 
     # Use the max genes parameter to limit the number of genes plotted
     # and then reorder genes based on the frequency of mutations
@@ -270,7 +279,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     }
 
     # Plot the Left Bar Chart
-    p2 <- waterfall_buildGenePrevelance(data_frame, layers=sampRecurLayer)
+    p2 <- waterfall_buildGenePrevelance(data_frame, layers=sampRecurLayer, palette)
 
     # if there are any NA values in the data frame for a gene, give these NA
     # values a gene name so they are plotted properly
