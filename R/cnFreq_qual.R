@@ -52,14 +52,14 @@ cnFreq_qual <- function(x)
         x$sample <- as.factor(x$sample)
         
         # also make sure windows are consistent (this is temporary)
-        tmp_vec <- x$end
-        tmp <- split(x$sample, x$sample)
-        if(!all(sapply(tmp, length) == length(tmp[[1]]))){
+        tmp <- split(x, x$sample)
+        tmp_vec <- tmp[[1]]$end
+        if(!all(sapply(tmp, nrow) == nrow(tmp[[1]]))){
             memo <- paste0("Input to x must have consistent windows across samples",
                            " output may be incorrect!")
             warning(memo)
         }
-        if(any(!sapply(tmp, function(x) x[,3] %in% tmp_vec))){
+        if(any(!unlist(sapply(tmp, function(x) x[,"end"] %in% tmp_vec), use.names=F))){
             memo <- paste0("Input to x must have consistent windows across samples",
                            " output may be incorrect!")
             warning(memo)            
