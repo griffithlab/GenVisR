@@ -1,3 +1,15 @@
+CHANGES IN VERSION 1.4.4
+------------------------
+- fixed bug where incorrect cell labels were overlayed with proper ones when removing silent mutations
+
+CHANGES IN VERSION 1.4.3
+------------------------
+- fixed bug in cnFreq where cnFreq would produce an error (improperly) when looking for consistent windows
+
+CHANGES IN VERSION 1.4.2
+------------------------
+- fixed bug caused by updates to gridExtra when using genCov
+
 CHANGES IN VERSION 1.4.1
 ------------------------
 - patch to fix alignments due to ggplot2 update
