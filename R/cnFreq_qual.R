@@ -25,6 +25,14 @@ cnFreq_qual <- function(x)
         memo <- paste0("x needs at least one row")
         stop(memo)
     }
+    
+    # remove any NA values in the data
+    if(any(is.na(x))){
+        na_rows_removed <- nrow(x) - nrow(na.omit(x))
+        memo <- paste0("Removing ", na_rows_removed, " rows containing NA values")
+        message(memo)
+        x <- na.omit(x)
+    }
 
     # Check that columns have the correct headers
     plotType <- NULL
@@ -51,18 +59,14 @@ cnFreq_qual <- function(x)
         x$segmean <- as.numeric(as.character(x$segmean))
         x$sample <- as.factor(x$sample)
         
-        # also make sure windows are consistent (this is temporary)
+        # also make sure windows are consistent if not disjoin them
         tmp <- split(x, x$sample)
         tmp_vec <- tmp[[1]]$end
-        if(!all(sapply(tmp, nrow) == nrow(tmp[[1]]))){
-            memo <- paste0("Input to x must have consistent windows across samples",
-                           " output may be incorrect!")
-            warning(memo)
-        }
         if(any(!unlist(sapply(tmp, function(x) x[,"end"] %in% tmp_vec), use.names=F))){
-            memo <- paste0("Input to x must have consistent windows across samples",
-                           " output may be incorrect!")
-            warning(memo)            
+            x <- cnFreq_disjoin(x)
+            memo <- paste0("Did not detect identical genomic segments for all samples",
+                           " ...Performing disjoin operation")
+            message(memo)            
         }
         rm(tmp)
         rm(tmp_vec)

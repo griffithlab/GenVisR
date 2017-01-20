@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.4.5
+------------------------
+- fixed issue where plot would not render/take awhile for functions requiring a genome and using hg38
+- Dramatically increased performance of cnFreq
+- cnFreq no longer requires genomic segments to be identical across samples
+
 CHANGES IN VERSION 1.4.4
 ------------------------
 - fixed bug where incorrect cell labels were overlayed with proper ones when removing silent mutations

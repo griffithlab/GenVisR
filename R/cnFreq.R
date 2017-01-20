@@ -7,8 +7,7 @@
 #' CN losses/gains across the genome (default), or actual CN values. The former
 #' option must contain columns with the following names "chromosome", "start",
 #' "end", "gain", and "loss", and the latter option must contain column names
-#' "chromosome", "start", "end", "segmean", and "sample". Windows supplied must
-#' be consistent across samples!
+#' "chromosome", "start", "end", "segmean", and "sample".
 #' @param CN_low_cutoff Numeric value representing the point at or below which
 #' copy number alterations are considered losses. Only used if x represents CN
 #' values.
@@ -32,7 +31,9 @@
 #' supplied to x, and will perform one of the following actions. If "gain" and
 #' "loss" columns are detected the raw data will be plotted, if "segmean" and 
 #' "sample" columns are detected the frequency of copy-number gains and losses
-#' present in the cohort will be calculated and plotted. The `plotLayer`
+#' present in the cohort will be calculated and plotted. In the later case, if genomic
+#' segments are not identical across all samples the algorithm will perform a disjoin operation
+#' splitting existing segments such that there are no overlaps. The `plotLayer`
 #' parameter can be used to add an additional layer to the ggplot2 graphic
 #' (see vignette).
 #' @return One of the following, a dataframe containing data to be
@@ -63,26 +64,18 @@ cnFreq <- function(x, CN_low_cutoff=1.5, CN_high_cutoff=2.5, plot_title=NULL,
     # If x contains actual CN values, transform into frequencies
     if(plotType=="freq")
     {
-        xuniq <- unique(x[,c("chromosome","start","end")])
-        gain = loss = obs = rep(NA, nrow(xuniq))
+        # Calculate a columns of Observed CN gains/losses/and obs samples in the
+        # cohort for each segment
+        gainFreq <- function(x){length(x[x >= CN_high_cutoff])}
+        gain <- aggregate(segmean ~ chromosome + start + end, data=x, gainFreq)$segmean
         
-        for(i in 1:nrow(xuniq))
-        {
-            tmpind = Reduce(intersect,
-                            list(which(x$chromosome==xuniq[i,1]),
-                                 which(x$start==xuniq[i,2]),
-                                 which(x$end==xuniq[i,3])))
-            
-            gain[i] = sum(x[tmpind,"segmean"] >= CN_high_cutoff, na.rm=TRUE)
-            loss[i] = sum(x[tmpind,"segmean"] <= CN_low_cutoff, na.rm=TRUE)
-            obs[i] = length(tmpind)
-        }
-        x <- data.frame(chromosome=xuniq$chromosome,
-                        start=xuniq$start,
-                        end=xuniq$end,
-                        gain=gain,
-                        loss=loss,
-                        obs=obs)
+        lossFreq <- function(x){length(x[x <= CN_low_cutoff])}
+        loss <- aggregate(segmean ~ chromosome + start + end, data=x, lossFreq)$segmean
+        
+        x <- aggregate(segmean ~ chromosome + start + end, data=x, length)
+        colnames(x)[which(colnames(x) %in% "segmean")] <- "obs"
+        x$gain <- gain
+        x$loss <- loss
     }
 
     # Transform losses to be negative values
