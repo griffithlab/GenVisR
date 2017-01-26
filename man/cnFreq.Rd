@@ -7,14 +7,13 @@
 cnFreq(x, CN_low_cutoff = 1.5, CN_high_cutoff = 2.5, plot_title = NULL,
   CN_Loss_colour = "#002EB8", CN_Gain_colour = "#A30000",
   x_title_size = 12, y_title_size = 12, facet_lab_size = 10,
-  plotLayer = NULL, out = "plot")
+  plotLayer = NULL, plotType = "proportion", genome = "hg19",
+  out = "plot")
 }
 \arguments{
-\item{x}{Object of class data frame with rows representing the proportion of
-CN losses/gains across the genome (default), or actual CN values. The former
-option must contain columns with the following names "chromosome", "start",
-"end", "gain", and "loss", and the latter option must contain column names
-"chromosome", "start", "end", "segmean", and "sample".}
+\item{x}{Object of class data frame with rows representing genomic segments.
+The data frame must contain columns with the following names "chromosome",
+"start", "end", "segmean", and "sample".}
 
 \item{CN_low_cutoff}{Numeric value representing the point at or below which
 copy number alterations are considered losses. Only used if x represents CN
@@ -42,6 +41,11 @@ plotted.}
 
 \item{plotLayer}{Valid ggplot2 layer to be added to the plot.}
 
+\item{plotType}{Character string specifying the type of values to plot. 
+One of "proportion" or "frequency"}
+
+\item{genome}{Character string specifying a valid UCSC genome (see details).}
+
 \item{out}{Character vector specifying the the object to output, one of
 "data", "grob", or "plot", defaults to "plot" (see returns).}
 }
@@ -54,25 +58,21 @@ Given a data frame construct a plot to display copy number changes across the
 genome for a group of samples.
 }
 \details{
-cnFreq will detect the column names present in the data frame
-supplied to x, and will perform one of the following actions. If "gain" and
-"loss" columns are detected the raw data will be plotted, if "segmean" and 
-"sample" columns are detected the frequency of copy-number gains and losses
-present in the cohort will be calculated and plotted. In the later case, if genomic
-segments are not identical across all samples the algorithm will perform a disjoin operation
+cnFreq requires the location of chromosome boundaries for a given
+genome assembly in order to ensure the entire chromosome space is plotted.
+As a convenience this information is available to cnSpec for
+the following genomes "hg19", "hg38", "mm9", "mm10", "rn5" and can be
+retrieved by supplying one of the afore mentioned assemblies via the `genome`
+parameter. If a genome assembly is supplied to the `genome` parameter and is
+unrecognized cnSpec will attempt to query the UCSC MySQL database for the
+required information. If genomic segments are not identical across all samples
+the algorithm will attempt to perform a disjoin operation
 splitting existing segments such that there are no overlaps. The `plotLayer`
 parameter can be used to add an additional layer to the ggplot2 graphic
 (see vignette).
 }
 \examples{
-# Create data
-xstart <- seq(0,4990000,length.out=500)
-xloss <- rep(runif(10,0,0.6),rep(50,10))/1.5
-xloss <- xloss + jitter(xloss,amount=0.002)
-x <- data.frame(chromosome=rep(paste0("chr",1:5),rep(500,5)), start=xstart,
-end=xstart+10000, loss=xloss, gain=(1-xloss))
-
-# Plot the data
-cnFreq(x)
+# plot on internal GenVisR dataset
+cnFreq(LucCNseg)
 }
 

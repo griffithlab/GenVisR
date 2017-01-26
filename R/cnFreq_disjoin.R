@@ -9,6 +9,7 @@
 #' @importFrom GenomicRanges mcols
 #' @importFrom GenomicRanges disjoin
 #' @importFrom IRanges IRanges
+#' @importFrom IRanges extractList
 
 cnFreq_disjoin <- function(x){
     
@@ -23,8 +24,8 @@ cnFreq_disjoin <- function(x){
     disJoint_x <- rep(disJoint_x, lengths(revmap))
     
     # exract the meta columns and map them back to the disJoint GRanges object
-    sample <- unlist(extractList(GenomicRanges::mcols(x)$sample, revmap))
-    segmean <- unlist(extractList(GenomicRanges::mcols(x)$segmean, revmap))
+    sample <- unlist(IRanges::extractList(GenomicRanges::mcols(x)$sample, revmap))
+    segmean <- unlist(IRanges::extractList(GenomicRanges::mcols(x)$segmean, revmap))
     GenomicRanges::mcols(disJoint_x)$sample <- sample
     GenomicRanges::mcols(disJoint_x)$segmean <- segmean
     
