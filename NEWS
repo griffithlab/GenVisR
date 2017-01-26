@@ -1,8 +1,10 @@
 CHANGES IN VERSION 1.4.5
 ------------------------
 - fixed issue where plot would not render/take awhile for functions requiring a genome and using hg38
-- Dramatically increased performance of cnFreq
-- cnFreq no longer requires genomic segments to be identical across samples
+- Dramatically increased performance of cnFreq()
+- cnFreq() no longer requires genomic segments to be identical across samples
+- cnFreq() can now selectively plot chromosomes
+- cnFreq() can now plot both frequency/proportion regardless of data input type
 
 CHANGES IN VERSION 1.4.4
 ------------------------

@@ -19,8 +19,8 @@ cnFreq_disjoin <- function(x){
                                 "sample"=x$sample, "segmean"=x$segmean)
     
     # disjoin with grange, get a mapping of meta columns and expand it
-    disJoint_x <- disjoin(x, with.revmap=TRUE)
-    revmap <- mcols(disJoint_x)$revmap
+    disJoint_x <- GenomicRanges::disjoin(x, with.revmap=TRUE)
+    revmap <- GenomicRangesmcols(disJoint_x)$revmap
     disJoint_x <- rep(disJoint_x, lengths(revmap))
     
     # exract the meta columns and map them back to the disJoint GRanges object
