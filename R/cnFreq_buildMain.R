@@ -36,7 +36,9 @@ cnFreq_buildMain <- function(x, plotType, dummy_data, plot_title=NULL,
                    axis.ticks.x=element_blank(),
                    legend.position='right',
                    axis.title.x=element_text(size=x_lab_size, face='bold'),
-                   axis.title.y=element_text(size=y_lab_size, face='bold'))
+                   axis.title.y=element_text(size=y_lab_size, face='bold'),
+                   panel.grid.major.x=element_blank(),
+                   panel.grid.minor.x=element_blank())
     facet <- facet_grid(. ~ chromosome, scales='free', space='free')
     xlabel <- xlab('Chromosomes')
     

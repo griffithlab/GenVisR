@@ -8,7 +8,7 @@ cnFreq(x, CN_low_cutoff = 1.5, CN_high_cutoff = 2.5, plot_title = NULL,
   CN_Loss_colour = "#002EB8", CN_Gain_colour = "#A30000",
   x_title_size = 12, y_title_size = 12, facet_lab_size = 10,
   plotLayer = NULL, plotType = "proportion", genome = "hg19",
-  out = "plot")
+  plotChr = NULL, out = "plot")
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing genomic segments.
@@ -45,6 +45,9 @@ plotted.}
 One of "proportion" or "frequency"}
 
 \item{genome}{Character string specifying a valid UCSC genome (see details).}
+
+\item{plotChr}{Character vector specifying specific chromosomes to plot,
+if NULL all chromosomes for the genome selected are displayed.}
 
 \item{out}{Character vector specifying the the object to output, one of
 "data", "grob", or "plot", defaults to "plot" (see returns).}
