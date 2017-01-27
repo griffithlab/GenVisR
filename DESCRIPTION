@@ -19,6 +19,7 @@ Imports:
     biomaRt,
     BiocGenerics,
     Biostrings,
+    data.table,
     DBI,
     FField,
     GenomicFeatures,

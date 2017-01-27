@@ -6,9 +6,9 @@
 \alias{Waterfall-class}
 \title{Class Waterfall}
 \usage{
-\S4method{initialize}{Waterfall}(.Object, input)
+\S4method{initialize}{Waterfall}(.Object, input, labelColumn)
 
-Waterfall(input)
+Waterfall(input, labelColumn = NULL)
 }
 \arguments{
 \item{input}{MutationAnnotationFormat class holding genomic information.}

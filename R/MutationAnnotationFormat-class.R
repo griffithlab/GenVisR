@@ -89,7 +89,7 @@ MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
 setMethod(f="getPosition",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              positions <- getPosition(object@mafObject)
+              positions <- getPosition(object@mafObject@position)
               return(positions)
           })
 
@@ -98,7 +98,7 @@ setMethod(f="getPosition",
 setMethod(f="getMutation",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              mutations <- getMutation(object@mafObject)
+              mutations <- getMutation(object@mafObject@mutation)
               return(mutations)
           })
 
@@ -107,7 +107,7 @@ setMethod(f="getMutation",
 setMethod(f="getSample",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              sample <- getSample(object@mafObject)
+              sample <- getSample(object@mafObject@sample)
               return(sample)
           })
 
@@ -116,7 +116,7 @@ setMethod(f="getSample",
 setMethod(f="getMeta",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              meta <- getMeta(object@mafObject)
+              meta <- getMeta(object@mafObject@meta)
               return(meta)
           })
 
@@ -125,7 +125,34 @@ setMethod(f="getMeta",
 #' @noRd
 setMethod(f="toWaterfall",
           signature="MutationAnnotationFormat",
-          definition=function(object, ...){
+          definition=function(object, labelColumn, ...){
+              
+              # grab the sample, mutation, gene columns and set a label
+              sample <- object@mafObject@sample
+              mutation <- object@mafObject@mutation[,"Variant_Classification"]
+              gene <- object@mafObject@meta[,"Hugo_Symbol"]
+              label <- NA
+              
+              # if a label column exists and is proper overwrite the label variable
+              if(!is.null(labelColumn)){
+                  if(length(labelColumn) != 1) {
+                      memo <- paste("Parameter \"labelColumn\" must be of length 1!",
+                                    "Found length to be", length(labelColumn))
+                      warning(memo)
+                      next
+                  } else if(labelColumn %in% colnames(object@mafObject@meta)){
+                      memo <- paste("Did not find column:", labelColumn,
+                                    "in the meta slot of the mafObject! Valid",
+                                    "names are:", colnames(getMeta(object)))
+                      warning(memo)
+                      next
+                  } else {
+                      label <- object@mafObject@meta[,labelColumn]
+                  }
+              }
+              
+              # combine all columns into a consistent format
+              object <- cbind(sample, gene, mutation, label)
               return(object)
           })
 

@@ -20,7 +20,10 @@ setClass("Waterfall",
                                        plotC="gtable",
                                        plotD="gtable",
                                        Grob="gtable",
-                                       Data="list")
+                                       Data="list"),
+         validity=function(object){
+             cat("!!!!! Waterfall~Inspector !!!!!\n")
+         }
          )
 
 #' Initalizer method for the Waterfall class
@@ -29,10 +32,12 @@ setClass("Waterfall",
 #' @rdname Waterfall-class
 setMethod(f="initialize",
           signature="Waterfall",
-          definition=function(.Object, input){
-              
+          definition=function(.Object, input, labelColumn){
+              browser()
               # convert to waterfall format
-              primaryData <- "test"
+              primaryData <- toWaterfall(input, labelColumn)
+              
+              
           })
 
 #' Constructor for the Waterfall class.
@@ -41,8 +46,7 @@ setMethod(f="initialize",
 #' @rdname Waterfall-class
 #' @param input MutationAnnotationFormat class holding genomic information.
 #' @export
-Waterfall <- function(input){
+Waterfall <- function(input, labelColumn=NULL){
     cat("!!!!! Waterfall~Constructor !!!!!\n")
-    new("Waterfall", input=input)
+    new("Waterfall", input=input, labelColumn=labelColumn)
 }
-

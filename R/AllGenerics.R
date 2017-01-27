@@ -7,7 +7,7 @@
 #' @exportMethod getPosition
 setGeneric(
     name="getPosition",
-    def=function(object, ...){standardGeneric("getPosition", ...)}
+    def=function(object, ...){standardGeneric("getPosition")}
 )
 
 #' Method getMutation
@@ -19,7 +19,7 @@ setGeneric(
 #' @exportMethod getMutation
 setGeneric(
     name="getMutation",
-    def=function(object, ...){standardGeneric("getMutation", ...)}
+    def=function(object, ...){standardGeneric("getMutation")}
 )
 
 #' Method getSample
@@ -31,7 +31,7 @@ setGeneric(
 #' @exportMethod getSample
 setGeneric(
     name="getSample",
-    def=function(object, ...){standardGeneric("getSample", ...)}
+    def=function(object, ...){standardGeneric("getSample")}
 )
 
 #' Method getMeta
@@ -42,7 +42,7 @@ setGeneric(
 #' @exportMethod getMeta
 setGeneric(
     name="getMeta",
-    def=function(object, ...){standardGeneric("getMeta", ...)}
+    def=function(object, ...){standardGeneric("getMeta")}
 )
 
 #' Method toWaterfall
@@ -53,6 +53,6 @@ setGeneric(
 #' @return data.table object formatted for input to waterfall
 setGeneric(
     name="toWaterfall",
-    def=function(object, ...){standardGeneric("toWaterfall", ...)}
+    def=function(object, labelColumn, ...){standardGeneric("toWaterfall")}
 )
 
