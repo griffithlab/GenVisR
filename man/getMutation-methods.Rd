@@ -15,10 +15,6 @@ getMutation(object, ...)
 
 \S4method{getMutation}{MutationAnnotationFormat}(object, ...)
 }
-\value{
-data.table object holding genomic mutations and containing column names
-"variant_classification", "variant_type", "reference_allele", "variant_allele_1", "variant_allele_2".
-}
 \description{
 Method getMutation
 }

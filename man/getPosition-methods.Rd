@@ -15,10 +15,6 @@ getPosition(object, ...)
 
 \S4method{getPosition}{MutationAnnotationFormat}(object, ...)
 }
-\value{
-data.table object holding genomic positions and containing column names
-"chromosome", "start", "end", "strand".
-}
 \description{
 Method getPosition
 }

@@ -125,7 +125,14 @@ setMethod(f="getMeta",
 #' @noRd
 setMethod(f="toWaterfall",
           signature="MutationAnnotationFormat",
-          definition=function(object, labelColumn, ...){
+          definition=function(object, labelColumn, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to expected waterfall format")
+                  message(memo)
+              }
               
               # grab the sample, mutation, gene columns and set a label
               sample <- object@mafObject@sample
@@ -153,6 +160,8 @@ setMethod(f="toWaterfall",
               
               # combine all columns into a consistent format
               object <- cbind(sample, gene, mutation, label)
+              colnames(object) <- c("sample", "gene", "mutation", "label")
+              
               return(object)
           })
 

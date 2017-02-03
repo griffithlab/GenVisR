@@ -2,8 +2,6 @@
 #' 
 #' @name getPosition
 #' @rdname getPosition-methods
-#' @return data.table object holding genomic positions and containing column names
-#' "chromosome", "start", "end", "strand".
 #' @exportMethod getPosition
 setGeneric(
     name="getPosition",
@@ -14,8 +12,6 @@ setGeneric(
 #' 
 #' @name getMutation
 #' @rdname getMutation-methods
-#' @return data.table object holding genomic mutations and containing column names
-#' "variant_classification", "variant_type", "reference_allele", "variant_allele_1", "variant_allele_2".
 #' @exportMethod getMutation
 setGeneric(
     name="getMutation",
@@ -26,8 +22,6 @@ setGeneric(
 #' 
 #' @name getSample
 #' @rdname getSample-methods
-#' @return data.table object holding samples and containing column names
-#' "sample".
 #' @exportMethod getSample
 setGeneric(
     name="getSample",
@@ -38,7 +32,6 @@ setGeneric(
 #' 
 #' @name getMeta
 #' @rdname getMeta-methods
-#' @return data.table object holding meta information.
 #' @exportMethod getMeta
 setGeneric(
     name="getMeta",
@@ -50,9 +43,58 @@ setGeneric(
 #' @name toWaterfall
 #' @rdname toWaterfall-methods
 #' @noRd
-#' @return data.table object formatted for input to waterfall
 setGeneric(
     name="toWaterfall",
-    def=function(object, labelColumn, ...){standardGeneric("toWaterfall")}
+    def=function(object, labelColumn, verbose, ...){standardGeneric("toWaterfall")}
+)
+
+#' Method sampSubset
+#'
+#' @name sampSubset
+#' @rdname sampSubset-methods
+#' @noRd
+setGeneric(
+    name="sampSubset",
+    def=function(object, samples, verbose, ...){standardGeneric("sampSubset")}
+)
+
+#' Method calcSimpleMutationBurden
+#'
+#' @name calcSimpleMutationBurden
+#' @rdname calcSimpleMutationBurden-methods
+#' @noRd
+setGeneric(
+    name="calcSimpleMutationBurden",
+    def=function(object, coverage, verbose, ...){standardGeneric("calcSimpleMutationBurden")}
+)
+
+#' Method calcComplexMutationBurden
+#'
+#' @name calcComplexMutationBurden
+#' @rdname calcComplexMutationBurden-methods
+#' @noRd
+setGeneric(
+    name="calcComplexMutationBurden",
+    def=function(object, coverage, verbose, ...){standardGeneric("calcComplexMutationBurden")}
+)
+
+#' Method rmvSilentMutation
+#'
+#' @name rmvSilentMutation
+#' @rdname rmvSilentMutation-methods
+#' @noRd
+setGeneric(
+    name="rmvSilentMutation",
+    def=function(object, verbose, ...){standardGeneric("rmvSilentMutation")}
+)
+
+#' Method geneSubset
+#'
+#' @name geneSubset
+#' @rdname geneSubset-methods
+#' @noRd
+setGeneric(
+    name="geneSubset",
+    def=function(object, genes, verbose, ...){standardGeneric("geneSubset")}
 )
 

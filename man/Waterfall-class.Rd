@@ -6,12 +6,26 @@
 \alias{Waterfall-class}
 \title{Class Waterfall}
 \usage{
-\S4method{initialize}{Waterfall}(.Object, input, labelColumn)
+\S4method{initialize}{Waterfall}(.Object, input, labelColumn, samples, coverage,
+  noSynonymous, genes, verbose)
 
-Waterfall(input, labelColumn = NULL)
+Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
+  noSynonymous = FALSE, genes = NULL, verbose = FALSE)
 }
 \arguments{
 \item{input}{MutationAnnotationFormat class holding genomic information.}
+
+\item{samples}{Character vector specifying samples to plot. If not NULL
+all samples in "input" not specified with this parameter are removed.}
+
+\item{coverage}{Integer specifying the size in base pairs of the genome
+covered by sequence data from which mutations could be called. Required for
+the mutation burden sub-plot (see details and vignette).}
+
+\item{noSynonymous}{Boolean specifying if silent mutations should be removed
+from the plot, this will not affect the mutation burden calculation.}
+
+\item{verbose}{Boolean specifying if status messages should be reported}
 }
 \description{
 An S4 class for the waterfall plot object
@@ -33,6 +47,13 @@ Constructor for the Waterfall class.
 
 \item{\code{Grob}}{gtable object for the arranged plot.}
 
-\item{\code{Data}}{list of data.table objects storing the plotted data.}
+\item{\code{primaryData}}{data.table object storing the primary data, should have
+column names sample, gene, mutation, label.}
+
+\item{\code{simpleMutationCounts}}{data.table object storing simplified mutation
+counts, should have column names sample, mutation, Freq, mutationBurden}
+
+\item{\code{complexMutationData}}{data.table object storing mutation counts per
+mutation type should have column names sample, mutation, Freq, mutationBurden.}
 }}
 

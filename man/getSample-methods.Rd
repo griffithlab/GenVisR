@@ -15,10 +15,6 @@ getSample(object, ...)
 
 \S4method{getSample}{MutationAnnotationFormat}(object, ...)
 }
-\value{
-data.table object holding samples and containing column names
-"sample".
-}
 \description{
 Method getSample
 }

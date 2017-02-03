@@ -15,9 +15,6 @@ getMeta(object, ...)
 
 \S4method{getMeta}{MutationAnnotationFormat}(object, ...)
 }
-\value{
-data.table object holding meta information.
-}
 \description{
 Method getMeta
 }
