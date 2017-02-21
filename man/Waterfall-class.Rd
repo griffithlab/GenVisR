@@ -7,10 +7,11 @@
 \title{Class Waterfall}
 \usage{
 \S4method{initialize}{Waterfall}(.Object, input, labelColumn, samples, coverage,
-  noSynonymous, genes, verbose)
+  noSynonymous, genes, mutationHierarchy, verbose)
 
 Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
-  noSynonymous = FALSE, genes = NULL, verbose = FALSE)
+  noSynonymous = FALSE, genes = NULL, mutationHierarchy = NULL,
+  verbose = FALSE)
 }
 \arguments{
 \item{input}{MutationAnnotationFormat class holding genomic information.}
@@ -24,6 +25,11 @@ the mutation burden sub-plot (see details and vignette).}
 
 \item{noSynonymous}{Boolean specifying if silent mutations should be removed
 from the plot, this will not affect the mutation burden calculation.}
+
+\item{mutationHierarchy}{Data.table object with rows specifying the order of
+mutations from most to least deleterious and column names "mutation" and
+"color". Used to change the default colors and/or to give priority to a
+mutation for the same gene/sample (see details and vignette).}
 
 \item{verbose}{Boolean specifying if status messages should be reported}
 }
@@ -55,5 +61,9 @@ counts, should have column names sample, mutation, Freq, mutationBurden}
 
 \item{\code{complexMutationData}}{data.table object storing mutation counts per
 mutation type should have column names sample, mutation, Freq, mutationBurden.}
+
+\item{\code{MutationHierarchy}}{data.table object storing the hierarchy of mutation
+type in order of most to least important and the mapping of mutation type to
+color. Should have column names mutation and color.}
 }}
 

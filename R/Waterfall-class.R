@@ -16,6 +16,9 @@
 #' mutation type should have column names sample, mutation, Freq, mutationBurden.
 #' @slot GeneData
 #' @slot ClinicalData
+#' @slot MutationHierarchy data.table object storing the hierarchy of mutation
+#' type in order of most to least important and the mapping of mutation type to
+#' color. Should have column names mutation and color.
 #' @exportClass Waterfall
 #' @import methods
 #' @importFrom gtable gtable
@@ -32,7 +35,8 @@ setClass("Waterfall",
                                        simpleMutationCounts="data.table",
                                        complexMutationCounts="data.table",
                                        GeneData="data.table",
-                                       ClinicalData="data.table"),
+                                       ClinicalData="data.table",
+                                       MutationHierarchy="data.table"),
          validity=function(object){
              cat("!!!!! Waterfall~Inspector !!!!!\n")
          }
@@ -45,10 +49,13 @@ setClass("Waterfall",
 setMethod(f="initialize",
           signature="Waterfall",
           definition=function(.Object, input, labelColumn, samples, coverage,
-                              noSynonymous, genes, verbose){
+                              noSynonymous, genes, mutationHierarchy, verbose){
 
               # convert to waterfall format
               .Object@primaryData <- toWaterfall(input, labelColumn, verbose)
+              
+              # assign the mapping of mutations and colors
+              .Object@MutationHierarchy <- setMutationHierarchy(input, mutationHierarchy, verbose)
               
               # subset samples if specified
               .Object@primaryData <- sampSubset(.Object, samples, verbose)
@@ -62,6 +69,9 @@ setMethod(f="initialize",
               
               # subset on genes if specified
               .Object@primaryData <- geneSubset(.Object, genes, verbose)
+              
+              # remove entries for the same gene/sample based on a hierarchy leaving one
+              .Object@primaryData <- mutHierarchySubset(.Object, verbose)
               
               browser()
               return(.Object)
@@ -79,13 +89,18 @@ setMethod(f="initialize",
 #' the mutation burden sub-plot (see details and vignette).
 #' @param noSynonymous Boolean specifying if silent mutations should be removed
 #' from the plot, this will not affect the mutation burden calculation.
+#' @param mutationHierarchy Data.table object with rows specifying the order of
+#' mutations from most to least deleterious and column names "mutation" and
+#' "color". Used to change the default colors and/or to give priority to a
+#' mutation for the same gene/sample (see details and vignette).
 #' @param verbose Boolean specifying if status messages should be reported
 #' @export
 Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
-                      noSynonymous=FALSE, genes=NULL, verbose=FALSE){
+                      noSynonymous=FALSE, genes=NULL, mutationHierarchy=NULL, verbose=FALSE){
     cat("!!!!! Waterfall~Constructor !!!!!\n")
     new("Waterfall", input=input, labelColumn=labelColumn, samples=samples, coverage=coverage,
-        noSynonymous=noSynonymous, genes=genes, verbose=verbose)
+        noSynonymous=noSynonymous, genes=genes, mutationHierarchy=mutationHierarchy,
+        verbose=verbose)
 }
 
 #' @rdname Waterfall-methods
@@ -254,8 +269,10 @@ setMethod(f="rmvSilentMutation",
 #' @rdname Waterfall-methods
 #' @aliases geneSubset,Waterfall
 #' @param object Object of class waterfall
+#' @param genes character vector giving genes to keep
 #' @param verbose Boolean for status updates
-#' @return data.table object subset on gene if gene is not NULL
+#' @return data.table object subset on gene if gene is not NULL. Entries are 
+#' kept and or added if they are in the genes parameter.
 #' @noRd
 setMethod(f="geneSubset",
           signature="Waterfall",
@@ -299,4 +316,19 @@ setMethod(f="geneSubset",
               primaryData <- primaryData[primaryData$gene %in% genes,]
               
               return(primaryData)
+          })
+
+#' @rdname Waterfall-methods
+#' @aliases mutHierarchySubset,Waterfall
+#' @param object Object of class waterfall
+#' @param mutationHierarchy character vector giving the order of mutations for
+#' the hiearchy in order of most to least important
+#' @param verbose Boolean for status updates
+#' @return data.table object subset based on a mutation hierarchy keeping the
+#' most important if there is more than one record for the same gene/sample.
+#' @noRd
+setMethod(f="mutHierarchySubset",
+          signature="Waterfall",
+          definition=function(object, mutationHierarchy, verbose, ...){
+              return(object)
           })

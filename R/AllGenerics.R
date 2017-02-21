@@ -98,3 +98,22 @@ setGeneric(
     def=function(object, genes, verbose, ...){standardGeneric("geneSubset")}
 )
 
+#' Method mutHierarchySubset
+#'
+#' @name mutHierarchySubset
+#' @rdname mutHierarchySubset-methods
+#' @noRd
+setGeneric(
+    name="mutHierarchySubset",
+    def=function(object, verbose, ...){standardGeneric("mutHierarchySubset")}
+)
+
+#' Method setMutationHierarchy
+#'
+#' @name setMutationHierarchy
+#' @rdname setMutationHierarchy-methods
+#' @noRd
+setGeneric(
+    name="setMutationHierarchy",
+    def=function(object, mutationHierarchy, verbose, ...){standardGeneric("setMutationHierarchy")}
+)

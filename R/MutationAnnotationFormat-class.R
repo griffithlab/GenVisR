@@ -165,3 +165,75 @@ setMethod(f="toWaterfall",
               return(object)
           })
 
+#' @rdname setMutationHierarchy-methods
+#' @aliases setMutationHierarchy,MutationAnnotationFormat
+#' @noRd
+#' @importFrom data.table data.table
+#' @importFrom data.table setDT
+setMethod(f="setMutationHierarchy",
+          signature="MutationAnnotationFormat",
+          definition=function(object, mutationHierarchy, verbose, ...){
+              
+              # set the mutation hierarchy if a custom hierarchy is unspecified
+              if(is.null(mutationHierarchy)){
+                  mutationHierarchy$mutation <- c("Nonsense_Mutation", "Frame_Shift_Ins",
+                                                  "Frame_Shift_Del", "Translation_Start_Site",
+                                                  "Splice_Site", "Nonstop_Mutation",
+                                                  "In_Frame_Ins", "In_Frame_Del",
+                                                  "Missense_Mutation", "5\'Flank",
+                                                  "3\'Flank", "5\'UTR", "3\'UTR", "RNA",
+                                                  "Intron", "IGR", "Silent",
+                                                  "Targeted_Region", NA)
+
+                  mutationHierarchy$color <- c("grey", '#A80100', '#CF5A59',
+                                               '#A80079', '#CF59AE', '#000000', 
+                                               '#9159CF', '#4f00A8', '#59CF74',
+                                               '#00A8A8', '#79F2F2', '#006666', 
+                                               '#002AA8', '#5977CF', '#F37812',
+                                               '#F2B079', '#888811', '#FDF31C',
+                                               NA)
+                  mutationHierarchy <- data.table::data.table("mutation"=mutationHierarchy$mutation,
+                                                              "color"=mutationHierarchy$color)
+              }
+              
+              # check that mutationHiearchy is a data table
+              if(!any(class(mutationHierarchy) %in% "data.table")){
+                  memo <- paste("mutationHiearchy is not an object of class",
+                                "data.table, attempting to coerce.")
+                  warning(memo)
+                  mutationHierarchy <- data.table::setDT(mutationHierarchy)
+              }
+              
+              # check for the correct columns
+              if(!all(colnames(mutationHierarchy) %in% c("mutation", "color"))){
+                  missingCol <- colnames(mutationHierarchy)[!c("mutation", "color") %in% colnames(mutationHierarchy)]
+                  memo <- paste("The correct columns were not found in",
+                                "mutationHierarchy, missing", toString(missingCol))
+                  stop(memo)
+              }
+              
+              # check that all mutations are specified
+              if(!all(object@mafObject@mutation$Variant_Classification %in% mutationHierarchy$mutation)){
+                  missingMutations <- unique(object@mafObject@mutation$Variant_Classification[!object@mafObject@mutation$Variant_Classification %in% mutationHierarchy$mutation])
+                  memo <- paste("The following mutations were found in the",
+                                "input however were not specified in the",
+                                "mutationHierarchy!", toString(missingMutations),
+                                "adding these in as least important and",
+                                "assigning random colors!")
+                  warning(memo)
+                  tmp <- data.table::data.table("mutation"=missingMutations,
+                                                "color"=sample(colors(), length(missingMutations)))
+                  mutationHierarchy <- rbind(tmp, mutationHierarchy)
+              }
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Setting the hierarchy of mutations from most",
+                                "to least deleterious and mapping to colors:",
+                                toString(mutationHierarchy$mutation))
+                  message(memo)
+              }
+              
+              return(mutationHierarchy)
+          })
+
