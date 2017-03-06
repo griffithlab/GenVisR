@@ -1,3 +1,7 @@
+CHANGES IN Version 1.4.6
+------------------------
+- fixed typo with new feature in cnFreq
+
 CHANGES IN VERSION 1.4.5
 ------------------------
 - fixed issue where plot would not render/take awhile for functions requiring a genome and using hg38
