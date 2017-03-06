@@ -3,8 +3,10 @@
 #' given a data frame construct a plot to display proportions of losses and
 #' gains across the genome
 #' @name cnFreq_buildMain
-#' @param data_frame object of class data frame containing columns chromosome,
+#' @param x object of class data frame containing columns chromosome,
 #'  start, end, gain, and loss
+#' @param dummy_data Object of class data frame containing columns chromosome,
+#' start, end, cn, sample. Used for defining chromosome boundaries
 #' @param plotType character string to determine whether to plot proportions or
 #'  frequencies
 #' @param plot_title character string for title of plot
@@ -19,53 +21,61 @@
 #' @return ggplot object
 #' @import ggplot2
 
-cnFreq_buildMain <- function(data_frame, plotType, plot_title=NULL,
+cnFreq_buildMain <- function(x, plotType, dummy_data, plot_title=NULL,
                              CN_low_colour='#002EB8', CN_high_colour='#A30000',
                              x_lab_size=12, y_lab_size=12, facet_lab_size=10,
                              plotLayer=NULL)
 {
-    x <- data_frame
+    # Transform losses to be negative values for plotting purposes
+    x$lossFrequency <- -1*x$lossFrequency
+    x$lossProportion <- -1*x$lossProportion
 
-    # Define Theme of plot
+    # Define parameters of plot
     theme <- theme(strip.text.x=element_text(size=facet_lab_size),
                    axis.text.x=element_blank(),
                    axis.ticks.x=element_blank(),
                    legend.position='right',
                    axis.title.x=element_text(size=x_lab_size, face='bold'),
-                   axis.title.y=element_text(size=y_lab_size, face='bold'))
-
-    # Define parameters of plot
+                   axis.title.y=element_text(size=y_lab_size, face='bold'),
+                   panel.grid.major.x=element_blank(),
+                   panel.grid.minor.x=element_blank())
     facet <- facet_grid(. ~ chromosome, scales='free', space='free')
-    ylabel <- ylab(ifelse(plotType=="prop",
-                          "Proportion of Copy Number Gains/Losses",
-                          "Frequency of Copy Number Gains/Losses"))
     xlabel <- xlab('Chromosomes')
-
-    # Define main plot using boundaries in dummy data and then plot actual data
-    ymax <- ifelse(plotType=="prop",
-                   1,
-                   max(as.numeric(as.character(x$obs)), na.rm=TRUE))
     
-    p1 <- ggplot(data=x,
+    # Choose whether to plot aesthetics for proportion or frequency
+    if(grepl("^PROP", plotType, ignore.case=TRUE)){
+        ylabel <- ylab("Proportion of Copy Number Gains/Losses")
+        ymax <- 1
+        x$gain <- x$gainProportion
+        x$loss <- x$lossProportion 
+    } else if(grepl("^FREQ", plotType, ignore.case=TRUE)){
+        ylabel <- ylab("Frequency of Copy Number Gains/Losses")
+        ymax <- max(as.numeric(as.character(x$sampleFrequency)), na.rm=TRUE)
+        x$gain <- x$gainFrequency
+        x$loss <- x$lossFrequency 
+    } else {
+        memo <- paste0("did not recognize plotType ", plotType,
+                       ", please specify one of \"proportion\" or \"frequency\"")
+        stop(memo)
+    }
+    
+    # Define the initial plot
+    p1 <- ggplot(data=dummy_data,
                  mapping=aes_string(xmin='start',
                                     xmax='end',
                                     ymin=-1*ymax,
                                     ymax=ymax)) + geom_rect(alpha=0) +
         scale_x_continuous(expand=c(0,0)) + scale_y_continuous(expand=c(0,0))
     
-    p1 <- p1 + geom_rect(data=x,
-                         mapping=aes_string(xmin='start',
-                                            xmax='end',
-                                            ymin='loss',
-                                            ymax=0),
-                         fill=CN_low_colour)
-    
-    p1 <- p1 + geom_rect(data=x,
-                         mapping=aes_string(xmin='start',
-                                            xmax='end',
-                                            ymin=0,
-                                            ymax='gain'),
-                         fill=CN_high_colour)
+    # add copy number data 
+    p1 <- p1 + geom_rect(data=x, mapping=aes_string(xmin='start',
+                                                    xmax='end',
+                                                    ymin='loss',
+                                                    ymax=0), fill=CN_low_colour)
+    p1 <- p1 + geom_rect(data=x, mapping=aes_string(xmin='start',
+                                                    xmax='end', 
+                                                    ymin=0,
+                                                    ymax='gain'), fill=CN_high_colour)
     
     p1 <- p1 + geom_hline(aes(yintercept=0), linetype="dotted")
 

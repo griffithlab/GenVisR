@@ -36,7 +36,7 @@ genCov_alignPlot <- function(plot_list, axis='both')
     }
 
     # Combine the plots of now equal widths/heights
-    plots <- do.call(gridExtra::arrangeGrob, plots)
+    plots <- do.call(gridExtra::arrangeGrob, c(plots, ncol=1, nrow=length(plots)))
 
     return(plots)
 }

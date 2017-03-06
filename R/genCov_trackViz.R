@@ -36,7 +36,7 @@ genCov_trackViz <- function(..., bgFill="black", textFill="white", border="black
     labels <- lapply(names(data), genCov_buildTrack, bg_fill=bgFill,
                      text_fill=textFill, border=border, size=size)
     label_plot <- do.call(gridExtra::arrangeGrob,
-                          lapply(labels, ggplot2::ggplotGrob))
+                          c(lapply(labels, ggplot2::ggplotGrob), ncol=1, nrow=length(labels)))
 
   # Convert the plots corresponding to track labels to a single grob
     data_plot <- genCov_alignPlot(data, axis=axis_align)
