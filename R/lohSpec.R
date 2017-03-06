@@ -5,7 +5,7 @@
 #' @param x object of class data frame with rows representing germline calls.
 #' The data frame must contain columns with the following names "chromosome",
 #' "position", "n_vaf", "t_vaf", "sample". required if path is set to NULL (see
-#' details).
+#' details). vaf should range from 0-1.
 #' @param y Object of class data frame with rows representing chromosome
 #' boundaries for a genome assembly. The data frame must contain columns with
 #' the following names "chromosome", "start", "end" (optional: see details).
@@ -26,9 +26,9 @@
 #' (see details).
 #' @param window_size Integer value specifying the size of the window in base
 #' pairs in which to calculate the mean Loss of Heterozygosity (see details).
-#' @param normal Numeric value within the range 0-50 specifying the expected
+#' @param normal Numeric value within the range 0-1 specifying the expected
 #' normal variant allele frequency to be used in Loss of Heterozygosity 
-#' calculations. defaults to 50\%
+#' calculations. defaults to .50\%
 #' @param colourScheme Character vector specifying the colour scale to use from
 #' the viridis package. One of "viridis", "magma", "plasma", or "inferno".
 #' @param plotLayer Valid ggpot2 layer to be added to the plot.
@@ -46,7 +46,7 @@
 #' sample. In lieu of this format a series of .tsv files can be supplied via the 
 #' path and fileExt arguments. If this method is choosen samples will be infered
 #' from the file names. In both cases columns containing the variant allele
-#' frequency for normal and tumor samples should range from 0-100.
+#' frequency for normal and tumor samples should range from 0-1.
 #' Two methods exist to calculate and display LOH events. If the method is set
 #' to "tile" mean LOH is calculated based on the window_size argument with
 #' windows being placed next to each other. If the method is set to slide the
