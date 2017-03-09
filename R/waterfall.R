@@ -197,7 +197,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
             prop_dat <- inputDat[[1]]
             prop_dat[["sample"]] <- factor(prop_dat[["sample"]], 
               levels = sample_order)
-            p5 <- waterfall_build_proportions(
+            proportions_plot <- waterfall_build_proportions(
                 data_frame = prop_dat, 
                 plot_palette = mainPalette,
                 file_type = fileType,
@@ -224,7 +224,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                     guides(fill = guide_legend(ncol = 2))
                 )
             }
-            p5 <- TvTi(
+            proportions_plot <- TvTi(
                 x,
                 fileType = fileType,
                 sort = "custom",
@@ -232,9 +232,9 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                 layers = proportions_layer,
                 return_plot = TRUE
             )
-            if (prop_x_label) p5 <- p5 + xlab(paste0('Sample (n=', nlevels(data_frame$sample), ')'))
+            if (prop_x_label) proportions_plot <- proportions_plot + xlab(paste0('Sample (n=', nlevels(data_frame$sample), ')'))
         }
-    } else p5 <- NULL
+    } else proportions_plot <- NULL
 
     # Reorder the sample levels in data_frame2 to match the main plot's levels,
     # and then plot the top margin plot
@@ -249,17 +249,17 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
             }
 
             mutBurden$sample <- factor(mutBurden$sample, levels=sample_order)
-            p3 <- waterfall_buildMutBurden_B(mutBurden, layers=mutBurdenLayer)
+            burden_plot <- waterfall_buildMutBurden_B(mutBurden, layers=mutBurdenLayer)
         } else {
             data_frame2$sample <- factor(data_frame2$sample,
                                          levels=sample_order)
-            p3 <- waterfall_buildMutBurden_A(data_frame2, coverageSpace,
+            burden_plot <- waterfall_buildMutBurden_A(data_frame2, coverageSpace,
                                              layers=mutBurdenLayer)
         }
     } else {
         # create a blank ggplot object
         df <- data.frame()
-        p3 <- ggplot2::ggplot(df) + ggplot2::geom_point() +
+        burden_plot <- ggplot2::ggplot(df) + ggplot2::geom_point() +
             ggplot2::xlim(0, 1) + ggplot2::ylim(0, 1) +
             ggplot2::theme(axis.text.x=ggplot2::element_blank(),
                            axis.text.y=ggplot2::element_blank(),
@@ -270,7 +270,8 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     }
 
     # Plot the Left Bar Chart
-    p2 <- waterfall_buildGenePrevelance(data_frame, layers=sampRecurLayer)
+    gene_plot <- waterfall_buildGenePrevelance(data_frame, layers=sampRecurLayer,
+      gene_label_size=main_geneLabSize)
 
     # if there are any NA values in the data frame for a gene, give these NA
     # values a gene name so they are plotted properly
@@ -279,9 +280,8 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     # Plot the Heatmap
     plot_x_title <- !(!is.null(clinData) || plot_proportions)
 
-    p1 <- waterfall_buildMain(data_frame, grid=mainGrid,
+    heatmap <- waterfall_buildMain(data_frame, grid=mainGrid,
                               label_x=mainXlabel,
-                              gene_label_size=main_geneLabSize,
                               file_type=fileType,
                               drop_mutation=mainDropMut,
                               plot_x_title=plot_x_title,
@@ -302,18 +302,20 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
         }
 
         # plot the clinical data
-        p4 <- multi_buildClin(clinData, clin.legend.col=clinLegCol,
+        clinical_plot <- multi_buildClin(clinData, clin.legend.col=clinLegCol,
                               clin.var.colour=clinVarCol,
                               clin.var.order=clinVarOrder,
                               clin.layers=clinLayer)
 
         # Align all plots and return as 1 plot
-        pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p4 = p4, p5 = p5, 
+        pA <- waterfall_align(genes = gene_plot, heatmap = heatmap, burden = burden_plot, 
+          clinical = clinical_plot, proportion = proportions_plot, 
           section_heights = section_heights)
         return(grid::grid.draw(pA))
     } else 
     {
-        pA <- waterfall_align(p2 = p2, p1 = p1, p3 = p3, p5 = p5,
+        pA <- waterfall_align(genes = gene_plot, heatmap = heatmap, burden = burden_plot, 
+          proportion = proportions_plot, 
           section_heights = section_heights)
     }
     dataOut <- list("main"=data_frame,

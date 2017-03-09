@@ -5,8 +5,6 @@
 #' @param data_frame a data frame in MAF format
 #' @param grid boolean value whether to overlay a grid on the plot
 #' @param label_x boolean value whether to label the x axis
-#' @param gene_label_size numeric value indicating the size of the gene labels
-#' on the y-axis
 #' @param file_type character string specifying the file type, one of 'MAF' or
 #' 'MGI'
 #' @param drop_mutation Boolean specifying whether to drop unused
@@ -23,7 +21,7 @@
 #' @import ggplot2
 
 waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
-                                gene_label_size=8, file_type='MGI',
+                                file_type='MGI',
                                 drop_mutation=FALSE, plot_x_title=TRUE,
                                 plot_label=FALSE, plot_label_size=4,
                                 plot_palette=NULL, layers=NULL,
@@ -84,62 +82,36 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
 
     # Theme, Boolean, if specified to plot x labels, define theme such that
     # labels are plotted
-    if(label_x == TRUE & plot_x_title == TRUE)
-    {
-        theme <-  theme(axis.ticks=element_blank(),
+    default_theme <- theme(axis.ticks=element_blank(),
                         panel.grid.major=element_blank(),
                         panel.grid.minor=element_blank(),
+                        axis.title.y=element_blank(),
                         panel.background=element_rect(fill='white',
                                                       colour='white'),
-                        axis.text.x=element_text(angle=50, hjust=1),
-                        axis.text.y=element_text(size=gene_label_size,
-                                                 colour='black', face='italic'),
-                        axis.title.y=element_blank(),
-                        axis.title.x=element_text(size=10),
-                        legend.title=element_text(size=14),
+                        axis.text.y=element_blank(),
                         plot.title=element_blank())
-    } else if(label_x == FALSE & plot_x_title == TRUE) {
-        theme <-  theme(axis.ticks=element_blank(),
-                        panel.grid.major=element_blank(),
-                        panel.grid.minor=element_blank(),
-                        panel.background=element_rect(fill='white',
-                                                      colour='white'),
-                        axis.text.x=element_blank(),
-                        axis.text.y=element_text(size=gene_label_size,
-                                                 colour='black', face='italic'),
-                        axis.title.y=element_blank(),
+    if(label_x & plot_x_title)
+    {
+        theme <-  theme(axis.text.x=element_text(angle=50, hjust=1),
+                        axis.title.x=element_text(size=10),
+                        legend.title=element_text(size=14)
+                        )
+    } else if(!label_x & plot_x_title) {
+        theme <-  theme(axis.text.x=element_blank(),                        
                         axis.title.x=element_text(size=20),
                         legend.title=element_text(size=14),
-                        plot.title=element_blank(),
                         panel.border=element_rect(colour='grey80', fill=NA,
                                                   size=.1),
                         legend.position=("right"))
-    } else if(label_x == TRUE & plot_x_title == FALSE) {
-        theme <-  theme(axis.ticks=element_blank(),
-                        panel.grid.major=element_blank(),
-                        panel.grid.minor=element_blank(),
-                        panel.background=element_rect(fill='white',
-                                                      colour='white'),
-                        axis.text.x=element_text(angle=50, hjust=1),
-                        axis.text.y=element_text(size=gene_label_size,
-                                                 colour='black', face='italic'),
-                        axis.title.y=element_blank(),
+    } else if(label_x & !plot_x_title) {
+        theme <-  theme(axis.text.x=element_text(angle=50, hjust=1),
                         axis.title.x=element_blank(),
-                        legend.title=element_text(size=14),
-                        plot.title=element_blank())
-    } else if(label_x == FALSE & plot_x_title == FALSE) {
-        theme <-  theme(axis.ticks=element_blank(),
-                        panel.grid.major=element_blank(),
-                        panel.grid.minor=element_blank(),
-                        panel.background=element_rect(fill='white',
-                                                      colour='white'),
+                        legend.title=element_text(size=14))
+    } else if(!label_x & !plot_x_title) {
+        theme <-  theme(
                         axis.text.x=element_blank(),
-                        axis.text.y=element_text(size=gene_label_size,
-                                                 colour='black', face='italic'),
-                        axis.title.y=element_blank(),
                         axis.title.x=element_blank(),
                         legend.title=element_text(size=14),
-                        plot.title=element_blank(),
                         panel.border=element_rect(colour='grey80', fill=NA,
                                                   size=.1),
                         legend.position=("right"))
@@ -154,19 +126,13 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
     }
 
     # ggplot call
-    if(grid == TRUE)
-    {
-        p1 <- ggplot(data_frame, aes_string('sample', 'gene')) +
-        geom_tile(aes_string(fill='trv_type'), position="identity") +
-        theme + legend + x_label + vertical_grid +
-        horizontal_grid + scale_x_discrete(drop=FALSE) + label +
-        layers
-    } else {
-        p1 <- ggplot(data_frame, aes_string('sample', 'gene')) +
-        geom_tile(aes_string(fill='trv_type'), position="identity") +
-        theme + legend + x_label +
-        scale_x_discrete(drop=FALSE) + label + layers
+    p1 <- ggplot(data_frame, aes_string('sample', 'gene')) +
+        geom_tile(aes_string(fill='trv_type'), position="identity")
+    if(grid == TRUE) {
+        p1 <- p1 + vertical_grid + horizontal_grid 
     }
+    p1 <- p1 +  default_theme + theme + legend + x_label +
+        scale_x_discrete(drop=FALSE) + label + layers
 
     return(p1)
 }
