@@ -1,6 +1,35 @@
-CHANGES IN VERSION 1.1.5
+CHANGES IN Version 1.4.6
+------------------------
+- fixed typo with new feature in cnFreq
+
+CHANGES IN VERSION 1.4.5
+------------------------
+- fixed issue where plot would not render/take awhile for functions requiring a genome and using hg38
+- Dramatically increased performance of cnFreq()
+- cnFreq() no longer requires genomic segments to be identical across samples
+- cnFreq() can now selectively plot chromosomes
+- cnFreq() can now plot both frequency/proportion regardless of data input type
+
+CHANGES IN VERSION 1.4.4
+------------------------
+- fixed bug where incorrect cell labels were overlayed with proper ones when removing silent mutations
+
+CHANGES IN VERSION 1.4.3
+------------------------
+- fixed bug in cnFreq where cnFreq would produce an error (improperly) when looking for consistent windows
+
+CHANGES IN VERSION 1.4.2
+------------------------
+- fixed bug caused by updates to gridExtra when using genCov
+
+CHANGES IN VERSION 1.4.1
+------------------------
+- patch to fix alignments due to ggplot2 update
+
+CHANGES IN VERSION 1.4.0
 --------------------------
 
-- added clarification for use of cnFreq (cnFreq requires consistent windows across samples!)
-- minor documentation changes
-- bug fix for lohView VAF values are no longer assumed to be from 0-100 and may range from 0-1
+- Added new functionality to waterfall()
+- Transitions and transverions can be plotted as a waterfall subplot
+- mutation type proportions can now be plotted as a waterfall subplot
+- minor bug fixes to waterfall

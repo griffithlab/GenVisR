@@ -7,14 +7,12 @@
 cnFreq_qual(x)
 }
 \arguments{
-\item{x}{a data frame with columns chromosome, start, end, gain, and loss,
-or chromosome, start, end, segmean, and sample}
+\item{x}{a data frame with columns chromosome, start, end, segmean, and sample}
 }
 \value{
-list containing data frame passing quality checks and the type
-of plot (proportional losses/gain or frequency of losses/gains)
+data frame passing quality checks
 }
 \description{
-Perform a data quality check for inputs to cnFreq
+Perform a data quality check for input to cnFreq
 }
 
