@@ -4,10 +4,14 @@
 \alias{waterfall_buildGenePrevelance}
 \title{plot mutation recurrence in genes}
 \usage{
-waterfall_buildGenePrevelance(data_frame, layers = NULL)
+waterfall_buildGenePrevelance(data_frame, gene_label_size = 8,
+  layers = NULL)
 }
 \arguments{
 \item{data_frame}{a data frame in MAF format}
+
+\item{gene_label_size}{numeric value indicating the size of the gene labels
+on the y-axis}
 
 \item{layers}{additional ggplot2 layers}
 }

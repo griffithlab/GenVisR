@@ -315,8 +315,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     } else 
     {
         pA <- waterfall_align(genes = gene_plot, heatmap = heatmap, burden = burden_plot, 
-          proportion = proportions_plot, 
-          section_heights = section_heights)
+          proportion = proportions_plot, section_heights = section_heights)
     }
     dataOut <- list("main"=data_frame,
                     "mutation_count"=data_frame2,

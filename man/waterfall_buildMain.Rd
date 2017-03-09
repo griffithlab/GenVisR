@@ -5,9 +5,9 @@
 \title{Plot a mutation heatmap}
 \usage{
 waterfall_buildMain(data_frame, grid = TRUE, label_x = FALSE,
-  gene_label_size = 8, file_type = "MGI", drop_mutation = FALSE,
-  plot_x_title = TRUE, plot_label = FALSE, plot_label_size = 4,
-  plot_palette = NULL, layers = NULL, plot_label_angle = 0)
+  file_type = "MGI", drop_mutation = FALSE, plot_x_title = TRUE,
+  plot_label = FALSE, plot_label_size = 4, plot_palette = NULL,
+  layers = NULL, plot_label_angle = 0)
 }
 \arguments{
 \item{data_frame}{a data frame in MAF format}
@@ -15,9 +15,6 @@ waterfall_buildMain(data_frame, grid = TRUE, label_x = FALSE,
 \item{grid}{boolean value whether to overlay a grid on the plot}
 
 \item{label_x}{boolean value whether to label the x axis}
-
-\item{gene_label_size}{numeric value indicating the size of the gene labels
-on the y-axis}
 
 \item{file_type}{character string specifying the file type, one of 'MAF' or
 'MGI'}

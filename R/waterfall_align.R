@@ -38,51 +38,32 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
     ind_legend <- grep("guide", heatmap_grob$layout$name)
     heatmap_legend <- heatmap_grob[["grobs"]][[ind_legend]]
     heatmap_width <- sum(heatmap_legend$width)
-    heatmap_grob[["grobs"]][[ind_legend]] <- zeroGrob()
+    heatmap_grob <- ggplot2::ggplotGrob(heatmap + theme(legend.position="none"))
 
     burden_grob <- ggplot2::ggplotGrob(burden)
     ## Strip out legends and plot separately
     ind_legend <- grep("guide", burden_grob$layout$name)
     burden_legend <- burden_grob[["grobs"]][[ind_legend]]
     burden_width <- sum(burden_legend$width)
-    burden_grob[["grobs"]][[ind_legend]] <- zeroGrob()
+    burden_grob <- ggplot2::ggplotGrob(burden + theme(legend.position="none"))
 
-    ## Strip out y axis titles and plot separately
-    ind_axis <- grep("ylab-l", burden_grob$layout$name)
-    burden_axis_title <- burden_grob[["grobs"]][[ind_axis]]
-    # burden_axis_title$children[[1]]$vjust <- 1
-    print(burden_axis_title$children[[1]]$vjust)
-    burden_axis_title$children[[1]]$hjust <- 0.5
-    burden_grob[["grobs"]][[ind_axis]] <- zeroGrob()
+    blankPanel <- grid::grid.rect(gp=grid::gpar(col="white"))
 
     if (!is.null(proportions)) {
         prop_grob <- ggplot2::ggplotGrob(proportions)
         ind_legend <- grep("guide", prop_grob$layout$name)
         prop_legend <- prop_grob[["grobs"]][[ind_legend]]
         prop_width <- sum(prop_legend$width)
-        prop_grob[["grobs"]][[ind_legend]] <- zeroGrob()
+        prop_grob <- ggplot2::ggplotGrob(proportions + theme(legend.position="none"))
         
-        ## Strip out y axis titles and plot separately
-        ind_axis <- grep("ylab-l", prop_grob$layout$name)
-        prop_axis_title <- prop_grob[["grobs"]][[ind_axis]]
-        print(prop_axis_title$children[[1]]$vjust)
-        prop_axis_title$children[[1]]$vjust <- 0
-        prop_axis_title$children[[1]]$hjust <- -0.2
-        prop_grob[["grobs"]][[ind_axis]] <- zeroGrob()
-
     } else prop_width <- NULL
-    blankPanel <- grid::grid.rect(gp=grid::gpar(col="white"))
+
     if(!missing(clinical)) {
         clin_grob <- ggplot2::ggplotGrob(clinical)
         ind_legend <- grep("guide", clin_grob$layout$name)
         clin_legend <- clin_grob[["grobs"]][[ind_legend]]
         clin_width <- sum(clin_legend$width)
-        clin_grob[["grobs"]][[ind_legend]] <- zeroGrob()
-
-        ## Strip out y axis titles and plot separately
-        ind_axis <- grep("ylab-l", clin_grob$layout$name)
-        clin_axis_title <- clin_grob[["grobs"]][[ind_axis]]
-        clin_grob[["grobs"]][[ind_axis]] <- zeroGrob()
+        clin_grob <- ggplot2::ggplotGrob(clinical + theme(legend.position="none"))
 
     } else clin_width <- NULL
 
@@ -91,16 +72,15 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
     widths <- grid::unit.c(width_left * 0.15, width_left * 0.85, legend_width)
 
     # Adjust the grob widths so heatmap and burden plots line up
-    if(!missing(clinical))
-    {
+    if(!missing(clinical)) {
         if (!is.null(proportions)) {
-            maxwidth <- grid::unit.pmin(heatmap_grob$widths,
+            maxwidth <- grid::unit.pmax(heatmap_grob$widths,
                                        burden_grob$widths,
                                        clin_grob$widths,
                                        prop_grob$widths)
             prop_grob$widths <- as.list(maxwidth)
         } else {
-            maxwidth <- grid::unit.pmin(heatmap_grob$widths,
+            maxwidth <- grid::unit.pmax(heatmap_grob$widths,
                                        burden_grob$widths,
                                        clin_grob$widths
                                        )
@@ -110,12 +90,12 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
         clin_grob$widths <- as.list(maxwidth)
     } else {
         if (!is.null(proportions)) {
-            maxwidth <- grid::unit.pmin(heatmap_grob$widths,
+            maxwidth <- grid::unit.pmax(heatmap_grob$widths,
                                        burden_grob$widths,
                                        prop_grob$widths)
             prop_grob$widths <- as.list(maxwidth)
         } else {   
-            maxwidth <- grid::unit.pmin(heatmap_grob$widths,
+            maxwidth <- grid::unit.pmax(heatmap_grob$widths,
                                        burden_grob$widths
                                        )
         }
@@ -133,16 +113,16 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
         if (!is.null(proportions)) {
             nrows <- 4
             grobs <- list(
-                burden_axis_title, burden_grob, burden_legend, 
+                blankPanel, burden_grob, burden_legend, 
                 genes_grob, heatmap_grob, heatmap_legend, 
-                prop_axis_title, prop_grob, prop_legend, 
-                clin_axis_title, clin_grob, clin_legend)
+                blankPanel, prop_grob, prop_legend, 
+                blankPanel, clin_grob, clin_legend)
         } else {
             nrows <- 3
             grobs <- list(
-                burden_axis_title, burden_grob, burden_legend, 
+                blankPanel, burden_grob, burden_legend, 
                 genes_grob, heatmap_grob, heatmap_legend,
-                clin_axis_title, clin_grob, clin_legend)
+                blankPanel, clin_grob, clin_legend)
         }
         heatmap <- gridExtra::arrangeGrob(grobs = grobs,
                                      ncol=3, nrow=nrows, 
@@ -155,13 +135,13 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
         if (!is.null(proportions)) {
             nrows <- 3
             grobs <- list(
-                burden_axis_title, burden_grob, burden_legend,
+                blankPanel, burden_grob, burden_legend,
                 genes_grob, heatmap_grob, heatmap_legend, 
-                prop_axis_title, prop_grob, prop_legend)
+                blankPanel, prop_grob, prop_legend)
         } else {
             grobs <- list(
-                burden_axis_title, burden_grob, burden_legend,
-                genes_grob, heatmap_grob, heatmap_legend,
+                blankPanel, burden_grob, burden_legend,
+                genes_grob, heatmap_grob, heatmap_legend
                 )
             nrows <- 2
         }
