@@ -34,7 +34,9 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
     genes_grob <- suppressWarnings(ggplot2::ggplotGrob(genes))
 
     heatmap_grob <- ggplot2::ggplotGrob(heatmap)
+    
     ## Strip out legends and plot separately
+    ## https://github.com/baptiste/gridextra/wiki/arranging-ggplot#legends
     ind_legend <- grep("guide", heatmap_grob$layout$name)
     heatmap_legend <- heatmap_grob[["grobs"]][[ind_legend]]
     heatmap_width <- sum(heatmap_legend$width)
@@ -67,6 +69,7 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
 
     } else clin_width <- NULL
 
+    ## https://github.com/baptiste/gridextra/wiki/arranging-ggplot#legends
     legend_width <- unit.pmax(heatmap_width, burden_width, clin_width, prop_width)
     width_left <- unit(1, "npc") - max(legend_width)
     widths <- grid::unit.c(width_left * 0.15, width_left * 0.85, legend_width)
