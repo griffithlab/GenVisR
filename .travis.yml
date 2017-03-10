@@ -1,8 +1,5 @@
 language: r
 r: 
-  - oldrel
-  - release
-  - devel
   - bioc-release
   - bioc-devel
 sudo: required
