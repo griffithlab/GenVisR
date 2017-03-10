@@ -16,4 +16,3 @@ A data set containing locations of 24 identity snps originating from:
 Pengelly et al. Genome Med. 2013, PMID 24070238
 }
 \keyword{datasets}
-

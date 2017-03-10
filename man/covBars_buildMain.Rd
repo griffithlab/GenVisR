@@ -31,4 +31,3 @@ ggplot object
 given a data frame construct a plot to display coverage as percentage bars
 for a group of samples
 }
-

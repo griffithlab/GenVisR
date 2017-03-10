@@ -22,4 +22,3 @@ Make labels and breaks for palettes
 \details{
 waterfall_palette_names
 }
-

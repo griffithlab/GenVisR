@@ -18,4 +18,3 @@ Converted string of nucleotides as character vector
 \description{
 Convert a character string of nucleotides to amino acids or side chain class
 }
-

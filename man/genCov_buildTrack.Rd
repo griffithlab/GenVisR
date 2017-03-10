@@ -25,4 +25,3 @@ ggplot object
 \description{
 given a name create a label
 }
-

@@ -22,4 +22,3 @@ ggplot2 object
 \description{
 given a loh data frame plot points in ggplot
 }
-

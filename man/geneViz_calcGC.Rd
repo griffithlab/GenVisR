@@ -18,4 +18,3 @@ Object of class GRanges
 \description{
 Calculate GC content for elements in a GRanges object
 }
-

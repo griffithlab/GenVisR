@@ -20,4 +20,3 @@ ggplot2 grob object
 Produce an identity SNP plot displaying VAFs of 24 SNP locations and coverage
 information to compare multiple sample identities
 }
-

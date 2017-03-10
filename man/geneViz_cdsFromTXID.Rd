@@ -17,4 +17,3 @@ Object of class Granges
 \description{
 Return CDS coordinates as a GRanges object given transcript IDs
 }
-

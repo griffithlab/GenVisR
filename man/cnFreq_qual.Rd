@@ -15,4 +15,3 @@ data frame passing quality checks
 \description{
 Perform a data quality check for input to cnFreq
 }
-

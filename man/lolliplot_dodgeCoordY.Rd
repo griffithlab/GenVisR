@@ -18,4 +18,3 @@ numeric vector of dodged position coordinates on y axis
 \description{
 given a data frame, dodge x coordinates ontop of each other
 }
-

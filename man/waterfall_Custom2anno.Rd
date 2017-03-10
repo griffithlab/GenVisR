@@ -20,4 +20,3 @@ a data frame coerced from custom to annotation format
 Convert columns of a Custom annotation file into a format
 recognizable by internal functions
 }
-

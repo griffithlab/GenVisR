@@ -15,4 +15,3 @@ Character corresponding to the residue for the given codon
 \description{
 Convert a Codon to the appropriate amino acid
 }
-

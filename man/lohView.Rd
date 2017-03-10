@@ -65,4 +65,3 @@ in input to `x`, failure to do so may result in a misleading visual!
 # Plot loh for chromosome 5
 lohView(HCC1395_Germline, chr='chr5', genome='hg19', ideogram_txtSize=4)
 }
-

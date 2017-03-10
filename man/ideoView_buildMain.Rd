@@ -26,4 +26,3 @@ ggplot object
 \description{
 given a data frame with cytogenetic band locations plot chromosome in ggplot
 }
-

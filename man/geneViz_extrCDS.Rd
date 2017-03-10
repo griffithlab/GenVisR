@@ -23,4 +23,3 @@ Object of class Granges list
 Extract CDS coordinates within a GRanges object given a transcription
 database
 }
-

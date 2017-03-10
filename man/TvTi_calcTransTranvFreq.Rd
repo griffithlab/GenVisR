@@ -18,4 +18,3 @@ Transistions/Transversions appended on a sample level
 Given a data frame with columns reference, variant, sample, and trans/tranv
 calculate the frequencies of transitions and transversion occuring.
 }
-

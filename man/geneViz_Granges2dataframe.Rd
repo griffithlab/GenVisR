@@ -16,4 +16,3 @@ Object of class data frame
 Convert a Granges object with meta data GC content to a object of class data
 frame
 }
-

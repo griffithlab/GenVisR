@@ -85,4 +85,3 @@ ranges=IRanges(start=c(89622195), end=c(89729532)), strand=strand(c("+")))
 # Plot the graphic
 geneViz(txdb, gr, genome)
 }
-

@@ -28,4 +28,3 @@ object of class data frame from data specified in path for lohSpec
 Look in the specified file path and grab data with the proper extension for
 lohSpec
 }
-

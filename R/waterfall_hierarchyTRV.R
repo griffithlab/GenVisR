@@ -45,7 +45,7 @@ waterfall_hierarchyTRV <- function(x, file_type, variant_class_order)
             stop(memo)
         }
     } else {
-        mutation_order <- variant_class_order
+        mutation_order <- unique(c(variant_class_order, NA))
     }
 
     # Check that elements in trv_type are in the mutation order

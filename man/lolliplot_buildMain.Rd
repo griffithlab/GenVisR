@@ -54,4 +54,3 @@ a ggplot2 object
 \description{
 Construct Lolliplot given gene and mutation data
 }
-

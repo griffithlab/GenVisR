@@ -18,4 +18,3 @@ a data frame, with column names 'sample', 'reference', 'variant'
 \description{
 Convert data frame in .maf format to an internally recogized format
 }
-

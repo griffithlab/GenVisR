@@ -15,4 +15,3 @@ a data frame with synonymous/nonsynonymous counts appended
 \description{
 Creates a data frame giving synonymous/nonsynonymous counts on a sample level
 }
-

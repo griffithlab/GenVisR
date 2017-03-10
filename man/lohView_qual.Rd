@@ -22,4 +22,3 @@ a list of data frames passing quality checks
 \description{
 Perform a data quality check for inputs to lohView
 }
-
