@@ -17,4 +17,3 @@ ggplotGrob
 \description{
 assign height of ggplotGrob object
 }
-

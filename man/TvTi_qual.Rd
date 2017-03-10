@@ -24,4 +24,3 @@ a data frame, or list of data frames passing quality checks
 \description{
 Perform quality check for input to function TvTi
 }
-

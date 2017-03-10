@@ -46,4 +46,3 @@ data <- cytoGeno[cytoGeno$genome == 'hg38',]
 # Call ideoView for chromosome 1
 ideoView(data, chromosome='chr1', txtSize=4)
 }
-

@@ -21,4 +21,3 @@ object of class data frame giving gene and domain information
 \description{
 Build gene for input into lolliplot_buildMain
 }
-

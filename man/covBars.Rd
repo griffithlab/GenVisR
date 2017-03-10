@@ -46,4 +46,3 @@ x <- matrix(sample(100000,500), nrow=50, ncol=10, dimnames=list(0:49,paste0("Sam
 # Call plot function
 covBars(x)
 }
-

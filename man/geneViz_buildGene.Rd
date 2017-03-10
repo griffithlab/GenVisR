@@ -33,4 +33,3 @@ ggplot object
 \description{
 given a data frame with gene feature information build the ggplot2 object
 }
-

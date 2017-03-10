@@ -23,4 +23,3 @@ collapsed on the most deleterious
 Remove MAF entries with the same gene/sample in an ordered fashion such that
 the most deleterious are retained
 }
-

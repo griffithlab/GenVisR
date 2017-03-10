@@ -24,4 +24,3 @@ Object of class data frame
 given a Granges object specifying a region of interest, format into a form
 recognizable by ggplot2
 }
-

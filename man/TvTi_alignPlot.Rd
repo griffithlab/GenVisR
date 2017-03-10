@@ -19,4 +19,3 @@ ggplot object
 \description{
 align transition/transversion plots
 }
-

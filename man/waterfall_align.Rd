@@ -26,4 +26,3 @@ a grob object
 align mutation landscape, mutation burden on sample, and mutation burden on
 gene plots
 }
-

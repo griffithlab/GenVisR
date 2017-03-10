@@ -17,4 +17,3 @@ a ggplot object
 \description{
 plot a bar graph displaying the percentage of samples with a mutation
 }
-

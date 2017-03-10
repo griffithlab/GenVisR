@@ -16,4 +16,3 @@ A data set in long format containing Copy Number segments for 4 samples
 corresponding to "lung cancer" from Govindan et al. Cell. 2012, PMID:22980976
 }
 \keyword{datasets}
-

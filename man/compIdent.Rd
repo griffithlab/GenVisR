@@ -59,4 +59,3 @@ hg19 <- BSgenome.Hsapiens.UCSC.hg19
 # Generate plot
 compIdent(genome=hg19, debug=TRUE)
 }
-

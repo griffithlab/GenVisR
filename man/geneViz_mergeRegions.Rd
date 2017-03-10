@@ -23,4 +23,3 @@ Master region table data frame
 \description{
 Create a master region table by merging isoforms
 }
-

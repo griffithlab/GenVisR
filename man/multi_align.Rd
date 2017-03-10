@@ -17,4 +17,3 @@ ggplot object
 \description{
 given a chromosome and CN/LOH plot align plot widths
 }
-

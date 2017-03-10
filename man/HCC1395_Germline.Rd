@@ -16,4 +16,3 @@ A data set containing downsampled Germline calls originating from the HCC1395
 breast cancer cell line.
 }
 \keyword{datasets}
-

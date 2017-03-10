@@ -71,4 +71,3 @@ ggplot2 graphic (see vignette).
 \examples{
 cnSpec(LucCNseg, genome="hg19")
 }
-

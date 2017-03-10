@@ -23,4 +23,3 @@ plotted, a grob object, or a plot.
 \description{
 Selector for choosing output for GenVisR functions
 }
-

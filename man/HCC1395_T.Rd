@@ -17,4 +17,3 @@ from GenVisR::SNPloci. Pileups are from downsampled bams and originate from
 tumor tissue corresponding to the HCC1395 breast cancer cell line.
 }
 \keyword{datasets}
-

@@ -21,4 +21,3 @@ a list of objects passing basic quality control
 \description{
 Ensure data input into genCov is of the proper type and format
 }
-

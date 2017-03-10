@@ -16,4 +16,3 @@ Object of class data frame with multi nucleotide codes removed
 Given a data frame with columns reference and variants remove all
 multinucleotides from data
 }
-

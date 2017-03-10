@@ -15,4 +15,3 @@ ggplotGrob width parameters
 \description{
 extract plot width of ggplotGrob object
 }
-

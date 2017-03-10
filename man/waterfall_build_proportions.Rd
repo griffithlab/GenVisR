@@ -24,4 +24,3 @@ a ggplot object
 \description{
 Builds a ggplot object showing individuals' mutational profile
 }
-

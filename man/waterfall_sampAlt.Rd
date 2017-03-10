@@ -17,4 +17,3 @@ a subset data frame
 \description{
 Alter a mutSpec input file keeping/adding entries in a selection of samples
 }
-

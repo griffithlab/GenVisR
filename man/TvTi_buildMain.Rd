@@ -42,4 +42,3 @@ GGplot Object
 Given a data frame with columns 'trans_tranv', 'sample', 'Freq', and 'Prop',
 build a transition/transversion plot
 }
-

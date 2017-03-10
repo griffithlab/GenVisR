@@ -20,4 +20,3 @@ a ggplot object
 \description{
 plot a barchart showing mutations per MB
 }
-

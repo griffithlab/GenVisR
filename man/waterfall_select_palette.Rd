@@ -17,4 +17,3 @@ A vector of colours to be used as palette
 \description{
 waterfall_select_palette
 }
-

@@ -16,4 +16,3 @@ a subset data frame
 Subset a MAF file setting keeping only sample information if a mutation
 is silent
 }
-

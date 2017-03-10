@@ -19,4 +19,3 @@ Character vector of ordered genes
 order a waterfall file ranking genes with more mutations higher if a gene
 order is unspecified.
 }
-

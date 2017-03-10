@@ -85,4 +85,3 @@ data <- as.data.frame(cbind(chromosome, coordinate, cn))
 # Plot raw copy number calls
 cnView(data, chr='chr14', genome='hg19', ideogram_txtSize=4)
 }
-

@@ -15,4 +15,3 @@ Object of class data frame
 A data set containg chromosome boundaries corresponding to hg19.
 }
 \keyword{datasets}
-

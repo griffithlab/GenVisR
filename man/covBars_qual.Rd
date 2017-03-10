@@ -17,4 +17,3 @@ a list of data frame and color vector
 given a matrix construct a plot to display coverage as percentage bars for a
 group of samples
 }
-

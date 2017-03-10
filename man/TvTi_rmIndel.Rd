@@ -16,4 +16,3 @@ Object of class data frame with indels removed
 Given a data frame with columns reference and variants remove all indels
 from data
 }
-

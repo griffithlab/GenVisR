@@ -78,4 +78,3 @@ parameter can be used to add an additional layer to the ggplot2 graphic
 # plot on internal GenVisR dataset
 cnFreq(LucCNseg)
 }
-

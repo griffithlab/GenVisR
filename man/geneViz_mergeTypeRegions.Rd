@@ -15,4 +15,3 @@ type.master A dataframe of merged elements of a certain type
 \description{
 Create a master region table by merging isoforms
 }
-

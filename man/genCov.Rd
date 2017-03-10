@@ -147,4 +147,3 @@ data <- list("Sample A"=cov_input_A)
 # Call genCov
 genCov(data, txdb, gr, genome, gene_labelTranscriptSize=3)
 }
-

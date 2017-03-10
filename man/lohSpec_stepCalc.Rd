@@ -19,4 +19,3 @@ list containing avg loh calculations for each step interval
 \description{
 Calculate avverage LOH within each step
 }
-

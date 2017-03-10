@@ -22,4 +22,3 @@ objects passing basic quality checks
 \description{
 Perform Basic quality checks for lolliplot input
 }
-

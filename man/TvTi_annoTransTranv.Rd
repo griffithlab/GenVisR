@@ -17,4 +17,3 @@ appended
 Given a data frame with columns reference and variant annotate the base
 change occurring
 }
-
