@@ -11,6 +11,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+[![Build Status]https://travis-ci.org/griffithlab/GenVisR.svg?branch=master](https://travis-ci.org/griffithlab/GenVisR)
+
 # GenVisR
 
 Please cite: "Skidmore et al. 2016 GenVisR: Genomic Visualizations in R Bioinformatics 32, 3012-3014"
@@ -304,21 +306,7 @@ covBars(x, colour=c("blue","grey","red"))
 
 ### cnFreq (proportional copy number alterations)
 
-`cnFreq` produces a plot displaying the proportion (default) or frequency of copy number losses/gains at a cohort level. Basic input consists of a data frame with rows representing the proportion of CN losses/gains across the genome (default), or actual CN values.
-
-```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=TRUE, warning=FALSE, results='asis', tidy=TRUE}
-# Example input to x
-xstart <- seq(0,4990000,length.out=500)
-xloss <- rep(runif(10,0,0.6),rep(50,10))/1.5
-xloss <- xloss + jitter(xloss,amount=0.002)
-x <- data.frame(chromosome=rep(paste0("chr",1:5),rep(500,5)), 
-start=xstart, end=xstart+10000, loss=xloss, gain=(1-xloss))
-
-# Plot the data
-cnFreq(x)
-```
-
-An alternate long data frame format with actual copy number values may be used. The default cutoffs for loss and gain are 1.5 and 2.5 respectively.
+`cnFreq` produces a plot displaying the proportion (default) or frequency of copy number losses/gains at a cohort level. Basic input consists of a data frame with rows representing CN values segment values.
 
 ```{r, eval=FALSE, tidy=TRUE}
 cnFreq(LucCNseg)
