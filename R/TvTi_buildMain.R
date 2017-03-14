@@ -67,7 +67,7 @@ TvTi_buildMain <- function(x, y=NULL, type='Proportion', label_x_axis=TRUE,
         xlabel <- xlab('')
     }
     
-    fill_palette <- scale_fill_manual(name='Transistion/Transversion',
+    fill_palette <- scale_fill_manual(name='Transition/Transversion',
                                       values=palette)
     
     # additional layers to plot?
