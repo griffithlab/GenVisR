@@ -19,4 +19,3 @@ a vector of samples in a sorted order
 perform a hiearchial sort on samples based on the presence of mutations in
 an ordered list of genes if a sample order is unspecified.
 }
-

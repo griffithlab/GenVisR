@@ -21,4 +21,3 @@ Object of class Granges list
 \description{
 Extract UTR coordinates within a GRanges object given a transcription database
 }
-

@@ -17,4 +17,3 @@ of plot (proportional losses/gain or frequency of losses/gains)
 \description{
 Perform a data quality check for inputs to cnFreq
 }
-

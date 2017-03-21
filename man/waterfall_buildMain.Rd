@@ -45,4 +45,3 @@ a ggplot2 object
 \description{
 Plot a Mutation Landscape with variables sample, gene, mutation
 }
-

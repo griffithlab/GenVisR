@@ -3,7 +3,7 @@
 #' An S4 class for the waterfall plot object
 #' @name Waterfall-class
 #' @rdname Waterfall-class
-#' @slot plotA gtable object for the top sub-plot.
+#' @slot PlotA gtable object for the top sub-plot.
 #' @slot plotB gtable object for the left sub-plot.
 #' @slot plotC gtable object for the main plot.
 #' @slot plotD gtable object for the bottom sub-plot.
@@ -12,7 +12,7 @@
 #' column names sample, gene, mutation, label.
 #' @slot simpleMutationCounts data.table object storing simplified mutation
 #' counts, should have column names sample, mutation, Freq, mutationBurden
-#' @slot complexMutationData data.table object storing mutation counts per
+#' @slot complexMutationCounts data.table object storing mutation counts per
 #' mutation type should have column names sample, mutation, Freq, mutationBurden.
 #' @slot GeneData
 #' @slot ClinicalData
@@ -26,7 +26,7 @@
 
 methods::setOldClass("gtable")
 setClass("Waterfall",
-         representation=representation(plotA="gtable",
+         representation=representation(PlotA="gtable",
                                        plotB="gtable",
                                        plotC="gtable",
                                        plotD="gtable",
@@ -49,7 +49,9 @@ setClass("Waterfall",
 setMethod(f="initialize",
           signature="Waterfall",
           definition=function(.Object, input, labelColumn, samples, coverage,
-                              noSynonymous, genes, mutationHierarchy, verbose){
+                              noSynonymous, genes, mutationHierarchy, recurrence, 
+                              geneOrder, geneMax, sampleOrder, plotA,
+                              plotATally, plotALayers, verbose){
 
               # convert to waterfall format
               .Object@primaryData <- toWaterfall(input, labelColumn, verbose)
@@ -60,7 +62,7 @@ setMethod(f="initialize",
               # subset samples if specified
               .Object@primaryData <- sampSubset(.Object, samples, verbose)
               
-              # calculate the mutation burden
+              # calculate the frequency and mutation burden
               .Object@simpleMutationCounts <- calcSimpleMutationBurden(.Object, coverage, verbose)
               .Object@complexMutationCounts <- calcComplexMutationBurden(.Object, coverage, verbose)
               
@@ -73,7 +75,22 @@ setMethod(f="initialize",
               # remove entries for the same gene/sample based on a hierarchy leaving one
               .Object@primaryData <- mutHierarchySubset(.Object, verbose)
               
-              browser()
+              # subset on recurrence of mutations
+              .Object@primaryData <- recurrenceSubset(.Object, recurrence, verbose)
+              
+              # set the order of genes for plotting
+              .Object@primaryData <- orderGenes(.Object, geneOrder, verbose)
+              
+              # limit to a maximum number of genes
+              .Object@primaryData <- maxGeneSubset(.Object, geneMax, verbose)
+              
+              # set the order of samples for plotting
+              .Object@primaryData <- orderSamples(.Object, sampleOrder, verbose)
+              
+              # create the top sub-plot
+              .Object@PlotA <- buildMutationPlot(.Object, plotA, plotATally, 
+                                                 plotALayers, verbose)
+              
               return(.Object)
           })
 
@@ -93,14 +110,35 @@ setMethod(f="initialize",
 #' mutations from most to least deleterious and column names "mutation" and
 #' "color". Used to change the default colors and/or to give priority to a
 #' mutation for the same gene/sample (see details and vignette).
+#' @param recurrence Numeric value between 0 and 1 specifying a
+#' mutation recurrence cutoff. Genes which do not have mutations in the
+#' proportion of samples defined are removed.
+#' @param geneOrder Character vector specifying the order in which to plot
+#' genes.
+#' @param geneMax Integer specifying the maximum number of genes to be plotted.
+#' Genes kept will be choosen based on the reccurence of mutations in samples.
+#' Unless geneOrder is specified.
+#' @param sampOrder Character vector specifying the order in which to plot
+#' samples.
+#' @param plotA String specifying the type of plot for the top sub-plot, one of
+#' "burden", "frequency", or NULL for a mutation burden (requires coverage to be
+#' specified), frequency of mutations, or no plot respectively.
+#' @param plotALayers list of ggplot2 layers to be passed to the plot.
+#' @param plotATally String specifying one of "simple" or "complex" for a
+#' simplified or complex tally of mutations respectively.
 #' @param verbose Boolean specifying if status messages should be reported
 #' @export
 Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
-                      noSynonymous=FALSE, genes=NULL, mutationHierarchy=NULL, verbose=FALSE){
+                      noSynonymous=FALSE, genes=NULL, mutationHierarchy=NULL,
+                      recurrence=NULL, geneOrder=NULL, geneMax=NULL,
+                      sampleOrder=NULL, plotA=c("burden", "frequency", NULL),
+                      plotATally=c("simple", "complex"), plotALayers=NULL,
+                      verbose=FALSE){
     cat("!!!!! Waterfall~Constructor !!!!!\n")
     new("Waterfall", input=input, labelColumn=labelColumn, samples=samples, coverage=coverage,
         noSynonymous=noSynonymous, genes=genes, mutationHierarchy=mutationHierarchy,
-        verbose=verbose)
+        recurrence=recurrence, geneOrder=geneOrder, geneMax=geneMax, sampleOrder=sampleOrder,
+        plotA=plotA, plotATally=plotATally, plotALayers=plotALayers, verbose=verbose)
 }
 
 #' @rdname Waterfall-methods
@@ -166,15 +204,12 @@ setMethod(f="sampSubset",
 setMethod(f="calcSimpleMutationBurden",
           signature="Waterfall",
           definition=function(object, coverage, verbose, ...){
-              # if coverage is not specified to not return a mutation burden calculation
-              if(!is.numeric(coverage)) return(data.table::data.table())
-              
               # access the part of the object we want to manipulate
               primaryData <- object@primaryData
               
               # status message
               if(verbose){
-                  memo <- paste("Calculating a simplified mutation burden.")
+                  memo <- paste("Calculating frequency and mutation burden.")
                   message(memo)
               }
               
@@ -190,6 +225,16 @@ setMethod(f="calcSimpleMutationBurden",
               simpleMutationCounts <- as.data.frame(table(primaryData[,c('sample', 'simpleMutation')]))
               data.table::setDT(simpleMutationCounts)
               colnames(simpleMutationCounts) <- c("sample", "mutation", "Freq")
+              
+              # if coverage is not specified return just frequencies
+              if(!is.numeric(coverage)){
+                  if(verbose){
+                      memo <- paste("coverage not specified, could not",
+                                    "calculate the mutation burden")
+                      message(memo)
+                      return(SimplemutationCounts)
+                  }
+              } 
               
               # mutation burden calculation
               simpleMutationCounts$mutationBurden <- simpleMutationCounts$Freq/coverage * 1000000
@@ -209,9 +254,6 @@ setMethod(f="calcSimpleMutationBurden",
 setMethod(f="calcComplexMutationBurden",
           signature="Waterfall",
           definition=function(object, coverage, verbose, ...){
-              # if coverage is not specified correctly do not return a mutation burden calculation
-              if(!is.numeric(coverage)) return(data.table::data.table())
-              
               # access the part of the object we want to manipulate
               primaryData <- object@primaryData
               
@@ -224,6 +266,16 @@ setMethod(f="calcComplexMutationBurden",
               # obtain a data table of mutation counts on the sample level
               complexMutationCounts <- as.data.frame(table(primaryData[,c('sample', 'mutation')]))
               data.table::setDT(complexMutationCounts)
+              
+              # if coverage is not specified return just frequencies
+              if(!is.numeric(coverage)){
+                  if(verbose){
+                      memo <- paste("coverage not specified, could not",
+                                    "calculate the mutation burden")
+                      message(memo)
+                      return(complexMutationCounts)
+                  }
+              } 
               
               # mutation burden calculation
               complexMutationCounts$mutationBurden <- complexMutationCounts$Freq/coverage * 1000000
@@ -280,8 +332,8 @@ setMethod(f="geneSubset",
               # access the part of the object we want to manipulate
               primaryData <- object@primaryData
               
-              # Dont do anything if samples is null
-              if(is.null(samples)) return(primaryData)
+              # Dont do anything if genes is null
+              if(is.null(genes)) return(primaryData)
               
               # print status message
               if(verbose){
@@ -329,6 +381,381 @@ setMethod(f="geneSubset",
 #' @noRd
 setMethod(f="mutHierarchySubset",
           signature="Waterfall",
-          definition=function(object, mutationHierarchy, verbose, ...){
-              return(object)
+          definition=function(object, verbose, ...){
+              # grab the data
+              primaryData <- object@primaryData
+              mutationHierarchy <- object@MutationHierarchy
+              
+              # refactor the data frame
+              primaryData$mutation<- factor(primaryData$mutation, levels=mutationHierarchy$mutation)
+              
+              # sort the data frame so that the duplicated call will remove the
+              # proper mutation
+              primaryData <- primaryData[order(primaryData$sample, primaryData$gene, primaryData$mutation),]
+              
+              # collapse the data on sample/gene
+              primaryData <- primaryData[!duplicated(primaryData[, c("sample", "gene")]), ]
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Removed", nrow(object@primaryData)-nrow(primaryData),
+                                "rows when setting the mutation hierarchy.")
+                  message(memo)
+              }
+              
+              return(primaryData)
+          })
+
+#' @rdname Waterfall-methods
+#' @aliases recurrenceSubset,Waterfall
+#' @param object Object of class waterfall
+#' @param recurrence Numeric value specifying a recurrence cutoff to require,
+#' genes not meeting this threshold are removed.
+#' @param verbose Boolean for status updates
+#' @return data.table object subset based on the recurrence of gene mutations.
+#' @noRd
+#' @importFrom stats na.omit
+setMethod(f="recurrenceSubset",
+signature="Waterfall",
+definition=function(object, recurrence, verbose, ...){
+    # access the part of the object we want to manipulate
+    primaryData <- object@primaryData
+    
+    # Dont do anything if recurrence is null
+    if(is.null(recurrence)) return(primaryData)
+    
+    # Perform quality checks
+    if(!is.numeric(recurrence)){
+        memo <- paste("argument supplied to recurrence is not of class",
+                      "numeric, attempting to coerce!")
+        warning(memo)
+        recurrence <- as.numeric(as.character(recurrence))
+    }
+    if(length(recurrence) > 1){
+        memo <- paste("argument supplied to recurrence has length > 1",
+                      "only the first element was used.")
+        warning(memo)
+        recurrence <- recurrence[1]
+    }
+    
+    # determine the frequency of gene mutations
+    mutRecur <- primaryData[, count := .N, by = list(gene)]
+    mutRecur <- unique(mutRecur[,c("gene", "count")])
+    mutRecur <- stats::na.omit(mutRecur)
+    mutRecur$prop <- mutRecur$count/nlevels(primaryData$sample)
+    
+    # If recurrence cutoff specified exceeds upper limit such that no
+    # useful plot would be generated, reset recurrence cutoff
+    maxRecur <- max(mutRecur$prop)
+    if(maxRecur < recurrence){
+        memo <- paste0("The recurrence cutoff specified exceeds the recurrence",
+                       " seen in the data, resetting this value to equal max ",
+                       "recurrence:", maxRecur)
+        warning(memo)
+        recurrence <- maxRecur
+    }
+    
+    gene_above_recur <- mutRecur[mutRecur$prop >= recurrence,]$gene
+    gene_below_recur <- mutRecur[mutRecur$prop < recurrence,]$gene
+    
+    # add NA to the end of 'gene_above_recurrence' vector, allowing for all
+    # samples having NA as a gene name to be retained in the subset below
+    gene_above_recur <- c(as.character(gene_above_recur), NA)
+    
+    # subset the original data frame based on the following: keep gene if it is
+    # in the gene vector in "mutation_recurrence_subset"
+    primaryData <- primaryData[(primaryData$gene %in% gene_above_recur), ]
+    
+    # print status message
+    if(verbose){
+        memo <- paste("Removing", length(unique(gene_below_recur)),
+                      "genes not meeting the recurrence cutoff threshold.")
+        message(memo)
+    }
+    
+    return(primaryData)
+})
+
+#' @rdname Waterfall-methods
+#' @aliases orderGenes,Waterfall
+#' @param object Object of class waterfall
+#' @param geneOrder Character vector specifying the order in which to plot
+#' genes.
+#' @param verbose Boolean for status updates
+#' @return data.table object genes reordered
+#' @noRd
+setMethod(f="orderGenes",
+          signature="Waterfall",
+          definition=function(object, geneOrder, verbose, ...){
+              # access the part of the object we want to manipulate
+              primaryData <- object@primaryData
+             
+              # print status message
+              if(verbose){
+                  memo <- paste("Setting gene order")
+              }
+              
+              # order the genes based of frequency
+              if(!is.null(geneOrder)) {
+                  # perform quality checks on geneOrder
+                  if(!is.character(geneOrder)){
+                      memo <- paste("Argument supplied to gene order is not of",
+                                    "class character, attempting to coerce.")
+                      geneOrder <- as.character(geneOrder)
+                      warning(memo)
+                  }
+                  if(any(duplicated(geneOrder))){
+                      memo <- paste("Detected duplicated element in geneOrder,",
+                                    "removing duplicates.")
+                      geneOrder <- unique(geneOrder)
+                      warning(memo)
+                  }
+                  
+                  # if there are any genes in geneOrder not in x, remove those
+                  gene_to_rmv <- geneOrder[!geneOrder %in% unique(primaryData$gene)]
+                  if(length(gene_to_rmv) > 0){
+                      memo <- paste("The following arguments to geneOrder were",
+                                    "not found in the data:", toString(gene_to_rmv))
+                      warning(memo)
+                      geneOrder <- geneOrder[geneOrder %in% unique(primaryData$gene)]
+                      primaryData$gene <- factor(primaryData$gene, levels=rev(geneOrder))
+                      return(primaryData)
+                  } else if(length(gene_to_rmv) == length(geneOrder)) {
+                      memo <- paste0("Found no genes supplied to geneOrder in the",
+                                     "data, check case.")
+                      warning(memo)
+                  }
+              }
+              
+              # order based on mutation frequency
+              gene_mutation_table <- table(primaryData[,c('gene', 'mutation')])
+              geneOrder <- names(sort(rowSums(gene_mutation_table)))
+              primaryData$gene <- factor(primaryData$gene, levels=geneOrder)
+              return(primaryData)
+          })
+
+#' @rdname Waterfall-methods
+#' @aliases maxGeneSubset,Waterfall
+#' @param object Object of class waterfall
+#' @param geneMax Integer specifying the maximum number of genes to be plotted.
+#' @param verbose Boolean for status updates
+#' @return data.table object subset to contain only the max number of genes.
+#' @noRd
+setMethod(f="maxGeneSubset",
+          signature="Waterfall",
+          definition=function(object, geneMax, verbose, ...){
+              # access the part of the object we want to manipulate
+              primaryData <- object@primaryData
+
+              # do nothing if null
+              if(is.null(geneMax)){
+                  return(primaryData)
+              }
+              
+              # perform quality checks
+              if(!is.numeric(geneMax)){
+                  memo <- paste("geneMax is not numeric, attempting to convert",
+                                "to an integer.")
+                  geneMax <- as.integer(geneMax)
+              }
+              
+              if(geneMax %% 1 != 0){
+                  memo <- paste("geneMax is not a whole number, rounding.")
+                  geneMax <- round(geneMax)
+              }
+              
+              # limit to max genes
+              keepGenes <- utils::tail(levels(primaryData$gene), geneMax)
+              removeGenes <- unique(primaryData[!primaryData$gene %in% keepGenes,"gene"])
+              primaryData <- primaryData[primaryData$gene %in% keepGenes,]
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("geneMax is set to", geneMax, "removing",
+                                nrow(removeGenes),"genes")
+              }
+              
+              return(primaryData)
+          })
+
+#' @rdname Waterfall-methods
+#' @aliases orderSamples,Waterfall
+#' @param object Object of class waterfall
+#' @param sampOrder Character vector specifying the order of samples
+#' @param verbose Boolean for status updates
+#' @return data.table object with samples reordered
+#' @noRd
+setMethod(f="orderSamples",
+          signature="Waterfall",
+          definition=function(object, sampleOrder, verbose, ...){
+              # access the part of the object we want to manipulate
+              primaryData <- object@primaryData
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("setting the order of samples.")
+                  message(memo)
+              }
+              
+              # if sampleOrder is specified reorder on that
+              if(!is.null(sampleOrder)){
+                  # perform quality checks
+                  if(!is.character(sampleOrder)){
+                      memo <- paste("sampleOrder is not a character vector,",
+                                    "attempting to coerce.")
+                      warning(memo)
+                      if(is.list(sampleOrder)){
+                          sampleOrder <- unlist(sampleOrder)
+                      }
+                      sampleOrder <- as.character(sampleOrder)
+                  }
+                  if(sum(duplicated(sampleOrder)) != 0){
+                      memo <- paste("Found duplicate elements in sampleOrder, uniquing!")
+                      warning(memo)
+                      sampleOrder <- unique(sampleOrder)
+                  }
+                  
+                  # check if there are any samples specified not in the data
+                  newSamples <- sampleOrder[!sampleOrder %in% levels(primaryData$sample)]
+                  if(length(newSamples) != 0){
+                      memo <- paste("The following samples were not detected",
+                                    "in the data or its subsets:",
+                                    toString(newSamples),
+                                    ". Binding these to the data.")
+                      warning(memo)
+                      newSampleDT <- data.table::data.table("sample"=newSamples, "gene"=NA, "mutation"=NA, "label"=NA)
+                      primaryData <- rbind(primaryData, newSampleDT, fill=TRUE)
+                  }
+                  
+                  # status message
+                  removeSample <- unique(primaryData$sample[!primaryData$sample %in% sampleOrder])
+                  if(length(removeSample) != 0){
+                      memo <- paste("Removing the samples:", toString(removeSample),
+                                    "which were found in the data but not sampleOrder")
+                      warning(memo)
+                      primaryData <- primaryData[!primaryData$sample %in% removeSample,]
+                  }
+                  
+                  # return the data with reordered samples
+                  primaryData$sample <- factor(primaryData$sample, levels=sampleOrder)
+                  return(primaryData)
+              }
+              
+              # perform a hierarchical sort if sampleOrder is null
+              # recast the data going from long format to wide format,
+              #values in this data are counts of a mutation call
+              wide_data <- reshape2::dcast(primaryData, sample ~ gene,
+                                           fun.aggregate = length, value.var="mutation")
+              
+              # apply a boolean function to convert the data frame values to 1's and 0's
+              values <- wide_data[,-1, drop=FALSE]
+              sample <- wide_data[,1]
+              values <- data.frame(apply(values, 2,
+                                         function(x) as.numeric(as.logical(x))))
+              wideBoolean <- cbind(sample, values)
+              
+              # reverse the columns so that genes with highest mutation's are 
+              # listed first (assumes gene_sort has been run on the data frame)
+              wideBoolean <- wideBoolean[,c(1, rev(2:ncol(wideBoolean)))]
+              
+              # if there are any NA values present in a sample at the gene put that
+              # remove that sample and save (at this stage it should be samples)
+              if(any(grepl("^NA.$", colnames(wideBoolean)))) {
+                  # Find which column has the NA header
+                  NA_index <- which(grepl("^NA.$", colnames(wideBoolean)))
+                  
+                  # Append NA column to end of data frame
+                  NA_gene <- wide_boolean[,NA_index]
+                  wide_boolean <- wide_boolean[,-NA_index]
+                  
+                  # Save copy and remove samples with no mutations,
+                  # these will be added to the end
+                  samp_no_mut <- wideBoolean[rowSums(wideBoolean[2:ncol(wideBoolean)]) == 0,]$sample
+                  samp_no_mut <- as.character(samp_no_mut)
+                  wideBoolean <- wideBoolean[!wideBoolean$sample %in% samp_no_mut,]
+              } else {
+                  samp_no_mut <- NULL
+              }
+              
+              # hiearchial sort on all column's (i.e. genes) such that samples are
+              # rearranged if there is a mutation in that gene
+              sampleOrder <- wideBoolean[do.call(order, as.list(-wideBoolean[2:ncol(wideBoolean)])),]$sample
+              
+              # Put those samples not in sample order in from the original levels of the
+              # data (these are samples with no mutations)
+              not_in <- as.character(levels(sampleOrder)[which(!levels(sampleOrder) %in% sampleOrder)])
+              not_in <- not_in[!not_in %in% samp_no_mut]
+              sampleOrder <- c(as.character(sampleOrder), as.character(not_in))
+              
+              # Put those samples with no mutations back in
+              if(!is.null(samp_no_mut)){
+                  sampleOrder <- c(sampleOrder, samp_no_mut)
+              }
+              
+              # set the new sample order
+              primaryData$sample <- factor(primaryData$sample, levels=sampleOrder)
+              return(primaryData)
+          })
+
+#' @rdname Waterfall-methods
+#' @aliases buildMutationPlot,Waterfall
+#' @param object Object of class waterfall
+#' @param plotA String specifying the type of plot for the top sub-plot, one of
+#' "burden", "frequency", or NULL for a mutation burden (requires coverage to be
+#' specified), frequency of mutations, or no plot respectively.
+#' @param plotATally String specifying one of "simple" or "complex" for a
+#' simplified or complex tally of mutations respectively.
+#' @param plotALayers list of ggplot2 layers to be passed to the plot.
+#' @param verbose Boolean for status updates
+#' @return gtable object containing the top sub-plot.
+#' @noRd
+setMethod(f="buildMutationPlot",
+          signature="Waterfall",
+          definition=function(object, plotA, plotATally, plotALayers, verbose, ...){
+              # grab only the first element for parameters
+              plotA <- plotA[1]
+              plotATally <- plotATally[1]
+              
+              browser()
+              # if plot type is null return an empty gtable
+              if(is.null(plotA)) return(gtable::gtable())
+              
+              # print status message
+              if(verbose) {
+                  memo <- paste("Constructing top sub-plot")
+                  message(memo)
+              }
+              
+              # perform quality checks
+              if(!is.null(plotALayers) && !is.list(plotALayers)){
+                  memo <- paste("plotALayers is not a list... attempting to coerce.")
+                  warning(memo)
+                  plotALayers <- as.list(plotALayers)
+                  if(any(lapply(plotALayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x)))){
+                      memo <- paste("plotALayers is not a list of ggproto or ",
+                                    "theme objects... setting plotALayers to NULL")
+                      warning(memo)
+                      plotALayers <- NULL
+                  }
+              }
+              if(!is.null(plotA) && !toupper(plotA) %in% toupper(c("frequency", "burden"))){
+                  memo <- paste("plotA is not set to \"frequency\", \"burden\"",
+                                " or NULL... defaulting to \"frequency\".")
+                  message(memo)
+                  plotA <- "frequency"
+              }
+              if(toupper(plotATally) %in% toupper(c("simple", "complex"))){
+                  memo <- paste("plotATally is not set to either \"simple\" or",
+                                " \"complex\"... defaulting to \"simple\"")
+                  message(memo)
+                  plotATally <- "simple"
+              }
+              
+              # extract the data for the type of plot we need
+              if(toupper(plotATally) == toupper("simple")){
+                  mutationData <- object@simpleMutationCounts
+              } else if(toupper(plotATally) == toupper("complex")) {
+                  mutationData <- object@complexMutationCounts
+              }
+
           })

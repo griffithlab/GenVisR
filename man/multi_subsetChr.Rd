@@ -17,4 +17,3 @@ object of class data frame
 \description{
 given a data frame subset out specific a chromosome
 }
-

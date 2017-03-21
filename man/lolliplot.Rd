@@ -173,4 +173,3 @@ colnames(data) <- c('gene', 'amino_acid_change', 'transcript_name')
 # Call lolliplot
 lolliplot(data)
 }
-

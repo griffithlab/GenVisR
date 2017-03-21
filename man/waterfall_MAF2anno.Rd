@@ -19,4 +19,3 @@ a data frame coerced from MAF to TGI format
 Convert columns of a mutation annotation file "MAF" into a format
 recognizable by internal functions
 }
-

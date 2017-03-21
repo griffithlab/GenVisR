@@ -19,4 +19,3 @@ a data frame coerced from VEP to intermal expected format
 Convert columns of a variant effect predictor file "VEP" into a format
 recognizable by internal functions
 }
-

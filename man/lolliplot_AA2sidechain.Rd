@@ -15,4 +15,3 @@ Object of class character
 \description{
 Given the 1 letter code an amino acid, return the side chian classification
 }
-

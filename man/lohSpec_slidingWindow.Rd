@@ -24,4 +24,3 @@ object of class dataframe containing LOH data
 \description{
 Obtain LOH heatmap on entire chromsomes from samples in a cohort
 }
-

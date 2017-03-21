@@ -18,4 +18,3 @@ ggplotGrob object
 \description{
 given a list of plots, align them on plotting space
 }
-

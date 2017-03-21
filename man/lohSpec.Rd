@@ -93,4 +93,3 @@ information can be supplied to the 'y' parameter which has priority over the
 # plot loh within the example dataset
 lohSpec(x=HCC1395_Germline)
 }
-

@@ -17,4 +17,3 @@ Object of class data frame taking the reduced form of x
 \description{
 Reduce lollis stacked ontop of each other to the amount specified
 }
-

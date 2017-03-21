@@ -2,8 +2,9 @@
 % Please edit documentation in R/MutationAnnotationFormat-class.R
 \docType{class}
 \name{MutationAnnotationFormat-class}
-\alias{MutationAnnotationFormat}
 \alias{MutationAnnotationFormat-class}
+\alias{MutationAnnotationFormat}
+\alias{MutationAnnotationFormat}
 \title{Class MutationAnnotationFormat}
 \usage{
 \S4method{initialize}{MutationAnnotationFormat}(.Object, path, version, verbose)

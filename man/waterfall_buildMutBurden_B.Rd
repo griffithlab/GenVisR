@@ -17,4 +17,3 @@ a ggplot object
 \description{
 plot a barchart showing mutation burden given by data frame
 }
-

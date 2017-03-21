@@ -89,7 +89,7 @@ MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
 setMethod(f="getPosition",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              positions <- getPosition(object@mafObject@position)
+              positions <- object@mafObject@position
               return(positions)
           })
 
@@ -98,7 +98,7 @@ setMethod(f="getPosition",
 setMethod(f="getMutation",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              mutations <- getMutation(object@mafObject@mutation)
+              mutations <- object@mafObject@mutation
               return(mutations)
           })
 
@@ -107,7 +107,7 @@ setMethod(f="getMutation",
 setMethod(f="getSample",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              sample <- getSample(object@mafObject@sample)
+              sample <- object@mafObject@sample
               return(sample)
           })
 
@@ -116,7 +116,7 @@ setMethod(f="getSample",
 setMethod(f="getMeta",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              meta <- getMeta(object@mafObject@meta)
+              meta <- object@mafObject@meta
               return(meta)
           })
 

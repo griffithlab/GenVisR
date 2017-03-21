@@ -18,4 +18,3 @@ a subset data frame
 \description{
 Subset a MAF file keeping only samples that meet a mutation recurrence cutoff
 }
-

@@ -64,4 +64,3 @@ A word of caution, users are advised to only use heterozygous germline calls in 
 # Plot loh for chromosome 5
 lohView(HCC1395_Germline, chr='chr5', genome='hg19', ideogram_txtSize=4)
 }
-

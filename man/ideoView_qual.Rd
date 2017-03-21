@@ -17,4 +17,3 @@ data frame
 \description{
 Check that input to ideoView is properly formatted
 }
-

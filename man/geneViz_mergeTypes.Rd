@@ -15,4 +15,3 @@ master A sorted dataframe of merged CDS and UTR elements
 \description{
 Create a master region table by merging isoforms
 }
-

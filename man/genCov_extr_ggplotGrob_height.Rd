@@ -15,4 +15,3 @@ ggplotGrob height parameters
 \description{
 extract plot height of ggplotGrob object
 }
-

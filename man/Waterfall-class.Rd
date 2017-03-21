@@ -2,15 +2,20 @@
 % Please edit documentation in R/Waterfall-class.R
 \docType{methods}
 \name{Waterfall-class}
-\alias{Waterfall}
 \alias{Waterfall-class}
+\alias{Waterfall}
+\alias{Waterfall}
 \title{Class Waterfall}
 \usage{
 \S4method{initialize}{Waterfall}(.Object, input, labelColumn, samples, coverage,
-  noSynonymous, genes, mutationHierarchy, verbose)
+  noSynonymous, genes, mutationHierarchy, recurrence, geneOrder, geneMax,
+  sampleOrder, plotA, plotATally, plotALayers, verbose)
 
 Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
   noSynonymous = FALSE, genes = NULL, mutationHierarchy = NULL,
+  recurrence = NULL, geneOrder = NULL, geneMax = NULL,
+  sampleOrder = NULL, plotA = c("burden", "frequency", NULL),
+  plotATally = c("simple", "complex"), plotALayers = NULL,
   verbose = FALSE)
 }
 \arguments{
@@ -31,7 +36,30 @@ mutations from most to least deleterious and column names "mutation" and
 "color". Used to change the default colors and/or to give priority to a
 mutation for the same gene/sample (see details and vignette).}
 
+\item{recurrence}{Numeric value between 0 and 1 specifying a
+mutation recurrence cutoff. Genes which do not have mutations in the
+proportion of samples defined are removed.}
+
+\item{geneOrder}{Character vector specifying the order in which to plot
+genes.}
+
+\item{geneMax}{Integer specifying the maximum number of genes to be plotted.
+Genes kept will be choosen based on the reccurence of mutations in samples.
+Unless geneOrder is specified.}
+
+\item{plotA}{String specifying the type of plot for the top sub-plot, one of
+"burden", "frequency", or NULL for a mutation burden (requires coverage to be
+specified), frequency of mutations, or no plot respectively.}
+
+\item{plotATally}{String specifying one of "simple" or "complex" for a
+simplified or complex tally of mutations respectively.}
+
+\item{plotALayers}{list of ggplot2 layers to be passed to the plot.}
+
 \item{verbose}{Boolean specifying if status messages should be reported}
+
+\item{sampOrder}{Character vector specifying the order in which to plot
+samples.}
 }
 \description{
 An S4 class for the waterfall plot object
@@ -43,7 +71,7 @@ Constructor for the Waterfall class.
 \section{Slots}{
 
 \describe{
-\item{\code{plotA}}{gtable object for the top sub-plot.}
+\item{\code{PlotA}}{gtable object for the top sub-plot.}
 
 \item{\code{plotB}}{gtable object for the left sub-plot.}
 
@@ -59,7 +87,7 @@ column names sample, gene, mutation, label.}
 \item{\code{simpleMutationCounts}}{data.table object storing simplified mutation
 counts, should have column names sample, mutation, Freq, mutationBurden}
 
-\item{\code{complexMutationData}}{data.table object storing mutation counts per
+\item{\code{complexMutationCounts}}{data.table object storing mutation counts per
 mutation type should have column names sample, mutation, Freq, mutationBurden.}
 
 \item{\code{MutationHierarchy}}{data.table object storing the hierarchy of mutation

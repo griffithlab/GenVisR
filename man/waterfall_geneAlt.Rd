@@ -18,4 +18,3 @@ a subset data frame
 Subset a internal mutSpec file keeping only samples within the specified gene
  list
 }
-

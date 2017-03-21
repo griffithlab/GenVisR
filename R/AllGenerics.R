@@ -117,3 +117,53 @@ setGeneric(
     name="setMutationHierarchy",
     def=function(object, mutationHierarchy, verbose, ...){standardGeneric("setMutationHierarchy")}
 )
+
+#' Method recurrenceSubset
+#'
+#' @name recurrenceSubset
+#' @rdname recurrenceSubset-methods
+#' @noRd
+setGeneric(
+    name="recurrenceSubset",
+    def=function(object, recurrence, verbose, ...){standardGeneric("recurrenceSubset")}
+)
+
+#' Method orderGenes
+#'
+#' @name orderGenes
+#' @rdname orderGenes-methods
+#' @noRd
+setGeneric(
+    name="orderGenes",
+    def=function(object, geneOrder, verbose, ...){standardGeneric("orderGenes")}
+)
+
+#' Method orderGenes
+#'
+#' @name maxGeneSubset
+#' @rdname maxGeneSubset-methods
+#' @noRd
+setGeneric(
+    name="maxGeneSubset",
+    def=function(object, geneMax, verbose, ...){standardGeneric("maxGeneSubset")}
+)
+
+#' Method orderSamples
+#'
+#' @name orderSamples
+#' @rdname orderSamples-methods
+#' @noRd
+setGeneric(
+    name="orderSamples",
+    def=function(object, sampleOrder, verbose, ...){standardGeneric("orderSamples")}
+)
+
+#' Method buildMutationPlot
+#'
+#' @name buildMutationPlot
+#' @rdname buildMutationPlot-methods
+#' @noRd
+setGeneric(
+    name="buildMutationPlot",
+    def=function(object, plotA, plotATally, plotALayers, verbose, ...){standardGeneric("buildMutationPlot")}
+)

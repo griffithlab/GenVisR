@@ -38,4 +38,3 @@ ggplot object
 given a data frame construct a plot to display proportions of losses and
 gains across the genome
 }
-

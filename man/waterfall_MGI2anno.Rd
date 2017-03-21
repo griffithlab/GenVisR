@@ -19,4 +19,3 @@ a data frame coerced from MGI to internal annotation format
 Convert columns of a mutation annotation file "MGI" into a format
 recognizable by internal functions
 }
-

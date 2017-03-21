@@ -73,4 +73,3 @@ end=xstart+10000, loss=xloss, gain=(1-xloss))
 # Plot the data
 cnFreq(x)
 }
-

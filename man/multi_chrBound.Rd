@@ -16,4 +16,3 @@ object of class data frame formatted to internal specifications
 given a genome obtain Start and Stop positions for all chromosomes in the
 genome
 }
-

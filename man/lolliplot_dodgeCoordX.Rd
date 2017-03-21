@@ -31,4 +31,3 @@ numeric vector of dodged position coordinates on x axis
 \description{
 given amino acid position dodge on x axis
 }
-
