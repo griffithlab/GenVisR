@@ -14,7 +14,8 @@
 #' counts, should have column names sample, mutation, Freq, mutationBurden
 #' @slot complexMutationCounts data.table object storing mutation counts per
 #' mutation type should have column names sample, mutation, Freq, mutationBurden.
-#' @slot GeneData
+#' @slot geneData data.table object storing gene counts, should have column
+#' names gene, mutation, count.
 #' @slot ClinicalData
 #' @slot MutationHierarchy data.table object storing the hierarchy of mutation
 #' type in order of most to least important and the mapping of mutation type to
@@ -34,7 +35,7 @@ setClass("Waterfall",
                                        primaryData="data.table",
                                        simpleMutationCounts="data.table",
                                        complexMutationCounts="data.table",
-                                       GeneData="data.table",
+                                       geneData="data.table",
                                        ClinicalData="data.table",
                                        MutationHierarchy="data.table"),
          validity=function(object){
@@ -51,9 +52,10 @@ setMethod(f="initialize",
           definition=function(.Object, input, labelColumn, samples, coverage,
                               noSynonymous, genes, mutationHierarchy, recurrence, 
                               geneOrder, geneMax, sampleOrder, plotA,
-                              plotATally, plotALayers, verbose){
+                              plotATally, plotALayers, plotB, plotBTally,
+                              plotBLayers, verbose){
 
-              # convert to waterfall format
+              # convert to initial data to waterfall format
               .Object@primaryData <- toWaterfall(input, labelColumn, verbose)
               
               # assign the mapping of mutations and colors
@@ -90,7 +92,16 @@ setMethod(f="initialize",
               # create the top sub-plot
               .Object@PlotA <- buildMutationPlot(.Object, plotA, plotATally, 
                                                  plotALayers, verbose)
+              # summarize gene level data
+              .Object@geneData <- constructGeneData(.Object, verbose)
               
+              # create left sub-plot
+              .Object@PlotB <- buildGenePlot(.Object, plotB, plotBTally,
+                                             plotBLayers, verbose)
+              
+              # create the main plot
+              .ObjectPlotC <- buildWaterfallPlot(.Object,verbose)
+              browser()
               return(.Object)
           })
 
@@ -126,19 +137,28 @@ setMethod(f="initialize",
 #' @param plotALayers list of ggplot2 layers to be passed to the plot.
 #' @param plotATally String specifying one of "simple" or "complex" for a
 #' simplified or complex tally of mutations respectively.
+#' @param plotB String specifying the type of plot for the left sub-plot, one of
+#' "proportion", "frequency", or NULL for a plot of gene proportions frequencies
+#' , or no plot respectively.
+#' @param plotBTally String specifying one of "simple" or "complex" for a
+#' simplified or complex tally of genes respectively.
+#' @param plotBLayers list of ggplot2 layers to be passed to the plot.
 #' @param verbose Boolean specifying if status messages should be reported
 #' @export
 Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
                       noSynonymous=FALSE, genes=NULL, mutationHierarchy=NULL,
                       recurrence=NULL, geneOrder=NULL, geneMax=NULL,
-                      sampleOrder=NULL, plotA=c("burden", "frequency", NULL),
+                      sampleOrder=NULL, plotA=c("frequency", "burden", NULL),
                       plotATally=c("simple", "complex"), plotALayers=NULL,
+                      plotB=c("proportion", "frequency", NULL),
+                      plotBTally=c("simple", "complex"), plotBLayers=NULL,
                       verbose=FALSE){
     cat("!!!!! Waterfall~Constructor !!!!!\n")
     new("Waterfall", input=input, labelColumn=labelColumn, samples=samples, coverage=coverage,
         noSynonymous=noSynonymous, genes=genes, mutationHierarchy=mutationHierarchy,
         recurrence=recurrence, geneOrder=geneOrder, geneMax=geneMax, sampleOrder=sampleOrder,
-        plotA=plotA, plotATally=plotATally, plotALayers=plotALayers, verbose=verbose)
+        plotA=plotA, plotATally=plotATally, plotALayers=plotALayers, plotB=plotB,
+        plotBTally=plotBTally, plotBLayers=plotBLayers, verbose=verbose)
 }
 
 #' @rdname Waterfall-methods
@@ -207,6 +227,19 @@ setMethod(f="calcSimpleMutationBurden",
               # access the part of the object we want to manipulate
               primaryData <- object@primaryData
               
+              # quality checks
+              if(length(coverage) > 1 && !is.null(coverage)){
+                  memo <- paste("coverage has a length > 1, using only the",
+                                "first element.")
+                  warning(memo)
+                  coverage <- coverage[1]
+              }
+              if(!is.numeric(coverage) && !is.null(coverage)){
+                  memo <- paste("coverage is not numeric, attempting to coerce.")
+                  warning(memo)
+                  coverage <- as.numeric(coverage)
+              }
+              
               # status message
               if(verbose){
                   memo <- paste("Calculating frequency and mutation burden.")
@@ -232,7 +265,8 @@ setMethod(f="calcSimpleMutationBurden",
                       memo <- paste("coverage not specified, could not",
                                     "calculate the mutation burden")
                       message(memo)
-                      return(SimplemutationCounts)
+                      simpleMutationCounts$mutationBurden <- NA
+                      return(simpleMutationCounts)
                   }
               } 
               
@@ -257,6 +291,19 @@ setMethod(f="calcComplexMutationBurden",
               # access the part of the object we want to manipulate
               primaryData <- object@primaryData
               
+              # quality checks
+              if(length(coverage) > 1 && !is.null(coverage)){
+                  memo <- paste("coverage has a length > 1, using only the",
+                                "first element.")
+                  warning(memo)
+                  coverage <- coverage[1]
+              }
+              if(!is.numeric(coverage) && !is.null(coverage)){
+                  memo <- paste("coverage is not numeric, attempting to coerce.")
+                  warning(memo)
+                  coverage <- as.numeric(coverage)
+              }
+              
               # status message
               if(verbose){
                   memo <- paste("Calculating a complex mutation burden.")
@@ -271,8 +318,9 @@ setMethod(f="calcComplexMutationBurden",
               if(!is.numeric(coverage)){
                   if(verbose){
                       memo <- paste("coverage not specified, could not",
-                                    "calculate the mutation burden")
+                                    "calculate the mutation burden... skipping")
                       message(memo)
+                      complexMutationCounts$mutationBurden <- NA
                       return(complexMutationCounts)
                   }
               } 
@@ -709,6 +757,8 @@ setMethod(f="orderSamples",
 #' @param verbose Boolean for status updates
 #' @return gtable object containing the top sub-plot.
 #' @noRd
+#' @import ggplot2
+#' @importFrom gtable gtable
 setMethod(f="buildMutationPlot",
           signature="Waterfall",
           definition=function(object, plotA, plotATally, plotALayers, verbose, ...){
@@ -716,14 +766,20 @@ setMethod(f="buildMutationPlot",
               plotA <- plotA[1]
               plotATally <- plotATally[1]
               
-              browser()
               # if plot type is null return an empty gtable
               if(is.null(plotA)) return(gtable::gtable())
-              
+
               # print status message
               if(verbose) {
                   memo <- paste("Constructing top sub-plot")
                   message(memo)
+              }
+              
+              # extract the data for the type of plot we need
+              if(toupper(plotATally) == toupper("simple")){
+                  mutationData <- object@simpleMutationCounts
+              } else if(toupper(plotATally) == toupper("complex")) {
+                  mutationData <- object@complexMutationCounts
               }
               
               # perform quality checks
@@ -744,18 +800,205 @@ setMethod(f="buildMutationPlot",
                   message(memo)
                   plotA <- "frequency"
               }
-              if(toupper(plotATally) %in% toupper(c("simple", "complex"))){
+              if(all(is.na(mutationData$mutationBurden)) && toupper(plotA) == toupper("burden")){
+                  memo <- paste("plotA is set to:",toString(plotA),"but could",
+                                "not find calculated mutation burden, please",
+                                "specify coverage!, Resetting plotA to frequency.")
+                  warning(memo)
+                  plotA <- "frequency"
+              }
+              if(!toupper(plotATally) %in% toupper(c("simple", "complex"))){
                   memo <- paste("plotATally is not set to either \"simple\" or",
                                 " \"complex\"... defaulting to \"simple\"")
                   message(memo)
                   plotATally <- "simple"
               }
               
-              # extract the data for the type of plot we need
-              if(toupper(plotATally) == toupper("simple")){
-                  mutationData <- object@simpleMutationCounts
-              } else if(toupper(plotATally) == toupper("complex")) {
-                  mutationData <- object@complexMutationCounts
+              # make sure sample levels match primaryData for plotting
+              mutationData <- mutationData[mutationData$sample %in% unique(object@primaryData$sample),]
+              mutationData$sample <- factor(mutationData$sample, levels=levels(object@primaryData$sample))
+              if(toupper(plotATally) == toupper("complex")) {
+                  mutationData$mutation <- factor(mutationData$mutation, levels=levels(object@primaryData$mutation))
+              } else if(toupper(plotATally) == toupper("simple")) {
+                  mutationData$mutation <- factor(mutationData$mutation, levels=c("Non Synonymous","Synonymous"))
               }
+              
+              ############# set ggplot2 layers #################################
+              
+              # theme
+              plotTheme <- theme(axis.ticks.x = element_blank(),
+                                 axis.text.x = element_blank(),
+                                 axis.title.x = element_blank(),
+                                 legend.title = element_text(size=14),
+                                 axis.text.y = element_text(colour = "black"),
+                                 axis.title.y = element_text(colour = "black"),
+                                 panel.background = element_blank(),
+                                 # panel.grid.minor.y = element_line(colour = "black"),
+                                 panel.grid.major.y = element_line(colour = "grey80"),
+                                 panel.grid.minor.x = element_blank(),
+                                 panel.grid.major.x = element_blank(),
+                                 panel.border = element_rect(fill = NA)
+              )
+              # legend
+              if(toupper(plotATally) == toupper("simple")){
+                  plotLegend <- scale_fill_manual(name="Translational Effect",
+                                                  values=c("Synonymous"="red", "Non Synonymous"="blue"),
+                                                  breaks=c("Synonymous", "Non Synonymous"),
+                                                  drop=FALSE)
+              } else if(toupper(plotATally) == toupper("complex")){
+                  plotLegend <- scale_fill_manual(name="Translational Effect",
+                                                  values=object@MutationHierarchy$color,
+                                                  breaks=object@MutationHierarchy$mutation,
+                                                  drop=FALSE)
+              }
+              
+              # titles
+              if(toupper(plotA) == toupper("frequency")) {
+                  plotTitleY <- ylab("Mutation Frequency")
+              } else if(toupper(plotA) == toupper("burden")) {
+                  plotTitleY <- ylab("Mutations\nper MB")
+              }
+              
+              #  geom definition
+              plotGeom <- geom_bar(stat='identity', alpha=.75, width=1)
+              
+              # plot
+              if(toupper(plotA) == toupper("frequency")) {
+                  mutPlot <- ggplot(mutationData, aes_string(x='sample', y='Freq', fill='mutation'))
+              } else if(toupper(plotA) == toupper("burden")) {
+                  mutPlot <- ggplot(mutationData, aes_string(x='sample', y='mutationBurden', fill='mutation'))
+              }
+              mutPlot <- mutPlot + plotGeom + plotTitleY + plotLegend + plotTheme + plotALayers
+              
+              # convert to gtable grob
+              plotGrob <- ggplotGrob(mutPlot)
+              return(plotGrob)
+          })
 
+#' @rdname Waterfall-methods
+#' @aliases constructGeneData,Waterfall
+#' @param object Object of class waterfall
+#' @param verbose Boolean for status updates
+#' @return data.table object containing summarized gene level data
+#' @noRd
+setMethod(f="constructGeneData",
+          signature="Waterfall",
+          definition=function(object, verbose, ...){
+              # extract the data to work with
+              geneData <- object@primaryData
+              
+              # status message
+              if(verbose){
+                  memo <- paste("Constructing GeneData")
+              }
+              
+              # construct geneData
+              geneData <- geneData[, count := .N, by = list(gene, mutation)]
+              geneData <- unique(geneData[,c("gene", "mutation", "count")])
+              geneData$gene <- factor(geneData$gene, levels=levels(object@primaryData$gene))
+              
+              return(geneData)
+          })
+
+#' @rdname Waterfall-methods
+#' @aliases buildGenePlot,Waterfall
+#' @param object Object of class waterfall
+#' @param plotB String specifying the type of plot for the left sub-plot, one of
+#' "proportion", "frequency", or NULL for a plot of gene proportions frequencies
+#' , or no plot respectively.
+#' @param plotBTally String specifying one of "simple" or "complex" for a
+#' simplified or complex tally of genes respectively.
+#' @param plotBLayers list of ggplot2 layers to be passed to the plot.
+#' @param verbose Boolean for status updates
+#' @return gtable object containing the left sub-plot.
+#' @noRd
+#' @import ggplot2
+#' @importFrom gtable gtable
+setMethod(f="buildGenePlot",
+          signature="Waterfall",
+          definition=function(object, plotB, plotBTally, plotBLayers, verbose, ...){
+              # grab only the first element for parameters
+              plotB <- plotB[1]
+              plotBTally <- plotBTally[1]
+              
+              # if plot type is null return an empty gtable
+              if(is.null(plotB)) return(gtable::gtable())
+              
+              # extract the data needed for this plot
+              geneData <- object@geneData
+              
+              # print status message
+              if(verbose) {
+                  memo <- paste("Constructing left sub-plot")
+                  message(memo)
+              }
+              
+              # perform quality checks
+              if(!is.null(plotBLayers) && !is.list(plotBLayers)){
+                  memo <- paste("plotBLayers is not a list... attempting to coerce.")
+                  warning(memo)
+                  plotBLayers <- as.list(plotBLayers)
+                  if(any(lapply(plotBLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x)))){
+                      memo <- paste("plotBLayers is not a list of ggproto or ",
+                                    "theme objects... setting plotBLayers to NULL")
+                      warning(memo)
+                      plotBLayers <- NULL
+                  }
+              }
+              if(!is.null(plotB) && !toupper(plotB) %in% toupper(c("frequency", "proportion"))){
+                  memo <- paste("plotB is not set to \"frequency\", \"proportion\"",
+                                " or NULL... defaulting to \"proportion\".")
+                  message(memo)
+                  plotB <- "proportion"
+              }
+              if(!toupper(plotBTally) %in% toupper(c("simple", "complex"))){
+                  memo <- paste("plotBTally is not set to either \"simple\" or",
+                                " \"complex\"... defaulting to \"simple\"")
+                  message(memo)
+                  plotBTally <- "simple"
+              }
+              
+              # determine proportion of gene mutations
+              sampleCount <- nlevels(object@primaryData$sample)
+              geneData$proportion <- geneData$count/sampleCount * 100
+              
+              ################ ggplot2 #########################################
+              
+              # theme
+              plotTheme <- theme(axis.text.y=element_text(colour='black', face='italic'),
+                                 axis.title.y=element_blank(),
+                                 legend.position=('none'))
+              # titles
+              if(plotB == "frequency"){
+                  plotYlabel <- ylab('# Mutant')
+              }else if(plotB == "proportion"){
+                  plotYlabel <- ylab('% Mutant')
+              }
+              
+              # legend
+              if(plotBTally == "simple"){
+                  plotLegend <- scale_fill_manual(name="Translational Effect",
+                                                  values=object@MutationHierarchy$color,
+                                                  breaks=object@MutationHierarchy$mutation,
+                                                  drop=FALSE)
+              }else if(plotBTally == "complex"){
+                  plotLegend <- scale_fill_manual(name="Translational Effect",
+                                                  values=object@MutationHierarchy$color,
+                                                  breaks=object@MutationHierarchy$mutation,
+                                                  drop=FALSE)
+              }
+              
+              # geom definition
+              plotGeom <- geom_bar(position='stack', alpha=.75, width=1, stat='identity')
+              
+              # plot
+              if(plotB == "frequency"){
+                  genePlot <- ggplot(geneData, aes_string(x='gene', y='proportion', fill='mutation'))
+              }else if(plotB == "proportion"){
+                  genePlot <- ggplot(geneData, aes_string(x='gene', y='count', fill='mutation'))
+              }
+              genePlot <- genePlot + plotGeom + theme_bw() + coord_flip() + plotTheme +
+                  plotYlabel + scale_y_reverse() + plotLegend + plotBLayers
+              
+              plotGrob <- ggplotGrob(genePlot)
           })

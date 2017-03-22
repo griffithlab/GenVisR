@@ -9,14 +9,16 @@
 \usage{
 \S4method{initialize}{Waterfall}(.Object, input, labelColumn, samples, coverage,
   noSynonymous, genes, mutationHierarchy, recurrence, geneOrder, geneMax,
-  sampleOrder, plotA, plotATally, plotALayers, verbose)
+  sampleOrder, plotA, plotATally, plotALayers, plotB, plotBTally, plotBLayers,
+  verbose)
 
 Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
   noSynonymous = FALSE, genes = NULL, mutationHierarchy = NULL,
   recurrence = NULL, geneOrder = NULL, geneMax = NULL,
-  sampleOrder = NULL, plotA = c("burden", "frequency", NULL),
+  sampleOrder = NULL, plotA = c("frequency", "burden", NULL),
   plotATally = c("simple", "complex"), plotALayers = NULL,
-  verbose = FALSE)
+  plotB = c("proportion", "frequency", NULL), plotBTally = c("simple",
+  "complex"), plotBLayers = NULL, verbose = FALSE)
 }
 \arguments{
 \item{input}{MutationAnnotationFormat class holding genomic information.}
@@ -56,6 +58,15 @@ simplified or complex tally of mutations respectively.}
 
 \item{plotALayers}{list of ggplot2 layers to be passed to the plot.}
 
+\item{plotB}{String specifying the type of plot for the left sub-plot, one of
+"proportion", "frequency", or NULL for a plot of gene proportions frequencies
+, or no plot respectively.}
+
+\item{plotBTally}{String specifying one of "simple" or "complex" for a
+simplified or complex tally of genes respectively.}
+
+\item{plotBLayers}{list of ggplot2 layers to be passed to the plot.}
+
 \item{verbose}{Boolean specifying if status messages should be reported}
 
 \item{sampOrder}{Character vector specifying the order in which to plot
@@ -89,6 +100,9 @@ counts, should have column names sample, mutation, Freq, mutationBurden}
 
 \item{\code{complexMutationCounts}}{data.table object storing mutation counts per
 mutation type should have column names sample, mutation, Freq, mutationBurden.}
+
+\item{\code{geneData}}{data.table object storing gene counts, should have column
+names gene, mutation, count.}
 
 \item{\code{MutationHierarchy}}{data.table object storing the hierarchy of mutation
 type in order of most to least important and the mapping of mutation type to

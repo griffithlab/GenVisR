@@ -28,7 +28,7 @@ NeedsCompilation: no
 Author: Zachary Skidmore [aut, cre], Alex Wagner [aut], Robert Lesurf [aut],
     Katie Campbell [aut], Jason Kunisaki [aut], Obi Griffith [aut], Malachi Griffith
     [aut]
-Collate:
+Collate: 
     'AllGenerics.R'
     'GenVisR.R'
     'MutationAnnotationFormat_Virtual-class.R'
@@ -51,6 +51,7 @@ Collate:
     'Waterfall-class.R'
     'cnFreq.R'
     'cnFreq_buildMain.R'
+    'cnFreq_disjoin.R'
     'cnFreq_qual.R'
     'cnSpec.R'
     'cnSpec_buildMain.R'
@@ -138,12 +139,15 @@ Collate:
     'waterfall_buildMain.R'
     'waterfall_buildMutBurden_A.R'
     'waterfall_buildMutBurden_B.R'
+    'waterfall_build_proportions.R'
     'waterfall_calcMutFreq.R'
     'waterfall_geneAlt.R'
     'waterfall_geneRecurCutoff.R'
     'waterfall_geneSort.R'
     'waterfall_hierarchyTRV.R'
+    'waterfall_palette_names.R'
     'waterfall_qual.R'
     'waterfall_rmvSilent.R'
     'waterfall_sampAlt.R'
     'waterfall_sampSort.R'
+    'waterfall_select_palette.R'

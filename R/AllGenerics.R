@@ -167,3 +167,23 @@ setGeneric(
     name="buildMutationPlot",
     def=function(object, plotA, plotATally, plotALayers, verbose, ...){standardGeneric("buildMutationPlot")}
 )
+
+#' Method constructGeneData
+#'
+#' @name constructGeneData
+#' @rdname constructGeneData-methods
+#' @noRd
+setGeneric(
+    name="constructGeneData",
+    def=function(object, verbose, ...){standardGeneric("constructGeneData")}
+)
+
+#' Method buildGenePlot
+#'
+#' @name buildGenePlot
+#' @rdname buildGenePlot-methods
+#' @noRd
+setGeneric(
+    name="buildGenePlot",
+    def=function(object, plotB, plotBTally, plotBLayers, verbose, ...){standardGeneric("buildGenePlot")}
+)
