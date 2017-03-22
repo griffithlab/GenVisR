@@ -9,7 +9,8 @@ TvTi(x, fileType = NULL, y = NULL, clinData = NULL, type = "Proportion",
   "#FEE08B", "#E6F598", "#99D594", "#3288BD"), tvtiLayer = NULL,
   expecLayer = NULL, sort = "none", clinLegCol = NULL,
   clinVarCol = NULL, clinVarOrder = NULL, clinLayer = NULL,
-  progress = TRUE, out = "plot")
+  progress = TRUE, out = "plot", sample_order_input, layers = NULL,
+  return_plot = FALSE)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing transitions and
@@ -78,6 +79,12 @@ the function.}
 
 \item{out}{Character vector specifying the the object to output, one of
 "data", "grob", or "plot", defaults to "plot" (see returns).}
+
+\item{sample_order_input}{Sample orders to be used}
+
+\item{layers}{ggplot object to be added to proportions plot}
+
+\item{return_plot}{Return as ggplot object? Only returns main plot}
 }
 \value{
 One of the following, a list of dataframes containing data to be

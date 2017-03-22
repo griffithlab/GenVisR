@@ -58,7 +58,8 @@ UCSC MySQL database to retrieve this information. Alternatively the user can
 manually supply this information as a data frame to the `y` parameter, input
 to the `y` parameter take precedence of input to `genome`.
 
-A word of caution, users are advised to only use heterozygous germline calls in input to `x`, failure to do so may result in a misleading visual!
+A word of caution, users are advised to only use heterozygous germline calls
+in input to `x`, failure to do so may result in a misleading visual!
 }
 \examples{
 # Plot loh for chromosome 5

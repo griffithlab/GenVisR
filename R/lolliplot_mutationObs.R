@@ -66,7 +66,7 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
     if(all(grepl("p\\.", mutation_coord)))
     {
         message("Detected p. notation for amino_acid_change")
-        mutation_coord <- as.numeric(gsub("p\\.[a-zA-z]*(\\d+).*?$", "\\1",
+        mutation_coord <- as.numeric(gsub("p\\.[*a-zA-z]*(\\d+).*?$", "\\1",
                                           mutation_coord, perl=TRUE))
     } else if(all(grepl("c\\.", mutation_coord))) {
         memo <- paste0("c. notation is not currently supported",

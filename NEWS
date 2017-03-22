@@ -1,28 +1,39 @@
-CHANGES IN VERSION 0.99.20
+CHANGES IN Version 1.4.7
+------------------------
+- patch to fix possible conflicts between the rmvSilent=T and fileType="custom" parameter in waterfall()
+
+CHANGES IN Version 1.4.6
+------------------------
+- fixed typo with new feature in cnFreq
+
+CHANGES IN VERSION 1.4.5
+------------------------
+- fixed issue where plot would not render/take awhile for functions requiring a genome and using hg38
+- Dramatically increased performance of cnFreq()
+- cnFreq() no longer requires genomic segments to be identical across samples
+- cnFreq() can now selectively plot chromosomes
+- cnFreq() can now plot both frequency/proportion regardless of data input type
+
+CHANGES IN VERSION 1.4.4
+------------------------
+- fixed bug where incorrect cell labels were overlayed with proper ones when removing silent mutations
+
+CHANGES IN VERSION 1.4.3
+------------------------
+- fixed bug in cnFreq where cnFreq would produce an error (improperly) when looking for consistent windows
+
+CHANGES IN VERSION 1.4.2
+------------------------
+- fixed bug caused by updates to gridExtra when using genCov
+
+CHANGES IN VERSION 1.4.1
+------------------------
+- patch to fix alignments due to ggplot2 update
+
+CHANGES IN VERSION 1.4.0
 --------------------------
-- Bug fix for new code introduced in 0.99.19
 
-CHANGES IN VERSION 0.99.19
---------------------------
-- Added option for custom sort of gene/sample in waterfall plot
-- Added waterfall specific vignette
-
-CHANGES IN VERSION 0.99.18
---------------------------
-- Minor bug fixes in cnSpec
-
-CHANGES IN VERSION 0.99.17
---------------------------
-- Adding new feature allowing functions to export data, grob, or plots
-
-CHANGES IN VERSION 0.99.15
---------------------------
-- Added documentation fo new function lohView
-
-CHANGES IN VERSION 0.99.10
----------------------------
-- Updated Documentation
-
-CHANGES IN VERSION 0.99.0
----------------------------
-- Develpment Version - Preparing for Release
+- Added new functionality to waterfall()
+- Transitions and transverions can be plotted as a waterfall subplot
+- mutation type proportions can now be plotted as a waterfall subplot
+- minor bug fixes to waterfall

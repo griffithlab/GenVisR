@@ -65,7 +65,7 @@ waterfall_hierarchyTRV <- function(x, file_type, variant_class_order)
                                 "feature_truncation", "intergenic_variant")
         }
     } else {
-        mutation_order <- variant_class_order
+        mutation_order <- unique(c(variant_class_order, NA))
     }
     
     # refactor the data frame
