@@ -15,7 +15,7 @@ Depends: R (>= 3.3.0), methods
 Imports: AnnotationDbi, biomaRt, BiocGenerics, Biostrings, DBI, FField, GenomicFeatures,
          GenomicRanges (>= 1.25.4), ggplot2 (>= 2.1.0), grid, gridExtra, gtable, gtools,
          IRanges (>= 2.7.5), plyr (>= 1.8.3), reshape2, Rsamtools, scales, stats,
-         utils, viridis
+         utils, viridis, data.table
 License: GPL-3 + file LICENSE
 BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification, DNASeq
@@ -30,6 +30,7 @@ Author: Zachary Skidmore [aut, cre], Alex Wagner [aut], Robert Lesurf [aut],
     [aut]
 Collate: 
     'AllGenerics.R'
+    'Clinical-class.R'
     'GenVisR.R'
     'MutationAnnotationFormat_Virtual-class.R'
     'MutationAnnotationFormat-class.R'

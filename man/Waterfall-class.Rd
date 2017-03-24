@@ -10,7 +10,7 @@
 \S4method{initialize}{Waterfall}(.Object, input, labelColumn, samples, coverage,
   noSynonymous, genes, mutationHierarchy, recurrence, geneOrder, geneMax,
   sampleOrder, plotA, plotATally, plotALayers, plotB, plotBTally, plotBLayers,
-  verbose)
+  gridOverlay, drop, labelSize, labelAngle, sampleNames, verbose)
 
 Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
   noSynonymous = FALSE, genes = NULL, mutationHierarchy = NULL,
@@ -18,10 +18,14 @@ Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
   sampleOrder = NULL, plotA = c("frequency", "burden", NULL),
   plotATally = c("simple", "complex"), plotALayers = NULL,
   plotB = c("proportion", "frequency", NULL), plotBTally = c("simple",
-  "complex"), plotBLayers = NULL, verbose = FALSE)
+  "complex"), plotBLayers = NULL, gridOverlay = FALSE, drop = TRUE,
+  labelSize = 5, labelAngle = 0, sampleNames = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{input}{MutationAnnotationFormat class holding genomic information.}
+
+\item{labelColumn}{Character vector specifying a column name from which to
+extract labels for cells.}
 
 \item{samples}{Character vector specifying samples to plot. If not NULL
 all samples in "input" not specified with this parameter are removed.}
@@ -67,6 +71,18 @@ simplified or complex tally of genes respectively.}
 
 \item{plotBLayers}{list of ggplot2 layers to be passed to the plot.}
 
+\item{gridOverlay}{Boolean specifying if a grid should be overlayed on the
+waterfall plot.}
+
+\item{drop}{Boolean specifying if unused mutations should be dropped from the
+legend.}
+
+\item{labelSize}{Integer specifying the size of label text}
+
+\item{labelAngle}{Numeric value specifying the angle of label text}
+
+\item{sampleNames}{Boolean specifying if samples should be labeled on the plot.}
+
 \item{verbose}{Boolean specifying if status messages should be reported}
 
 \item{sampOrder}{Character vector specifying the order in which to plot
@@ -84,11 +100,11 @@ Constructor for the Waterfall class.
 \describe{
 \item{\code{PlotA}}{gtable object for the top sub-plot.}
 
-\item{\code{plotB}}{gtable object for the left sub-plot.}
+\item{\code{PlotB}}{gtable object for the left sub-plot.}
 
-\item{\code{plotC}}{gtable object for the main plot.}
+\item{\code{PlotC}}{gtable object for the main plot.}
 
-\item{\code{plotD}}{gtable object for the bottom sub-plot.}
+\item{\code{PlotD}}{gtable object for the bottom sub-plot.}
 
 \item{\code{Grob}}{gtable object for the arranged plot.}
 
@@ -106,6 +122,6 @@ names gene, mutation, count.}
 
 \item{\code{MutationHierarchy}}{data.table object storing the hierarchy of mutation
 type in order of most to least important and the mapping of mutation type to
-color. Should have column names mutation and color.}
+color. Should have column names mutation, color, and label.}
 }}
 

@@ -4,9 +4,9 @@
 #' @name Waterfall-class
 #' @rdname Waterfall-class
 #' @slot PlotA gtable object for the top sub-plot.
-#' @slot plotB gtable object for the left sub-plot.
-#' @slot plotC gtable object for the main plot.
-#' @slot plotD gtable object for the bottom sub-plot.
+#' @slot PlotB gtable object for the left sub-plot.
+#' @slot PlotC gtable object for the main plot.
+#' @slot PlotD gtable object for the bottom sub-plot.
 #' @slot Grob gtable object for the arranged plot.
 #' @slot primaryData data.table object storing the primary data, should have
 #' column names sample, gene, mutation, label.
@@ -19,7 +19,7 @@
 #' @slot ClinicalData
 #' @slot MutationHierarchy data.table object storing the hierarchy of mutation
 #' type in order of most to least important and the mapping of mutation type to
-#' color. Should have column names mutation and color.
+#' color. Should have column names mutation, color, and label.
 #' @exportClass Waterfall
 #' @import methods
 #' @importFrom gtable gtable
@@ -28,9 +28,9 @@
 methods::setOldClass("gtable")
 setClass("Waterfall",
          representation=representation(PlotA="gtable",
-                                       plotB="gtable",
-                                       plotC="gtable",
-                                       plotD="gtable",
+                                       PlotB="gtable",
+                                       PlotC="gtable",
+                                       PlotD="gtable",
                                        Grob="gtable",
                                        primaryData="data.table",
                                        simpleMutationCounts="data.table",
@@ -53,7 +53,8 @@ setMethod(f="initialize",
                               noSynonymous, genes, mutationHierarchy, recurrence, 
                               geneOrder, geneMax, sampleOrder, plotA,
                               plotATally, plotALayers, plotB, plotBTally,
-                              plotBLayers, verbose){
+                              plotBLayers, gridOverlay, drop, labelSize, labelAngle,
+                              sampleNames, verbose){
 
               # convert to initial data to waterfall format
               .Object@primaryData <- toWaterfall(input, labelColumn, verbose)
@@ -99,8 +100,14 @@ setMethod(f="initialize",
               .Object@PlotB <- buildGenePlot(.Object, plotB, plotBTally,
                                              plotBLayers, verbose)
               
+              # add the clinical data plot
+              .Object@PlotD <- .Object
+              
               # create the main plot
-              .ObjectPlotC <- buildWaterfallPlot(.Object,verbose)
+              xTitle <- TRUE #tmporary remove when clinical object is defined
+              .Object@PlotC <- buildWaterfallPlot(.Object, gridOverlay, drop,
+                                                  labelSize, labelAngle, xTitle,
+                                                  sampleNames, verbose)
               browser()
               return(.Object)
           })
@@ -110,6 +117,8 @@ setMethod(f="initialize",
 #' @name Waterfall
 #' @rdname Waterfall-class
 #' @param input MutationAnnotationFormat class holding genomic information.
+#' @param labelColumn Character vector specifying a column name from which to
+#' extract labels for cells.
 #' @param samples Character vector specifying samples to plot. If not NULL
 #' all samples in "input" not specified with this parameter are removed.
 #' @param coverage Integer specifying the size in base pairs of the genome
@@ -143,6 +152,13 @@ setMethod(f="initialize",
 #' @param plotBTally String specifying one of "simple" or "complex" for a
 #' simplified or complex tally of genes respectively.
 #' @param plotBLayers list of ggplot2 layers to be passed to the plot.
+#' @param gridOverlay Boolean specifying if a grid should be overlayed on the
+#' waterfall plot.
+#' @param drop Boolean specifying if unused mutations should be dropped from the
+#' legend.
+#' @param labelSize Integer specifying the size of label text
+#' @param labelAngle Numeric value specifying the angle of label text
+#' @param sampleNames Boolean specifying if samples should be labeled on the plot.
 #' @param verbose Boolean specifying if status messages should be reported
 #' @export
 Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
@@ -152,13 +168,15 @@ Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
                       plotATally=c("simple", "complex"), plotALayers=NULL,
                       plotB=c("proportion", "frequency", NULL),
                       plotBTally=c("simple", "complex"), plotBLayers=NULL,
-                      verbose=FALSE){
+                      gridOverlay=FALSE, drop=TRUE, labelSize=5, labelAngle=0,
+                      sampleNames=TRUE, verbose=FALSE){
     cat("!!!!! Waterfall~Constructor !!!!!\n")
     new("Waterfall", input=input, labelColumn=labelColumn, samples=samples, coverage=coverage,
         noSynonymous=noSynonymous, genes=genes, mutationHierarchy=mutationHierarchy,
         recurrence=recurrence, geneOrder=geneOrder, geneMax=geneMax, sampleOrder=sampleOrder,
         plotA=plotA, plotATally=plotATally, plotALayers=plotALayers, plotB=plotB,
-        plotBTally=plotBTally, plotBLayers=plotBLayers, verbose=verbose)
+        plotBTally=plotBTally, plotBLayers=plotBLayers, gridOverlay=gridOverlay, drop=drop,
+        labelSize=labelSize, labelAngle=labelAngle, sampleNames=sampleNames, verbose=verbose)
 }
 
 #' @rdname Waterfall-methods
@@ -1001,4 +1019,122 @@ setMethod(f="buildGenePlot",
                   plotYlabel + scale_y_reverse() + plotLegend + plotBLayers
               
               plotGrob <- ggplotGrob(genePlot)
+          })
+
+#' @rdname Waterfall-methods
+#' @aliases buildWaterfallPlot,Waterfall
+#' @param object Object of class waterfall
+#' @param verbose Boolean for status updates
+#' @param gridOverlay Boolean specifying if a grid should be overlayed on the
+#' waterfall plot.
+#' @param drop Boolean specifying if unused mutations should be dropped from the
+#' legend.
+#' @return gtable object containing the main plot.
+#' @noRd
+#' @import ggplot2
+#' @importFrom gtable gtable
+setMethod(f="buildWaterfallPlot",
+          signature="Waterfall",
+          definition=function(object, gridOverlay, drop, labelSize, labelAngle, sampleNames, xTitle, verbose, ...){
+              # extract the data we need
+              primaryData <- object@primaryData
+              paletteData <- object@MutationHierarchy
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Building the main plot")
+                  message(memo)
+              }
+              
+              ######### start building the plot ################################
+              # grid overlay
+              if(gridOverlay){
+                  verticalPlotGrid <- geom_vline(xintercept = seq(.5, nlevels(primaryData$sample),
+                                                                  by=1),
+                                                 linetype='solid', colour='grey80', size=.01)
+                  
+                  if(length(unique(primaryData$gene)) == 1)
+                  {
+                      horizontalPlotGrid <- geom_blank()
+                  } else {
+                      horizontalPlotGrid <- geom_hline(yintercept = seq(1.5, length(unique(primaryData$gene)),
+                                                                        by=1),
+                                                       linetype='solid', colour='grey80',
+                                                       size=.01)
+                  }
+                  plotGridOverlay <- list(horizontalPlotGrid, verticalPlotGrid)
+              } else {
+                  plotGridOverlay <- geom_blank()
+              }
+              
+              # construct legend
+              if(drop)
+              {
+                  valueMap <- paletteData$color
+                  names(valueMap) <- paletteData$mutation
+                  plotLegend <- scale_fill_manual(name="Mutation Type",
+                                                  values=valueMap,
+                                                  breaks=paletteData$mutation,
+                                                  labels=paletteData$label,
+                                                  drop=TRUE)
+              } else {
+                  valueMap <- paletteData$color
+                  names(valueMap) <- paletteData$mutation
+                  plotLegend <- scale_fill_manual(name="Mutation Type",
+                                                  values=valueMap,
+                                                  breaks=paletteData$mutation,
+                                                  labels=paletteData$label,
+                                                  drop=FALSE)
+              }
+              
+              # plot titles
+              plotXLabel <- xlab(paste0('Sample (n=', nlevels(primaryData$sample), ')'))
+              
+              if(all(is.na(primaryData$label)))
+              {
+                  label <- geom_text(data=primaryData,
+                                     mapping=aes_string(x='sample', y='gene',
+                                                        label='label'),
+                                     size=labelSize, colour='white',
+                                     angle=labelAngle)
+              } else {
+                  label <- geom_blank()
+              }
+              
+              # base theme
+              plotTheme <- theme(axis.ticks=element_blank(),
+                                 panel.grid.major=element_blank(),
+                                 panel.grid.minor=element_blank(),
+                                 axis.title.y=element_blank(),
+                                 panel.background=element_rect(fill='white',
+                                                               colour='white'),
+                                 axis.text.y=element_blank(),
+                                 plot.title=element_blank(),
+                                 legend.title=element_text(size=14))
+              
+              if(sampleNames){
+                  sampleLabels <- theme(axis.text.x=element_text(angle=50, hjust=1))
+              } else {
+                  sampleLabels <- theme(axis.text.x=element_blank(),
+                                        axis.title.x=element_blank())
+              }
+              if(xTitle){
+                  plotXtitle <- theme(axis.title.x=element_text(size=20))
+              } else {
+                  plotXtitle <- theme(axis.title.x=element_blank())
+              }
+              
+              # define geom
+              plotGeom <- geom_tile(aes_string(fill='mutation'), position="identity")
+              
+              # define plot
+              waterfallPlot <- ggplot(primaryData, aes_string('sample', 'gene'))
+              
+              # combine plot elements
+              waterfallPlot <- waterfallPlot + plotGeom + plotGridOverlay +
+                  plotLegend + plotXLabel + plotTheme + sampleLabels + plotXtitle
+              
+              # covert to grob
+              waterfallGrob <- ggplotGrob(waterfallPlot)
+              return(waterfallGrob)
           })

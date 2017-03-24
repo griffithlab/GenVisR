@@ -187,3 +187,43 @@ setGeneric(
     name="buildGenePlot",
     def=function(object, plotB, plotBTally, plotBLayers, verbose, ...){standardGeneric("buildGenePlot")}
 )
+
+#' Method buildWaterfallPlot
+#'
+#' @name buildWaterfallPlot
+#' @rdname buildWaterfallPlot-methods
+#' @noRd
+setGeneric(
+    name="buildWaterfallPlot",
+    def=function(object, gridOverlay, drop, labelSize, labelAngle, sampleNames, xTitle, verbose, ...){standardGeneric("buildWaterfallPlot")}
+)
+
+#' Method formatClinicalData
+#'
+#' @name formatClinicalData
+#' @rdname formatClinicalData-methods
+#' @noRd
+setGeneric(
+    name="formatClinicalData",
+    def=function(object, inputFormat, verbose, ...){standardGeneric("formatClinicalData")}
+)
+
+#' Method setClinicalPlotLayers
+#'
+#' @name setClinicalPlotLayers
+#' @rdname setClinicalPlotLayers-methods
+#' @noRd
+setGeneric(
+    name="setClinicalPlotLayers",
+    def=function(object, legendColumns, palette, clinicalLayers, verbose, ...){standardGeneric("setClinicalPlotLayers")}
+)
+
+#' Method buildClinicalPlot
+#'
+#' @name buildClinicalPlot
+#' @rdname buildClinicalPlot-methods
+#' @noRd
+setGeneric(
+    name="buildClinicalPlot",
+    def=function(object, verbose, ...){standardGeneric("buildClinicalPlot")}
+)

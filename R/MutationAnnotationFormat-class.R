@@ -226,6 +226,10 @@ setMethod(f="setMutationHierarchy",
                   mutationHierarchy <- rbind(tmp, mutationHierarchy)
               }
               
+              # add in a pretty print mutation labels
+              mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
+              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$mutation)
+              
               # print status message
               if(verbose){
                   memo <- paste("Setting the hierarchy of mutations from most",
