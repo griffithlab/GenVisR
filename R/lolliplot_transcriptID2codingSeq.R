@@ -27,7 +27,8 @@ lolliplot_transcriptID2codingSeq <- function(transcriptID,
                                      host=host)
     
     # select proper data set given regexp print warnings if unexpected out occur
-    index <- which(grepl(species, biomaRt::listDatasets(ensembl_mart)$dataset))
+    dataset <- biomaRt::listDatasets(ensembl_mart)$dataset
+    index <- which(grepl(species, dataset))
     if(length(index)>1)
     {
         memo <- paste0(species, " Matches more than one dataset for the",
@@ -37,14 +38,14 @@ lolliplot_transcriptID2codingSeq <- function(transcriptID,
     } else if(length(index)==0) {
         valid_species <- toString(gsub("_gene_ensembl",
                                        "",
-                                       biomaRt::listDatasets(ensembl_mart)$dataset))
+                                       dataset))
         
         memo <- paste0(species, " does not appear to be supported by biomaRt",
                        " please specify one of the following species:",
                        valid_species)
         stop(memo)
     }
-    ensembl_mart <- biomaRt::useDataset(as.character(biomaRt::listDatasets(ensembl_mart)$dataset[index]),
+    ensembl_mart <- biomaRt::useDataset(as.character(dataset[index]),
                                         mart=ensembl_mart)
     
     # Apply various filters using vector of values
