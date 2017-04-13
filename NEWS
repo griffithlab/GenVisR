@@ -1,3 +1,7 @@
+CHANGES IN VERSION 1.4.8
+------------------------
+- fixed bug in lolliplot introduced by ensembl server changes
+
 CHANGES IN Version 1.4.7
 ------------------------
 - patch to fix possible conflicts between the rmvSilent=T and fileType="custom" parameter in waterfall()

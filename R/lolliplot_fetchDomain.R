@@ -23,7 +23,8 @@ lolliplot_fetchDomain <- function(transcriptID,
                                      host="www.ensembl.org")
     
     # select proper data set given regexp print warnings if unexpected out occur
-    index <- which(grepl(species, biomaRt::listDatasets(ensembl_mart)$dataset))
+    dataset <- biomaRt::listDatasets(ensembl_mart)$dataset
+    index <- which(grepl(species, dataset))
     if(length(index)>1)
     {
         memo <- paste0(species, " Matches more than one dataset for the",
@@ -36,7 +37,7 @@ lolliplot_fetchDomain <- function(transcriptID,
                        "you're input to to conform to this format: hsapiens")
         stop(memo)
     }
-    ensembl_mart <- biomaRt::useDataset(as.character(biomaRt::listDatasets(ensembl_mart)$dataset[index]),
+    ensembl_mart <- biomaRt::useDataset(as.character(dataset[index]),
                                         mart=ensembl_mart)
     
     # Apply various filters using vector of values
