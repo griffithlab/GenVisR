@@ -205,7 +205,7 @@ setGeneric(
 #' @noRd
 setGeneric(
     name="formatClinicalData",
-    def=function(object, inputFormat, verbose, ...){standardGeneric("formatClinicalData")}
+    def=function(object, verbose, ...){standardGeneric("formatClinicalData")}
 )
 
 #' Method setClinicalPlotLayers
@@ -226,4 +226,24 @@ setGeneric(
 setGeneric(
     name="buildClinicalPlot",
     def=function(object, verbose, ...){standardGeneric("buildClinicalPlot")}
+)
+
+#' Method getData
+#' 
+#' @name getData
+#' @rdname getData-methods
+#' @exportMethod getData
+setGeneric(
+    name="getData",
+    def=function(object, ...){standardGeneric("getData")}
+)
+
+#' Method arrangeWaterfallPlot
+#' 
+#' @name arrangeWaterfallPlot
+#' @rdname arrangeWaterfallPlot-methods
+#' @exportMethod arrangeWaterfallPlot
+setGeneric(
+    name="arrangeWaterfallPlot",
+    def=function(object, ...){standardGeneric("arrangeWaterfallPlot")}
 )

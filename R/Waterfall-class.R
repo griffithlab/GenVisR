@@ -16,7 +16,8 @@
 #' mutation type should have column names sample, mutation, Freq, mutationBurden.
 #' @slot geneData data.table object storing gene counts, should have column
 #' names gene, mutation, count.
-#' @slot ClinicalData
+#' @slot ClinicalData data.table object stroring the data used to plot the
+#' clinical sub-plot.
 #' @slot MutationHierarchy data.table object storing the hierarchy of mutation
 #' type in order of most to least important and the mapping of mutation type to
 #' color. Should have column names mutation, color, and label.
@@ -54,7 +55,8 @@ setMethod(f="initialize",
                               geneOrder, geneMax, sampleOrder, plotA,
                               plotATally, plotALayers, plotB, plotBTally,
                               plotBLayers, gridOverlay, drop, labelSize, labelAngle,
-                              sampleNames, verbose){
+                              sampleNames, clinical, sectionHeights, sectionWidths, 
+                              verbose){
 
               # convert to initial data to waterfall format
               .Object@primaryData <- toWaterfall(input, labelColumn, verbose)
@@ -100,14 +102,23 @@ setMethod(f="initialize",
               .Object@PlotB <- buildGenePlot(.Object, plotB, plotBTally,
                                              plotBLayers, verbose)
               
+              # add the clinical data
+              .Object@ClinicalData <- getData(clinical)
+              .Object@ClinicalData <- formatClinicalData(.Object, verbose)
+                  
               # add the clinical data plot
-              .Object@PlotD <- .Object
+              .Object@PlotD <- buildClinicalPlot(.Object, clinicalLayers=clinical@clinicalLayers)
               
               # create the main plot
               xTitle <- TRUE #tmporary remove when clinical object is defined
               .Object@PlotC <- buildWaterfallPlot(.Object, gridOverlay, drop,
                                                   labelSize, labelAngle, xTitle,
                                                   sampleNames, verbose)
+              
+              # align all plots together
+              .Object@Grob <- arrangeWaterfallPlot(.Object, sectionHeights=sectionHeights,
+                                                   sectionWidths=sectionWidths,
+                                                   verbose=verbose)
               browser()
               return(.Object)
           })
@@ -159,6 +170,11 @@ setMethod(f="initialize",
 #' @param labelSize Integer specifying the size of label text
 #' @param labelAngle Numeric value specifying the angle of label text
 #' @param sampleNames Boolean specifying if samples should be labeled on the plot.
+#' @param clinical Object of class Clinical, used for adding a clinical data subplot.
+#' @param sectionHeights Numeric vector specifying relative heights of each plot section,
+#' should sum to one. Expects a value for each section.
+#' @param sectionWidths Numeric vector specifying relative heights of each plot section,
+#' should sum to one. Expects a value for each section.
 #' @param verbose Boolean specifying if status messages should be reported
 #' @export
 Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
@@ -169,14 +185,17 @@ Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
                       plotB=c("proportion", "frequency", NULL),
                       plotBTally=c("simple", "complex"), plotBLayers=NULL,
                       gridOverlay=FALSE, drop=TRUE, labelSize=5, labelAngle=0,
-                      sampleNames=TRUE, verbose=FALSE){
+                      sampleNames=TRUE, clinical=NULL, sectionHeights=NULL,
+                      sectionWidths=NULL, verbose=FALSE){
     cat("!!!!! Waterfall~Constructor !!!!!\n")
     new("Waterfall", input=input, labelColumn=labelColumn, samples=samples, coverage=coverage,
         noSynonymous=noSynonymous, genes=genes, mutationHierarchy=mutationHierarchy,
         recurrence=recurrence, geneOrder=geneOrder, geneMax=geneMax, sampleOrder=sampleOrder,
         plotA=plotA, plotATally=plotATally, plotALayers=plotALayers, plotB=plotB,
         plotBTally=plotBTally, plotBLayers=plotBLayers, gridOverlay=gridOverlay, drop=drop,
-        labelSize=labelSize, labelAngle=labelAngle, sampleNames=sampleNames, verbose=verbose)
+        labelSize=labelSize, labelAngle=labelAngle, sampleNames=sampleNames,
+        clinical=clinical, sectionHeights=sectionHeights, sectionWidths=sectionWidths,
+        verbose=verbose)
 }
 
 #' @rdname Waterfall-methods
@@ -1021,6 +1040,46 @@ setMethod(f="buildGenePlot",
               plotGrob <- ggplotGrob(genePlot)
           })
 
+#' @rdname formatClinicalData-methods
+#' @aliases formatClinicalData,MutationAnnotationFormat
+#' @noRd
+#' @importFrom data.table setDT
+#' @importFrom data.table is.data.table
+#' @importFrom data.table melt
+setMethod(f="formatClinicalData",
+          signature="Waterfall",
+          definition=function(object, verbose, ...){
+              
+              # extract the data we need
+              clinicalData <- object@ClinicalData
+              primaryData <- object@primaryData
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Formatting clinical data")
+                  message(memo)
+              }
+              
+              # remove clinical samples not found in primary data
+              clinicalData <- clinicalData[clinicalData$sample %in% primaryData$sample,]
+              
+              # check no samples were removed
+              removedSamp <- length(object@ClinicalData$sample) - length(clinicalData$sample)
+              memo <- paste("Removed", removedSamp, "samples from the clinical data",
+                            "not found in the waterfall data!")
+              if(removedSamp != 0){
+                  warning(memo)
+              } else if(verbose){
+                  message(memo)
+              }
+              
+              # set levels of clinicalData to match primaryData
+              clinicalData$sample <- factor(clinicalData$sample, levels=levels(primaryData$sample))
+              
+              # return the formated data
+              return(clinicalData)
+          })
+
 #' @rdname Waterfall-methods
 #' @aliases buildWaterfallPlot,Waterfall
 #' @param object Object of class waterfall
@@ -1137,4 +1196,107 @@ setMethod(f="buildWaterfallPlot",
               # covert to grob
               waterfallGrob <- ggplotGrob(waterfallPlot)
               return(waterfallGrob)
+          })
+
+#' @rdname buildClinicalPlot-methods
+#' @aliases buildClinicalPlot,Waterfall
+#' @param clinicalLayers List of ggplot2 layers to add to the clinical plot.
+#' @noRd
+#' @import ggplot2
+#' @importFrom gtable gtable
+setMethod(f="buildClinicalPlot",
+          signature="Waterfall",
+          definition=function(object, clinicalLayers, ...){
+              # extract necessary data
+              clinicalData <- object@ClinicalData
+              
+              # if clinical data is empty return empty gtable
+              if(nrow(clinicalData) == 0){
+                  return(gtable::gtable())
+              }
+              
+              # construct a plot
+              clinicalXLabel <- xlab(paste0("Sample n=", length(unique(clinicalData$sample))))
+              clinicalPlot <- ggplot(clinicalData, aes_string(x='sample',
+                                                              y='variable',
+                                                              fill='value')) +
+                  clinicalLayers + clinicalXLabel + theme(axis.text.x=element_blank())
+              
+              # contruct grob
+              clinicalGrob <- ggplotGrob(clinicalPlot)
+          })
+
+#' @rdname arrangeWaterfallPlot-methods
+#' @aliases arrangeWaterfallPlot,Waterfall
+#' @param sectionHeights Relative heights of each plot section (should sum to one).
+#' @param sectionWidths Relative widths of each plot section (should sum to one).
+#' @noRd
+#' @importFrom grid nullGrob
+setMethod(f="arrangeWaterfallPlot",
+          signature="Waterfall",
+          definition=function(object, sectionHeights, sectionWidths, verbose, ...){
+              
+              # grab the data we need
+              plotA <- object@PlotA
+              plotB <- object@PlotB
+              plotC <- object@PlotC
+              plotD <- object@PlotD
+              
+              # set default heights and widths
+              if(is.null(sectionWidths)){
+                  sectionWidths <- c(.25, .75)
+              }
+              if(is.null(sectionHeights)){
+                  sectionHeights <- c(.15, .7, .15)
+              }
+              
+              # set up a blank plot for alignment purposes
+              emptyPlot <- grid::nullGrob()
+              
+              ## Strip out legends and plot separately
+              ## https://github.com/baptiste/gridextra/wiki/arranging-ggplot#legends
+              #ind_legend <- grep("guide", plotC$layout$name)
+              #plotC_legend <- plotC[["grobs"]][[ind_legend]]
+              #plotC_width <- sum(plotC_legend$width)
+              #heatmap_grob <- ggplot2::ggplotGrob(grid.draw(plotC) + theme(legend.position="none"))
+              
+              # align the heights of plotB and plotC if they exist
+              if(length(plotB) != 0){
+                  maxHeight <- grid::unit.pmax(plotB$heights, plotC$heights)
+                  plotB$heights <- as.list(maxHeight)
+                  plotC$heights <- as.list(maxHeight)
+              }
+              
+              # Obtain the max width for relevant plots
+              plotList4Width <- list(plotA, plotC, plotD)
+              plotList4Width <- plotList4Width[lapply(plotList4Width, length) > 0]
+              plotList4Width <- lapply(plotList4Width, function(x) x$widths)
+              maxWidth <- do.call(grid::unit.pmax, plotList4Width)
+              
+              # section plots in rows
+              # set width for first row of plots
+              if(length(plotA) != 0){
+                  plotA$widths <- as.list(maxWidth)
+                  firstRowPlots <- gridExtra::arrangeGrob(emptyPlot, plotA, ncol=2, widths=sectionWidths)
+              }
+              
+              # set widths for second row of plots
+              plotC$widths <- as.list(maxWidth)
+              if(length(plotB) != 0){
+                  secondRowPlots <- gridExtra::arrangeGrob(plotB, plotC, ncol=2, widths=sectionWidths)
+              } else {
+                  secondRowPlots <- gridExtra::arrangeGrob(emptyPlot, plotC, ncol=2, widths=sectionWidths)
+              }
+              
+              # set widths for third row of plots
+              if(length(plotD) != 0){
+                  plotD$widths <- as.list(maxWidth)
+                  lastRowPlots <- gridExtra::arrangeGrob(emptyPlot, plotD, ncol=2, widths=sectionWidths)
+              }
+              
+              # arrange the final plot
+              finalPlot <- gridExtra::arrangeGrob(firstRowPlots, secondRowPlots,
+                                                  lastRowPlots, ncol=1, heights=sectionHeights)
+              
+              return(finalPlot)
           })

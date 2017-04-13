@@ -45,16 +45,17 @@ setMethod(f="initialize",
               }
               
               # format clinical data
-              .Object@clinicalData <- formatClinicalData(.Object, inputFormat, verbose)
+              .Object@clinicalData <- formatClinicalData(.Object, inputFormat=inputFormat, verbose=verbose)
               
               # construct a list of ggplot layers
               .Object@clinicalLayers <- setClinicalPlotLayers(.Object, legendColumns,
                                                               palette, clinicalLayers,
                                                               verbose)
-              browser()
+              
               # construct a plot of clinical data
               .Object@clinicalGrob <- buildClinicalPlot(.Object, verbose)
-              browser()
+              
+              return(.Object)
           })
 
 #' Constructor for the Clinical class.
@@ -90,13 +91,15 @@ Clinical <- function(path, inputData=NULL ,inputFormat=c("wide", "long"),
 setMethod(f="formatClinicalData",
           signature="Clinical",
           definition=function(object, inputFormat, verbose, ...){
+              
               # print status message
               if(verbose){
                   memo <- paste("Formatting clinical data")
+                  message(memo)
               }
               
               # extract the data we need
-              clinicalData <- object@clinicalData
+              clinicalData <- unique(object@clinicalData)
               inputFormat <- inputFormat[1]
               
               # quality checks
@@ -189,13 +192,14 @@ setMethod(f="setClinicalPlotLayers",
                                  legend.title=element_text(size=14),
                                  axis.title.y=element_blank(),
                                  axis.text.y=element_text(size=14, colour='black'),
+                                 axis.text.x=element_text(angle=90),
                                  legend.position='right')
               
               # geom
               plotGeom <- geom_tile()
               
               # return list of layers
-              return(list(plotLegendGuide, plotTheme, plotLegend, clinicalLayers))
+              return(list(plotGeom, plotLegendGuide, plotTheme, plotLegend, clinicalLayers))
           })
 
 #' @rdname buildClinicalPlot-methods
@@ -218,4 +222,13 @@ setMethod(f="buildClinicalPlot",
               
               # contruct grob
               clinicalGrob <- ggplotGrob(clinicalPlot)
+          })
+
+#' @rdname getData-methods
+#' @aliases getData,Clinical
+setMethod(f="getData",
+          signature="Clinical",
+          definition=function(object, ...){
+              clinData <- object@clinicalData
+              return(clinData)
           })
