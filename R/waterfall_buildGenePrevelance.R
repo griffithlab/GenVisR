@@ -3,12 +3,14 @@
 #' plot a bar graph displaying the percentage of samples with a mutation
 #' @name waterfall_buildGenePrevelance
 #' @param data_frame a data frame in MAF format
+#' @param gene_label_size numeric value indicating the size of the gene labels
+#'      on the y-axis
 #' @param layers additional ggplot2 layers
 #' @return a ggplot object
 #' @importFrom plyr count
 #' @importFrom stats na.omit
 
-waterfall_buildGenePrevelance <- function(data_frame, layers=NULL)
+waterfall_buildGenePrevelance <- function(data_frame, gene_label_size=8, layers=NULL)
 {
     # Convert all silent mutations to Synonymous, and all else to non-synonymous
     data_frame$trv_type <- as.character(data_frame$trv_type)
@@ -29,12 +31,12 @@ waterfall_buildGenePrevelance <- function(data_frame, layers=NULL)
     data_frame$prop <- data_frame$freq/total_number_sample * 100
 
     # Define Theme and various other layers to be passed to ggplot
-    theme <- theme(axis.text.y=element_blank(),
-                   axis.ticks.y=element_blank(),
+    theme <- theme(axis.text.y=element_text(size=gene_label_size,
+                                            colour='black', face='italic'),
                    axis.title.y=element_blank(),
                    legend.position=('none'))
     y_limits <- ylim(100, 0)
-    y_label <- ylab('% Samples With Mutation')
+    y_label <- ylab('% Mutant')
     legend <- scale_fill_manual(name="Translational Effect",
                                 values=c("Non Synonymous"="blue", "Synonymous"="red"),
                                 breaks=c('Synonymous', 'Non Synonymous'),
