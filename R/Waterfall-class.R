@@ -103,9 +103,14 @@ setMethod(f="initialize",
                                              plotBLayers, verbose)
               
               # add the clinical data
-              .Object@ClinicalData <- getData(clinical)
-              .Object@ClinicalData <- formatClinicalData(.Object, verbose)
-                  
+              if(is.null(clinical)){
+                  .Object@ClinicalData <- data.table::data.table()
+              } else {
+                  # there be dragons here, fix!
+                  .Object@ClinicalData <- getData(clinical)
+                  .Object@ClinicalData <- formatClinicalData(.Object, verbose)
+              }
+
               # add the clinical data plot
               .Object@PlotD <- buildClinicalPlot(.Object, clinicalLayers=clinical@clinicalLayers)
               
@@ -1242,12 +1247,19 @@ setMethod(f="arrangeWaterfallPlot",
               plotC <- object@PlotC
               plotD <- object@PlotD
               
-              # set default heights and widths
+              # set default widths
               if(is.null(sectionWidths)){
                   sectionWidths <- c(.25, .75)
-              }
-              if(is.null(sectionHeights)){
-                  sectionHeights <- c(.15, .7, .15)
+              } else if(length(sectionWidths) != 2){
+                  memo <- paste("sectionWidths should be of length 2... Using",
+                                "default values!")
+                  warning(memo)
+                  sectionWidths <- c(.25, .75)
+              } else if(!all(is.numeric(sectionWidths))) {
+                  memo <- paste("sectionWidths must be numeric... Using",
+                                "default values!")
+                  warning(memo)
+                  sectionWidths <- c(.25, .75)
               }
               
               # set up a blank plot for alignment purposes
@@ -1275,9 +1287,11 @@ setMethod(f="arrangeWaterfallPlot",
               
               # section plots in rows
               # set width for first row of plots
+              plotList <- list()
               if(length(plotA) != 0){
                   plotA$widths <- as.list(maxWidth)
                   firstRowPlots <- gridExtra::arrangeGrob(emptyPlot, plotA, ncol=2, widths=sectionWidths)
+                  plotList[["firstRow"]] <- firstRowPlots
               }
               
               # set widths for second row of plots
@@ -1287,16 +1301,33 @@ setMethod(f="arrangeWaterfallPlot",
               } else {
                   secondRowPlots <- gridExtra::arrangeGrob(emptyPlot, plotC, ncol=2, widths=sectionWidths)
               }
+              plotList[["secondRow"]] <- secondRowPlots
               
               # set widths for third row of plots
               if(length(plotD) != 0){
                   plotD$widths <- as.list(maxWidth)
                   lastRowPlots <- gridExtra::arrangeGrob(emptyPlot, plotD, ncol=2, widths=sectionWidths)
+                  plotList[["lastRow"]] <- lastRowPlots
+              }
+              
+              # set section heights based upon the number of sections
+              defaultHeight <- 
+              if(length(sectionHeights) != length(plotList)){
+                  memo <- paste("There are", length(sectionHeights), "provided",
+                                "but", length(plotList), "vertical sections...",
+                                "using default values!")
+                  warning(memo)
+                  subsectionHeight <- (1-.7)/length(plotList)
+                  sectionHeights <- c()
+              } else if(!all(is.numeric(sectionHeights))) {
+                  memo <- paste("sectionHeights must be numeric... Using",
+                                "default values!")
+                  warning(memo)
               }
               
               # arrange the final plot
-              finalPlot <- gridExtra::arrangeGrob(firstRowPlots, secondRowPlots,
-                                                  lastRowPlots, ncol=1, heights=sectionHeights)
+              # http://stackoverflow.com/questions/6681145/how-can-i-arrange-an-arbitrary-number-of-ggplots-using-grid-arrange
+              finalPlot <- do.call(gridExtra::arrangeGrob, c(p.list, list(ncol=1, heights=sectionHeights)))
               
               return(finalPlot)
           })
