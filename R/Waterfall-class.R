@@ -124,7 +124,7 @@ setMethod(f="initialize",
               .Object@Grob <- arrangeWaterfallPlot(.Object, sectionHeights=sectionHeights,
                                                    sectionWidths=sectionWidths,
                                                    verbose=verbose)
-              browser()
+              
               return(.Object)
           })
 
@@ -816,7 +816,6 @@ setMethod(f="buildMutationPlot",
                   memo <- paste("Constructing top sub-plot")
                   message(memo)
               }
-              
               # extract the data for the type of plot we need
               if(toupper(plotATally) == toupper("simple")){
                   mutationData <- object@simpleMutationCounts
@@ -1237,6 +1236,7 @@ setMethod(f="buildClinicalPlot",
 #' @param sectionWidths Relative widths of each plot section (should sum to one).
 #' @noRd
 #' @importFrom grid nullGrob
+#' @importFrom gridExtra arrangeGrob
 setMethod(f="arrangeWaterfallPlot",
           signature="Waterfall",
           definition=function(object, sectionHeights, sectionWidths, verbose, ...){
@@ -1285,13 +1285,15 @@ setMethod(f="arrangeWaterfallPlot",
               plotList4Width <- lapply(plotList4Width, function(x) x$widths)
               maxWidth <- do.call(grid::unit.pmax, plotList4Width)
               
-              # section plots in rows
-              # set width for first row of plots
+              # section plots into rows rows, also define preliminary heights
               plotList <- list()
+              plotHeight <- list()
+              # set width for first row of plots
               if(length(plotA) != 0){
                   plotA$widths <- as.list(maxWidth)
                   firstRowPlots <- gridExtra::arrangeGrob(emptyPlot, plotA, ncol=2, widths=sectionWidths)
                   plotList[["firstRow"]] <- firstRowPlots
+                  plotHeight[["firstRow"]] <- .2
               }
               
               # set widths for second row of plots
@@ -1302,32 +1304,50 @@ setMethod(f="arrangeWaterfallPlot",
                   secondRowPlots <- gridExtra::arrangeGrob(emptyPlot, plotC, ncol=2, widths=sectionWidths)
               }
               plotList[["secondRow"]] <- secondRowPlots
+              plotHeight[["secondRow"]] <- .8
               
               # set widths for third row of plots
               if(length(plotD) != 0){
                   plotD$widths <- as.list(maxWidth)
                   lastRowPlots <- gridExtra::arrangeGrob(emptyPlot, plotD, ncol=2, widths=sectionWidths)
                   plotList[["lastRow"]] <- lastRowPlots
+                  plotHeight[["lastRow"]] <- .2
               }
               
               # set section heights based upon the number of sections
-              defaultHeight <- 
-              if(length(sectionHeights) != length(plotList)){
+              plotHeight <- as.vector(do.call(rbind, plotHeight))
+              plotHeight[which(plotHeight == min(plotHeight))] <- min(plotHeight)/length(which(plotHeight == min(plotHeight)))
+              
+              if(is.null(sectionHeights)){
+                  sectionHeights <- plotHeight
+              } else if(length(sectionHeights) != length(plotList)){
                   memo <- paste("There are", length(sectionHeights), "provided",
                                 "but", length(plotList), "vertical sections...",
                                 "using default values!")
                   warning(memo)
-                  subsectionHeight <- (1-.7)/length(plotList)
-                  sectionHeights <- c()
+                  sectionHeights <- plotHeight
               } else if(!all(is.numeric(sectionHeights))) {
                   memo <- paste("sectionHeights must be numeric... Using",
                                 "default values!")
                   warning(memo)
+                  sectionHeights <- plotHeight
               }
               
               # arrange the final plot
               # http://stackoverflow.com/questions/6681145/how-can-i-arrange-an-arbitrary-number-of-ggplots-using-grid-arrange
-              finalPlot <- do.call(gridExtra::arrangeGrob, c(p.list, list(ncol=1, heights=sectionHeights)))
+              finalPlot <- do.call(gridExtra::arrangeGrob, c(plotList, list(ncol=1, heights=sectionHeights)))
               
               return(finalPlot)
           })
+
+#' @rdname drawPlot-methods
+#' @aliases drawPlot,Waterfall
+#' @importFrom grid grid.draw
+setMethod(
+    f="drawPlot",
+    signature="Waterfall",
+    definition=function(object, ...){
+        mainPlot <- object@Grob
+        grid::grid.draw(mainPlot)
+    }
+)

@@ -246,3 +246,13 @@ setGeneric(
     name="arrangeWaterfallPlot",
     def=function(object, ...){standardGeneric("arrangeWaterfallPlot")}
 )
+
+#' Method drawPlot
+#' 
+#' @name drawPlot
+#' @rdname drawPlot-methods
+#' @exportMethod drawPlot
+setGeneric(
+    name="drawPlot",
+    def=function(object, ...){standardGeneric("drawPlot")}
+)
