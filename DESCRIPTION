@@ -31,6 +31,8 @@ Author: Zachary Skidmore [aut, cre], Alex Wagner [aut], Robert Lesurf [aut],
 Collate: 
     'AllGenerics.R'
     'Clinical-class.R'
+    'GMS_Virtual-class.R'
+    'GMS-class.R'
     'GenVisR.R'
     'MutationAnnotationFormat_Virtual-class.R'
     'MutationAnnotationFormat-class.R'
