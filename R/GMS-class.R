@@ -12,8 +12,7 @@
 setClass("GMS",
          representation=representation(path="character",
                                        version="numeric",
-                                       gmsObject="GMS_Virtual")
-)
+                                       gmsObject="GMS_Virtual"))
 
 #' Initalizer method for the GMS container class
 #' 
@@ -27,8 +26,12 @@ setMethod(
     definition=function(.Object, path, version, verbose){
         cat("!!!!! GMS~Initalizer !!!!!\n")
         
-        # Grab all files
+        # assign the annotator version
+        .Object@version <- version
+        
+        # Grab all files and assign to slot
         gmsFiles <- Sys.glob(path)
+        .Object@path <- gmsFiles
         
         # anonymous function to read in files
         a <- function(x, verbose){
@@ -61,10 +64,19 @@ setMethod(
             gmsData <- lapply(gmsFiles, a, verbose)
             gmsData <- data.table::rbindlist(gmsData)
         } 
-        browser()
-         
-    }
-)
+        
+        # assign the gmsData to it's slot
+        if(version == 4){
+            .Object@gmsObject <- GMS_v4(gmsData=gmsData)
+        } else {
+            memo <- paste("Currently only GMS version 4 is supported, make a",
+                          "feature request on",
+                          "https://github.com/griffithlab/GenVisR!")
+            stop(memo)
+        }
+        
+        return(.Object)
+    })
 
 #' Constructor for the GMS container class.
 #' 
@@ -91,5 +103,165 @@ setMethod(
 #' @export
 GMS <- function(path, version=4, verbose=FALSE){
     cat("!!!!! GMS~Constructor !!!!!\n")
-    new("GMS", path=path, version=version, verbose=verbose)
-}
+    new("GMS", path=path, version=version, verbose=verbose)}
+
+#' @rdname getPosition-methods
+#' @aliases getPosition,GMS
+setMethod(f="getPosition",
+          signature="GMS",
+          definition=function(object, ...){
+              positions <- object@gmsObject@position
+              return(positions)
+          })
+
+#' @rdname getMutation-methods
+#' @aliases getMutation,GMS
+setMethod(f="getMutation",
+          signature="GMS",
+          definition=function(object, ...){
+              mutations <- object@gmsObject@mutation
+              return(mutations)
+          })
+
+#' @rdname getSample-methods
+#' @aliases getSample,GMS
+setMethod(f="getSample",
+          signature="GMS",
+          definition=function(object, ...){
+              sample <- object@gmsObject@sample
+              return(sample)
+          })
+
+#' @rdname getMeta-methods
+#' @aliases getMeta,GMS
+setMethod(
+    f="getMeta",
+    signature="GMS",
+    definition=function(object, ...){
+        return(object@gmsObject@meta)
+    }
+)
+
+#' @rdname toWaterfall-methods
+#' @aliases toWaterfall,GMS
+#' @noRd
+setMethod(f="toWaterfall",
+          signature="GMS",
+          definition=function(object, labelColumn, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to expected waterfall format")
+                  message(memo)
+              }
+              
+              # grab the sample, mutation, gene columns and set a label
+              sample <- object@gmsObject@sample
+              mutation <- object@gmsObject@mutation[,"trv_type"]
+              gene <- object@gmsObject@meta[,"gene_name"]
+              label <- NA
+              
+              # if a label column exists and is proper overwrite the label variable
+              if(!is.null(labelColumn)){
+                  if(length(labelColumn) != 1) {
+                      memo <- paste("Parameter \"labelColumn\" must be of length 1!",
+                                    "Found length to be", length(labelColumn))
+                      warning(memo)
+                      next
+                  } else if(labelColumn %in% colnames(object@gmsObject@meta)){
+                      memo <- paste("Did not find column:", labelColumn,
+                                    "in the meta slot of the gmsObject! Valid",
+                                    "names are:", colnames(getMeta(object)))
+                      warning(memo)
+                      next
+                  } else {
+                      label <- object@gmsObject@meta[,labelColumn]
+                  }
+              }
+              
+              # combine all columns into a consistent format
+              object <- cbind(sample, gene, mutation, label)
+              colnames(object) <- c("sample", "gene", "mutation", "label")
+              
+              return(object)
+          })
+
+#' @rdname setMutationHierarchy-methods
+#' @aliases setMutationHierarchy,GMS
+#' @noRd
+#' @importFrom data.table data.table
+#' @importFrom data.table setDT
+setMethod(f="setMutationHierarchy",
+          signature="GMS",
+          definition=function(object, mutationHierarchy, verbose, ...){
+              
+              # set the mutation hierarchy if a custom hierarchy is unspecified
+              if(is.null(mutationHierarchy)){
+                  mutationHierarchy$mutation <- c("nonsense", "frame_shift_del",
+                                                  "frame_shift_ins", "splice_site_del",
+                                                  "splice_site_ins", "splice_site",
+                                                  "nonstop", "in_frame_del", "in_frame_ins",
+                                                  "missense", "splice_region_del",
+                                                  "splice_region_ins", "splice_region",
+                                                  "5_prime_flanking_region", 
+                                                  "3_prime_flanking_region", 
+                                                  "3_prime_untranslated_region",
+                                                  "5_prime_unstranslated_region",
+                                                  "rna", "intronic", "silent", NA)
+                  
+                  mutationHierarchy$color <- c('#4f00A8', '#A80100', '#CF5A59',
+                                               '#A80079', '#BC2D94', '#CF59AE',
+                                               '#000000', '#006666', '#00A8A8',
+                                               '#009933', '#ace7b9', '#cdf0d5',
+                                               '#59CF74', '#002AA8', '#5977CF',
+                                               '#F37812', '#F2B079', '#888811',
+                                               '#FDF31C', '#8C8C8C', NA)
+                  mutationHierarchy <- data.table::data.table("mutation"=mutationHierarchy$mutation,
+                                                              "color"=mutationHierarchy$color)
+              }
+              
+              # check that mutationHiearchy is a data table
+              if(!any(class(mutationHierarchy) %in% "data.table")){
+                  memo <- paste("mutationHiearchy is not an object of class",
+                                "data.table, attempting to coerce.")
+                  warning(memo)
+                  mutationHierarchy <- data.table::setDT(mutationHierarchy)
+              }
+              
+              # check for the correct columns
+              if(!all(colnames(mutationHierarchy) %in% c("mutation", "color"))){
+                  missingCol <- colnames(mutationHierarchy)[!c("mutation", "color") %in% colnames(mutationHierarchy)]
+                  memo <- paste("The correct columns were not found in",
+                                "mutationHierarchy, missing", toString(missingCol))
+                  stop(memo)
+              }
+              
+              # check that all mutations are specified
+              if(!all(object@gmsObject@mutation$trv_type %in% mutationHierarchy$mutation)){
+                  missingMutations <- unique(object@gmsObject@mutation$trv_type[!object@gmsObject@mutation$trv_type %in% mutationHierarchy$mutation])
+                  memo <- paste("The following mutations were found in the",
+                                "input however were not specified in the",
+                                "mutationHierarchy!", toString(missingMutations),
+                                "adding these in as least important and",
+                                "assigning random colors!")
+                  warning(memo)
+                  tmp <- data.table::data.table("mutation"=missingMutations,
+                                                "color"=sample(colors(), length(missingMutations)))
+                  mutationHierarchy <- rbind(tmp, mutationHierarchy)
+              }
+              
+              # add in a pretty print mutation labels
+              mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
+              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$mutation)
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Setting the hierarchy of mutations from most",
+                                "to least deleterious and mapping to colors:",
+                                toString(mutationHierarchy$mutation))
+                  message(memo)
+              }
+              
+              return(mutationHierarchy)
+          })

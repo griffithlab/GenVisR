@@ -20,20 +20,20 @@ setClass("MutationAnnotationFormat_v2.4",
              expecMutationNames <- c("Variant_Classification", "Variant_Type", "Reference_Allele",
                                      "Tumor_Seq_Allele1", "Tumor_Seq_Allele2")
              expecSampleNames <- c("Tumor_Sample_Barcode")
-
+             
              if(!all(expecPositionNames %in% colnames(object@position))){
                  memo <- paste("Missing the following required columns in slot position:",
-                               toString(expected_col[!expecPositionNames %in% colnames(object@position)]))
+                               toString(expecPositionNames[!expecPositionNames %in% colnames(object@position)]))
                  stop(memo)
              }
              if(!all(expecMutationNames %in% colnames(object@mutation))){
                  memo <- paste("Missing the following required columns in slot mutation:",
-                               toString(expected_col[!expecMutationNames %in% colnames(object@mutation)]))
+                               toString(expecMutationNames[!expecMutationNames %in% colnames(object@mutation)]))
                  stop(memo)
              }
              if(!all(expecSampleNames %in% colnames(object@sample))){
                  memo <- paste("Missing the following required columns in slot sample:",
-                               toString(expected_col[!expecSampleNames %in% colnames(object@sample)]))
+                               toString(expecSampleNames[!expecSampleNames %in% colnames(object@sample)]))
                  stop(memo)
              }
              return(TRUE)

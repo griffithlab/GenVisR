@@ -132,7 +132,7 @@ setMethod(f="initialize",
 #' 
 #' @name Waterfall
 #' @rdname Waterfall-class
-#' @param input MutationAnnotationFormat class holding genomic information.
+#' @param input Object of class MutationAnnotationFormat, or GMS.
 #' @param labelColumn Character vector specifying a column name from which to
 #' extract labels for cells.
 #' @param samples Character vector specifying samples to plot. If not NULL

@@ -33,6 +33,7 @@ Collate:
     'Clinical-class.R'
     'GMS_Virtual-class.R'
     'GMS-class.R'
+    'GMS_v4-class.R'
     'GenVisR.R'
     'MutationAnnotationFormat_Virtual-class.R'
     'MutationAnnotationFormat-class.R'
