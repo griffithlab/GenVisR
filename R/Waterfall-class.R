@@ -91,7 +91,7 @@ setMethod(f="initialize",
               
               # set the order of samples for plotting
               .Object@primaryData <- orderSamples(.Object, sampleOrder, verbose)
-              
+              browser()
               # create the top sub-plot
               .Object@PlotA <- buildMutationPlot(.Object, plotA, plotATally, 
                                                  plotALayers, verbose)
@@ -973,7 +973,7 @@ setMethod(f="buildGenePlot",
                   memo <- paste("Constructing left sub-plot")
                   message(memo)
               }
-              
+              browser()
               # perform quality checks
               if(!is.null(plotBLayers) && !is.list(plotBLayers)){
                   memo <- paste("plotBLayers is not a list... attempting to coerce.")
@@ -1033,9 +1033,9 @@ setMethod(f="buildGenePlot",
               plotGeom <- geom_bar(position='stack', alpha=.75, width=1, stat='identity')
               
               # plot
-              if(plotB == "frequency"){
+              if(plotB == "proportion"){
                   genePlot <- ggplot(geneData, aes_string(x='gene', y='proportion', fill='mutation'))
-              }else if(plotB == "proportion"){
+              }else if(plotB == "frequency"){
                   genePlot <- ggplot(geneData, aes_string(x='gene', y='count', fill='mutation'))
               }
               genePlot <- genePlot + plotGeom + theme_bw() + coord_flip() + plotTheme +

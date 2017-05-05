@@ -256,3 +256,34 @@ setGeneric(
     name="drawPlot",
     def=function(object, ...){standardGeneric("drawPlot")}
 )
+
+#' Method parseDescription
+#' 
+#' @name parseDescription
+#' @rdname parseDescription-methods
+#' @exportMethod parseDescription
+setGeneric(
+    name="parseDescription",
+    def=function(object, ...){standardGeneric("parseDescription")}
+)
+
+#' Method parseHeader
+#' 
+#' @name parseHeader
+#' @rdname parseHeader-methods
+#' @exportMethod parseHeader
+setGeneric(
+    name="parseHeader",
+    def=function(object, ...){standardGeneric("parseHeader")}
+)
+
+#' Method parseExtra
+#' 
+#' @name parseExtra
+#' @rdname parseExtra-methods
+#' @exportMethod parseExtra
+setGeneric(
+    name="parseExtra",
+    def=function(object, ...){standardGeneric("parseExtra")}
+)
+

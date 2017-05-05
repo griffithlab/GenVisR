@@ -24,7 +24,7 @@ Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
   sectionHeights = NULL, sectionWidths = NULL, verbose = FALSE)
 }
 \arguments{
-\item{input}{MutationAnnotationFormat class holding genomic information.}
+\item{input}{Object of class MutationAnnotationFormat, or GMS.}
 
 \item{labelColumn}{Character vector specifying a column name from which to
 extract labels for cells.}
