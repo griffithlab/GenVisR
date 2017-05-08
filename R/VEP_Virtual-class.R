@@ -95,9 +95,9 @@ setMethod(f="parseExtra",
               }
               
               # Split fields in the "Extra" column of a VEP file into actual columns
-              extraCol <- lapply(strsplit(as.character(vepData$Extra), ';'),
+              extraCol <- lapply(strsplit(as.character(vepData$Extra), ';', fixed=TRUE),
                                  function(x){
-                                     res <- data.table::tstrsplit(x, '=')
+                                     res <- data.table::tstrsplit(x, '=', fixed=TRUE)
                                      setNames(as.list(res[[2]]), res[[1]])
                                      })
               extraCol <- rbindlist(extraCol, fill = T)

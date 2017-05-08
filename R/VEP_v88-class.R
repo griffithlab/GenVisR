@@ -19,8 +19,8 @@ setClass("VEP_v88",
          contains="VEP_Virtual",
          validity=function(object){
              cat("!!!!! VEP_v4~Inspector !!!!!\n")
-             expecPositionNames <- c("chromosome_name", "start", "stop")
-             expecMutationNames <- c("reference", "variant", "trv_type")
+             expecPositionNames <- c("Location")
+             expecMutationNames <- c("Allele", "Consequence")
              expecSampleNames <- c("sample")
              
              if(!all(expecPositionNames %in% colnames(object@position))){
@@ -62,10 +62,10 @@ setMethod(
         # convert the "extra" field in vepData to separate columns
         vepData <- parseExtra(.Object, vepData)
         
-        positionColNames <- c("chromosome_name", "start", "stop")
+        positionColNames <- c("Location")
         .Object@position <- vepData[,positionColNames, with=FALSE]
         
-        mutationColNames <- c("reference", "variant", "trv_type")
+        mutationColNames <- c("Allele", "Consequence")
         .Object@mutation <- vepData[,mutationColNames, with=FALSE]
         
         sampleColNames <- c("sample")
