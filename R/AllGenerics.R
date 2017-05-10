@@ -287,3 +287,12 @@ setGeneric(
     def=function(object, ...){standardGeneric("parseExtra")}
 )
 
+#' Method writeData
+#' 
+#' @name writeData
+#' @rdname writeData-methods
+#' @exportMethod writeData
+setGeneric(
+    name="writeData",
+    def=function(object, ...){standardGeneric("writeData")}
+)

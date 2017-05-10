@@ -108,3 +108,16 @@ setMethod(f="parseExtra",
               
               return(vepData)
           })
+
+#' @rdname writeData-methods
+#' @aliases writeData,VEP_Virtual
+#' @param object Object of class VEP_Virtual.
+#' @param file Character string specifying a file to send output to.
+#' @param sep Delimiter used when writing output, defaults to "\t".
+#' @importFrom data.table fwrite
+setMethod(f="writeData",
+          signature="VEP_Virtual",
+          definition=function(object, file, sep, ...){
+              data.table::fwrite(cbind(object@position, object@mutation, object@sample,
+                                       object@meta), file=file, sep=sep, na=NA)
+          })
