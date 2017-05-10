@@ -48,6 +48,7 @@ setClass("Waterfall",
 #' 
 #' @name Waterfall
 #' @rdname Waterfall-class
+#' @import ggplot2
 setMethod(f="initialize",
           signature="Waterfall",
           definition=function(.Object, input, labelColumn, samples, coverage,
@@ -56,7 +57,7 @@ setMethod(f="initialize",
                               plotATally, plotALayers, plotB, plotBTally,
                               plotBLayers, gridOverlay, drop, labelSize, labelAngle,
                               sampleNames, clinical, sectionHeights, sectionWidths, 
-                              verbose){
+                              plotCLayers, verbose){
 
               # convert to initial data to waterfall format
               .Object@primaryData <- toWaterfall(input, labelColumn, verbose)
@@ -91,7 +92,7 @@ setMethod(f="initialize",
               
               # set the order of samples for plotting
               .Object@primaryData <- orderSamples(.Object, sampleOrder, verbose)
-              browser()
+              
               # create the top sub-plot
               .Object@PlotA <- buildMutationPlot(.Object, plotA, plotATally, 
                                                  plotALayers, verbose)
@@ -106,9 +107,10 @@ setMethod(f="initialize",
               if(is.null(clinical)){
                   .Object@ClinicalData <- data.table::data.table()
               } else {
-                  # there be dragons here, fix!
                   .Object@ClinicalData <- getData(clinical)
                   .Object@ClinicalData <- formatClinicalData(.Object, verbose)
+                  addLayer <- theme(axis.title.x=element_blank())
+                  plotCLayers[[length(plotCLayers ) + 1]] <- addLayer
               }
 
               # add the clinical data plot
@@ -118,7 +120,7 @@ setMethod(f="initialize",
               xTitle <- TRUE #tmporary remove when clinical object is defined
               .Object@PlotC <- buildWaterfallPlot(.Object, gridOverlay, drop,
                                                   labelSize, labelAngle, xTitle,
-                                                  sampleNames, verbose)
+                                                  sampleNames, plotCLayers, verbose)
               
               # align all plots together
               .Object@Grob <- arrangeWaterfallPlot(.Object, sectionHeights=sectionHeights,
@@ -181,6 +183,7 @@ setMethod(f="initialize",
 #' @param sectionWidths Numeric vector specifying relative heights of each plot section,
 #' should sum to one. Expects a value for each section.
 #' @param verbose Boolean specifying if status messages should be reported
+#' @param plotCLayers list of ggplot2 layers to be passed to the plot.
 #' @export
 Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
                       noSynonymous=FALSE, genes=NULL, mutationHierarchy=NULL,
@@ -191,7 +194,7 @@ Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
                       plotBTally=c("simple", "complex"), plotBLayers=NULL,
                       gridOverlay=FALSE, drop=TRUE, labelSize=5, labelAngle=0,
                       sampleNames=TRUE, clinical=NULL, sectionHeights=NULL,
-                      sectionWidths=NULL, verbose=FALSE){
+                      sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL){
     cat("!!!!! Waterfall~Constructor !!!!!\n")
     new("Waterfall", input=input, labelColumn=labelColumn, samples=samples, coverage=coverage,
         noSynonymous=noSynonymous, genes=genes, mutationHierarchy=mutationHierarchy,
@@ -200,7 +203,7 @@ Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
         plotBTally=plotBTally, plotBLayers=plotBLayers, gridOverlay=gridOverlay, drop=drop,
         labelSize=labelSize, labelAngle=labelAngle, sampleNames=sampleNames,
         clinical=clinical, sectionHeights=sectionHeights, sectionWidths=sectionWidths,
-        verbose=verbose)
+        verbose=verbose, plotCLayers=plotCLayers)
 }
 
 #' @rdname Waterfall-methods
@@ -1050,10 +1053,12 @@ setMethod(f="buildGenePlot",
 #' @importFrom data.table setDT
 #' @importFrom data.table is.data.table
 #' @importFrom data.table melt
+#' @importFrom data.table data.table
+#' @importFrom data.table rbindlist
 setMethod(f="formatClinicalData",
           signature="Waterfall",
           definition=function(object, verbose, ...){
-              
+
               # extract the data we need
               clinicalData <- object@ClinicalData
               primaryData <- object@primaryData
@@ -1064,17 +1069,28 @@ setMethod(f="formatClinicalData",
                   message(memo)
               }
               
-              # remove clinical samples not found in primary data
+              # remove clinical samples not found in the primary data
               clinicalData <- clinicalData[clinicalData$sample %in% primaryData$sample,]
-              
-              # check no samples were removed
               removedSamp <- unique(object@ClinicalData$sample[!object@ClinicalData$sample %in% clinicalData$sample])
               memo <- paste("Removed", length(removedSamp), "samples from the clinical data",
                             "not found in the primary waterfall data! These samples are:",
                             toString(removedSamp))
-              if(removedSamp != 0){
+              if(length(removedSamp) != 0){
                   warning(memo)
               } else if(verbose){
+                  message(memo)
+              }
+              
+              # fill in missing clinical samples from primary data if necessary
+              fillSamp <- unique(primaryData$sample[!primaryData$sample %in% clinicalData$sample])
+              clinList <- list(clinicalData, data.table::data.table("sample"=fillSamp))
+              clinicalData <- data.table::rbindlist(clinList, use.names=TRUE,
+                                                    fill=TRUE)
+              memo <- paste("Added", length(fillSamp), "samples from the primary data",
+                            "to the clinical data! These samples are:", toString(fillSamp))
+              if(length(fillSamp) != 0){
+                  warning(memo)
+              } else if(verbose) {
                   message(memo)
               }
               
@@ -1093,13 +1109,15 @@ setMethod(f="formatClinicalData",
 #' waterfall plot.
 #' @param drop Boolean specifying if unused mutations should be dropped from the
 #' legend.
+#' @param plotCLayers list of ggplot2 layers to be passed to the plot.
 #' @return gtable object containing the main plot.
 #' @noRd
 #' @import ggplot2
 #' @importFrom gtable gtable
 setMethod(f="buildWaterfallPlot",
           signature="Waterfall",
-          definition=function(object, gridOverlay, drop, labelSize, labelAngle, sampleNames, xTitle, verbose, ...){
+          definition=function(object, gridOverlay, drop, labelSize, labelAngle,
+                              sampleNames, xTitle, plotCLayers, verbose, ...){
               # extract the data we need
               primaryData <- object@primaryData
               paletteData <- object@MutationHierarchy
@@ -1108,6 +1126,19 @@ setMethod(f="buildWaterfallPlot",
               if(verbose){
                   memo <- paste("Building the main plot")
                   message(memo)
+              }
+              
+              # perform quality checks
+              if(!is.null(plotCLayers) && !is.list(plotCLayers)){
+                  memo <- paste("plotCLayers is not a list... attempting to coerce.")
+                  warning(memo)
+                  plotCLayers <- as.list(plotCLayers)
+                  if(any(lapply(plotCLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x)))){
+                      memo <- paste("plotCLayers is not a list of ggproto or ",
+                                    "theme objects... setting plotCLayers to NULL")
+                      warning(memo)
+                      plotCLayers <- NULL
+                  }
               }
               
               ######### start building the plot ################################
@@ -1193,10 +1224,10 @@ setMethod(f="buildWaterfallPlot",
               
               # define plot
               waterfallPlot <- ggplot(primaryData, aes_string('sample', 'gene'))
-              
+              browser()
               # combine plot elements
               waterfallPlot <- waterfallPlot + plotGeom + plotGridOverlay +
-                  plotLegend + plotXLabel + plotTheme + sampleLabels + plotXtitle
+                  plotLegend + plotXLabel + plotTheme + sampleLabels + plotXtitle + plotCLayers
               
               # covert to grob
               waterfallGrob <- ggplotGrob(waterfallPlot)

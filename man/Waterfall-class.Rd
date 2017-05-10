@@ -11,7 +11,7 @@
   noSynonymous, genes, mutationHierarchy, recurrence, geneOrder, geneMax,
   sampleOrder, plotA, plotATally, plotALayers, plotB, plotBTally, plotBLayers,
   gridOverlay, drop, labelSize, labelAngle, sampleNames, clinical,
-  sectionHeights, sectionWidths, verbose)
+  sectionHeights, sectionWidths, plotCLayers, verbose)
 
 Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
   noSynonymous = FALSE, genes = NULL, mutationHierarchy = NULL,
@@ -21,7 +21,8 @@ Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
   plotB = c("proportion", "frequency", NULL), plotBTally = c("simple",
   "complex"), plotBLayers = NULL, gridOverlay = FALSE, drop = TRUE,
   labelSize = 5, labelAngle = 0, sampleNames = TRUE, clinical = NULL,
-  sectionHeights = NULL, sectionWidths = NULL, verbose = FALSE)
+  sectionHeights = NULL, sectionWidths = NULL, verbose = FALSE,
+  plotCLayers = NULL)
 }
 \arguments{
 \item{input}{Object of class MutationAnnotationFormat, or GMS.}
@@ -92,6 +93,8 @@ should sum to one. Expects a value for each section.}
 
 \item{sectionWidths}{Numeric vector specifying relative heights of each plot section,
 should sum to one. Expects a value for each section.}
+
+\item{plotCLayers}{list of ggplot2 layers to be passed to the plot.}
 
 \item{verbose}{Boolean specifying if status messages should be reported}
 
