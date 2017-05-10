@@ -1068,9 +1068,10 @@ setMethod(f="formatClinicalData",
               clinicalData <- clinicalData[clinicalData$sample %in% primaryData$sample,]
               
               # check no samples were removed
-              removedSamp <- length(object@ClinicalData$sample) - length(clinicalData$sample)
-              memo <- paste("Removed", removedSamp, "samples from the clinical data",
-                            "not found in the waterfall data!")
+              removedSamp <- unique(object@ClinicalData$sample[!object@ClinicalData$sample %in% clinicalData$sample])
+              memo <- paste("Removed", length(removedSamp), "samples from the clinical data",
+                            "not found in the primary waterfall data! These samples are:",
+                            toString(removedSamp))
               if(removedSamp != 0){
                   warning(memo)
               } else if(verbose){
