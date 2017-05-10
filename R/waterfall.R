@@ -115,6 +115,7 @@
 #' @return One of the following, a list of dataframes containing data to be
 #' plotted, a grob object, or a plot.
 #' @importFrom utils tail
+#' @importFrom grid nullGrob
 #' @export
 
 waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE, 
@@ -258,15 +259,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
         }
     } else {
         # create a blank ggplot object
-        df <- data.frame()
-        burden_plot <- ggplot2::ggplot(df) + ggplot2::geom_point() +
-            ggplot2::xlim(0, 1) + ggplot2::ylim(0, 1) +
-            ggplot2::theme(axis.text.x=ggplot2::element_blank(),
-                           axis.text.y=ggplot2::element_blank(),
-                           axis.ticks.x=ggplot2::element_blank(),
-                           axis.ticks.y=ggplot2::element_blank(),
-                           panel.background=ggplot2::element_blank(),
-                           panel.grid=ggplot2::element_blank())
+        burden_plot <- grid::nullGrob()
     }
 
     # Plot the Left Bar Chart

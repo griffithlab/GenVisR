@@ -11,6 +11,7 @@
 #' @param section_heights Heights of each section (should sum to one)
 #' @return a grob object
 #' @importFrom gridExtra arrangeGrob
+#' @importFrom grid nullGrob
 
 waterfall_align <- function(genes, heatmap, burden, clinical, proportions, 
     section_heights) {
@@ -29,6 +30,7 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
             }
         }
     }
+   
 
     # define the ggplot's as grobs and create a blank plot
     genes_grob <- suppressWarnings(ggplot2::ggplotGrob(genes))
@@ -41,15 +43,22 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
     heatmap_legend <- heatmap_grob[["grobs"]][[ind_legend]]
     heatmap_width <- sum(heatmap_legend$width)
     heatmap_grob <- ggplot2::ggplotGrob(heatmap + theme(legend.position="none"))
-
-    burden_grob <- ggplot2::ggplotGrob(burden)
-    ## Strip out legends and plot separately
-    ind_legend <- grep("guide", burden_grob$layout$name)
-    burden_legend <- burden_grob[["grobs"]][[ind_legend]]
-    burden_width <- sum(burden_legend$width)
-    burden_grob <- ggplot2::ggplotGrob(burden + theme(legend.position="none"))
-
-    blankPanel <- grid::grid.rect(gp=grid::gpar(col="white"))
+    
+    if(grid::is.grob(burden)){
+        burden_width <- NULL
+        burden_grob <- burden
+        blankPanel <- grid::grid.rect(gp=grid::gpar(col="white"))
+        burden_legend <- grid::nullGrob()
+    } else {
+        burden_grob <- ggplot2::ggplotGrob(burden)
+        ## Strip out legends and plot separately
+        ind_legend <- grep("guide", burden_grob$layout$name)
+        burden_legend <- burden_grob[["grobs"]][[ind_legend]]
+        burden_width <- sum(burden_legend$width)
+        burden_grob <- ggplot2::ggplotGrob(burden + theme(legend.position="none"))
+        
+        blankPanel <- grid::grid.rect(gp=grid::gpar(col="white"))
+    }
 
     if (!is.null(proportions)) {
         prop_grob <- ggplot2::ggplotGrob(proportions)
