@@ -232,3 +232,15 @@ setMethod(f="getData",
               clinData <- object@clinicalData
               return(clinData)
           })
+
+#' @rdname drawPlot-methods
+#' @aliases drawPlot,Clinical
+#' @importFrom grid grid.draw
+setMethod(
+    f="drawPlot",
+    signature="Clinical",
+    definition=function(object, ...){
+        mainPlot <- object@clinicalGrob
+        grid::grid.draw(mainPlot)
+    }
+)
