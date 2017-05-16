@@ -7,13 +7,16 @@
 \alias{GMS}
 \title{Class GMS}
 \usage{
-\S4method{initialize}{GMS}(.Object, path, version, verbose)
+\S4method{initialize}{GMS}(.Object, path, data, version, verbose)
 
-GMS(path, version = 4, verbose = FALSE)
+GMS(path, data = NULL, version = 4, verbose = FALSE)
 }
 \arguments{
 \item{path}{String specifying the path to a GMS annotation file. Can accept
 wildcards if multiple GMS annotation files exist (see details).}
+
+\item{data}{data.table object storing a GMS annotation file. Overrides "path"
+if specified.}
 
 \item{version}{String specifying the version of the GMS files, Defaults to
 version 4.}

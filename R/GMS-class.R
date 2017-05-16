@@ -20,50 +20,64 @@ setClass("GMS",
 #' @rdname GMS-class
 #' @importFrom data.table fread
 #' @importFrom data.table rbindlist
+#' @importFrom data.table is.data.table
+#' @importFrom data.table as.data.table
 setMethod(
     f="initialize",
     signature="GMS",
-    definition=function(.Object, path, version, verbose){
+    definition=function(.Object, path, data, version, verbose){
         cat("!!!!! GMS~Initalizer !!!!!\n")
         
         # assign the annotator version
         .Object@version <- version
         
-        # Grab all files and assign to slot
-        gmsFiles <- Sys.glob(path)
-        .Object@path <- gmsFiles
-        
-        # anonymous function to read in files
-        a <- function(x, verbose){
-            # detect OS and remove slashes and extension
-            if(.Platform$OS.type == "windows"){
-                sampleName <- gsub("(.*/)||(.*\\\\)", "", x)
-                sampleName <- gsub("\\.[^.]+$", "", x)
-            } else {
-                sampleName <- gsub("(.*/)", "", x)
-                sampleName <- gsub("\\.[^.]+$", "", sampleName)
+        # if data is null read from path variable
+        if(is.null(data)){
+            # Grab all files and assign to slot
+            gmsFiles <- Sys.glob(path)
+            .Object@path <- gmsFiles
+            
+            # anonymous function to read in files
+            a <- function(x, verbose){
+                # detect OS and remove slashes and extension
+                if(.Platform$OS.type == "windows"){
+                    sampleName <- gsub("(.*/)||(.*\\\\)", "", x)
+                    sampleName <- gsub("\\.[^.]+$", "", x)
+                } else {
+                    sampleName <- gsub("(.*/)", "", x)
+                    sampleName <- gsub("\\.[^.]+$", "", sampleName)
+                }
+                # read data
+                gmsData <- suppressWarnings(data.table::fread(input=x,
+                                                              stringsAsFactors=TRUE,
+                                                              verbose=verbose))
+                # set sample if it's not already in the data table
+                if(any(colnames(gmsData) %in% "sample")){
+                    return(gmsData)
+                } else {
+                    gmsData$sample <- sampleName
+                    return(gmsData)
+                }
             }
-            # read data
-            gmsData <- suppressWarnings(data.table::fread(input=x,
-                                                          stringsAsFactors=TRUE,
-                                                          verbose=verbose))
-            # set sample if it's not already in the data table
-            if(any(colnames(gmsData) %in% "sample")){
-                return(gmsData)
+            
+            # aggregate data into a single data table if necessary
+            if(length(gmsFiles) == 0){
+                memo <- paste("No files found using:", path)
+                stop(memo)
             } else {
-                gmsData$sample <- sampleName
-                return(gmsData)
+                gmsData <- lapply(gmsFiles, a, verbose)
+                gmsData <- data.table::rbindlist(gmsData)
             }
-        }
-        
-        # aggregate data into a single data table if necessary
-        if(length(gmsFiles) == 0){
-            memo <- paste("No files found using:", path)
-            stop(memo)
+        } else if(is.data.table(data)){
+            .Object@path <- "none"
+            gmsData <- data
         } else {
-            gmsData <- lapply(gmsFiles, a, verbose)
-            gmsData <- data.table::rbindlist(gmsData)
-        } 
+            memo <- paste("data is not of class data.table,",
+                          "attempting to coerce")
+            warning(memo)
+            .Object@path <- "none"
+            gmsData <- data.table::as.data.table(data)
+        }
         
         # assign the gmsData to it's slot
         if(version == 4){
@@ -84,6 +98,8 @@ setMethod(
 #' @rdname GMS-class
 #' @param path String specifying the path to a GMS annotation file. Can accept
 #' wildcards if multiple GMS annotation files exist (see details).
+#' @param data data.table object storing a GMS annotation file. Overrides "path"
+#' if specified.
 #' @param version String specifying the version of the GMS files, Defaults to
 #' version 4.
 #' @param verbose Boolean specifying if progress should be reported while
@@ -101,9 +117,9 @@ setMethod(
 #' This value will need to be changed only if files were created using a
 #' different GMS annotator version.
 #' @export
-GMS <- function(path, version=4, verbose=FALSE){
+GMS <- function(path, data=NULL, version=4, verbose=FALSE){
     cat("!!!!! GMS~Constructor !!!!!\n")
-    new("GMS", path=path, version=version, verbose=verbose)}
+    new("GMS", path=path, data=data, version=version, verbose=verbose)}
 
 #' @rdname getPosition-methods
 #' @aliases getPosition,GMS
@@ -183,6 +199,9 @@ setMethod(f="toWaterfall",
               # combine all columns into a consistent format
               object <- cbind(sample, gene, mutation, label)
               colnames(object) <- c("sample", "gene", "mutation", "label")
+              
+              # convert appropriate columns to factor
+              object$sample <- factor(object$sample)
               
               return(object)
           })

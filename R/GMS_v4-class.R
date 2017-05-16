@@ -20,6 +20,7 @@ setClass("GMS_v4",
              expecPositionNames <- c("chromosome_name", "start", "stop")
              expecMutationNames <- c("reference", "variant", "trv_type")
              expecSampleNames <- c("sample")
+             expecMetaNames <- c("gene_name")
              
              if(!all(expecPositionNames %in% colnames(object@position))){
                  memo <- paste("Missing the following required columns in slot position:",
@@ -34,6 +35,11 @@ setClass("GMS_v4",
              if(!all(expecSampleNames %in% colnames(object@sample))){
                  memo <- paste("Missing the following required columns in slot sample:",
                                toString(expecSampleNames[!expecSampleNames %in% colnames(object@sample)]))
+                 stop(memo)
+             }
+             if(!all(expecMetaNames %in% colnames(object@meta))){
+                 memo <- paste("Missing the following required columns in slot meta:",
+                               toString(expecMetaNames[!expecMetaNames %in% colnames(object@meta)]))
                  stop(memo)
              }
              return(TRUE)
