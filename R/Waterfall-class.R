@@ -758,8 +758,8 @@ setMethod(f="orderSamples",
                   NA_index <- which(grepl("^NA.$", colnames(wideBoolean)))
                   
                   # Append NA column to end of data frame
-                  NA_gene <- wide_boolean[,NA_index]
-                  wide_boolean <- wide_boolean[,-NA_index]
+                  NA_gene <- wideBoolean[,NA_index]
+                  wideBoolean <- wideBoolean[,-NA_index]
                   
                   # Save copy and remove samples with no mutations,
                   # these will be added to the end
@@ -903,6 +903,9 @@ setMethod(f="buildMutationPlot",
                   plotTitleY <- ylab("Mutations\nper MB")
               }
               
+              # keep all samples
+              x_scale <- scale_x_discrete(drop=FALSE)
+              
               #  geom definition
               plotGeom <- geom_bar(stat='identity', alpha=.75, width=1)
               
@@ -912,7 +915,7 @@ setMethod(f="buildMutationPlot",
               } else if(toupper(plotA) == toupper("burden")) {
                   mutPlot <- ggplot(mutationData, aes_string(x='sample', y='mutationBurden', fill='mutation'))
               }
-              mutPlot <- mutPlot + plotGeom + plotTitleY + plotLegend + plotTheme + plotALayers
+              mutPlot <- mutPlot + plotGeom + x_scale + plotTitleY + plotLegend + plotTheme + plotALayers
               
               # convert to gtable grob
               plotGrob <- ggplotGrob(mutPlot)
@@ -976,7 +979,7 @@ setMethod(f="buildGenePlot",
                   memo <- paste("Constructing left sub-plot")
                   message(memo)
               }
-              browser()
+              
               # perform quality checks
               if(!is.null(plotBLayers) && !is.list(plotBLayers)){
                   memo <- paste("plotBLayers is not a list... attempting to coerce.")
@@ -1219,14 +1222,17 @@ setMethod(f="buildWaterfallPlot",
                   plotXtitle <- theme(axis.title.x=element_blank())
               }
               
+              # make sure all samples are plotted
+              x_scale <- scale_x_discrete(drop=FALSE)
+              
               # define geom
               plotGeom <- geom_tile(aes_string(fill='mutation'), position="identity")
               
               # define plot
               waterfallPlot <- ggplot(primaryData, aes_string('sample', 'gene'))
-              browser()
+             
               # combine plot elements
-              waterfallPlot <- waterfallPlot + plotGeom + plotGridOverlay +
+              waterfallPlot <- waterfallPlot + plotGeom + plotGridOverlay + x_scale +
                   plotLegend + plotXLabel + plotTheme + sampleLabels + plotXtitle + plotCLayers
               
               # covert to grob
