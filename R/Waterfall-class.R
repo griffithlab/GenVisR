@@ -52,7 +52,7 @@ setClass("Waterfall",
 setMethod(f="initialize",
           signature="Waterfall",
           definition=function(.Object, input, labelColumn, samples, coverage,
-                              noSynonymous, genes, mutationHierarchy, recurrence, 
+                              mutation, genes, mutationHierarchy, recurrence, 
                               geneOrder, geneMax, sampleOrder, plotA,
                               plotATally, plotALayers, plotB, plotBTally,
                               plotBLayers, gridOverlay, drop, labelSize, labelAngle,
@@ -72,17 +72,22 @@ setMethod(f="initialize",
               .Object@simpleMutationCounts <- calcSimpleMutationBurden(.Object, coverage, verbose)
               .Object@complexMutationCounts <- calcComplexMutationBurden(.Object, coverage, verbose)
               
-              # remove silent mutations if specified
-              if(noSynonymous) .Object@primaryData <- rmvSilentMutation(.Object, verbose)
-              
-              # subset on genes if specified
-              .Object@primaryData <- geneSubset(.Object, genes, verbose)
+              # remove mutations if specified
+              .Object@primaryData <- rmvMutation(.Object, mutation, verbose)
               
               # remove entries for the same gene/sample based on a hierarchy leaving one
+              # (must happen before recurrenceSubset)
               .Object@primaryData <- mutHierarchySubset(.Object, verbose)
               
-              # subset on recurrence of mutations
-              .Object@primaryData <- recurrenceSubset(.Object, recurrence, verbose)
+              # Get genes which should be kept based on genes param
+              keepGenes_a <- geneSubset(.Object, genes, verbose)
+              
+              # get genes which should be kept based on recurrence parameter
+              keepGenes_b <- recurrenceSubset(.Object, recurrence, verbose)
+              
+              # Filter the necessary genes from geneSubset and recurrenceSubset
+              keepGenes <- unique(c(keepGenes_a, keepGenes_b))
+              .Object@primaryData <- geneFilter(.Object, keepGenes, verbose)
               
               # set the order of genes for plotting
               .Object@primaryData <- orderGenes(.Object, geneOrder, verbose)
@@ -142,8 +147,8 @@ setMethod(f="initialize",
 #' @param coverage Integer specifying the size in base pairs of the genome
 #' covered by sequence data from which mutations could be called. Required for
 #' the mutation burden sub-plot (see details and vignette).
-#' @param noSynonymous Boolean specifying if silent mutations should be removed
-#' from the plot, this will not affect the mutation burden calculation.
+#' @param mutation Character vector specifying mutations to keep, if defined
+#' mutations not supplied are removed from the main plot.
 #' @param mutationHierarchy Data.table object with rows specifying the order of
 #' mutations from most to least deleterious and column names "mutation" and
 #' "color". Used to change the default colors and/or to give priority to a
@@ -151,6 +156,7 @@ setMethod(f="initialize",
 #' @param recurrence Numeric value between 0 and 1 specifying a
 #' mutation recurrence cutoff. Genes which do not have mutations in the
 #' proportion of samples defined are removed.
+#' @param genes Character vector of genes to keep
 #' @param geneOrder Character vector specifying the order in which to plot
 #' genes.
 #' @param geneMax Integer specifying the maximum number of genes to be plotted.
@@ -186,7 +192,7 @@ setMethod(f="initialize",
 #' @param plotCLayers list of ggplot2 layers to be passed to the plot.
 #' @export
 Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
-                      noSynonymous=FALSE, genes=NULL, mutationHierarchy=NULL,
+                      mutation=NULL, genes=NULL, mutationHierarchy=NULL,
                       recurrence=NULL, geneOrder=NULL, geneMax=NULL,
                       sampleOrder=NULL, plotA=c("frequency", "burden", NULL),
                       plotATally=c("simple", "complex"), plotALayers=NULL,
@@ -197,7 +203,7 @@ Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
                       sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL){
     cat("!!!!! Waterfall~Constructor !!!!!\n")
     new("Waterfall", input=input, labelColumn=labelColumn, samples=samples, coverage=coverage,
-        noSynonymous=noSynonymous, genes=genes, mutationHierarchy=mutationHierarchy,
+        mutation=mutation, genes=genes, mutationHierarchy=mutationHierarchy,
         recurrence=recurrence, geneOrder=geneOrder, geneMax=geneMax, sampleOrder=sampleOrder,
         plotA=plotA, plotATally=plotATally, plotALayers=plotALayers, plotB=plotB,
         plotBTally=plotBTally, plotBLayers=plotBLayers, gridOverlay=gridOverlay, drop=drop,
@@ -376,35 +382,54 @@ setMethod(f="calcComplexMutationBurden",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases rmvSilentMutation,Waterfall
+#' @aliases rmvMutation,Waterfall
 #' @param object Object of class waterfall
 #' @param verbose Boolean for status updates
-#' @return data.table object with silent mutations removed from primaryData slot
+#' @return data.table object with mutations removed from primaryData slot.
 #' @noRd
-setMethod(f="rmvSilentMutation",
+setMethod(f="rmvMutation",
           signature="Waterfall",
-          definition=function(object, verbose, ...){
+          definition=function(object, mutation, verbose, ...){
+              
               # access the part of the object we want to manipulate
               primaryData <- object@primaryData
+              mutation <- unique(mutation)
+              
+              # do nothing if mutation is null
+              if(is.null(mutation)){
+                  return(primaryData)
+              }
+              
+              # perform quality checks
+              if(!is.character(mutation)){
+                  memo <- paste("mutation is defined but is not a character vector,",
+                                "attempting to coerce.")
+                  mutation <- as.character(mutation)
+              }
               
               # store how many mutations there are originaly to figure out how
-              # silent mutations are removed
+              # manyt mutations are removed
               totalMut <- length(na.omit(primaryData$mutation))
               
-              # define what a silent mutation is
-              silentMutations <- c("synonymous", "silent", "synonymous_variant")
+              # check if any mutations were specified but are not in the data
+              if(!any(mutation %in% primaryData$mutation)){
+                  missingMutation <- mutation[!mutation %in% unique(primaryData$mutation)]
+                  memo <- paste("the following mutations were specified to be kept",
+                                "but were not found:", toString(missingMutation))
+                  warning(memo)
+              }
               
               # assign NA to any rows/columns with silent mutations, keep the
               # sample so the cohort size is not accidently reduced
-              primaryData[toupper(primaryData$trv_type) == toupper(silentMutations), c('gene', 'mutation', 'label')] <- NA
-              
+              primaryData <- primaryData[primaryData$mutation %in% mutation,]
+
               # figure out number of silent mutations that existed
-              silentMutCount <- totalMut - length(na.omit(primaryData$mutation))
+              mutCount <- totalMut - length(na.omit(primaryData$mutation))
               
               # print status message
               if(verbose){
-                  memo <- paste("Found", silentMutCount,"silent mutations...",
-                                "removing")
+                  memo <- paste("Removed", mutCount, "which were not specified",
+                                "to be kept.")
                   message(memo)
               }
               
@@ -416,8 +441,7 @@ setMethod(f="rmvSilentMutation",
 #' @param object Object of class waterfall
 #' @param genes character vector giving genes to keep
 #' @param verbose Boolean for status updates
-#' @return data.table object subset on gene if gene is not NULL. Entries are 
-#' kept and or added if they are in the genes parameter.
+#' @return Character vector of genes which should be kept.
 #' @noRd
 setMethod(f="geneSubset",
           signature="Waterfall",
@@ -426,7 +450,7 @@ setMethod(f="geneSubset",
               primaryData <- object@primaryData
               
               # Dont do anything if genes is null
-              if(is.null(genes)) return(primaryData)
+              if(is.null(genes)) return(NA)
               
               # print status message
               if(verbose){
@@ -443,24 +467,10 @@ setMethod(f="geneSubset",
                   genes <- as.character(genes)
               }
               
-              # check if a gene was specified but is not in the data
-              if(!all(genes %in% primaryData$gene))
-              {
-                  newGenes <- genes[!genes %in% primaryData$gene]
-                  memo <- paste("The following genes were specified but were",
-                                "not found in the data:", toString(newGenes),"
-                                this may be because they were filtered in a", 
-                                "previous step... adding these to the input.")
-                  warning(memo)
-                  primaryData <- rbind(primaryData,
-                                       data.table("gene"=newGenes), fill=TRUE)
-              }
-              
-              # keep all genes specified and any NA so samples are kept
+              # keep all genes specified and add NA so all samples are kept later
               genes <- c(genes, NA)
-              primaryData <- primaryData[primaryData$gene %in% genes,]
               
-              return(primaryData)
+              return(genes)
           })
 
 #' @rdname Waterfall-methods
@@ -505,7 +515,7 @@ setMethod(f="mutHierarchySubset",
 #' @param recurrence Numeric value specifying a recurrence cutoff to require,
 #' genes not meeting this threshold are removed.
 #' @param verbose Boolean for status updates
-#' @return data.table object subset based on the recurrence of gene mutations.
+#' @return Character vector of genes to keep based on recurrence.
 #' @noRd
 #' @importFrom stats na.omit
 setMethod(f="recurrenceSubset",
@@ -515,7 +525,7 @@ definition=function(object, recurrence, verbose, ...){
     primaryData <- object@primaryData
     
     # Dont do anything if recurrence is null
-    if(is.null(recurrence)) return(primaryData)
+    if(is.null(recurrence)) return(NA)
     
     # Perform quality checks
     if(!is.numeric(recurrence)){
@@ -551,22 +561,18 @@ definition=function(object, recurrence, verbose, ...){
     gene_above_recur <- mutRecur[mutRecur$prop >= recurrence,]$gene
     gene_below_recur <- mutRecur[mutRecur$prop < recurrence,]$gene
     
-    # add NA to the end of 'gene_above_recurrence' vector, allowing for all
-    # samples having NA as a gene name to be retained in the subset below
-    gene_above_recur <- c(as.character(gene_above_recur), NA)
-    
-    # subset the original data frame based on the following: keep gene if it is
-    # in the gene vector in "mutation_recurrence_subset"
-    primaryData <- primaryData[(primaryData$gene %in% gene_above_recur), ]
-    
     # print status message
     if(verbose){
-        memo <- paste("Removing", length(unique(gene_below_recur)),
+        memo <- paste("Designating for removal", length(unique(gene_below_recur)),
                       "genes not meeting the recurrence cutoff threshold.")
         message(memo)
     }
     
-    return(primaryData)
+    # add NA to the end of 'gene_above_recurrence' vector, allowing for all
+    # samples having NA as a gene name to be retained in subsequent subsets
+    gene_above_recur <- c(as.character(gene_above_recur), NA)
+    
+    return(gene_above_recur)
 })
 
 #' @rdname Waterfall-methods
@@ -859,7 +865,6 @@ setMethod(f="buildMutationPlot",
               }
               
               # make sure sample levels match primaryData for plotting
-              mutationData <- mutationData[mutationData$sample %in% unique(object@primaryData$sample),]
               mutationData$sample <- factor(mutationData$sample, levels=levels(object@primaryData$sample))
               if(toupper(plotATally) == toupper("complex")) {
                   mutationData$mutation <- factor(mutationData$mutation, levels=levels(object@primaryData$mutation))
@@ -915,7 +920,7 @@ setMethod(f="buildMutationPlot",
               } else if(toupper(plotA) == toupper("burden")) {
                   mutPlot <- ggplot(mutationData, aes_string(x='sample', y='mutationBurden', fill='mutation'))
               }
-              mutPlot <- mutPlot + plotGeom + x_scale + plotTitleY + plotLegend + plotTheme + plotALayers
+              mutPlot <- mutPlot + plotGeom + x_scale + plotTitleY + plotLegend + plotTheme + plotALayers + theme(legend.position="none")
               
               # convert to gtable grob
               plotGrob <- ggplotGrob(mutPlot)
@@ -1073,7 +1078,8 @@ setMethod(f="formatClinicalData",
               }
               
               # remove clinical samples not found in the primary data
-              clinicalData <- clinicalData[clinicalData$sample %in% primaryData$sample,]
+              primaryDataSamples <- levels(primaryData$sample)
+              clinicalData <- clinicalData[clinicalData$sample %in% primaryDataSamples,]
               removedSamp <- unique(object@ClinicalData$sample[!object@ClinicalData$sample %in% clinicalData$sample])
               memo <- paste("Removed", length(removedSamp), "samples from the clinical data",
                             "not found in the primary waterfall data! These samples are:",
@@ -1085,7 +1091,7 @@ setMethod(f="formatClinicalData",
               }
               
               # fill in missing clinical samples from primary data if necessary
-              fillSamp <- unique(primaryData$sample[!primaryData$sample %in% clinicalData$sample])
+              fillSamp <- unique(primaryDataSamples[!primaryDataSamples %in% clinicalData$sample])
               clinList <- list(clinicalData, data.table::data.table("sample"=fillSamp))
               clinicalData <- data.table::rbindlist(clinList, use.names=TRUE,
                                                     fill=TRUE)
@@ -1097,7 +1103,7 @@ setMethod(f="formatClinicalData",
                   message(memo)
               }
               
-              # set levels of clinicalData to match primaryData
+              # set levels of clinicalData to match primaryData for ordering
               clinicalData$sample <- factor(clinicalData$sample, levels=levels(primaryData$sample))
               
               # return the formated data
@@ -1208,7 +1214,9 @@ setMethod(f="buildWaterfallPlot",
                                                                colour='white'),
                                  axis.text.y=element_blank(),
                                  plot.title=element_blank(),
-                                 legend.title=element_text(size=14))
+                                 legend.title=element_text(size=14),
+                                 panel.border = element_rect(colour = "grey20",
+                                                             fill=NA))
               
               if(sampleNames){
                   sampleLabels <- theme(axis.text.x=element_text(angle=50, hjust=1))
@@ -1387,5 +1395,42 @@ setMethod(
     definition=function(object, ...){
         mainPlot <- object@Grob
         grid::grid.draw(mainPlot)
+    }
+)
+
+#' @rdname geneFilter-methods
+#' @aliases geneFilter,Waterfall
+#' @param genes Character vector of genes to keep based on geneSubset and recurrenceSubset
+#' @noRd
+setMethod(
+    f="geneFilter",
+    signature="Waterfall",
+    definition=function(object, genes, verbose, ...){
+        
+        # extract the data we need
+        primaryData <- object@primaryData
+        
+        # do nothing if there are no genes to remove
+        if(all(is.na(genes))) return(primaryData)
+        
+        if(verbose){
+            memo <- paste("Performing gene subsets")
+            message(memo)
+        }
+        
+        # check if a gene was specified but is not in the data
+        if(!all(na.omit(genes) %in% primaryData$gene))
+        {
+            newGenes <- na.omit(genes[!genes %in% primaryData$gene])
+            memo <- paste("The following genes were designated to be kept but were",
+                          "not found in the data:", toString(newGenes))
+            warning(memo)
+        }
+        
+        # subset the original data frame based on the following: keep gene if it is
+        # in the gene vector in "mutation_recurrence_subset"
+        primaryData <- primaryData[(primaryData$gene %in% genes), ]
+        
+        return(primaryData)
     }
 )

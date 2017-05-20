@@ -78,14 +78,14 @@ setGeneric(
     def=function(object, coverage, verbose, ...){standardGeneric("calcComplexMutationBurden")}
 )
 
-#' Method rmvSilentMutation
+#' Method rmvMutation
 #'
-#' @name rmvSilentMutation
-#' @rdname rmvSilentMutation-methods
+#' @name rmvMutation
+#' @rdname rmvMutation-methods
 #' @noRd
 setGeneric(
-    name="rmvSilentMutation",
-    def=function(object, verbose, ...){standardGeneric("rmvSilentMutation")}
+    name="rmvMutation",
+    def=function(object, verbose, ...){standardGeneric("rmvMutation")}
 )
 
 #' Method geneSubset
@@ -295,4 +295,14 @@ setGeneric(
 setGeneric(
     name="writeData",
     def=function(object, ...){standardGeneric("writeData")}
+)
+
+#' Method geneFilter
+#' 
+#' @name geneFilter
+#' @rdname geneFilter-methods
+#' @noRd
+setGeneric(
+    name="geneFilter",
+    def=function(object, ...){standardGeneric("geneFilter")}
 )

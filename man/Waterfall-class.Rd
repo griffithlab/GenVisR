@@ -8,13 +8,13 @@
 \title{Class Waterfall}
 \usage{
 \S4method{initialize}{Waterfall}(.Object, input, labelColumn, samples, coverage,
-  noSynonymous, genes, mutationHierarchy, recurrence, geneOrder, geneMax,
+  mutation, genes, mutationHierarchy, recurrence, geneOrder, geneMax,
   sampleOrder, plotA, plotATally, plotALayers, plotB, plotBTally, plotBLayers,
   gridOverlay, drop, labelSize, labelAngle, sampleNames, clinical,
   sectionHeights, sectionWidths, plotCLayers, verbose)
 
 Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
-  noSynonymous = FALSE, genes = NULL, mutationHierarchy = NULL,
+  mutation = NULL, genes = NULL, mutationHierarchy = NULL,
   recurrence = NULL, geneOrder = NULL, geneMax = NULL,
   sampleOrder = NULL, plotA = c("frequency", "burden", NULL),
   plotATally = c("simple", "complex"), plotALayers = NULL,
@@ -37,8 +37,10 @@ all samples in "input" not specified with this parameter are removed.}
 covered by sequence data from which mutations could be called. Required for
 the mutation burden sub-plot (see details and vignette).}
 
-\item{noSynonymous}{Boolean specifying if silent mutations should be removed
-from the plot, this will not affect the mutation burden calculation.}
+\item{mutation}{Character vector specifying mutations to keep, if defined
+mutations not supplied are removed from the main plot.}
+
+\item{genes}{Character vector of genes to keep}
 
 \item{mutationHierarchy}{Data.table object with rows specifying the order of
 mutations from most to least deleterious and column names "mutation" and
