@@ -149,7 +149,7 @@ VEP <- function(path, version="auto", verbose=FALSE){
 #' @aliases writeData,VEP
 #' @param object Object of class VEP.
 #' @param file Character string specifying a file to send output to.
-#' @param sep Delimiter used when writing output, defaults to ::tab::.
+#' @param sep Delimiter used when writing output, defaults to tab.
 setMethod(f="writeData",
           signature="VEP",
           definition=function(object, file, ...){

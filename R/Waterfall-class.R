@@ -1039,6 +1039,7 @@ setMethod(f="buildGenePlot",
               }else if(plotB == "frequency"){
                   genePlot <- ggplot(geneData, aes_string(x='gene', y='count', fill='mutation'))
               }
+              
               genePlot <- genePlot + plotGeom + theme_bw() + coord_flip() + plotTheme +
                   plotYlabel + scale_y_reverse() + plotLegend + plotBLayers
               

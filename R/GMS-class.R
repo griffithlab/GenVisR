@@ -211,10 +211,10 @@ setMethod(f="toWaterfall",
 #' @noRd
 #' @importFrom data.table data.table
 #' @importFrom data.table setDT
+#' @importFrom data.table rbindlist
 setMethod(f="setMutationHierarchy",
           signature="GMS",
           definition=function(object, mutationHierarchy, verbose, ...){
-              
               # set the mutation hierarchy if a custom hierarchy is unspecified
               if(is.null(mutationHierarchy)){
                   mutationHierarchy$mutation <- c("nonsense", "frame_shift_del",
@@ -227,7 +227,7 @@ setMethod(f="setMutationHierarchy",
                                                   "3_prime_flanking_region", 
                                                   "3_prime_untranslated_region",
                                                   "5_prime_unstranslated_region",
-                                                  "rna", "intronic", "silent", NA)
+                                                  "rna", "intronic", "silent")
                   
                   mutationHierarchy$color <- c('#4f00A8', '#A80100', '#CF5A59',
                                                '#A80079', '#BC2D94', '#CF59AE',
@@ -235,7 +235,7 @@ setMethod(f="setMutationHierarchy",
                                                '#009933', '#ace7b9', '#cdf0d5',
                                                '#59CF74', '#002AA8', '#5977CF',
                                                '#F37812', '#F2B079', '#888811',
-                                               '#FDF31C', '#8C8C8C', NA)
+                                               '#FDF31C', '#8C8C8C')
                   mutationHierarchy <- data.table::data.table("mutation"=mutationHierarchy$mutation,
                                                               "color"=mutationHierarchy$color)
               }
@@ -249,8 +249,9 @@ setMethod(f="setMutationHierarchy",
               }
               
               # check for the correct columns
-              if(!all(colnames(mutationHierarchy) %in% c("mutation", "color"))){
-                  missingCol <- colnames(mutationHierarchy)[!c("mutation", "color") %in% colnames(mutationHierarchy)]
+              correctCol <- c("mutation", "color")
+              if(!all(correctCol %in% colnames(mutationHierarchy))){
+                  missingCol <- correctCol[!correctCol %in% colnames(mutationHierarchy)]
                   memo <- paste("The correct columns were not found in",
                                 "mutationHierarchy, missing", toString(missingCol))
                   stop(memo)
@@ -267,12 +268,20 @@ setMethod(f="setMutationHierarchy",
                   warning(memo)
                   tmp <- data.table::data.table("mutation"=missingMutations,
                                                 "color"=sample(colors(), length(missingMutations)))
-                  mutationHierarchy <- rbind(tmp, mutationHierarchy)
+                  mutationHierarchy <- data.table::rbindlist(list(mutationHierarchy, tmp), use.names=TRUE, fill=TRUE)
               }
               
               # add in a pretty print mutation labels
               mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
               mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$mutation)
+              
+              # check for duplicate mutations
+              if(any(duplicated(mutationHierarchy$mutation))){
+                  duplicateMut <- mutationHierarchy[duplicated(mutationHierarchy$mutation),"mutation"]
+                  memo <- paste("The mutation type",toString(duplicateMut),
+                                "was duplicated in the supplied mutationHierarchy!")
+                  mutationHierarchy <- mutationHierarchy[!duplicated(mutationHierarchy$mutation),]
+              }
               
               # print status message
               if(verbose){

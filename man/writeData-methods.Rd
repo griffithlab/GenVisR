@@ -27,7 +27,7 @@ writeData(object, ...)
 
 \item{file}{Character string specifying a file to send output to.}
 
-\item{sep}{Delimiter used when writing output, defaults to ::tab::.}
+\item{sep}{Delimiter used when writing output, defaults to tab.}
 }
 \description{
 Method writeData
