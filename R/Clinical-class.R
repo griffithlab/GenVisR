@@ -133,6 +133,9 @@ setMethod(f="formatClinicalData",
                   clinicalData <- data.table::melt(clinicalData, id.vars="sample")
               }
               
+              # coerce to factor for ordering in plot call
+              clinicalData$value <- factor(clinicalData$value, levels=unique(clinicalData$value))
+              
               # return the formated data
               return(clinicalData)
           })
@@ -173,7 +176,7 @@ setMethod(f="setClinicalPlotLayers",
               
               ################## define layers ###################
               # legend
-              plotLegendGuide <- guides(fill=guide_legend(ncol=legendColumns))
+              plotLegendGuide <- guides(fill=guide_legend(ncol=legendColumns, title="Clinical"))
               if(!is.null(palette)){
                   plotLegend <- scale_fill_manual("Clinical", values=palette,
                                                   breaks=names(palette))

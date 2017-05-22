@@ -879,7 +879,7 @@ setMethod(f="buildMutationPlot",
                                  panel.grid.major.x = element_blank(),
                                  panel.border = element_rect(fill = NA)
               )
-              browser()
+              
               # legend
               if(toupper(plotATally) == toupper("simple")){
                   plotLegend <- scale_fill_manual(name="Translational Effect",
@@ -1095,6 +1095,7 @@ setMethod(f="formatClinicalData",
               
               # set levels of clinicalData to match primaryData for ordering
               clinicalData$sample <- factor(clinicalData$sample, levels=levels(primaryData$sample))
+              clinicalData$value <- factor(clinicalData$value, levels=unique(clinicalData$value))
               
               # return the formated data
               return(clinicalData)
