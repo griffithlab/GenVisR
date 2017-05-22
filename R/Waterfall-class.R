@@ -270,8 +270,7 @@ setMethod(f="sampSubset",
 #' @param verbose Boolean for status updates.
 #' @return data.table object with simplified mutation counts
 #' @noRd
-#' @importFrom data.table setDT
-#' @importFrom data.table data.table
+#' @importFrom data.table as.data.table
 setMethod(f="calcSimpleMutationBurden",
           signature="Waterfall",
           definition=function(object, coverage, verbose, ...){
@@ -297,18 +296,10 @@ setMethod(f="calcSimpleMutationBurden",
                   message(memo)
               }
               
-              # change mutation calls to either synonymous or non synonymous
-              primaryData$simpleMutation <- NA
-              silentMutations <- c("synonymous_variant", "silent", "synonymous")
-              primaryData$simpleMutation[!toupper(primaryData$mutation) %in% toupper(silentMutations)] <- 'Non Synonymous'
-              primaryData$simpleMutation[toupper(primaryData$mutation) %in% toupper(silentMutations)] <- 'Synonymous'
-              primaryData$simpleMutation[is.na(primaryData$mutation)] <- NA
-              primaryData$simpleMutation <- factor(primaryData$simpleMutation, levels=c('Synonymous', 'Non Synonymous'))
-              
               # obtain a data table of mutation counts on the sample level
-              simpleMutationCounts <- as.data.frame(table(primaryData[,c('sample', 'simpleMutation')]))
-              data.table::setDT(simpleMutationCounts)
-              colnames(simpleMutationCounts) <- c("sample", "mutation", "Freq")
+              simpleMutationCounts <- data.table::as.data.table(table(primaryData[,c('sample')]))
+              colnames(simpleMutationCounts) <- c("sample", "Freq")
+              simpleMutationCounts$mutation <- NA
               
               # if coverage is not specified return just frequencies
               if(!is.numeric(coverage)){
@@ -819,7 +810,7 @@ setMethod(f="buildMutationPlot",
               
               # if plot type is null return an empty gtable
               if(is.null(plotA)) return(gtable::gtable())
-
+              
               # print status message
               if(verbose) {
                   memo <- paste("Constructing top sub-plot")
@@ -869,7 +860,7 @@ setMethod(f="buildMutationPlot",
               if(toupper(plotATally) == toupper("complex")) {
                   mutationData$mutation <- factor(mutationData$mutation, levels=levels(object@primaryData$mutation))
               } else if(toupper(plotATally) == toupper("simple")) {
-                  mutationData$mutation <- factor(mutationData$mutation, levels=c("Non Synonymous","Synonymous"))
+                  # Do Nothing
               }
               
               ############# set ggplot2 layers #################################
@@ -888,12 +879,11 @@ setMethod(f="buildMutationPlot",
                                  panel.grid.major.x = element_blank(),
                                  panel.border = element_rect(fill = NA)
               )
+              browser()
               # legend
               if(toupper(plotATally) == toupper("simple")){
                   plotLegend <- scale_fill_manual(name="Translational Effect",
-                                                  values=c("Synonymous"="red", "Non Synonymous"="blue"),
-                                                  breaks=c("Synonymous", "Non Synonymous"),
-                                                  drop=FALSE)
+                                                  na.value="deepskyblue4", values="deepskyblue4")
               } else if(toupper(plotATally) == toupper("complex")){
                   plotLegend <- scale_fill_manual(name="Translational Effect",
                                                   values=object@MutationHierarchy$color,
@@ -903,7 +893,7 @@ setMethod(f="buildMutationPlot",
               
               # titles
               if(toupper(plotA) == toupper("frequency")) {
-                  plotTitleY <- ylab("Mutation Frequency")
+                  plotTitleY <- ylab("Mutation\nFrequency")
               } else if(toupper(plotA) == toupper("burden")) {
                   plotTitleY <- ylab("Mutations\nper MB")
               }
@@ -920,7 +910,7 @@ setMethod(f="buildMutationPlot",
               } else if(toupper(plotA) == toupper("burden")) {
                   mutPlot <- ggplot(mutationData, aes_string(x='sample', y='mutationBurden', fill='mutation'))
               }
-              mutPlot <- mutPlot + plotGeom + x_scale + plotTitleY + plotLegend + plotTheme + plotALayers + theme(legend.position="none")
+              mutPlot <- mutPlot + plotGeom + x_scale + plotTitleY + plotLegend + plotTheme + plotALayers
               
               # convert to gtable grob
               plotGrob <- ggplotGrob(mutPlot)
