@@ -23,7 +23,7 @@ setClass("VEP",
 setMethod(
     f="initialize",
     signature="VEP",
-    definition=function(.Object, path, version, verbose){
+    definition=function(.Object, path, data, version, verbose){
         cat("!!!!! VEP~Initalizer !!!!!\n")
         
         # Grab all files and assign to slot
@@ -154,4 +154,182 @@ setMethod(f="writeData",
           signature="VEP",
           definition=function(object, file, ...){
               writeData(object@vepObject, file, sep="\t")
+          })
+
+#' @rdname setMutationHierarchy-methods
+#' @aliases setMutationHierarchy,VEP
+#' @noRd
+#' @importFrom data.table data.table
+#' @importFrom data.table setDT
+#' @importFrom data.table rbindlist
+setMethod(f="setMutationHierarchy",
+          signature="VEP",
+          definition=function(object, mutationHierarchy, verbose, ...){
+              # set the mutation hierarchy if a custom hierarchy is unspecified
+              if(is.null(mutationHierarchy)){
+                  mutationHierarchy$mutation <- c("transcript_ablation", "splice_acceptor_variant",
+                                                  "splice_donor_variant", "stop_gained",
+                                                  "frameshift_variant", "stop_lost", "start_lost",
+                                                  "transcript_amplification", "inframe_insertion",
+                                                  "inframe_deletion", "missense_variant",
+                                                  "protein_altering_variant", "splice_region_variant",
+                                                  "incomplete_terminal_codon_variant", "stop_retained_variant",
+                                                  "synonymous_variant", "coding_sequence_variant",
+                                                  "mature_miRNA_variant", "5_prime_UTR_variant",
+                                                  "3_prime_UTR_variant", "non_coding_transcript_exon_variant",
+                                                  "intron_variant", "NMD_transcript_variant",
+                                                  "non_coding_transcript_variant", "upstream_gene_variant",
+                                                  "downstream_gene_variant", "TFBS_ablation",
+                                                  "TFBS_amplification", "TF_binding_site_variant",
+                                                  "regulatory_region_ablation", "regulatory_region_amplification",
+                                                  "feature_elongation", "regulatory_region_variant",
+                                                  "feature_truncation", "intergenic_variant")
+                  
+                  mutationHierarchy$color <- c("#bd3d3d", "#d45a73", "#cd3300",
+                                               "#d24719", "#895878", "#e18466",
+                                               "#bd92cc", "#9e55a7", "#7d4281",
+                                               "#a6cea9", "#78b3d2", "#00a0b0",
+                                               "#4f372d", "#c6c386", "#739475",
+                                               "#ffdb86", "#ddb554", "#d69f35",
+                                               "#f98107", "#383838", "#5acb7f",
+                                               "#1e81b5", "#bcd9e8", "#ab763d",
+                                               "#a72ca2", "#f4a460", "#0000ff",
+                                               "#00510a", "#2a7694", "#00c9bb",
+                                               "#8c860e", "#687233", "#6f3333",
+                                               "#626161", "#db9294")
+                  mutationHierarchy <- data.table::data.table("mutation"=mutationHierarchy$mutation,
+                                                              "color"=mutationHierarchy$color)
+              }
+              
+              # check that mutationHiearchy is a data table
+              if(!any(class(mutationHierarchy) %in% "data.table")){
+                  memo <- paste("mutationHiearchy is not an object of class",
+                                "data.table, attempting to coerce.")
+                  warning(memo)
+                  mutationHierarchy <- data.table::setDT(mutationHierarchy)
+              }
+              
+              # check for the correct columns
+              correctCol <- c("mutation", "color")
+              if(!all(correctCol %in% colnames(mutationHierarchy))){
+                  missingCol <- correctCol[!correctCol %in% colnames(mutationHierarchy)]
+                  memo <- paste("The correct columns were not found in",
+                                "mutationHierarchy, missing", toString(missingCol))
+                  stop(memo)
+              }
+              
+              # check that all mutations are specified
+              if(!all(object@vepObject@mutation$trv_type %in% mutationHierarchy$mutation)){
+                  missingMutations <- unique(object@vepObject@mutation$trv_type[!object@vepObject@mutation$trv_type %in% mutationHierarchy$mutation])
+                  memo <- paste("The following mutations were found in the",
+                                "input however were not specified in the",
+                                "mutationHierarchy!", toString(missingMutations),
+                                "adding these in as least important and",
+                                "assigning random colors!")
+                  warning(memo)
+                  newCol <- colors(distinct=TRUE)[!grepl("^gray", colors(distinct=TRUE))]
+                  tmp <- data.table::data.table("mutation"=missingMutations,
+                                                "color"=sample(newCol, length(missingMutations)))
+                  mutationHierarchy <- data.table::rbindlist(list(mutationHierarchy, tmp), use.names=TRUE, fill=TRUE)
+              }
+              
+              # add in a pretty print mutation labels
+              mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
+              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$mutation)
+              
+              # check for duplicate mutations
+              if(any(duplicated(mutationHierarchy$mutation))){
+                  duplicateMut <- mutationHierarchy[duplicated(mutationHierarchy$mutation),"mutation"]
+                  memo <- paste("The mutation type",toString(duplicateMut),
+                                "was duplicated in the supplied mutationHierarchy!")
+                  mutationHierarchy <- mutationHierarchy[!duplicated(mutationHierarchy$mutation),]
+              }
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Setting the hierarchy of mutations from most",
+                                "to least deleterious and mapping to colors:",
+                                toString(mutationHierarchy$mutation))
+                  message(memo)
+              }
+              
+              return(mutationHierarchy)
+          })
+
+#' @rdname toWaterfall-methods
+#' @aliases toWaterfall,VEP
+#' @noRd
+setMethod(f="toWaterfall",
+          signature="VEP",
+          definition=function(object, hierarchy, labelColumn, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to expected waterfall format")
+                  message(memo)
+              }
+              
+              # grab the mutation hierarchy
+              hierarchy <- hierarchy@MutationHierarchy
+              
+              # grab the sample, mutation, gene columns and set a label
+              sample <- object@vepObject@sample
+              mutation <- object@vepObject@mutation[,"Consequence"]
+              gene <- object@vepObject@meta[,"SYMBOL"]
+              label <- NA
+              
+              # if a label column exists and is proper overwrite the label variable
+              if(!is.null(labelColumn)){
+                  if(length(labelColumn) != 1) {
+                      memo <- paste("Parameter \"labelColumn\" must be of length 1!",
+                                    "Found length to be", length(labelColumn))
+                      warning(memo)
+                      next
+                  } else if(labelColumn %in% colnames(object@gmsObject@meta)){
+                      memo <- paste("Did not find column:", labelColumn,
+                                    "in the meta slot of the vepObject! Valid",
+                                    "names are:", colnames(getMeta(object)))
+                      warning(memo)
+                      next
+                  } else {
+                      label <- object@vepObject@meta[,labelColumn]
+                  }
+              }
+              
+              # combine all columns into a consistent format
+              waterfallFormat <- cbind(sample, gene, mutation, label)
+              colnames(waterfallFormat) <- c("sample", "gene", "mutation", "label")
+              
+              # make a temporary ID column for genomic features to collapse on
+              # this will ensure the mutation burden/frequency plot will be accurate
+              waterfallFormat$key <- paste0(object@vepObject@position$Location, ":",
+                                            object@vepObject@mutation$Allele, ":",
+                                            object@vepObject@sample$sample)
+              rowCountOrig <- nrow(waterfallFormat)
+              
+              # cast data into form where mutation column is not comma delimited
+              # the hierarchy will sort out any duplicates
+              waterfallFormat <- waterfallFormat[, strsplit(as.character(mutation), ",", fixed=TRUE),
+                                                 by = .(sample, gene, label, mutation, key)][,.(Consequence = V1, sample, gene, label, key)]
+              
+              # order the data based on the mutation hierarchy,
+              # remove all duplicates based on key, and remove the key column
+              waterfallFormat$mutation <- factor(waterfallFormat$mutation, levels=hierarchy$mutation)
+              waterfallFormat <- waterfallFormat[order(waterfallFormat$mutation),]
+              waterfallFormat <- waterfallFormat[!duplicated(waterfallFormat$key),]
+              waterfallFormat[,key:=NULL]
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Removed", rowCountOrig - nrow(waterfallFormat),
+                                "rows from the data which harbored duplicate",
+                                "genomic locations")
+                  message(memo)
+              }
+              
+              # convert appropriate columns to factor
+              waterfallFormat$sample <- factor(waterfallFormat$sample)
+              
+              return(waterfallFormat)
           })

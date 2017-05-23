@@ -58,12 +58,11 @@ setMethod(f="initialize",
                               plotBLayers, gridOverlay, drop, labelSize, labelAngle,
                               sampleNames, clinical, sectionHeights, sectionWidths, 
                               plotCLayers, verbose){
-
-              # convert to initial data to waterfall format
-              .Object@primaryData <- toWaterfall(input, labelColumn, verbose)
-              browser()
               # assign the mapping of mutations and colors
               .Object@MutationHierarchy <- setMutationHierarchy(input, mutationHierarchy, verbose)
+
+              # convert to initial data to waterfall format
+              .Object@primaryData <- toWaterfall(input, .Object, labelColumn, verbose)
               
               # subset samples if specified
               .Object@primaryData <- sampSubset(.Object, samples, verbose)

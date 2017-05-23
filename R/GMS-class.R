@@ -163,7 +163,7 @@ setMethod(
 #' @noRd
 setMethod(f="toWaterfall",
           signature="GMS",
-          definition=function(object, labelColumn, verbose, ...){
+          definition=function(object, hierarchy, labelColumn, verbose, ...){
               
               # print status message
               if(verbose){
@@ -171,6 +171,9 @@ setMethod(f="toWaterfall",
                                 "to expected waterfall format")
                   message(memo)
               }
+              
+              # grab the mutation hierarchy
+              hierarchy <- hierarchy@MutationHierarchy
               
               # grab the sample, mutation, gene columns and set a label
               sample <- object@gmsObject@sample
@@ -197,8 +200,33 @@ setMethod(f="toWaterfall",
               }
               
               # combine all columns into a consistent format
-              object <- cbind(sample, gene, mutation, label)
-              colnames(object) <- c("sample", "gene", "mutation", "label")
+              waterfallFormat <- cbind(sample, gene, mutation, label)
+              colnames(waterfallFormat) <- c("sample", "gene", "mutation", "label")
+              
+              # make a temporary ID column for genomic features to collapse on
+              # this will ensure the mutation burden/frequency plot will be accurate
+              waterfallFormat$key <- paste0(object@vepObject@position$chromosome_name, ":",
+                                            object@vepObject@position$start, ":",
+                                            object@vepObject@position$stop, ":",
+                                            object@vepObject@mutation$reference, ":",
+                                            object@vepObject@mutation$variant, ":",
+                                            object@vepObject@sample$sample)
+              rowCountOrig <- nrow(waterfallFormat)
+              
+              # order the data based on the mutation hierarchy,
+              # remove all duplicates based on key, and remove the key column
+              waterfallFormat$mutation <- factor(waterfallFormat$mutation, levels=hierarchy$mutation)
+              waterfallFormat <- waterfallFormat[order(waterfallFormat$mutation),]
+              waterfallFormat <- waterfallFormat[!duplicated(waterfallFormat$key),]
+              waterfallFormat[,key:=NULL]
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Removed", rowCountOrig - nrow(waterfallFormat),
+                                "rows from the data which harbored duplicate",
+                                "genomic locations")
+                  message(memo)
+              }
               
               # convert appropriate columns to factor
               object$sample <- factor(object$sample)

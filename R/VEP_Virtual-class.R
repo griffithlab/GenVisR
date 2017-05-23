@@ -113,7 +113,7 @@ setMethod(f="parseExtra",
 #' @aliases writeData,VEP_Virtual
 #' @param object Object of class VEP_Virtual.
 #' @param file Character string specifying a file to send output to.
-#' @param sep Delimiter used when writing output, defaults to "\t".
+#' @param sep Delimiter used when writing output, defaults to tab.
 #' @importFrom data.table fwrite
 setMethod(f="writeData",
           signature="VEP_Virtual",

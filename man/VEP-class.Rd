@@ -7,7 +7,7 @@
 \alias{VEP}
 \title{Class VEP}
 \usage{
-\S4method{initialize}{VEP}(.Object, path, version, verbose)
+\S4method{initialize}{VEP}(.Object, path, data, version, verbose)
 
 VEP(path, version = "auto", verbose = FALSE)
 }
