@@ -61,7 +61,7 @@ setMethod(f="initialize",
 
               # convert to initial data to waterfall format
               .Object@primaryData <- toWaterfall(input, labelColumn, verbose)
-              
+              browser()
               # assign the mapping of mutations and colors
               .Object@MutationHierarchy <- setMutationHierarchy(input, mutationHierarchy, verbose)
               

@@ -183,15 +183,14 @@ setMethod(f="setMutationHierarchy",
                                                   "Missense_Mutation", "5\'Flank",
                                                   "3\'Flank", "5\'UTR", "3\'UTR", "RNA",
                                                   "Intron", "IGR", "Silent",
-                                                  "Targeted_Region", NA)
+                                                  "Targeted_Region")
 
                   mutationHierarchy$color <- c("grey", '#A80100', '#CF5A59',
                                                '#A80079', '#CF59AE', '#000000', 
                                                '#9159CF', '#4f00A8', '#59CF74',
                                                '#00A8A8', '#79F2F2', '#006666', 
                                                '#002AA8', '#5977CF', '#F37812',
-                                               '#F2B079', '#888811', '#FDF31C',
-                                               NA)
+                                               '#F2B079', '#888811', '#FDF31C')
                   mutationHierarchy <- data.table::data.table("mutation"=mutationHierarchy$mutation,
                                                               "color"=mutationHierarchy$color)
               }
@@ -221,14 +220,23 @@ setMethod(f="setMutationHierarchy",
                                 "adding these in as least important and",
                                 "assigning random colors!")
                   warning(memo)
+                  newCol <- colors(distinct=TRUE)[!grepl("^gray", colors(distinct=TRUE))]
                   tmp <- data.table::data.table("mutation"=missingMutations,
-                                                "color"=sample(colors(), length(missingMutations)))
-                  mutationHierarchy <- rbind(tmp, mutationHierarchy)
+                                                "color"=sample(newCol, length(missingMutations)))
+                  mutationHierarchy <- data.table::rbindlist(list(mutationHierarchy, tmp), use.names=TRUE, fill=TRUE)
               }
               
               # add in a pretty print mutation labels
               mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
               mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$mutation)
+              
+              # check for duplicate mutations
+              if(any(duplicated(mutationHierarchy$mutation))){
+                  duplicateMut <- mutationHierarchy[duplicated(mutationHierarchy$mutation),"mutation"]
+                  memo <- paste("The mutation type",toString(duplicateMut),
+                                "was duplicated in the supplied mutationHierarchy!")
+                  mutationHierarchy <- mutationHierarchy[!duplicated(mutationHierarchy$mutation),]
+              }
               
               # print status message
               if(verbose){

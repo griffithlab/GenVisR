@@ -266,8 +266,9 @@ setMethod(f="setMutationHierarchy",
                                 "adding these in as least important and",
                                 "assigning random colors!")
                   warning(memo)
+                  newCol <- colors(distinct=TRUE)[!grepl("^gray", colors(distinct=TRUE))]
                   tmp <- data.table::data.table("mutation"=missingMutations,
-                                                "color"=sample(colors(), length(missingMutations)))
+                                                "color"=sample(newCol, length(missingMutations)))
                   mutationHierarchy <- data.table::rbindlist(list(mutationHierarchy, tmp), use.names=TRUE, fill=TRUE)
               }
               
