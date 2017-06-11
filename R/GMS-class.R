@@ -205,12 +205,12 @@ setMethod(f="toWaterfall",
               
               # make a temporary ID column for genomic features to collapse on
               # this will ensure the mutation burden/frequency plot will be accurate
-              waterfallFormat$key <- paste0(object@vepObject@position$chromosome_name, ":",
-                                            object@vepObject@position$start, ":",
-                                            object@vepObject@position$stop, ":",
-                                            object@vepObject@mutation$reference, ":",
-                                            object@vepObject@mutation$variant, ":",
-                                            object@vepObject@sample$sample)
+              waterfallFormat$key <- paste0(object@gmsObject@position$chromosome_name, ":",
+                                            object@gmsObject@position$start, ":",
+                                            object@gmsObject@position$stop, ":",
+                                            object@gmsObject@mutation$reference, ":",
+                                            object@gmsObject@mutation$variant, ":",
+                                            object@gmsObject@sample$sample)
               rowCountOrig <- nrow(waterfallFormat)
               
               # order the data based on the mutation hierarchy,
@@ -229,9 +229,9 @@ setMethod(f="toWaterfall",
               }
               
               # convert appropriate columns to factor
-              object$sample <- factor(object$sample)
+              waterfallFormat$sample <- factor(waterfallFormat$sample)
               
-              return(object)
+              return(waterfallFormat)
           })
 
 #' @rdname setMutationHierarchy-methods

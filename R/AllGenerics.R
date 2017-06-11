@@ -306,3 +306,13 @@ setGeneric(
     name="geneFilter",
     def=function(object, ...){standardGeneric("geneFilter")}
 )
+
+#' Method toMutSpectra
+#' 
+#' @name toMutSpectra
+#' @rdname toMutSpectra
+#' @noRd
+setGeneric(
+    name="toMutSpectra",
+    def=function(object, ...){standardGeneric("toMutSpectra")}
+)

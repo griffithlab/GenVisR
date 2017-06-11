@@ -333,3 +333,89 @@ setMethod(f="toWaterfall",
               
               return(waterfallFormat)
           })
+
+#' @rdname toMutSpectra-methods
+#' @aliases toMutSpectra,VEP
+#' @importFrom BSgenome getSeq
+#' @noRd
+setMethod(f="toMutSpectra",
+          signature="VEP",
+          definition=function(object, BSgenome, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to expected MutSpectra format")
+                  message(memo)
+              }
+              
+              # grab the BSgenome
+              if(is.null(BSgenome)){
+                  if(verboase){
+                      memo <- paste("Looking for correct genome for reference base annotation.")
+                      messsage(memo)
+                  }
+                  
+                  # look for assembly version in header
+                  header <- object@vepObject@header
+                  header <- header$Info[grepl("assembly", header$Info)]
+                  header <- regmatches(header,regexpr("\\w(\\d)+", header))
+                  if(length(header) != 1){
+                      memo <- paste("Unable to infer assembly from VEP header")
+                      stop(memo) 
+                  }
+                  
+                  # determine if a genome is available
+                  availableGenomes <- BSgenome::available.genomes()
+                  availableGenomes <- availableGenomes[grepl(header, availableGenomes)]
+                  if(length(availableGenomes) == 0){
+                      memo <- paste("Could not find a compatible BSgenome for", toString(header),
+                                    "Please specify the bioconductor BSgenome to annotate references bases!")
+                      stop(memo)
+                  }
+                  
+                  # determine if the available genome in an installed package
+                  installedGenomes <- BSgenome::installed.genomes()
+                  installedGenomes <- installedGenomes[installedGenomes == availableGenomes]
+                  if(legnth(installedGenomes) == 0){
+                      memo <- paste("The BSgenome", toString(availableGenomes), "is available",
+                                    "but is not installed! Please install", toString(availableGenomes),
+                                    "via bioconductor!")
+                      stop(memo)
+                  }
+              }
+              
+              # grab the sample, mutation, position columns
+              sample <- object@vepObject@sample
+              variantAllele <- object@vepObject@mutation[,"Allele"]
+              position <- object@vepObject@position[,"Location"]
+              positionSplit <- lapply(as.character(position$Location), strsplit, ":", fixed=TRUE)
+              chr <- unlist(lapply(positionSplit, function(x) x[[1]][1]))
+              coord <- unlist(lapply(positionSplit, function(x) x[[1]][2]))
+              coord <- lapply(as.character(tmp), strsplit, "-", fixed=TRUE)
+              
+              # combine all columns into a consistent format
+              mutSpectraFormat <- cbind(sample, position, refAllele, variantAllele)
+              colnames(mutSpectraFormat) <- c("sample", "position", "refAllele", "variantAllele")
+              
+              # unique, to make sure no duplicate variants exist to throw off the counts
+              rowCountOrig <- nrow(mutSpectraFormat)
+              mutSpectraFormat <- unique(mutSpectraFormat)
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Removed", rowCountOrig - nrow(mutSpectraFormat),
+                                "rows from the data which harbored duplicate",
+                                "genomic locations")
+                  message(memo)
+                  memo <- paste("Annotating reference bases")
+                  message(memo)
+              }
+              tmp@vepObject@position
+              
+
+              # convert appropriate columns to factor
+              mutSpectraFormat$sample <- factor(mutSpectraFormat$sample)
+              
+              return(mutSpectraFormat)
+          })
