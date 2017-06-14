@@ -9,13 +9,14 @@
 #' segments called from copy number (optional)
 #' @param chr a character string specifying chromosome
 #' @param CNscale Character string specifying if copy number calls supplied are
-#' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+#' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of
 #' "relative" or "absolute"
 #' @param layers additional ggplot2 layers to add
 #' @return ggplot2 object
 #' @import ggplot2
 
-cnView_buildMain <- function(x, y, z=NULL, chr, CNscale=FALSE, layers=NULL)
+cnView_buildMain <- function(x, y, z=NULL, chr, CNscale=FALSE, layers=NULL,
+                             segmentColor=NULL)
 {
     # Define various parameters of the plot
     dummy_data <- geom_point(data=y, mapping=aes_string(x='coordinate', y=2),
@@ -44,15 +45,15 @@ cnView_buildMain <- function(x, y, z=NULL, chr, CNscale=FALSE, layers=NULL)
         # y label
         ylabel <- ylab('Absolute Copy Number')
     } else {
-        memo <- paste0("Did not recognize input to CNscale... defaulting to", 
+        memo <- paste0("Did not recognize input to CNscale... defaulting to",
                        "absolute scale, please specify \"relative\"",
                        "if copy neutral calls == 0")
         warning(memo)
     }
-    
+
     # provide x label
     xlabel <- xlab('Coordinate')
-    
+
     # allow an extra layer in the plot
     if(!is.null(layers))
     {
@@ -80,11 +81,12 @@ cnView_buildMain <- function(x, y, z=NULL, chr, CNscale=FALSE, layers=NULL)
     # Define segments for main plot
     if(!is.null(z))
     {
+        colour = ifelse(is.null(segmentColor), "green", segmentColor)
         cnseg <- geom_segment(data=z, mapping=aes_string(x='start',
                                                          xend='end',
                                                          y='segmean',
                                                          yend='segmean'),
-                              colour='green', size=2)
+                              colour=colour, size=2)
     } else {
         cnseg <- geom_blank()
     }
