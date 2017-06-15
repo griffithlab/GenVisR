@@ -60,7 +60,7 @@ setMethod(f="initialize",
                               plotCLayers, verbose){
               # assign the mapping of mutations and colors
               .Object@MutationHierarchy <- setMutationHierarchy(input, mutationHierarchy, verbose)
-
+              
               # convert to initial data to waterfall format
               .Object@primaryData <- toWaterfall(input, .Object, labelColumn, verbose)
               
@@ -110,18 +110,19 @@ setMethod(f="initialize",
               # add the clinical data
               if(is.null(clinical)){
                   .Object@ClinicalData <- data.table::data.table()
+                  xTitle <- FALSE
               } else {
                   .Object@ClinicalData <- getData(clinical)
                   .Object@ClinicalData <- formatClinicalData(.Object, verbose)
                   addLayer <- theme(axis.title.x=element_blank())
                   plotCLayers[[length(plotCLayers ) + 1]] <- addLayer
+                  xTitle <- TRUE
               }
 
               # add the clinical data plot
               .Object@PlotD <- buildClinicalPlot(.Object, clinicalLayers=clinical@clinicalLayers)
               
               # create the main plot
-              xTitle <- TRUE #tmporary remove when clinical object is defined
               .Object@PlotC <- buildWaterfallPlot(.Object, gridOverlay, drop,
                                                   labelSize, labelAngle, xTitle,
                                                   sampleNames, plotCLayers, verbose)
@@ -295,10 +296,19 @@ setMethod(f="calcSimpleMutationBurden",
                   message(memo)
               }
               
+              # dont include any samples with NA values for genes
+              samples <- primaryData[is.na(primaryData$gene),]$sample
+              primaryData <- primaryData[!is.na(primaryData$gene),]
+              
               # obtain a data table of mutation counts on the sample level
               simpleMutationCounts <- data.table::as.data.table(table(primaryData[,c('sample')]))
               colnames(simpleMutationCounts) <- c("sample", "Freq")
               simpleMutationCounts$mutation <- NA
+              
+              # add the samples with NA values back in
+              samples <- data.table::data.table("sample"=samples, "Freq"=0)
+              simpleMutationCounts <- data.table::rbindlist(list(simpleMutationCounts, samples),
+                                                            use.names=TRUE, fill=TRUE)
               
               # if coverage is not specified return just frequencies
               if(!is.numeric(coverage)){
@@ -966,7 +976,7 @@ setMethod(f="buildGenePlot",
               if(is.null(plotB)) return(gtable::gtable())
               
               # extract the data needed for this plot
-              geneData <- object@geneData
+              geneData <- na.omit(object@geneData)
               
               # print status message
               if(verbose) {
@@ -1121,6 +1131,10 @@ setMethod(f="buildWaterfallPlot",
               # extract the data we need
               primaryData <- object@primaryData
               paletteData <- object@MutationHierarchy
+              
+              # there could be samples with no gene information assign these a gene but no
+              # mutation so they are plotted correctly
+              primaryData[is.na(primaryData$gene),"gene"] <- levels(primaryData$gene)[1]
               
               # print status message
               if(verbose){

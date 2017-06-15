@@ -212,14 +212,14 @@ setMethod(f="toWaterfall",
                                             object@gmsObject@mutation$variant, ":",
                                             object@gmsObject@sample$sample)
               rowCountOrig <- nrow(waterfallFormat)
-              
+
               # order the data based on the mutation hierarchy,
               # remove all duplicates based on key, and remove the key column
               waterfallFormat$mutation <- factor(waterfallFormat$mutation, levels=hierarchy$mutation)
               waterfallFormat <- waterfallFormat[order(waterfallFormat$mutation),]
               waterfallFormat <- waterfallFormat[!duplicated(waterfallFormat$key),]
               waterfallFormat[,key:=NULL]
-              
+
               # print status message
               if(verbose){
                   memo <- paste("Removed", rowCountOrig - nrow(waterfallFormat),
@@ -276,7 +276,7 @@ setMethod(f="setMutationHierarchy",
                   mutationHierarchy <- data.table::setDT(mutationHierarchy)
               }
               
-              # check for the correct columns
+              # check for the correct columns and make sure they are character vectors
               correctCol <- c("mutation", "color")
               if(!all(correctCol %in% colnames(mutationHierarchy))){
                   missingCol <- correctCol[!correctCol %in% colnames(mutationHierarchy)]
@@ -284,6 +284,8 @@ setMethod(f="setMutationHierarchy",
                                 "mutationHierarchy, missing", toString(missingCol))
                   stop(memo)
               }
+              mutationHierarchy$color <- as.character(mutationHierarchy$color)
+              mutationHierarchy$mutation <- as.character(mutationHierarchy$mutation)
               
               # check that all mutations are specified
               if(!all(object@gmsObject@mutation$trv_type %in% mutationHierarchy$mutation)){
@@ -302,7 +304,6 @@ setMethod(f="setMutationHierarchy",
               
               # add in a pretty print mutation labels
               mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
-              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$mutation)
               
               # check for duplicate mutations
               if(any(duplicated(mutationHierarchy$mutation))){

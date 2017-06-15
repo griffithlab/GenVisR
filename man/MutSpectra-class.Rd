@@ -5,30 +5,17 @@
 \alias{MutSpectra-class}
 \alias{MutSpectra}
 \alias{MutSpectra}
-\alias{Waterfall}
 \title{Class MutSpectra}
 \usage{
 \S4method{initialize}{MutSpectra}(.Object, input, verbose)
 
-Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
-  mutation = NULL, genes = NULL, mutationHierarchy = NULL,
-  recurrence = NULL, geneOrder = NULL, geneMax = NULL,
-  sampleOrder = NULL, plotA = c("frequency", "burden", NULL),
-  plotATally = c("simple", "complex"), plotALayers = NULL,
-  plotB = c("proportion", "frequency", NULL), plotBTally = c("simple",
-  "complex"), plotBLayers = NULL, gridOverlay = FALSE, drop = TRUE,
-  labelSize = 5, labelAngle = 0, sampleNames = TRUE, clinical = NULL,
-  sectionHeights = NULL, sectionWidths = NULL, verbose = FALSE,
-  plotCLayers = NULL)
+MutSpectra(input, clinical = NULL, sectionHeights = NULL,
+  sectionWidths = NULL, verbose = FALSE, plotCLayers = NULL)
 }
 \arguments{
 \item{input}{Object of class MutationAnnotationFormat, GMS, VEP.}
 
 \item{verbose}{Boolean specifying if status messages should be reported}
-
-\item{plotALayers}{list of ggplot2 layers to be passed to the frequency plot.}
-
-\item{plotBLayers}{list of ggplot2 layers to be passed to the proportion plot.}
 
 \item{clinical}{Object of class Clinical, used for adding a clinical data subplot.}
 
@@ -39,6 +26,10 @@ should sum to one. Expects a value for each section.}
 should sum to one. Expects a value for each section.}
 
 \item{plotCLayers}{list of ggplot2 layers to be passed to the clinical plot.}
+
+\item{plotALayers}{list of ggplot2 layers to be passed to the frequency plot.}
+
+\item{plotBLayers}{list of ggplot2 layers to be passed to the proportion plot.}
 }
 \description{
 An S4 class for the MutSpectra plot object

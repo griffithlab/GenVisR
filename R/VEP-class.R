@@ -389,14 +389,26 @@ setMethod(f="toMutSpectra",
               sample <- object@vepObject@sample
               variantAllele <- object@vepObject@mutation[,"Allele"]
               position <- object@vepObject@position[,"Location"]
+              
+              # split the position into chr, start , stop
               positionSplit <- lapply(as.character(position$Location), strsplit, ":", fixed=TRUE)
               chr <- unlist(lapply(positionSplit, function(x) x[[1]][1]))
               coord <- unlist(lapply(positionSplit, function(x) x[[1]][2]))
-              coord <- lapply(as.character(tmp), strsplit, "-", fixed=TRUE)
+              coord <- lapply(coord, strsplit, "-", fixed=TRUE)
+              start <- unlist(lapply(coord, function(x) x[[1]][1]))
+              stop <- unlist(lapply(coord, function(x) x[[1]][2]))
+              stop[is.na(stop)] <- start[is.na(stop)]
+              
+              # get the reference sequences
+              if(verbose){
+                  memo <- paste("Annotating reference bases")
+                  message(memo)
+              }
+              refAllele <- getSeq(BSgenome, GenomicRanges::Granges)
               
               # combine all columns into a consistent format
-              mutSpectraFormat <- cbind(sample, position, refAllele, variantAllele)
-              colnames(mutSpectraFormat) <- c("sample", "position", "refAllele", "variantAllele")
+              mutSpectraFormat <- cbind(sample, chromosome, start, stop, refAllele, variantAllele)
+              colnames(mutSpectraFormat) <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
               
               # unique, to make sure no duplicate variants exist to throw off the counts
               rowCountOrig <- nrow(mutSpectraFormat)
@@ -408,11 +420,7 @@ setMethod(f="toMutSpectra",
                                 "rows from the data which harbored duplicate",
                                 "genomic locations")
                   message(memo)
-                  memo <- paste("Annotating reference bases")
-                  message(memo)
               }
-              tmp@vepObject@position
-              
 
               # convert appropriate columns to factor
               mutSpectraFormat$sample <- factor(mutSpectraFormat$sample)

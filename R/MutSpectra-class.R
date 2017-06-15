@@ -53,7 +53,7 @@ setMethod(f="initialize",
 #' @param plotBLayers list of ggplot2 layers to be passed to the proportion plot.
 #' @param plotCLayers list of ggplot2 layers to be passed to the clinical plot.
 #' @export
-Waterfall <- function(input, clinical=NULL, sectionHeights=NULL,
+MutSpectra <- function(input, clinical=NULL, sectionHeights=NULL,
                       sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL){
     cat("!!!!! MutSpectra~Constructor !!!!!\n")
     new("MutSpectra", input=input, clinical=clinical, sectionHeights=sectionHeights,
