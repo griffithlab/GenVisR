@@ -29,6 +29,8 @@
 #' sub-plot.
 #' @param out Character vector specifying the the object to output, one of
 #' "data", "grob", or "plot", defaults to "plot" (see returns).
+#' @param segmentColor Character string specifying the color of segment lines. Used only if 
+#' Z is not null.
 #' @details cnView is able to plot in two modes specified via the `chr`
 #' parameter, these modes are single chromosome view in which an ideogram is
 #' displayed and genome view where chromosomes are faceted. For the single
