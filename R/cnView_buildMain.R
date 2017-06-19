@@ -12,6 +12,8 @@
 #' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of
 #' "relative" or "absolute"
 #' @param layers additional ggplot2 layers to add
+#' @param segmentColor Character string specifying the color of segment lines. Used only if 
+#' Z is not null.
 #' @return ggplot2 object
 #' @import ggplot2
 
