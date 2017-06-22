@@ -323,3 +323,59 @@ setMethod(f="setMutationHierarchy",
               
               return(mutationHierarchy)
           })
+
+#' @rdname toMutSpectra-methods
+#' @aliases toMutSpectra,GMS
+#' @param object Object of class GMS
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+setMethod(f="toMutSpectra",
+          signature="GMS",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to expected MutSpectra format")
+                  message(memo)
+              }
+              
+              # get an index of only the snvs
+              snvIndex <- which(object@gmsObject@meta$type == "SNP")
+              
+              # status message
+              if(verbose){
+                  memo <- paste("Removing", nrow(object@gmsObject@sample)-length(snvIndex),
+                                "entries which are not of class SNP!")
+                  message(memo)
+              }
+              
+              # grab the sample, mutation, position columns
+              sample <- object@gmsObject@sample[snvIndex]
+              variantAllele <- object@gmsObject@mutation[snvIndex,"variant"]
+              refAllele <- object@gmsObject@mutation[snvIndex,"reference"]
+              chr <- object@gmsObject@position[snvIndex,"chromosome_name"]
+              start <- object@gmsObject@position[snvIndex,"start"]
+              stop <- object@gmsObject@position[snvIndex,"stop"]
+              
+              # combine all columns into a consistent format and remove duplicate variants
+              mutSpectraFormat <- cbind(sample, chr, start, stop, refAllele, variantAllele)
+              colnames(mutSpectraFormat) <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
+              
+              # unique, to make sure no duplicate variants exist to throw off the counts
+              rowCountOrig <- nrow(mutSpectraFormat)
+              mutSpectraFormat <- unique(mutSpectraFormat)
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Removed", rowCountOrig - nrow(mutSpectraFormat),
+                                "rows from the data which harbored duplicate",
+                                "genomic locations")
+                  message(memo)
+              }
+              
+              # convert appropriate columns to factor
+              mutSpectraFormat$sample <- factor(mutSpectraFormat$sample)
+              
+              return(mutSpectraFormat)
+          })

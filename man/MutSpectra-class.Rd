@@ -7,15 +7,17 @@
 \alias{MutSpectra}
 \title{Class MutSpectra}
 \usage{
-\S4method{initialize}{MutSpectra}(.Object, input, verbose)
+\S4method{initialize}{MutSpectra}(.Object, input, BSgenome, clinical,
+  sectionHeights, sectionWidths, verbose, plotCLayers)
 
-MutSpectra(input, clinical = NULL, sectionHeights = NULL,
+MutSpectra(input, BSgenome = NULL, clinical = NULL, sectionHeights = NULL,
   sectionWidths = NULL, verbose = FALSE, plotCLayers = NULL)
 }
 \arguments{
 \item{input}{Object of class MutationAnnotationFormat, GMS, VEP.}
 
-\item{verbose}{Boolean specifying if status messages should be reported}
+\item{BSgenome}{Object of class BSgenome, used to extract reference bases if
+not supplied by the file format.}
 
 \item{clinical}{Object of class Clinical, used for adding a clinical data subplot.}
 
@@ -24,6 +26,8 @@ should sum to one. Expects a value for each section.}
 
 \item{sectionWidths}{Numeric vector specifying relative heights of each plot section,
 should sum to one. Expects a value for each section.}
+
+\item{verbose}{Boolean specifying if status messages should be reported}
 
 \item{plotCLayers}{list of ggplot2 layers to be passed to the clinical plot.}
 

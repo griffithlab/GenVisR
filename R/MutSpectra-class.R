@@ -36,13 +36,19 @@ setClass("MutSpectra",
 #' @import ggplot2
 setMethod(f="initialize",
           signature="MutSpectra",
-          definition=function(.Object, input, verbose){})
+          definition=function(.Object, input, BSgenome, clinical, sectionHeights,
+                              sectionWidths, verbose, plotCLayers){
+              # convert object to mutSpectra format
+              toMutSpectra(input, BSgenome=BSgenome, verbose=verbose)
+          })
 
 #' Constructor for the MutSpectra class.
 #' 
 #' @name MutSpectra
 #' @rdname MutSpectra-class
 #' @param input Object of class MutationAnnotationFormat, GMS, VEP.
+#' @param BSgenome Object of class BSgenome, used to extract reference bases if
+#' not supplied by the file format.
 #' @param clinical Object of class Clinical, used for adding a clinical data subplot.
 #' @param sectionHeights Numeric vector specifying relative heights of each plot section,
 #' should sum to one. Expects a value for each section.
@@ -53,9 +59,9 @@ setMethod(f="initialize",
 #' @param plotBLayers list of ggplot2 layers to be passed to the proportion plot.
 #' @param plotCLayers list of ggplot2 layers to be passed to the clinical plot.
 #' @export
-MutSpectra <- function(input, clinical=NULL, sectionHeights=NULL,
+MutSpectra <- function(input, BSgenome=NULL, clinical=NULL, sectionHeights=NULL,
                       sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL){
     cat("!!!!! MutSpectra~Constructor !!!!!\n")
-    new("MutSpectra", input=input, clinical=clinical, sectionHeights=sectionHeights,
+    new("MutSpectra", input=input, BSgenome=BSgenome, clinical=clinical, sectionHeights=sectionHeights,
         sectionWidths=sectionWidths, verbose=verbose, plotCLayers=plotCLayers)
 }

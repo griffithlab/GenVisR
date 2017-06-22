@@ -336,7 +336,15 @@ setMethod(f="toWaterfall",
 
 #' @rdname toMutSpectra-methods
 #' @aliases toMutSpectra,VEP
-#' @importFrom BSgenome getSeq
+#' @param object Object of class VEP
+#' @param BSgenome Object of class BSgenome, used to extract reference bases if
+#' not supplied by the file format.
+#' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom Rsamtools getSeq
+#' @importFrom IRanges IRanges
+#' @importFrom GenomicRanges GRanges
+#' @importFrom BSgenome available.genomes
+#' @importFrom BSgenome installed.genomes
 #' @noRd
 setMethod(f="toMutSpectra",
           signature="VEP",
@@ -351,7 +359,7 @@ setMethod(f="toMutSpectra",
               
               # grab the BSgenome
               if(is.null(BSgenome)){
-                  if(verboase){
+                  if(verbose){
                       memo <- paste("Looking for correct genome for reference base annotation.")
                       messsage(memo)
                   }
@@ -359,9 +367,10 @@ setMethod(f="toMutSpectra",
                   # look for assembly version in header
                   header <- object@vepObject@header
                   header <- header$Info[grepl("assembly", header$Info)]
-                  header <- regmatches(header,regexpr("\\w(\\d)+", header))
+                  header <- regmatches(header,regexpr("\\w+(\\d)+", header))
                   if(length(header) != 1){
-                      memo <- paste("Unable to infer assembly from VEP header")
+                      memo <- paste("Unable to infer assembly from VEP header,",
+                                    "please use the BSgenome parameter!")
                       stop(memo) 
                   }
                   
@@ -377,26 +386,40 @@ setMethod(f="toMutSpectra",
                   # determine if the available genome in an installed package
                   installedGenomes <- BSgenome::installed.genomes()
                   installedGenomes <- installedGenomes[installedGenomes == availableGenomes]
-                  if(legnth(installedGenomes) == 0){
+                  if(length(installedGenomes) == 0){
                       memo <- paste("The BSgenome", toString(availableGenomes), "is available",
                                     "but is not installed! Please install", toString(availableGenomes),
                                     "via bioconductor!")
                       stop(memo)
                   }
+                  
+                  # grab the genome
+                  requireNamespace(installedGenomes[1])
+                  BSgenome <- getExportedValue(BSgenome, BSgenome)
+              }
+              
+              # get an index of only the snvs
+              snvIndex <- which(object@vepObject@meta$VARIANT_CLASS == "SNV")
+              
+              # status message
+              if(verbose){
+                  memo <- paste("Removing", nrow(object@vepObject@sample)-length(snvIndex),
+                                "entries which are not of class SNV!")
+                  message(memo)
               }
               
               # grab the sample, mutation, position columns
-              sample <- object@vepObject@sample
-              variantAllele <- object@vepObject@mutation[,"Allele"]
-              position <- object@vepObject@position[,"Location"]
+              sample <- object@vepObject@sample[snvIndex]
+              variantAllele <- object@vepObject@mutation[snvIndex,"Allele"]
+              position <- object@vepObject@position[snvIndex,"Location"]
               
               # split the position into chr, start , stop
               positionSplit <- lapply(as.character(position$Location), strsplit, ":", fixed=TRUE)
               chr <- unlist(lapply(positionSplit, function(x) x[[1]][1]))
               coord <- unlist(lapply(positionSplit, function(x) x[[1]][2]))
               coord <- lapply(coord, strsplit, "-", fixed=TRUE)
-              start <- unlist(lapply(coord, function(x) x[[1]][1]))
-              stop <- unlist(lapply(coord, function(x) x[[1]][2]))
+              start <- as.numeric(unlist(lapply(coord, function(x) x[[1]][1])))
+              stop <- as.numeric(unlist(lapply(coord, function(x) x[[1]][2])))
               stop[is.na(stop)] <- start[is.na(stop)]
               
               # get the reference sequences
@@ -404,10 +427,12 @@ setMethod(f="toMutSpectra",
                   memo <- paste("Annotating reference bases")
                   message(memo)
               }
-              refAllele <- getSeq(BSgenome, GenomicRanges::Granges)
+              refAllele <- Rsamtools::getSeq(BSgenome, GenomicRanges::GRanges(seqnames=chr,
+                                                                              IRanges::IRanges(start=start, end=stop)),
+                                             as.character=TRUE)
               
-              # combine all columns into a consistent format
-              mutSpectraFormat <- cbind(sample, chromosome, start, stop, refAllele, variantAllele)
+              # combine all columns into a consistent format and remove duplicate variants
+              mutSpectraFormat <- cbind(sample, chr, start, stop, refAllele, variantAllele)
               colnames(mutSpectraFormat) <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
               
               # unique, to make sure no duplicate variants exist to throw off the counts
