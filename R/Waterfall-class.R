@@ -58,6 +58,7 @@ setMethod(f="initialize",
                               plotBLayers, gridOverlay, drop, labelSize, labelAngle,
                               sampleNames, clinical, sectionHeights, sectionWidths, 
                               plotCLayers, verbose){
+             
               # assign the mapping of mutations and colors
               .Object@MutationHierarchy <- setMutationHierarchy(input, mutationHierarchy, verbose)
               
@@ -110,18 +111,18 @@ setMethod(f="initialize",
               # add the clinical data
               if(is.null(clinical)){
                   .Object@ClinicalData <- data.table::data.table()
-                  xTitle <- FALSE
+                  xTitle <- sampleNames
               } else {
                   .Object@ClinicalData <- getData(clinical)
                   .Object@ClinicalData <- formatClinicalData(.Object, verbose)
                   addLayer <- theme(axis.title.x=element_blank())
                   plotCLayers[[length(plotCLayers ) + 1]] <- addLayer
-                  xTitle <- TRUE
+                  xTitle <- FALSE
               }
 
               # add the clinical data plot
               .Object@PlotD <- buildClinicalPlot(.Object, clinicalLayers=clinical@clinicalLayers)
-              
+             
               # create the main plot
               .Object@PlotC <- buildWaterfallPlot(.Object, gridOverlay, drop,
                                                   labelSize, labelAngle, xTitle,
@@ -305,10 +306,12 @@ setMethod(f="calcSimpleMutationBurden",
               colnames(simpleMutationCounts) <- c("sample", "Freq")
               simpleMutationCounts$mutation <- NA
               
-              # add the samples with NA values back in
-              samples <- data.table::data.table("sample"=samples, "Freq"=0)
-              simpleMutationCounts <- data.table::rbindlist(list(simpleMutationCounts, samples),
-                                                            use.names=TRUE, fill=TRUE)
+              # add the samples with NA values back in if needed
+              if(length(samples) != 0){
+                  samples <- data.table::data.table("sample"=samples, "Freq"=0)
+                  simpleMutationCounts <- data.table::rbindlist(list(simpleMutationCounts, samples),
+                                                                use.names=TRUE, fill=TRUE)
+              }
               
               # if coverage is not specified return just frequencies
               if(!is.numeric(coverage)){

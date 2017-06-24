@@ -46,18 +46,26 @@ setClass("VEP_v88",
 #' 
 #' @name VEP_v88
 #' @rdname VEP_v88-class
+#' @importFrom data.table data.table
 setMethod(
     f="initialize",
     signature="VEP_v88",
     definition=function(.Object, vepData, vepHeader){
         
         cat("!!!!! VEP_v88~Initalizer !!!!!\n")
-        
         # set the columns descriptions for the object
-        .Object@description <- parseDescription(.Object, vepHeader)
+        if(length(vepHeader) == 0){
+            .Object@description <- data.table::data.table()
+        } else {
+            .Object@description <- parseDescription(.Object, vepHeader)
+        }
         
         # set the header for the object
-        .Object@header <- parseHeader(.Object, vepHeader)
+        if(length(vepHeader) == 0){
+            .Object@header <- data.table::data.table()
+        } else {
+            .Object@header <- parseHeader(.Object, vepHeader)
+        }
         
         # convert the "extra" field in vepData to separate columns
         vepData <- parseExtra(.Object, vepData)

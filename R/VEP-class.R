@@ -20,59 +20,74 @@ setClass("VEP",
 #' @rdname VEP-class
 #' @importFrom data.table fread
 #' @importFrom data.table rbindlist
+#' @importFrom data.table data.table
 setMethod(
     f="initialize",
     signature="VEP",
     definition=function(.Object, path, data, version, verbose){
         cat("!!!!! VEP~Initalizer !!!!!\n")
         
-        # Grab all files and assign to slot
-        vepFiles <- Sys.glob(path)
-        .Object@path <- vepFiles
-        
-        # anonymous function to read in files
-        a <- function(x, verbose){
-            # detect OS and remove slashes and extension
-            if(.Platform$OS.type == "windows"){
-                sampleName <- gsub("(.*/)||(.*\\\\)", "", x)
-                sampleName <- gsub("\\.[^.]+$", "", x)
-            } else {
-                sampleName <- gsub("(.*/)", "", x)
-                sampleName <- gsub("\\.[^.]+$", "", sampleName)
+        if(is.null(data)){
+            # Grab all files and assign to slot
+            vepFiles <- Sys.glob(path)
+            .Object@path <- vepFiles
+            
+            # anonymous function to read in files
+            a <- function(x, verbose){
+                # detect OS and remove slashes and extension
+                if(.Platform$OS.type == "windows"){
+                    sampleName <- gsub("(.*/)||(.*\\\\)", "", x)
+                    sampleName <- gsub("\\.[^.]+$", "", x)
+                } else {
+                    sampleName <- gsub("(.*/)", "", x)
+                    sampleName <- gsub("\\.[^.]+$", "", sampleName)
+                }
+                # read the header
+                header <- readLines(con=x, n=400)
+                header <- header[grepl("^##", header)]
+                # find where headers stop and read the data
+                skip <- length(header)
+                vepData <- suppressWarnings(data.table::fread(input=x,
+                                                              stringsAsFactors=TRUE,
+                                                              verbose=verbose,
+                                                              skip=skip))
+                # set sample if it's not already in the data table
+                if(any(colnames(vepData) %in% "sample")){
+                    return(vepData)
+                } else {
+                    vepData$sample <- sampleName
+                    return(list("data"=vepData, "header"=header))
+                }
             }
-            # read the header
-            header <- readLines(con=x, n=400)
-            header <- header[grepl("^##", header)]
-            # find where headers stop and read the data
-            skip <- length(header)
-            vepData <- suppressWarnings(data.table::fread(input=x,
-                                                          stringsAsFactors=TRUE,
-                                                          verbose=verbose,
-                                                          skip=skip))
-            # set sample if it's not already in the data table
-            if(any(colnames(vepData) %in% "sample")){
-                return(vepData)
+            
+            # aggregate data into a single data table if necessary
+            if(length(vepFiles) == 0){
+                memo <- paste("No files found using:", path)
+                stop(memo)
             } else {
-                vepData$sample <- sampleName
-                return(list("data"=vepData, "header"=header))
-            }
-        }
-       
-        # aggregate data into a single data table if necessary
-        if(length(vepFiles) == 0){
-            memo <- paste("No files found using:", path)
-            stop(memo)
+                # Read in the information
+                vepInfo <- lapply(vepFiles, a, verbose)
+                
+                # extract header and data information
+                vepHeader <- lapply(vepInfo, function(x) x[["header"]])
+                vepData <- lapply(vepInfo, function(x) x[["data"]])
+                
+                # aggregate the data
+                vepData <- data.table::rbindlist(vepData, fill=TRUE)
+            } 
+        } else if(is.data.table(data)){
+            .Object@path <- "none"
+            vepHeader <- data.table::data.table()
+            vepData <- data
         } else {
-            # Read in the information
-            vepInfo <- lapply(vepFiles, a, verbose)
-            
-            # extract header and data information
-            vepHeader <- lapply(vepInfo, function(x) x[["header"]])
-            vepData <- lapply(vepInfo, function(x) x[["data"]])
-            
-            # aggregate the data
-            vepData <- data.table::rbindlist(vepData, fill=TRUE)
-        } 
+            memo <- paste("data is not of class data.table,",
+                          "attempting to coerce")
+            warning(memo)
+            .Object@path <- "none"
+            vepHeader <- data.table::data.table()
+            vepData <- data.table::as.data.table(data)
+        }
+
         
         # grab the version and assign it
         a <- function(x){
@@ -127,6 +142,8 @@ setMethod(
 #' @rdname VEP-class
 #' @param path String specifying the path to a VEP annotation file. Can accept
 #' wildcards if multiple VEP annotation files exist (see details).
+#' @param data data.table object storing a GMS annotation file. Overrides "path"
+#' if specified.
 #' @param version String specifying the version of the VEP files, Defaults to
 #' auto which will look for the version in the header.
 #' @param verbose Boolean specifying if progress should be reported while
@@ -141,9 +158,9 @@ setMethod(
 #' initalizer will aggregate all the files and use the file names minus any
 #' extension to populate sample names.
 #' @export
-VEP <- function(path, version="auto", verbose=FALSE){
+VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
     cat("!!!!! VEP~Constructor !!!!!\n")
-    new("VEP", path=path, version=version, verbose=verbose)}
+    new("VEP", path=path, data=data, version=version, verbose=verbose)}
 
 #' @rdname writeData-methods
 #' @aliases writeData,VEP
@@ -311,7 +328,7 @@ setMethod(f="toWaterfall",
               # cast data into form where mutation column is not comma delimited
               # the hierarchy will sort out any duplicates
               waterfallFormat <- waterfallFormat[, strsplit(as.character(mutation), ",", fixed=TRUE),
-                                                 by = .(sample, gene, label, mutation, key)][,.(Consequence = V1, sample, gene, label, key)]
+                                                 by = .(sample, gene, label, mutation, key)][,.(mutation = V1, sample, gene, label, key)]
               
               # order the data based on the mutation hierarchy,
               # remove all duplicates based on key, and remove the key column

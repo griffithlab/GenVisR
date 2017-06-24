@@ -9,11 +9,14 @@
 \usage{
 \S4method{initialize}{VEP}(.Object, path, data, version, verbose)
 
-VEP(path, version = "auto", verbose = FALSE)
+VEP(path, data = NULL, version = "auto", verbose = FALSE)
 }
 \arguments{
 \item{path}{String specifying the path to a VEP annotation file. Can accept
 wildcards if multiple VEP annotation files exist (see details).}
+
+\item{data}{data.table object storing a GMS annotation file. Overrides "path"
+if specified.}
 
 \item{version}{String specifying the version of the VEP files, Defaults to
 auto which will look for the version in the header.}
