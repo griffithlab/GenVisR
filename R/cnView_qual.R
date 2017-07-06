@@ -41,9 +41,7 @@ cnView_qual <- function(x, y, z, genome, CNscale)
                            " column but CNscale is set to \"absolute\"!")
             warning(memo)
         }
-    } else if(CNscale == "relative") {
-        next
-    } else {
+    } else if(CNscale != "relative") {
         memo <- paste0("Did not recognize input to parameter CNscale",
                        " please specify one of \"relative\" or \"absolute\"!")
         stop(memo)
