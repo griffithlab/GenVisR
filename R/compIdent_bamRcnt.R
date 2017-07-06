@@ -14,8 +14,8 @@
 #' @importFrom Rsamtools ScanBamParam
 #' @importFrom Rsamtools scanBam
 #' @importFrom Rsamtools pileup
-#' @importFrom reshape2 melt
-#' @importFrom reshape2 dcast
+#' @importFrom data.table melt
+#' @importFrom data.table dcast
 
 compIdent_bamRcnt <- function(bamfile, genome, target=NULL, debug=FALSE)
 {
@@ -98,8 +98,8 @@ compIdent_bamRcnt <- function(bamfile, genome, target=NULL, debug=FALSE)
 
     # Use reshape to create separate columns for nucleotides
     # Result (x2) is: chr, position, A, C, G, T
-    x <- reshape2::melt(pileup_table, c('chr','position','nucleotide'), 'count')
-    x <- reshape2::dcast(x, chr + position ~ nucleotide, fun.aggregate = sum)
+    x <- data.table::melt(pileup_table, c('chr','position','nucleotide'), 'count')
+    x <- data.table::dcast(x, chr + position ~ nucleotide, fun.aggregate = sum)
 
     # Add ref column
     x$getref <- as.character(Biostrings::getSeq(genome, grange.chr))

@@ -686,6 +686,7 @@ setMethod(f="maxGeneSubset",
 #' @param sampOrder Character vector specifying the order of samples
 #' @param verbose Boolean for status updates
 #' @return data.table object with samples reordered
+#' @importFrom data.table dcast
 #' @noRd
 setMethod(f="orderSamples",
           signature="Waterfall",
@@ -746,8 +747,8 @@ setMethod(f="orderSamples",
               # perform a hierarchical sort if sampleOrder is null
               # recast the data going from long format to wide format,
               #values in this data are counts of a mutation call
-              wide_data <- reshape2::dcast(primaryData, sample ~ gene,
-                                           fun.aggregate = length, value.var="mutation")
+              wide_data <- data.table::dcast(primaryData, sample ~ gene,
+                                             fun.aggregate = length, value.var="mutation")
               
               # apply a boolean function to convert the data frame values to 1's and 0's
               values <- wide_data[,-1, drop=FALSE]

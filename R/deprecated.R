@@ -845,6 +845,7 @@ waterfall_buildMutBurden_B <- function(x, layers=NULL)
 #' @name waterfall_calcMutFreq
 #' @param x data frame in long format with columns sample, trv_type
 #' @return a data frame with synonymous/nonsynonymous counts appended
+#' @importFrom data.table melt
 #' @noRd
 
 waterfall_calcMutFreq <- function(x)
@@ -861,7 +862,7 @@ waterfall_calcMutFreq <- function(x)
     
     # Obtain a data frame of mutation counts on the sample level
     mutation_counts <- table(x[,c('sample', 'trv_type')])
-    mutation_counts <- as.data.frame(reshape2::melt(mutation_counts))
+    mutation_counts <- as.data.frame(data.table::melt(mutation_counts))
     colnames(mutation_counts) <- c('sample', 'trv_type', 'mutation_total')
     
     return(mutation_counts)
@@ -1499,7 +1500,7 @@ waterfall_sampAlt <- function(x, samples)
 #' "gene", "trv_type"
 #' @param sampOrder Character vector specifying the order of samples to plot.
 #' @return a vector of samples in a sorted order
-#' @importFrom reshape2 dcast
+#' @importFrom data.table dcast
 #' @noRd
 
 waterfall_sampSort <- function(x, sampOrder=NULL)
@@ -1527,7 +1528,7 @@ waterfall_sampSort <- function(x, sampOrder=NULL)
     
     # recast the data going from long format to wide format, values in this data
     # are counts of a mutation call
-    wide_data <- reshape2::dcast(x, sample ~ gene, fun.aggregate = length,
+    wide_data <- data.table::dcast(x, sample ~ gene, fun.aggregate = length,
                                  value.var="trv_type")
     
     # apply a boolean function to convert the data frame values to 1's and 0's
