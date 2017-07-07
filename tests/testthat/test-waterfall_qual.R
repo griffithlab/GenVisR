@@ -1,12 +1,10 @@
 test_that("waterfall_qual returns a list with three elements", {
-    x <- data.frame(sample='samp1', gene_name='egfr', trv_type='missense',
-                    chromosome_name=1, start=1, stop=1, reference="A",
-                    variant="T")
+    x <- data.frame(sample='samp1', gene_name='egfr', trv_type='missense')
     y <- NULL
     z <- NULL
     file_type <- 'MGI'
     label_col <- NULL
-    out <- waterfall_qual(x, y, z, file_type, label_col, variant_class_order=NULL)
+    out <- waterfall_qual(x, y, z, file_type, label_col)
     
     expect_equal(length(out), 3)
     expect_is(out, 'list')

@@ -5,16 +5,11 @@
 #' @name waterfall
 #' @param x Object of class data frame representing annotated mutations. The
 #' data frame supplied must have one of the following sets of column names
-#' ("Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification",
-#' "Chromosome", "Start_Position", "End_Position", "Reference_Allele",
-#' "Tumor_Seq_Allele2") for fileType="MAF", ("sample","gene_name","trv_type",
-#' "chromosome_name", "start", "stop", "reference", "variant") for
-#' fileType="MGI", ("IND", "SYMBOL", "Consequence", "Location", "Allele") for
-#' fileType="VEP" (these may be fields in a column called Extra) or
-#' ("sample", "gene", "variant_class", "key") for fileType="Custom". These 
-#' columns should represent samples in a cohort, gene with mutation, the
-#' mutation type and a unique id for a genomic event respectively
-#' (see waterfall function vignette).
+#' ("Tumor_Sample_Barcode", "Hugo_Symbol", "Variant_Classification") for
+#' fileType="MAF", ("sample","gene_name","trv_type") for fileType="MGI" or
+#' ("sample", "gene", "variant_class") for fileType="Custom". This columns
+#' should represent samples in a cohort, gene with mutation, and the mutation
+#' type respectively.
 #' @param mainRecurCutoff Numeric value between 0 and 1 specifying a
 #' mutation recurrence cutoff. Genes which do not have mutations in the
 #' proportion os samples defined are removed.
@@ -97,8 +92,8 @@
 #' priority (see vignette for default priority). If the fileType parameter is
 #' set to "Custom" the user most supply this priority via the
 #' `variant_class_order` parameter with the highest priorities occuring first.
-#' Additionally this parameter will override the default orders of MGI, MAF and
-#' VEP file types.
+#' Additionally this parameter will override the default orders of MGI and MAF
+#' file types.
 #'
 #' Various data subsets are allowed via the waterfall function (see above), all
 #' of these subsets will occur independently of the mutation burden calculation.
@@ -120,7 +115,7 @@
 #' @return One of the following, a list of dataframes containing data to be
 #' plotted, a grob object, or a plot.
 #' @importFrom utils tail
-#' @noRd
+#' @importFrom grid nullGrob
 #' @export
 
 waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE, 
@@ -137,11 +132,12 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       proportions_layer = NULL, proportions_type = "TRV_TYPE",
                       section_heights)
 {
-    message("This function has been deprecated in order to implement an object oriented programming style! Please use Waterfall() with a capital W instead!")
+    
+    message("This function has been deprecated in order to implement an object oriented programming style! Please use Waterfall() with a capital W instead!")    
+    
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
-                               label_col=mainLabelCol,
-                               variant_class_order=variant_class_order)
+                               label_col=mainLabelCol)
     data_frame <- inputDat[[1]]
     clinData <- inputDat[[2]]
     mutBurden <- inputDat[[3]]
@@ -265,15 +261,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
             }
     } else {
         # create a blank ggplot object
-        df <- data.frame()
-        burden_plot <- ggplot2::ggplot(df) + ggplot2::geom_point() +
-            ggplot2::xlim(0, 1) + ggplot2::ylim(0, 1) +
-            ggplot2::theme(axis.text.x=ggplot2::element_blank(),
-                           axis.text.y=ggplot2::element_blank(),
-                           axis.ticks.x=ggplot2::element_blank(),
-                           axis.ticks.y=ggplot2::element_blank(),
-                           panel.background=ggplot2::element_blank(),
-                           panel.grid=ggplot2::element_blank())
+        burden_plot <- grid::nullGrob()
     }
     
     # Plot the Left Bar Chart
@@ -330,6 +318,154 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
     output <- multi_selectOut(data=dataOut, plot=pA, draw=TRUE, out=out)
     return(output)
 }
+#' Convert Custom File
+#'
+#' Convert columns of a Custom annotation file into a format
+#' recognizable by internal functions
+#' @name waterfall_Custom2anno
+#' @param x a data frame with columns having values for sample, gene, mutation
+#' type
+#' @param label_col Character string specifying the column name of a
+#' label column (optional)
+#' @return a data frame coerced from custom to annotation format
+
+waterfall_Custom2anno <- function(x, label_col)
+{
+    # message statement
+    memo <- paste0("Detected \"Custom\" file_type flag, ",
+                   "looking for correct column names...")
+    message(memo)
+    
+    # define expected columns
+    expec_col <- c("sample", "gene", "variant_class")
+    if(!is.null(label_col))
+    {
+        expec_col <- c(expec_col, label_col)
+    }
+    
+    # check expected columns are present
+    if(!all(expec_col %in% colnames(x)))
+    {
+        memo <- paste0("Did not detect correct column names, column names
+                       should be: ", toString(expec_col))
+        stop(memo)
+    }
+    
+    x <- x[,c('sample', 'gene', 'variant_class', label_col)]
+    
+    if(!is.null(label_col))
+    {
+        colnames(x) <- c('sample', 'gene', 'trv_type', 'label')
+    } else {
+        colnames(x) <- c('sample', 'gene', 'trv_type')
+    }
+    
+    # if no silent mutations are present warn the user
+    if(all(!toupper(x$trv_type) %in% toupper("silent")))
+    {
+        warning("Did not detect silent mutations in input, is this expected?")
+    }
+    return(x)
+}
+#' Convert MAF File
+#'
+#' Convert columns of a mutation annotation file "MAF" into a format
+#' recognizable by internal functions
+#' @name waterfall_MAF2anno
+#' @param x a data frame in MAF format
+#' @param label_col Character string specifying the column name of a
+#' label column
+#' @return a data frame coerced from MAF to TGI format
+
+waterfall_MAF2anno <- function(x, label_col)
+{
+    # Check that correct column names are present and convert to internal format
+    expec_col <- c('Tumor_Sample_Barcode', 'Hugo_Symbol',
+                   'Variant_Classification')
+    
+    if(!is.null(label_col))
+    {
+        expec_col <- c(expec_col, label_col)
+    }
+    
+    if(!all(expec_col %in% colnames(x)))
+    {
+        memo <- paste0("Did not detect correct column names, column names
+                       should be: ", toString(expec_col))
+        stop(memo)
+    }
+    
+    x <- x[,c('Tumor_Sample_Barcode', 'Hugo_Symbol', 'Variant_Classification',
+              label_col)]
+    
+    if(!is.null(label_col))
+    {
+        colnames(x) <- c('sample', 'gene', 'trv_type', 'label')
+    } else {
+        colnames(x) <- c('sample', 'gene', 'trv_type')
+    }
+    return(x)
+}
+#' Convert MGI File
+#'
+#' Convert columns of a mutation annotation file "MGI" into a format
+#' recognizable by internal functions
+#' @name waterfall_MGI2anno
+#' @param x a data frame in MGI internal format
+#' @param label_col Character string specifying the column name of a label
+#' column
+#' @return a data frame coerced from MGI to internal annotation format
+
+waterfall_MGI2anno <- function(x, label_col)
+{
+    # Check that correct column names are present and convert to internal format
+    expec_col <- c('sample', 'gene_name', 'trv_type')
+    if(!is.null(label_col))
+    {
+        expec_col <- c(expec_col, label_col)
+    }
+    
+    if(!all(expec_col %in% colnames(x)))
+    {
+        memo <- paste0("Did not detect correct column names, column names
+                       should be: ", toString(expec_col))
+        stop(memo)
+    }
+    
+    x <- x[,c('sample', 'gene_name', 'trv_type', label_col)]
+    if(!is.null(label_col))
+    {
+        colnames(x) <- c('sample', 'gene', 'trv_type', 'label')
+    } else {
+        colnames(x) <- c('sample', 'gene', 'trv_type')
+    }
+    
+    return(x)
+}
+#' Assign NA samples a gene
+#'
+#' Replace NA values in a gene column with the top gene name
+#' @name waterfall_NA2gene
+#' @param x a data frame in anno format
+#' @return a data frame with NA values in a gene column coerced to the top gene
+#' name
+#' @importFrom stats na.omit
+
+waterfall_NA2gene <- function(x)
+{
+    # Get The gene with the most Mutations and add the NA samples to that gene
+    # (ensures that the NAs are added in as gene with most mutations will always
+    # be plotted) i.e. makes sure that samples are plotted, happens with rmvSilent param
+    
+    # find top gene
+    top_gene <- stats::na.omit(rev(x$gene))[1]
+    
+    # set the trv_type to NA if gene is NA (makes sure that wile a sample is plotted the cell is empty)
+    x$trv_type <- replace(x$trv_type, is.na(x$gene), NA)
+    x$gene <- replace(x$gene, is.na(x$gene), top_gene)
+    
+    return(x)
+}
 #' align plots
 #'
 #' align mutation landscape, mutation burden on sample, and mutation burden on
@@ -343,7 +479,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
 #' @param section_heights Heights of each section (should sum to one)
 #' @return a grob object
 #' @importFrom gridExtra arrangeGrob
-#' @noRd
+#' @importFrom grid nullGrob
 
 waterfall_align <- function(genes, heatmap, burden, clinical, proportions, 
                             section_heights) {
@@ -363,6 +499,7 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
         }
     }
     
+    
     # define the ggplot's as grobs and create a blank plot
     genes_grob <- suppressWarnings(ggplot2::ggplotGrob(genes))
     
@@ -375,14 +512,21 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
     heatmap_width <- sum(heatmap_legend$width)
     heatmap_grob <- ggplot2::ggplotGrob(heatmap + theme(legend.position="none"))
     
-    burden_grob <- ggplot2::ggplotGrob(burden)
-    ## Strip out legends and plot separately
-    ind_legend <- grep("guide", burden_grob$layout$name)
-    burden_legend <- burden_grob[["grobs"]][[ind_legend]]
-    burden_width <- sum(burden_legend$width)
-    burden_grob <- ggplot2::ggplotGrob(burden + theme(legend.position="none"))
-    
-    blankPanel <- grid::grid.rect(gp=grid::gpar(col="white"))
+    if(grid::is.grob(burden)){
+        burden_width <- NULL
+        burden_grob <- burden
+        blankPanel <- grid::grid.rect(gp=grid::gpar(col="white"))
+        burden_legend <- grid::nullGrob()
+    } else {
+        burden_grob <- ggplot2::ggplotGrob(burden)
+        ## Strip out legends and plot separately
+        ind_legend <- grep("guide", burden_grob$layout$name)
+        burden_legend <- burden_grob[["grobs"]][[ind_legend]]
+        burden_width <- sum(burden_legend$width)
+        burden_grob <- ggplot2::ggplotGrob(burden + theme(legend.position="none"))
+        
+        blankPanel <- grid::grid.rect(gp=grid::gpar(col="white"))
+    }
     
     if (!is.null(proportions)) {
         prop_grob <- ggplot2::ggplotGrob(proportions)
@@ -488,57 +632,6 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
     
     return(heatmap)
 }
-#' @title Build mutational profile plot
-#' 
-#' @param data_frame input data.frame
-#' @param plot_palette Color palette to use
-#' @param file_type MAF, etc
-#' @param layers layer(s) to add to this plot object
-#' @param x_label label this plot?
-#' 
-#' @description Builds a ggplot object showing individuals' mutational profile
-#' 
-#' @return a ggplot object
-#' @noRd
-waterfall_build_proportions <- function(data_frame, plot_palette, 
-                                        file_type, layers, x_label) {
-    
-    # Declare the appropriate palette
-    palette <- waterfall_select_palette(file_type, custom_palette = plot_palette)
-    breaks_labels <- waterfall_palette_names(palette, file_type, data_frame)
-    breaks <- breaks_labels[["breaks"]]
-    labels <- breaks_labels[["labels"]]
-    
-    if (x_label) {
-        x_label_obj <- xlab(paste0('Sample (n=', nlevels(data_frame$sample), ')'))
-    } else {
-        x_label_obj <- geom_blank()
-    }
-    
-    p5 <- ggplot(data_frame, aes_string(x = 'sample', fill = 'trv_type')) + 
-        geom_bar(position = "fill", width = 0.95) + 
-        scale_y_continuous(
-            name = "Proportion", 
-            labels = scales::percent_format()) + 
-        scale_fill_manual(name="Mutation Type", 
-                          values=palette, 
-                          breaks = breaks,
-                          labels = labels
-        ) + 
-        guides(fill = guide_legend(title = "Mutation Type", ncol = 2)) +
-        theme(
-            axis.ticks.x = element_blank(),
-            axis.text.x =  element_blank(),
-            axis.title.x = if (x_label) element_text() else element_blank(),
-            axis.text.y = element_text(colour = "black"),
-            axis.title.y = element_text(colour = "black", hjust = 0),
-            panel.background = element_blank(),
-            panel.border = element_blank(),
-            panel.grid.minor = element_blank(),
-            plot.background = element_blank()
-        ) + layers + x_label_obj
-    p5
-}
 #' plot mutation recurrence in genes
 #'
 #' plot a bar graph displaying the percentage of samples with a mutation
@@ -550,7 +643,6 @@ waterfall_build_proportions <- function(data_frame, plot_palette,
 #' @return a ggplot object
 #' @importFrom plyr count
 #' @importFrom stats na.omit
-#' @noRd
 
 waterfall_buildGenePrevelance <- function(data_frame, gene_label_size=8, layers=NULL)
 {
@@ -621,7 +713,6 @@ waterfall_buildGenePrevelance <- function(data_frame, gene_label_size=8, layers=
 #' true
 #' @return a ggplot2 object
 #' @import ggplot2
-#' @noRd
 
 waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
                                 file_type='MGI',
@@ -748,7 +839,6 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
 #' from which a mutation could occur
 #' @param layers Additional ggplot2 layers to plot
 #' @return a ggplot object
-#' @noRd
 
 waterfall_buildMutBurden_A <- function(x, coverage_space, layers=NULL)
 {
@@ -796,7 +886,6 @@ waterfall_buildMutBurden_A <- function(x, coverage_space, layers=NULL)
 #' @param layers additional ggplot2 layers to plot
 #' @return a ggplot object
 #' @import ggplot2
-#' @noRd
 
 waterfall_buildMutBurden_B <- function(x, layers=NULL)
 {
@@ -839,25 +928,73 @@ waterfall_buildMutBurden_B <- function(x, layers=NULL)
     
     return(p1)
 }
+#' @title Build mutational profile plot
+#' 
+#' @param data_frame input data.frame
+#' @param plot_palette Color palette to use
+#' @param file_type MAF, etc
+#' @param layers layer(s) to add to this plot object
+#' @param x_label label this plot?
+#' 
+#' @description Builds a ggplot object showing individuals' mutational profile
+#' 
+#' @return a ggplot object
+#' 
+waterfall_build_proportions <- function(data_frame, plot_palette, 
+                                        file_type, layers, x_label) {
+    
+    # Declare the appropriate palette
+    palette <- waterfall_select_palette(file_type, custom_palette = plot_palette)
+    breaks_labels <- waterfall_palette_names(palette, file_type, data_frame)
+    breaks <- breaks_labels[["breaks"]]
+    labels <- breaks_labels[["labels"]]
+    
+    if (x_label) {
+        x_label_obj <- xlab(paste0('Sample (n=', nlevels(data_frame$sample), ')'))
+    } else {
+        x_label_obj <- geom_blank()
+    }
+    
+    p5 <- ggplot(data_frame, aes_string(x = 'sample', fill = 'trv_type')) + 
+        geom_bar(position = "fill", width = 0.95) + 
+        scale_y_continuous(
+            name = "Proportion", 
+            labels = scales::percent_format()) + 
+        scale_fill_manual(name="Mutation Type", 
+                          values=palette, 
+                          breaks = breaks,
+                          labels = labels
+        ) + 
+        guides(fill = guide_legend(title = "Mutation Type", ncol = 2)) +
+        theme(
+            axis.ticks.x = element_blank(),
+            axis.text.x =  element_blank(),
+            axis.title.x = if (x_label) element_text() else element_blank(),
+            axis.text.y = element_text(colour = "black"),
+            axis.title.y = element_text(colour = "black", hjust = 0),
+            panel.background = element_blank(),
+            panel.border = element_blank(),
+            panel.grid.minor = element_blank(),
+            plot.background = element_blank()
+        ) + layers + x_label_obj
+    p5
+}
 #' Calculate Synonymous/Nonsynonymous mutation frequency
 #'
 #' Creates a data frame giving synonymous/nonsynonymous counts on a sample level
 #' @name waterfall_calcMutFreq
 #' @param x data frame in long format with columns sample, trv_type
-#' @return a data frame with synonymous/nonsynonymous counts appended
 #' @importFrom data.table melt
-#' @noRd
+#' @return a data frame with synonymous/nonsynonymous counts appended
 
 waterfall_calcMutFreq <- function(x)
 {
     message("Calculating frequency of mutations...")
-    
     # Change trv_type calls to either synonymous or non synonymous,
     # for use in the mutation per Mb plot
-    silent_mut <- c("synonymous_variant", "silent")
     x$trv_type <- as.character(x$trv_type)
-    x$trv_type[!toupper(x$trv_type) %in% toupper(silent_mut)] <- 'Non Synonymous'
-    x$trv_type[toupper(x$trv_type) %in% toupper(silent_mut)] <- 'Synonymous'
+    x$trv_type[toupper(x$trv_type) != toupper('silent')] <- 'Non Synonymous'
+    x$trv_type[toupper(x$trv_type) == toupper('silent')] <- 'Synonymous'
     x$trv_type <- factor(x$trv_type, levels=c('Synonymous', 'Non Synonymous'))
     
     # Obtain a data frame of mutation counts on the sample level
@@ -867,70 +1004,6 @@ waterfall_calcMutFreq <- function(x)
     
     return(mutation_counts)
 }
-#' Convert Custom File
-#'
-#' Convert columns of a Custom annotation file into a format
-#' recognizable by internal functions
-#' @name waterfall_Custom2anno
-#' @param x Object of class data frame with rows representing mutations and
-#' containing columns "key, "sample", "gene", "variant_class".
-#' @param label_col Character string specifying the column name of a
-#' label column (optional)
-#' @return a data frame coerced from custom to annotation format
-#' @noRd
-
-waterfall_Custom2anno <- function(x, label_col, variant_class_order)
-{
-    # message statement
-    memo <- paste0("Detected \"Custom\" fileType flag, ",
-                   "looking for correct column names...")
-    message(memo)
-    
-    # define expected columns
-    expec_col <- c("key", "sample", "gene", "variant_class")
-    if(!is.null(label_col))
-    {
-        expec_col <- c(expec_col, label_col)
-    }
-    
-    # check expected columns are present
-    if(!all(expec_col %in% colnames(x)))
-    {
-        memo <- paste0("Did not detect correct column names, column names
-                       should be: ", toString(expec_col))
-        stop(memo)
-    }
-    
-    x <- x[,c("key", 'sample', 'gene', 'variant_class', label_col)]
-    if(!is.null(label_col))
-    {
-        colnames(x) <- c('sample', 'gene', 'trv_type', 'label')
-    } else {
-        colnames(x) <- c('sample', 'gene', 'trv_type')
-    }
-    
-    if(is.null(variant_class_order)){
-        memo <- paste0("Detected NULL in variant_class_order, ",
-                       "this parameter is required if fileType is set ",
-                       "to \"Custom\"")
-        stop(memo)
-    }
-    
-    # Check that elements in trv_type are in the mutation order
-    if(any(!x$trv_type %in% mutation_order))
-    {
-        memo <- paste0("Detected an invalid mutation type, valid values for ",
-                       "Custom are: ", toString(mutation_order))
-        stop(memo)
-    }
-    
-    # remove duplicate keys keeping entries based on a trv_type hiearchy
-    x$trv_type <- factor(x$trv_type, levels=variant_class_order)
-    x <- x[order(x$sample, x$key, x$gene),]
-    x <- x[!duplicated(x[, c("sample", "key", "gene")]),]
-    
-    return(x)
-}
 #' mutation sample cutoff gene based
 #'
 #' Subset a internal mutSpec file keeping only samples within the specified gene
@@ -939,7 +1012,6 @@ waterfall_Custom2anno <- function(x, label_col, variant_class_order)
 #' @param x a data frame in long format with columns 'gene', 'trv_type'
 #' @param genes character vector listing genes to plot
 #' @return a subset data frame
-#' @noRd
 
 waterfall_geneAlt <- function(x, genes)
 {
@@ -974,7 +1046,6 @@ waterfall_geneAlt <- function(x, genes)
 #' @return a subset data frame
 #' @importFrom plyr count
 #' @importFrom stats na.omit
-#' @noRd
 
 waterfall_geneRecurCutoff <- function(x, recurrence_cutoff)
 {
@@ -1018,7 +1089,6 @@ waterfall_geneRecurCutoff <- function(x, recurrence_cutoff)
 #' @param geneOrder Character vector specifying the order in which to plot
 #' genes.
 #' @return Character vector of ordered genes
-#' @noRd
 
 waterfall_geneSort <- function(x, geneOrder=NULL)
 {
@@ -1057,13 +1127,11 @@ waterfall_geneSort <- function(x, geneOrder=NULL)
 #' @name waterfall_hierarchyTRV
 #' @param x a data frame in long format with columns sample, gene,
 #' trv_type
-#' @param file_type The type of file to act on one of 'MAF", "MGI", "VEP",
-#' "Custom"
+#' @param file_type The type of file to act on one of 'MAF", "MGI", "Custom"
 #' @param variant_class_order character vector giving the hierarchical order of
 #' mutation types to plot
 #' @return a data frame with multiple mutations in the same sample/gene
 #' collapsed on the most deleterious
-#' @noRd
 
 waterfall_hierarchyTRV <- function(x, file_type, variant_class_order)
 {
@@ -1092,35 +1160,23 @@ waterfall_hierarchyTRV <- function(x, file_type, variant_class_order)
                                 "Missense_Mutation", "5\'Flank",
                                 "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron",
                                 "IGR", "Silent", "Targeted_Region", NA)
-        } else if(toupper(file_type) == toupper('VEP')) {
-            mutation_order <- c("transcript_ablation", "splice_acceptor_variant",
-                                "splice_donor_variant", "stop_gained",
-                                "frameshift_variant", "stop_lost", "start_lost",
-                                "transcript_amplification", "inframe_insertion",
-                                "inframe_deletion", "missense_variant",
-                                "protein_altering_variant", 
-                                "splice_region_variant",
-                                "incomplete_terminal_codon_variant",
-                                "stop_retained_variant", "synonymous_variant",
-                                "coding_sequence_variant",
-                                "mature_miRNA_variant", "5_prime_UTR_variant",
-                                "3_prime_UTR_variant",
-                                "non_coding_transcript_exon_variant",
-                                "intron_variant", "NMD_transcript_variant",
-                                "non_coding_transcript_variant",
-                                "upstream_gene_variant",
-                                "downstream_gene_variant", "TFBS_ablation",
-                                "TFBS_amplification", "TF_binding_site_variant",
-                                "regulatory_region_ablation",
-                                "regulatory_region_amplification",
-                                "feature_elongation",
-                                "regulatory_region_variant",
-                                "feature_truncation", "intergenic_variant")
+        } else if(toupper(file_type) == toupper('Custom')) {
+            memo <- paste0("Detected NULL in variant_class_order, ",
+                           "this parameter is required if file_type is set ",
+                           "to \"Custom\"")
+            stop(memo)
         }
     } else {
         mutation_order <- unique(c(variant_class_order, NA))
     }
     
+    # Check that elements in trv_type are in the mutation order
+    if(any(!x$trv_type %in% mutation_order))
+    {
+        memo <- paste0("Detected an invalid mutation type, valid values for ",
+                       file_type, " are: ", toString(mutation_order))
+        stop(memo)
+    }
     # refactor the data frame
     x$trv_type <- factor(x$trv_type, levels=mutation_order)
     
@@ -1130,173 +1186,6 @@ waterfall_hierarchyTRV <- function(x, file_type, variant_class_order)
     
     # collapse the data on sample/gene
     x <- x[!duplicated(x[, c("sample", "gene")]), ]
-    
-    return(x)
-}
-#' Convert MAF File
-#'
-#' Convert columns of a mutation annotation file "MAF" into a format
-#' recognizable by internal functions
-#' @name waterfall_MAF2anno
-#' @param x a data frame in MAF format
-#' @param label_col Character string specifying the column name of a
-#' label column
-#' @return a data frame coerced from MAF to TGI format
-#' @noRd
-
-waterfall_MAF2anno <- function(x, label_col, variant_class_order)
-{
-    # Check that correct column names are present and convert to internal format
-    expec_col <- c('Chromosome', 'Start_Position', 'End_Position',
-                   'Reference_Allele', 'Tumor_Seq_Allele2',
-                   'Tumor_Sample_Barcode', 'Hugo_Symbol',
-                   'Variant_Classification')
-    
-    if(!is.null(label_col))
-    {
-        expec_col <- c(expec_col, label_col)
-    }
-    
-    if(!all(expec_col %in% colnames(x)))
-    {
-        memo <- paste0("Did not detect correct column names, column names
-                       should be: ", toString(expec_col))
-        stop(memo)
-    }
-    
-    # add a unique key and remove uneccessary columns
-    x$key <- paste0(x$Chromosome, ":", x$Start_Position, "-", x$End_Position,
-                    ":", x$Reference_Allele, "/", x$Tumor_Seq_Allele2)
-    x <- x[,c('key', 'Tumor_Sample_Barcode', 'Hugo_Symbol',
-              'Variant_Classification', label_col)]
-    
-    if(!is.null(label_col))
-    {
-        colnames(x) <- c('key', 'sample', 'gene', 'trv_type', 'label')
-    } else {
-        colnames(x) <- c('key', 'sample', 'gene', 'trv_type')
-    }
-    
-    # remove duplicate keys keeping entries based on a trv_type hiearchy
-    if(is.null(variant_class_order)){
-        mutation_order <- c("Nonsense_Mutation", "Frame_Shift_Ins",
-                            "Frame_Shift_Del", "Translation_Start_Site",
-                            "Splice_Site", "Nonstop_Mutation",
-                            "In_Frame_Ins", "In_Frame_Del",
-                            "Missense_Mutation", "5\'Flank",
-                            "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron",
-                            "IGR", "Silent", "Targeted_Region", NA)
-    } else {
-        mutation_order <- variant_class_order
-    }
-    
-    # Check that elements in trv_type are in the mutation order
-    if(any(!x$trv_type %in% mutation_order))
-    {
-        memo <- paste0("Detected an invalid mutation type, valid values for ",
-                       "MAF are: ", toString(mutation_order))
-        stop(memo)
-    }
-    
-    x$trv_type <- factor(x$trv_type, levels=mutation_order)
-    x <- x[order(x$sample, x$key, x$gene),]
-    x <- x[!duplicated(x[, c("sample", "key", "gene")]),]
-    
-    return(x)
-}
-#' Convert MGI File
-#'
-#' Convert columns of a mutation annotation file "MGI" into a format
-#' recognizable by internal functions
-#' @name waterfall_MGI2anno
-#' @param x a data frame in MGI internal format
-#' @param label_col Character string specifying the column name of a label
-#' column
-#' @return a data frame coerced from MGI to internal annotation format
-#' @noRd
-
-waterfall_MGI2anno <- function(x, label_col, variant_class_order)
-{
-    # Check that correct column names are present and convert to internal format
-    expec_col <- c('sample', 'gene_name', 'trv_type', 'chromosome_name',
-                   'start', 'stop', 'reference', 'variant')
-    if(!is.null(label_col))
-    {
-        expec_col <- c(expec_col, label_col)
-    }
-    
-    if(!all(expec_col %in% colnames(x)))
-    {
-        memo <- paste0("Did not detect correct column names, column names
-                       should be: ", toString(expec_col))
-        stop(memo)
-    }
-    
-    # add a unique key and remove uneccessary columns
-    x$key <- paste0(x$chromosome_name, ":", x$start, "-", x$stop, ":",
-                    x$reference, "/", x$variant)
-    x <- x[,c('key', 'sample', 'gene_name', 'trv_type', label_col)]
-    
-    if(!is.null(label_col))
-    {
-        colnames(x) <- c('key', 'sample', 'gene', 'trv_type', 'label')
-    } else {
-        colnames(x) <- c('key', 'sample', 'gene', 'trv_type')
-    }
-    
-    # remove duplicate keys keeping entries based on a trv_type hiearchy
-    if(is.null(variant_class_order)){
-        mutation_order <- c("nonsense", "frame_shift_del",
-                            "frame_shift_ins", "splice_site_del",
-                            "splice_site_ins", "splice_site",
-                            "nonstop", "in_frame_del", "in_frame_ins",
-                            "missense", "splice_region_del",
-                            "splice_region_ins", "splice_region",
-                            "5_prime_flanking_region",
-                            "3_prime_flanking_region",
-                            "3_prime_untranslated_region",
-                            "5_prime_untranslated_region", "rna",
-                            "intronic", "silent", NA)
-    } else {
-        mutation_order <- variant_class_order
-    }
-    
-    # Check that elements in trv_type are in the mutation order
-    if(any(!x$trv_type %in% mutation_order))
-    {
-        memo <- paste0("Detected an invalid mutation type, valid values for ",
-                       "MGI are: ", toString(mutation_order))
-        stop(memo)
-    }
-    
-    x$trv_type <- factor(x$trv_type, levels=mutation_order)
-    x <- x[order(x$sample, x$key, x$gene),]
-    x <- x[!duplicated(x[, c("sample", "key", "gene")]),]
-    
-    return(x)
-}
-#' Assign NA samples a gene
-#'
-#' Replace NA values in a gene column with the top gene name
-#' @name waterfall_NA2gene
-#' @param x a data frame in anno format
-#' @return a data frame with NA values in a gene column coerced to the top gene
-#' name
-#' @importFrom stats na.omit
-#' @noRd
-
-waterfall_NA2gene <- function(x)
-{
-    # Get The gene with the most Mutations and add the NA samples to that gene
-    # (ensures that the NAs are added in as gene with most mutations will always
-    # be plotted) i.e. makes sure that samples are plotted, happens with rmvSilent param
-    
-    # find top gene
-    top_gene <- stats::na.omit(rev(x$gene))[1]
-    
-    # set the trv_type to NA if gene is NA (makes sure that wile a sample is plotted the cell is empty)
-    x$trv_type <- replace(x$trv_type, is.na(x$gene), NA)
-    x$gene <- replace(x$gene, is.na(x$gene), top_gene)
     
     return(x)
 }
@@ -1311,7 +1200,6 @@ waterfall_NA2gene <- function(x)
 #' @param data_frame Only used if file_type is "custom"
 #' 
 #' @return a named list of "breaks" and "labels"
-#' @noRd
 waterfall_palette_names <- function(palette, file_type, data_frame) {
     # Create breaks specific and labels for specified file type
     ## Create labels and breaks from 
@@ -1350,12 +1238,10 @@ waterfall_palette_names <- function(palette, file_type, data_frame) {
 #' @param z a data frame containing mutation burden information or a null object
 #' @param file_type Character string specifying the input format to expect in x
 #' @param label_col Character string specifying the column name of a label
-#' @param variant_class_order Character vector specifying the hierarchical order
-#' of mutation types to plot
+#' column
 #' @return a list of data frames passing quality checks
-#' @noRd
 
-waterfall_qual <- function(x, y, z, file_type, label_col, variant_class_order)
+waterfall_qual <- function(x, y, z, file_type, label_col)
 {
     # print message statement
     message("Checking if input is properly formatted...")
@@ -1369,13 +1255,11 @@ waterfall_qual <- function(x, y, z, file_type, label_col, variant_class_order)
     # Convert file type to internal format
     if(toupper(file_type) == toupper("MAF"))
     {
-        x <- waterfall_MAF2anno(x, label_col, variant_class_order)
+        x <- waterfall_MAF2anno(x, label_col)
     } else if(toupper(file_type) == toupper("MGI")) {
-        x <- waterfall_MGI2anno(x, label_col, variant_class_order)
+        x <- waterfall_MGI2anno(x, label_col)
     } else if(toupper(file_type) == toupper("Custom")) {
-        x <- waterfall_Custom2anno(x, label_col, variant_class_order)
-    } else if(toupper(file_type) == toupper("VEP")) {
-        x <- waterfall_VEP2anno(x, label_col, variant_class_order)
+        x <- waterfall_Custom2anno(x, label_col)
     } else {
         stop("Unrecognized file_type: ", file_type)
     }
@@ -1434,7 +1318,6 @@ waterfall_qual <- function(x, y, z, file_type, label_col, variant_class_order)
 #' @name waterfall_rmvSilent
 #' @param x a data frame with columns 'sample', 'gene', 'trv_type'
 #' @return a subset data frame
-#' @noRd
 
 waterfall_rmvSilent <- function(x)
 {
@@ -1457,7 +1340,6 @@ waterfall_rmvSilent <- function(x)
 #' @param samples character vector giving samples to plot
 #' @return a subset data frame
 #' @importFrom plyr rbind.fill
-#' @noRd
 
 waterfall_sampAlt <- function(x, samples)
 {
@@ -1501,7 +1383,6 @@ waterfall_sampAlt <- function(x, samples)
 #' @param sampOrder Character vector specifying the order of samples to plot.
 #' @return a vector of samples in a sorted order
 #' @importFrom data.table dcast
-#' @noRd
 
 waterfall_sampSort <- function(x, sampOrder=NULL)
 {
@@ -1588,7 +1469,6 @@ waterfall_sampSort <- function(x, sampOrder=NULL)
 #' @param custom_palette Nullable custom colour palette
 #' 
 #' @return A vector of colours to be used as palette
-#' @noRd
 waterfall_select_palette <- function(file_type, custom_palette = NULL) {
     if (is.null(custom_palette)) {
         if (toupper(file_type) == toupper('MGI')) {
