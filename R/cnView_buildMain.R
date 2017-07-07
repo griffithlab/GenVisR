@@ -17,8 +17,7 @@
 #' @return ggplot2 object
 #' @import ggplot2
 
-cnView_buildMain <- function(x, y, z=NULL, chr, CNscale=FALSE, layers=NULL,
-                             segmentColor=NULL)
+cnView_buildMain <- function(x, y, z=NULL, chr, CNscale=FALSE, layers=NULL, segmentColor=NULL)
 {
     # Define various parameters of the plot
     dummy_data <- geom_point(data=y, mapping=aes_string(x='coordinate', y=2),
