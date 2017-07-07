@@ -5,7 +5,7 @@
 #' @name cnView
 #' @param x Object of class data frame with rows representing copy number calls
 #' from a single sample. The data frame must contain columns with the following
-#' names "chromosome", "coordinate", "cn", and optionally "p_value" 
+#' names "chromosome", "coordinate", "cn", and optionally "p_value"
 #' (see details).
 #' @param y Object of class data frame with rows representing cytogenetic bands
 #' for a chromosome. The data frame must contain columns with the following
@@ -18,7 +18,7 @@
 #' @param chr Character string specifying which chromosome to plot one of
 #' "chr..." or "all"
 #' @param CNscale Character string specifying if copy number calls supplied are
-#' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+#' relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of
 #' "relative" or "absolute"
 #' @param ideogram_txtAngle Integer specifying the angle of cytogenetic labels
 #' on the ideogram subplot.
@@ -29,6 +29,8 @@
 #' sub-plot.
 #' @param out Character vector specifying the the object to output, one of
 #' "data", "grob", or "plot", defaults to "plot" (see returns).
+#' @param segmentColor Character string specifying the color of segment lines. Used only if 
+#' Z is not null.
 #' @details cnView is able to plot in two modes specified via the `chr`
 #' parameter, these modes are single chromosome view in which an ideogram is
 #' displayed and genome view where chromosomes are faceted. For the single
@@ -40,12 +42,12 @@
 #' UCSC MySQL database to retrieve this information. Alternatively the user can
 #' manually supply this information as a data frame to the `y` parameter, input
 #' to the `y` parameter take precedence of input to `genome`.
-#' 
+#'
 #' cnView is also able to represent p-values for copy-number calls if they are
 #' supplied via the "p_value" column in the argument supplied to x. The presence
-#' of this column in x will set a transparency value to copy-number calls with 
+#' of this column in x will set a transparency value to copy-number calls with
 #' calls of less significance becoming more transparent.
-#' 
+#'
 #' If it is available cnView can plot copy-number segment calls on top of raw
 #' calls supplied to parameter `x` via the parameter `z`.
 #' @examples
@@ -54,7 +56,7 @@
 #' coordinate <- sort(sample(0:106455000, size=2000, replace=FALSE))
 #' cn <- c(rnorm(300, mean=3, sd=.2), rnorm(700, mean=2, sd=.2), rnorm(1000, mean=3, sd=.2))
 #' data <- as.data.frame(cbind(chromosome, coordinate, cn))
-#' 
+#'
 #' # Plot raw copy number calls
 #' cnView(data, chr='chr14', genome='hg19', ideogram_txtSize=4)
 #' @return One of the following, a list of dataframes containing data to be
@@ -64,8 +66,8 @@
 
 cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
                    CNscale="absolute", ideogram_txtAngle=45,
-                   ideogram_txtSize=5, plotLayer=NULL, ideogramLayer=NULL, 
-                   out="plot")
+                   ideogram_txtSize=5, plotLayer=NULL, ideogramLayer=NULL,
+                   out="plot", segmentColor=NULL)
 {
     # Perform a basic quality check
     input <- cnView_qual(x, y, z, genome, CNscale=CNscale)
@@ -88,7 +90,7 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
         message(memo)
         cytobands <- suppressWarnings(multi_cytobandRet(genome=genome))
     } else {
-        memo <- paste0("Detected argument supplied to y.. using y for", 
+        memo <- paste0("Detected argument supplied to y.. using y for",
                        "position and cytogenetic information")
         message(memo)
         cytobands <- y
@@ -114,17 +116,17 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
                                     txtAngle=ideogram_txtAngle,
                                     txtSize=ideogram_txtSize,
                                     plotLayer=ideogramLayer)
-        
+
         # if requested plot only selected chromosome
         x <- multi_subsetChr(x, chr)
         if(!is.null(z))
         {
             z <- multi_subsetChr(z, chr)
         }
-        
+
         # build the plot
         CN_plot <- cnView_buildMain(x, dummyData, z=z, chr=chr, CNscale=CNscale,
-                                    layers=plotLayer)
+                                    layers=plotLayer, segmentColor=segmentColor)
     }
 
     # Decide what to output
@@ -136,6 +138,6 @@ cnView <- function(x, y=NULL, z=NULL, genome='hg19', chr='chr1',
     } else {
         output <- multi_selectOut(data=dataOut, plot=p1, draw=FALSE, out=out)
     }
-    
+
     return(output)
 }
