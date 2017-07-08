@@ -20,6 +20,8 @@ setClass("MutationAnnotationFormat",
 #' 
 #' @name MutationAnnotationFormat
 #' @rdname MutationAnnotationFormat-class
+#' @param .Object object of class MutationAnnotationFormat
+#' @noRd
 #' @importFrom data.table fread
 setMethod(
     f="initialize",
@@ -202,6 +204,7 @@ setMethod(f="toWaterfall",
 #' @noRd
 #' @importFrom data.table data.table
 #' @importFrom data.table setDT
+#' @importFrom grDevices colors
 setMethod(f="setMutationHierarchy",
           signature="MutationAnnotationFormat",
           definition=function(object, mutationHierarchy, verbose, ...){
@@ -252,7 +255,7 @@ setMethod(f="setMutationHierarchy",
                                 "adding these in as least important and",
                                 "assigning random colors!")
                   warning(memo)
-                  newCol <- colors(distinct=TRUE)[!grepl("^gray", colors(distinct=TRUE))]
+                  newCol <- grDevices::colors(distinct=TRUE)[!grepl("^gray", grDevices::colors(distinct=TRUE))]
                   tmp <- data.table::data.table("mutation"=missingMutations,
                                                 "color"=sample(newCol, length(missingMutations)))
                   mutationHierarchy <- data.table::rbindlist(list(mutationHierarchy, tmp), use.names=TRUE, fill=TRUE)

@@ -4,11 +4,8 @@
 \name{GMS_v4-class}
 \alias{GMS_v4-class}
 \alias{GMS_v4}
-\alias{GMS_v4}
 \title{Class GMS_v4}
 \usage{
-\S4method{initialize}{GMS_v4}(.Object, gmsData)
-
 GMS_v4(gmsData)
 }
 \arguments{
@@ -18,8 +15,6 @@ to the version 4 specifications.}
 \description{
 An S4 class to represent data in gms annotation version 4,
 inherits from the GMS_Virtual class.
-
-Initalizer method for the GMS_v4 sub-class
 
 Constructor for the GMS_v4 sub-class
 }

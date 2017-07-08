@@ -16,6 +16,11 @@ getSample(object, ...)
 
 \S4method{getSample}{MutationAnnotationFormat}(object, ...)
 }
+\arguments{
+\item{object}{Object of class VEP, GMS, or MutationAnnotationFormat}
+
+\item{...}{additional arguments to passed}
+}
 \description{
 Method getSample
 }

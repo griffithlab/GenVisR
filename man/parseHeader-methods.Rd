@@ -14,6 +14,8 @@ parseHeader(object, ...)
 \arguments{
 \item{object}{Object of class VEP_Virtual, needed for method dispatch on class.}
 
+\item{...}{additional arguments to passed}
+
 \item{vepHeader}{List of character vectors obtained from the vep header}
 }
 \description{

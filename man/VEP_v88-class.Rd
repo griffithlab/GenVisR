@@ -4,25 +4,20 @@
 \name{VEP_v88-class}
 \alias{VEP_v88-class}
 \alias{VEP_v88}
-\alias{VEP_v88}
 \title{Class VEP_v88}
 \usage{
-\S4method{initialize}{VEP_v88}(.Object, vepData, vepHeader)
-
 VEP_v88(vepData, vepHeader)
 }
 \arguments{
+\item{vepData}{data.table object containing a VEP annotation file conforming
+to the version 88 specifications.}
+
 \item{vepHeader}{Object of class list containing character vectors for vep
 header information.}
-
-\item{gmsData}{data.table object containing a VEP annotation file conforming
-to the version 88 specifications.}
 }
 \description{
 An S4 class to represent data in variant effect predictor version 88 format,
 inherits from the VEP_Virtual class.
-
-Initalizer method for the VEP_v88 sub-class
 
 Constructor for the VEP_v4 sub-class
 }

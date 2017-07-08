@@ -4,11 +4,8 @@
 \name{VEP-class}
 \alias{VEP-class}
 \alias{VEP}
-\alias{VEP}
 \title{Class VEP}
 \usage{
-\S4method{initialize}{VEP}(.Object, path, data, version, verbose)
-
 VEP(path, data = NULL, version = "auto", verbose = FALSE)
 }
 \arguments{
@@ -26,8 +23,6 @@ reading in the VEP files.}
 }
 \description{
 An S4 class for Variant Effect Predictor input.
-
-Initalizer method for the VEP container class
 
 Constructor for the VEP container class.
 }

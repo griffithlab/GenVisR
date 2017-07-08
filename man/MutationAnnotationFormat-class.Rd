@@ -4,11 +4,8 @@
 \name{MutationAnnotationFormat-class}
 \alias{MutationAnnotationFormat-class}
 \alias{MutationAnnotationFormat}
-\alias{MutationAnnotationFormat}
 \title{Class MutationAnnotationFormat}
 \usage{
-\S4method{initialize}{MutationAnnotationFormat}(.Object, path, version, verbose)
-
 MutationAnnotationFormat(path, version = "auto", verbose = FALSE)
 }
 \arguments{
@@ -22,8 +19,6 @@ in the MAF file.}
 }
 \description{
 An S4 class acting as a container for MutationAnnotationFormat version sub-classes.
-
-Initalizer method for the MutationAnnotationFormat container class
 
 Constructor for the MutationAnnotationFormat container class.
 }

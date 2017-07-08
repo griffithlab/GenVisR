@@ -18,6 +18,8 @@ setClass("GMS",
 #' 
 #' @name GMS
 #' @rdname GMS-class
+#' @param .Object object of class GMS
+#' @noRd
 #' @importFrom data.table fread
 #' @importFrom data.table rbindlist
 #' @importFrom data.table is.data.table
@@ -240,6 +242,7 @@ setMethod(f="toWaterfall",
 #' @importFrom data.table data.table
 #' @importFrom data.table setDT
 #' @importFrom data.table rbindlist
+#' @importFrom grDevices colors
 setMethod(f="setMutationHierarchy",
           signature="GMS",
           definition=function(object, mutationHierarchy, verbose, ...){
@@ -296,7 +299,7 @@ setMethod(f="setMutationHierarchy",
                                 "adding these in as least important and",
                                 "assigning random colors!")
                   warning(memo)
-                  newCol <- colors(distinct=TRUE)[!grepl("^gray", colors(distinct=TRUE))]
+                  newCol <- grDevices::colors(distinct=TRUE)[!grepl("^gray", grDevices::colors(distinct=TRUE))]
                   tmp <- data.table::data.table("mutation"=missingMutations,
                                                 "color"=sample(newCol, length(missingMutations)))
                   mutationHierarchy <- data.table::rbindlist(list(mutationHierarchy, tmp), use.names=TRUE, fill=TRUE)

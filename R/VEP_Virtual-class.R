@@ -103,6 +103,7 @@ setMethod(f="parseExtra",
               extraCol <- rbindlist(extraCol, fill = T)
               
               # meged the Extra column back in
+              Extra <- NULL # appease R CMD CHECK
               vepData <- vepData[,Extra:=NULL]
               vepData <- cbind(vepData, extraCol)
               
@@ -111,9 +112,6 @@ setMethod(f="parseExtra",
 
 #' @rdname writeData-methods
 #' @aliases writeData,VEP_Virtual
-#' @param object Object of class VEP_Virtual.
-#' @param file Character string specifying a file to send output to.
-#' @param sep Delimiter used when writing output, defaults to tab.
 #' @importFrom data.table fwrite
 setMethod(f="writeData",
           signature="VEP_Virtual",

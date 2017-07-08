@@ -48,6 +48,8 @@ setClass("Waterfall",
 #' 
 #' @name Waterfall
 #' @rdname Waterfall-class
+#' @param .Object object of class Waterfall
+#' @noRd
 #' @import ggplot2
 setMethod(f="initialize",
           signature="Waterfall",
@@ -163,7 +165,7 @@ setMethod(f="initialize",
 #' @param geneMax Integer specifying the maximum number of genes to be plotted.
 #' Genes kept will be choosen based on the reccurence of mutations in samples.
 #' Unless geneOrder is specified.
-#' @param sampOrder Character vector specifying the order in which to plot
+#' @param sampleOrder Character vector specifying the order in which to plot
 #' samples.
 #' @param plotA String specifying the type of plot for the top sub-plot, one of
 #' "burden", "frequency", or NULL for a mutation burden (requires coverage to be
@@ -545,6 +547,7 @@ definition=function(object, recurrence, verbose, ...){
     }
     
     # determine the frequency of gene mutations
+    gene <- NULL # appease R CMD CHECK
     mutRecur <- primaryData[, count := .N, by = list(gene)]
     mutRecur <- unique(mutRecur[,c("gene", "count")])
     mutRecur <- stats::na.omit(mutRecur)
@@ -948,6 +951,7 @@ setMethod(f="constructGeneData",
               }
               
               # construct geneData
+              gene <- mutation <- NULL # appeases R CMD CHECK
               geneData <- geneData[, count := .N, by = list(gene, mutation)]
               geneData <- unique(geneData[,c("gene", "mutation", "count")])
               geneData$gene <- factor(geneData$gene, levels=levels(object@primaryData$gene))
@@ -1397,6 +1401,7 @@ setMethod(f="arrangeWaterfallPlot",
 
 #' @rdname drawPlot-methods
 #' @aliases drawPlot,Waterfall
+#' @param object Object of class Waterfall
 #' @importFrom grid grid.draw
 setMethod(
     f="drawPlot",

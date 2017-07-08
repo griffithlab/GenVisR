@@ -16,6 +16,11 @@ getMutation(object, ...)
 
 \S4method{getMutation}{MutationAnnotationFormat}(object, ...)
 }
+\arguments{
+\item{object}{Object of class VEP, GMS, or MutationAnnotationFormat}
+
+\item{...}{additional arguments to passed}
+}
 \description{
 Method getMutation
 }

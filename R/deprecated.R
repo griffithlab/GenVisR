@@ -327,6 +327,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
 #' type
 #' @param label_col Character string specifying the column name of a
 #' label column (optional)
+#' @noRd
 #' @return a data frame coerced from custom to annotation format
 
 waterfall_Custom2anno <- function(x, label_col)
@@ -375,6 +376,7 @@ waterfall_Custom2anno <- function(x, label_col)
 #' @param x a data frame in MAF format
 #' @param label_col Character string specifying the column name of a
 #' label column
+#' @noRd
 #' @return a data frame coerced from MAF to TGI format
 
 waterfall_MAF2anno <- function(x, label_col)
@@ -414,6 +416,7 @@ waterfall_MAF2anno <- function(x, label_col)
 #' @param x a data frame in MGI internal format
 #' @param label_col Character string specifying the column name of a label
 #' column
+#' @noRd
 #' @return a data frame coerced from MGI to internal annotation format
 
 waterfall_MGI2anno <- function(x, label_col)
@@ -449,6 +452,7 @@ waterfall_MGI2anno <- function(x, label_col)
 #' @param x a data frame in anno format
 #' @return a data frame with NA values in a gene column coerced to the top gene
 #' name
+#' @noRd
 #' @importFrom stats na.omit
 
 waterfall_NA2gene <- function(x)
@@ -475,23 +479,24 @@ waterfall_NA2gene <- function(x)
 #' @param genes ggplot object displaying mutation burden on gene
 #' @param burden ggplot object displaying mutation burden on sample
 #' @param clinical ggplot object displaying clinical information "optional"
-#' @param proportions ggplot object displaying proportion of mutation types "optional"
+#' @param proportion ggplot object displaying proportion of mutation types "optional"
 #' @param section_heights Heights of each section (should sum to one)
 #' @return a grob object
+#' @noRd
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom grid nullGrob
 
-waterfall_align <- function(genes, heatmap, burden, clinical, proportions, 
+waterfall_align <- function(genes, heatmap, burden, clinical, proportion, 
                             section_heights) {
     if (missing(section_heights)) {    
         if (missing(clinical)) {
-            if (is.null(proportions)) {
+            if (is.null(proportion)) {
                 section_heights <- c(1, 4)
             } else {
                 section_heights <- c(1, 4, 0.5)
             }
         } else {
-            if (is.null(proportions)) {
+            if (is.null(proportion)) {
                 section_heights <- c(1, 4, 0.5)
             } else {
                 section_heights <- c(1, 4, 1.2, 0.5)
@@ -528,12 +533,12 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
         blankPanel <- grid::grid.rect(gp=grid::gpar(col="white"))
     }
     
-    if (!is.null(proportions)) {
-        prop_grob <- ggplot2::ggplotGrob(proportions)
+    if (!is.null(proportion)) {
+        prop_grob <- ggplot2::ggplotGrob(proportion)
         ind_legend <- grep("guide", prop_grob$layout$name)
         prop_legend <- prop_grob[["grobs"]][[ind_legend]]
         prop_width <- sum(prop_legend$width)
-        prop_grob <- ggplot2::ggplotGrob(proportions + theme(legend.position="none"))
+        prop_grob <- ggplot2::ggplotGrob(proportion + theme(legend.position="none"))
         
     } else prop_width <- NULL
     
@@ -553,7 +558,7 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
     
     # Adjust the grob widths so heatmap and burden plots line up
     if(!missing(clinical)) {
-        if (!is.null(proportions)) {
+        if (!is.null(proportion)) {
             maxwidth <- grid::unit.pmax(heatmap_grob$widths,
                                         burden_grob$widths,
                                         clin_grob$widths,
@@ -569,7 +574,7 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
         heatmap_grob$widths <- as.list(maxwidth)
         clin_grob$widths <- as.list(maxwidth)
     } else {
-        if (!is.null(proportions)) {
+        if (!is.null(proportion)) {
             maxwidth <- grid::unit.pmax(heatmap_grob$widths,
                                         burden_grob$widths,
                                         prop_grob$widths)
@@ -590,7 +595,7 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
     
     # plot the grobs with grid.arrange
     if(!missing(clinical)) {
-        if (!is.null(proportions)) {
+        if (!is.null(proportion)) {
             nrows <- 4
             grobs <- list(
                 blankPanel, burden_grob, burden_legend, 
@@ -612,7 +617,7 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
         
         
     } else {
-        if (!is.null(proportions)) {
+        if (!is.null(proportion)) {
             nrows <- 3
             grobs <- list(
                 blankPanel, burden_grob, burden_legend,
@@ -640,6 +645,7 @@ waterfall_align <- function(genes, heatmap, burden, clinical, proportions,
 #' @param gene_label_size numeric value indicating the size of the gene labels
 #'      on the y-axis
 #' @param layers additional ggplot2 layers
+#' @noRd
 #' @return a ggplot object
 #' @importFrom plyr count
 #' @importFrom stats na.omit
@@ -711,6 +717,7 @@ waterfall_buildGenePrevelance <- function(data_frame, gene_label_size=8, layers=
 #' @param layers additional ggplot2 layers to plot
 #' @param plot_label_angle angle at which to plot label text if plot_label is
 #' true
+#' @noRd
 #' @return a ggplot2 object
 #' @import ggplot2
 
@@ -838,6 +845,7 @@ waterfall_buildMain <- function(data_frame, grid=TRUE, label_x=FALSE,
 #' @param coverage_space an integer specifying the coverage space in base pairs
 #' from which a mutation could occur
 #' @param layers Additional ggplot2 layers to plot
+#' @noRd
 #' @return a ggplot object
 
 waterfall_buildMutBurden_A <- function(x, coverage_space, layers=NULL)
@@ -885,6 +893,7 @@ waterfall_buildMutBurden_A <- function(x, coverage_space, layers=NULL)
 #' @param x a data frame containing columns sample, mut_burden
 #' @param layers additional ggplot2 layers to plot
 #' @return a ggplot object
+#' @noRd
 #' @import ggplot2
 
 waterfall_buildMutBurden_B <- function(x, layers=NULL)
@@ -935,11 +944,9 @@ waterfall_buildMutBurden_B <- function(x, layers=NULL)
 #' @param file_type MAF, etc
 #' @param layers layer(s) to add to this plot object
 #' @param x_label label this plot?
-#' 
 #' @description Builds a ggplot object showing individuals' mutational profile
-#' 
+#' @noRd
 #' @return a ggplot object
-#' 
 waterfall_build_proportions <- function(data_frame, plot_palette, 
                                         file_type, layers, x_label) {
     
@@ -985,6 +992,7 @@ waterfall_build_proportions <- function(data_frame, plot_palette,
 #' @name waterfall_calcMutFreq
 #' @param x data frame in long format with columns sample, trv_type
 #' @importFrom data.table melt
+#' @noRd
 #' @return a data frame with synonymous/nonsynonymous counts appended
 
 waterfall_calcMutFreq <- function(x)
@@ -1011,6 +1019,7 @@ waterfall_calcMutFreq <- function(x)
 #' @name waterfall_geneAlt
 #' @param x a data frame in long format with columns 'gene', 'trv_type'
 #' @param genes character vector listing genes to plot
+#' @noRd
 #' @return a subset data frame
 
 waterfall_geneAlt <- function(x, genes)
@@ -1044,6 +1053,7 @@ waterfall_geneAlt <- function(x, genes)
 #' @param recurrence_cutoff integer specifying removal of entries not seen
 #' in at least "x" percent of samples
 #' @return a subset data frame
+#' @noRd
 #' @importFrom plyr count
 #' @importFrom stats na.omit
 
@@ -1088,6 +1098,7 @@ waterfall_geneRecurCutoff <- function(x, recurrence_cutoff)
 #' @param x Data frame with columns names "gene", "trv_type".
 #' @param geneOrder Character vector specifying the order in which to plot
 #' genes.
+#' @noRd
 #' @return Character vector of ordered genes
 
 waterfall_geneSort <- function(x, geneOrder=NULL)
@@ -1130,6 +1141,7 @@ waterfall_geneSort <- function(x, geneOrder=NULL)
 #' @param file_type The type of file to act on one of 'MAF", "MGI", "Custom"
 #' @param variant_class_order character vector giving the hierarchical order of
 #' mutation types to plot
+#' @noRd
 #' @return a data frame with multiple mutations in the same sample/gene
 #' collapsed on the most deleterious
 
@@ -1198,7 +1210,7 @@ waterfall_hierarchyTRV <- function(x, file_type, variant_class_order)
 #' @param palette Named colour vector as input 
 #' @param file_type Which file type is involved?
 #' @param data_frame Only used if file_type is "custom"
-#' 
+#' @noRd
 #' @return a named list of "breaks" and "labels"
 waterfall_palette_names <- function(palette, file_type, data_frame) {
     # Create breaks specific and labels for specified file type
@@ -1239,6 +1251,7 @@ waterfall_palette_names <- function(palette, file_type, data_frame) {
 #' @param file_type Character string specifying the input format to expect in x
 #' @param label_col Character string specifying the column name of a label
 #' column
+#' @noRd
 #' @return a list of data frames passing quality checks
 
 waterfall_qual <- function(x, y, z, file_type, label_col)
@@ -1317,6 +1330,7 @@ waterfall_qual <- function(x, y, z, file_type, label_col)
 #' is silent
 #' @name waterfall_rmvSilent
 #' @param x a data frame with columns 'sample', 'gene', 'trv_type'
+#' @noRd
 #' @return a subset data frame
 
 waterfall_rmvSilent <- function(x)
@@ -1339,6 +1353,7 @@ waterfall_rmvSilent <- function(x)
 #' @param x a data frame in long format with columns 'sample', 'trv_type'
 #' @param samples character vector giving samples to plot
 #' @return a subset data frame
+#' @noRd
 #' @importFrom plyr rbind.fill
 
 waterfall_sampAlt <- function(x, samples)
@@ -1382,6 +1397,7 @@ waterfall_sampAlt <- function(x, samples)
 #' "gene", "trv_type"
 #' @param sampOrder Character vector specifying the order of samples to plot.
 #' @return a vector of samples in a sorted order
+#' @noRd
 #' @importFrom data.table dcast
 
 waterfall_sampSort <- function(x, sampOrder=NULL)
@@ -1467,7 +1483,7 @@ waterfall_sampSort <- function(x, sampOrder=NULL)
 #' 
 #' @param file_type Which file tyoe is used?
 #' @param custom_palette Nullable custom colour palette
-#' 
+#' @noRd
 #' @return A vector of colours to be used as palette
 waterfall_select_palette <- function(file_type, custom_palette = NULL) {
     if (is.null(custom_palette)) {

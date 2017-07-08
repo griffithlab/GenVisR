@@ -11,6 +11,11 @@ getData(object, ...)
 
 \S4method{getData}{Clinical}(object, ...)
 }
+\arguments{
+\item{object}{Object of class}
+
+\item{...}{additional arguments to passed}
+}
 \description{
 Method getData
 }

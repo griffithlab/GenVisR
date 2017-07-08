@@ -16,6 +16,11 @@ getPosition(object, ...)
 
 \S4method{getPosition}{MutationAnnotationFormat}(object, ...)
 }
+\arguments{
+\item{object}{Object of class VEP, GMS, or MutationAnnotationFormat}
+
+\item{...}{additional arguments to passed}
+}
 \description{
 Method getPosition
 }

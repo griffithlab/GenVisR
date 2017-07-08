@@ -25,8 +25,10 @@ setClass("Clinical",
 #' 
 #' @name Clinical
 #' @rdname Clinical-class
+#' @noRd
 #' @importFrom data.table fread
 #' @importFrom data.table is.data.table
+
 setMethod(f="initialize",
           signature="Clinical",
           definition=function(.Object, path, inputData, inputFormat, legendColumns,

@@ -2,6 +2,8 @@
 #' 
 #' @name getPosition
 #' @rdname getPosition-methods
+#' @param object Object of class VEP, GMS, or MutationAnnotationFormat
+#' @param ... additional arguments to passed
 #' @exportMethod getPosition
 setGeneric(
     name="getPosition",
@@ -12,6 +14,8 @@ setGeneric(
 #' 
 #' @name getMutation
 #' @rdname getMutation-methods
+#' @param object Object of class VEP, GMS, or MutationAnnotationFormat
+#' @param ... additional arguments to passed
 #' @exportMethod getMutation
 setGeneric(
     name="getMutation",
@@ -22,6 +26,8 @@ setGeneric(
 #' 
 #' @name getSample
 #' @rdname getSample-methods
+#' @param object Object of class VEP, GMS, or MutationAnnotationFormat
+#' @param ... additional arguments to passed
 #' @exportMethod getSample
 setGeneric(
     name="getSample",
@@ -32,6 +38,8 @@ setGeneric(
 #' 
 #' @name getMeta
 #' @rdname getMeta-methods
+#' @param object Object of class VEP, GMS, or MutationAnnotationFormat
+#' @param ... additional arguments to passed
 #' @exportMethod getMeta
 setGeneric(
     name="getMeta",
@@ -42,6 +50,7 @@ setGeneric(
 #'
 #' @name toWaterfall
 #' @rdname toWaterfall-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="toWaterfall",
@@ -52,6 +61,7 @@ setGeneric(
 #'
 #' @name sampSubset
 #' @rdname sampSubset-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="sampSubset",
@@ -62,6 +72,7 @@ setGeneric(
 #'
 #' @name calcSimpleMutationBurden
 #' @rdname calcSimpleMutationBurden-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="calcSimpleMutationBurden",
@@ -72,6 +83,7 @@ setGeneric(
 #'
 #' @name calcComplexMutationBurden
 #' @rdname calcComplexMutationBurden-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="calcComplexMutationBurden",
@@ -82,6 +94,7 @@ setGeneric(
 #'
 #' @name rmvMutation
 #' @rdname rmvMutation-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="rmvMutation",
@@ -92,6 +105,7 @@ setGeneric(
 #'
 #' @name geneSubset
 #' @rdname geneSubset-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="geneSubset",
@@ -102,6 +116,7 @@ setGeneric(
 #'
 #' @name mutHierarchySubset
 #' @rdname mutHierarchySubset-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="mutHierarchySubset",
@@ -112,6 +127,7 @@ setGeneric(
 #'
 #' @name setMutationHierarchy
 #' @rdname setMutationHierarchy-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="setMutationHierarchy",
@@ -122,6 +138,7 @@ setGeneric(
 #'
 #' @name recurrenceSubset
 #' @rdname recurrenceSubset-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="recurrenceSubset",
@@ -132,6 +149,7 @@ setGeneric(
 #'
 #' @name orderGenes
 #' @rdname orderGenes-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="orderGenes",
@@ -142,6 +160,7 @@ setGeneric(
 #'
 #' @name maxGeneSubset
 #' @rdname maxGeneSubset-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="maxGeneSubset",
@@ -152,6 +171,7 @@ setGeneric(
 #'
 #' @name orderSamples
 #' @rdname orderSamples-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="orderSamples",
@@ -162,6 +182,7 @@ setGeneric(
 #'
 #' @name buildMutationPlot
 #' @rdname buildMutationPlot-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="buildMutationPlot",
@@ -172,6 +193,7 @@ setGeneric(
 #'
 #' @name constructGeneData
 #' @rdname constructGeneData-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="constructGeneData",
@@ -182,6 +204,7 @@ setGeneric(
 #'
 #' @name buildGenePlot
 #' @rdname buildGenePlot-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="buildGenePlot",
@@ -192,6 +215,7 @@ setGeneric(
 #'
 #' @name buildWaterfallPlot
 #' @rdname buildWaterfallPlot-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="buildWaterfallPlot",
@@ -202,6 +226,7 @@ setGeneric(
 #'
 #' @name formatClinicalData
 #' @rdname formatClinicalData-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="formatClinicalData",
@@ -212,6 +237,7 @@ setGeneric(
 #'
 #' @name setClinicalPlotLayers
 #' @rdname setClinicalPlotLayers-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="setClinicalPlotLayers",
@@ -222,6 +248,7 @@ setGeneric(
 #'
 #' @name buildClinicalPlot
 #' @rdname buildClinicalPlot-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="buildClinicalPlot",
@@ -232,6 +259,8 @@ setGeneric(
 #' 
 #' @name getData
 #' @rdname getData-methods
+#' @param object Object of class
+#' @param ... additional arguments to passed
 #' @exportMethod getData
 setGeneric(
     name="getData",
@@ -242,6 +271,8 @@ setGeneric(
 #' 
 #' @name arrangeWaterfallPlot
 #' @rdname arrangeWaterfallPlot-methods
+#' @param ... additional arguments to passed
+#' @noRd
 setGeneric(
     name="arrangeWaterfallPlot",
     def=function(object, ...){standardGeneric("arrangeWaterfallPlot")}
@@ -251,6 +282,7 @@ setGeneric(
 #' 
 #' @name drawPlot
 #' @rdname drawPlot-methods
+#' @param ... additional arguments to passed
 #' @exportMethod drawPlot
 setGeneric(
     name="drawPlot",
@@ -261,6 +293,7 @@ setGeneric(
 #' 
 #' @name parseDescription
 #' @rdname parseDescription-methods
+#' @param ... additional arguments to passed
 #' @exportMethod parseDescription
 setGeneric(
     name="parseDescription",
@@ -271,6 +304,7 @@ setGeneric(
 #' 
 #' @name parseHeader
 #' @rdname parseHeader-methods
+#' @param ... additional arguments to passed
 #' @exportMethod parseHeader
 setGeneric(
     name="parseHeader",
@@ -281,6 +315,7 @@ setGeneric(
 #' 
 #' @name parseExtra
 #' @rdname parseExtra-methods
+#' @param ... additional arguments to passed
 #' @exportMethod parseExtra
 setGeneric(
     name="parseExtra",
@@ -291,6 +326,10 @@ setGeneric(
 #' 
 #' @name writeData
 #' @rdname writeData-methods
+#' @param object Object of class VEP
+#' @param file Character string specifying a file to send output to.
+#' @param sep Delimiter used when writing output, defaults to tab.
+#' @param ... additional arguments to passed
 #' @exportMethod writeData
 setGeneric(
     name="writeData",
@@ -301,6 +340,7 @@ setGeneric(
 #' 
 #' @name geneFilter
 #' @rdname geneFilter-methods
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="geneFilter",
@@ -311,6 +351,7 @@ setGeneric(
 #' 
 #' @name toMutSpectra
 #' @rdname toMutSpectra
+#' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
     name="toMutSpectra",

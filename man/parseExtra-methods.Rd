@@ -14,6 +14,8 @@ parseExtra(object, ...)
 \arguments{
 \item{object}{Object of class VEP_Virtual, needed for method dispatch on class.}
 
+\item{...}{additional arguments to passed}
+
 \item{vepData}{Object of class data.table holding vep annotated data}
 }
 \description{

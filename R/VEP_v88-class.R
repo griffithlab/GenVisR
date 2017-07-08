@@ -46,6 +46,7 @@ setClass("VEP_v88",
 #' 
 #' @name VEP_v88
 #' @rdname VEP_v88-class
+#' @noRd
 #' @importFrom data.table data.table
 setMethod(
     f="initialize",
@@ -91,7 +92,7 @@ setMethod(
 #' 
 #' @name VEP_v88
 #' @rdname VEP_v88-class
-#' @param gmsData data.table object containing a VEP annotation file conforming
+#' @param vepData data.table object containing a VEP annotation file conforming
 #' to the version 88 specifications.
 #' @param vepHeader Object of class list containing character vectors for vep
 #' header information.

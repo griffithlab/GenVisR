@@ -16,6 +16,11 @@ drawPlot(object, ...)
 
 \S4method{drawPlot}{Waterfall}(object, ...)
 }
+\arguments{
+\item{object}{Object of class Waterfall}
+
+\item{...}{additional arguments to passed}
+}
 \description{
 Method drawPlot
 }

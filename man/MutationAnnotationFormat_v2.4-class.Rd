@@ -4,11 +4,8 @@
 \name{MutationAnnotationFormat_v2.4-class}
 \alias{MutationAnnotationFormat_v2.4-class}
 \alias{MutationAnnotationFormat_v2.4}
-\alias{MutationAnnotationFormat_v2.4}
 \title{Class MutationAnnotationFormat_v2.4}
 \usage{
-\S4method{initialize}{MutationAnnotationFormat_v2.4}(.Object, mafData)
-
 MutationAnnotationFormat_v2.4(mafData)
 }
 \arguments{
@@ -18,8 +15,6 @@ version 2.4 specification.}
 \description{
 An S4 class to represent data in mutation annotation format version 2.4,
 inherits from the MutationAnnotationFormat_Virtual class.
-
-Initalizer method for the MutationAnnotationFormat_v2.4 sub-class
 
 Constructor for the MutationAnnotationFormat_v2.4 sub-class
 }

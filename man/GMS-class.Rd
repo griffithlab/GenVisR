@@ -4,11 +4,8 @@
 \name{GMS-class}
 \alias{GMS-class}
 \alias{GMS}
-\alias{GMS}
 \title{Class GMS}
 \usage{
-\S4method{initialize}{GMS}(.Object, path, data, version, verbose)
-
 GMS(path, data = NULL, version = 4, verbose = FALSE)
 }
 \arguments{
@@ -26,8 +23,6 @@ reading in the GMS files.}
 }
 \description{
 An S4 class for Genome Modeling System annotation files.
-
-Initalizer method for the GMS container class
 
 Constructor for the GMS container class.
 }

@@ -33,11 +33,14 @@ setClass("MutSpectra",
 #' 
 #' @name MutSpectra
 #' @rdname MutSpectra-class
+#' @param .Object object of class MutSpectra
+#' @noRd
 #' @import ggplot2
 setMethod(f="initialize",
           signature="MutSpectra",
           definition=function(.Object, input, BSgenome, clinical, sectionHeights,
-                              sectionWidths, verbose, plotCLayers){
+                              sectionWidths, verbose, plotALayers, plotBLayers,
+                              plotCLayers){
               # convert object to mutSpectra format
               toMutSpectra(input, BSgenome=BSgenome, verbose=verbose)
           })
@@ -60,8 +63,10 @@ setMethod(f="initialize",
 #' @param plotCLayers list of ggplot2 layers to be passed to the clinical plot.
 #' @export
 MutSpectra <- function(input, BSgenome=NULL, clinical=NULL, sectionHeights=NULL,
-                      sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL){
+                      sectionWidths=NULL, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL,
+                      plotCLayers=NULL){
     cat("!!!!! MutSpectra~Constructor !!!!!\n")
     new("MutSpectra", input=input, BSgenome=BSgenome, clinical=clinical, sectionHeights=sectionHeights,
-        sectionWidths=sectionWidths, verbose=verbose, plotCLayers=plotCLayers)
+        sectionWidths=sectionWidths, verbose=verbose, plotALayers=plotALayers, plotBLayers = plotBLayers, 
+        plotCLayers=plotCLayers)
 }

@@ -17,13 +17,9 @@ writeData(object, ...)
 \S4method{writeData}{VEP}(object, file, ...)
 }
 \arguments{
-\item{object}{Object of class VEP_Virtual.}
+\item{object}{Object of class VEP}
 
-\item{file}{Character string specifying a file to send output to.}
-
-\item{sep}{Delimiter used when writing output, defaults to tab.}
-
-\item{object}{Object of class VEP.}
+\item{...}{additional arguments to passed}
 
 \item{file}{Character string specifying a file to send output to.}
 

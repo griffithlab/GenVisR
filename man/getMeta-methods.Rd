@@ -16,6 +16,11 @@ getMeta(object, ...)
 
 \S4method{getMeta}{MutationAnnotationFormat}(object, ...)
 }
+\arguments{
+\item{object}{Object of class VEP, GMS, or MutationAnnotationFormat}
+
+\item{...}{additional arguments to passed}
+}
 \description{
 Method getMeta
 }

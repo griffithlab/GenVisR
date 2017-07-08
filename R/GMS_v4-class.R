@@ -49,6 +49,8 @@ setClass("GMS_v4",
 #' Initalizer method for the GMS_v4 sub-class
 #' 
 #' @name GMS_v4
+#' @param .Object object of class GMS_v4
+#' @noRd
 #' @rdname GMS_v4-class
 setMethod(
     f="initialize",

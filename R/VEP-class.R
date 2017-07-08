@@ -18,6 +18,8 @@ setClass("VEP",
 #' 
 #' @name VEP
 #' @rdname VEP-class
+#' @param .Object object of class VEP
+#' @noRd
 #' @importFrom data.table fread
 #' @importFrom data.table rbindlist
 #' @importFrom data.table data.table
@@ -33,7 +35,7 @@ setMethod(
             .Object@path <- vepFiles
             
             # anonymous function to read in files
-            a <- function(x, verbose){
+            a1 <- function(x, verbose){
                 # detect OS and remove slashes and extension
                 if(.Platform$OS.type == "windows"){
                     sampleName <- gsub("(.*/)||(.*\\\\)", "", x)
@@ -66,7 +68,7 @@ setMethod(
                 stop(memo)
             } else {
                 # Read in the information
-                vepInfo <- lapply(vepFiles, a, verbose)
+                vepInfo <- lapply(vepFiles, a1, verbose)
                 
                 # extract header and data information
                 vepHeader <- lapply(vepInfo, function(x) x[["header"]])
@@ -90,7 +92,7 @@ setMethod(
 
         
         # grab the version and assign it
-        a <- function(x){
+        a2 <- function(x){
             # find the element which defines the VEP version
             x <- x[grepl("VARIANT EFFECT PREDICTOR", x)]
             
@@ -105,7 +107,7 @@ setMethod(
             return(as.numeric(x[1]))
         }
         if(version == "auto"){
-            version <- lapply(vepHeader, a)
+            version <- lapply(vepHeader, a2)
             version <- unique(unlist(version))
             if(length(version) > 1){
                 version <- version[1]
@@ -164,9 +166,6 @@ VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
 
 #' @rdname writeData-methods
 #' @aliases writeData,VEP
-#' @param object Object of class VEP.
-#' @param file Character string specifying a file to send output to.
-#' @param sep Delimiter used when writing output, defaults to tab.
 setMethod(f="writeData",
           signature="VEP",
           definition=function(object, file, ...){
@@ -179,6 +178,7 @@ setMethod(f="writeData",
 #' @importFrom data.table data.table
 #' @importFrom data.table setDT
 #' @importFrom data.table rbindlist
+#' @importFrom grDevices colors
 setMethod(f="setMutationHierarchy",
           signature="VEP",
           definition=function(object, mutationHierarchy, verbose, ...){
@@ -244,7 +244,7 @@ setMethod(f="setMutationHierarchy",
                                 "adding these in as least important and",
                                 "assigning random colors!")
                   warning(memo)
-                  newCol <- colors(distinct=TRUE)[!grepl("^gray", colors(distinct=TRUE))]
+                  newCol <- grDevices::colors(distinct=TRUE)[!grepl("^gray", grDevices::colors(distinct=TRUE))]
                   tmp <- data.table::data.table("mutation"=missingMutations,
                                                 "color"=sample(newCol, length(missingMutations)))
                   mutationHierarchy <- data.table::rbindlist(list(mutationHierarchy, tmp), use.names=TRUE, fill=TRUE)
@@ -327,6 +327,7 @@ setMethod(f="toWaterfall",
               
               # cast data into form where mutation column is not comma delimited
               # the hierarchy will sort out any duplicates
+              V1 <- . <- NULL # appease R CMD CHECK
               waterfallFormat <- waterfallFormat[, strsplit(as.character(mutation), ",", fixed=TRUE),
                                                  by = .(sample, gene, label, mutation, key)][,.(mutation = V1, sample, gene, label, key)]
               

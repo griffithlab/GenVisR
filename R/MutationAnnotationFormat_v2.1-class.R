@@ -45,6 +45,8 @@ setClass("MutationAnnotationFormat_v2.1",
 #' 
 #' @name MutationAnnotationFormat_v2.1
 #' @rdname MutationAnnotationFormat_v2.1-class
+#' @noRd
+#' @param .Object object of class MutationAnnotationFormat_v2.1
 
 setMethod(
     f="initialize",
