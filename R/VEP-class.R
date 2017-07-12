@@ -27,8 +27,7 @@ setMethod(
     f="initialize",
     signature="VEP",
     definition=function(.Object, path, data, version, verbose){
-        cat("!!!!! VEP~Initalizer !!!!!\n")
-        
+
         if(is.null(data)){
             # Grab all files and assign to slot
             vepFiles <- Sys.glob(path)
@@ -161,7 +160,6 @@ setMethod(
 #' extension to populate sample names.
 #' @export
 VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
-    cat("!!!!! VEP~Constructor !!!!!\n")
     new("VEP", path=path, data=data, version=version, verbose=verbose)}
 
 #' @rdname writeData-methods

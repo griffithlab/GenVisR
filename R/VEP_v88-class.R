@@ -18,7 +18,6 @@
 setClass("VEP_v88",
          contains="VEP_Virtual",
          validity=function(object){
-             cat("!!!!! VEP_v4~Inspector !!!!!\n")
              expecPositionNames <- c("Location")
              expecMutationNames <- c("Allele", "Consequence")
              expecSampleNames <- c("sample")
@@ -53,7 +52,6 @@ setMethod(
     signature="VEP_v88",
     definition=function(.Object, vepData, vepHeader){
         
-        cat("!!!!! VEP_v88~Initalizer !!!!!\n")
         # set the columns descriptions for the object
         if(length(vepHeader) == 0){
             .Object@description <- data.table::data.table()
@@ -97,6 +95,5 @@ setMethod(
 #' @param vepHeader Object of class list containing character vectors for vep
 #' header information.
 VEP_v88 <- function(vepData, vepHeader){
-    cat("!!!!! VEP_v88~Constructor !!!!!\n")
     new("VEP_v88", vepData=vepData, vepHeader=vepHeader)
 }
