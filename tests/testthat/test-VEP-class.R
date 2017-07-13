@@ -10,7 +10,7 @@ test_that("Samples are added from file name", {
     
     # multiple files
     testFile <- Sys.glob(paste0(testFileDir, "/*vep"))[1:2]
-    sample <- length(as.character(unique(VEP(testFile)@vepObject@sample)))
+    sample <- nrow(unique(VEP(testFile)@vepObject@sample))
     expect_equal(sample, 2)
 })
 
