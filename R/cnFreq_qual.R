@@ -43,10 +43,14 @@ cnFreq_qual <- function(x)
         tmp <- split(x, x$sample)
         tmp_vec <- tmp[[1]]$end
         if(any(!unlist(sapply(tmp, function(x) x[,"end"] %in% tmp_vec), use.names=F))){
-            x <- cnFreq_disjoin(x)
             memo <- paste0("Did not detect identical genomic segments for all samples",
                            " ...Performing disjoin operation")
-            message(memo)            
+            message(memo) 
+            
+            # here we split the DF up in an attempt to avoid complaints that lists are to large 
+            x <- split(x, f=x$chromosome)
+            x <- lapply(x, cnFreq_disjoin)
+            x <- do.call(rbind, x)
         }
         rm(tmp)
         rm(tmp_vec)
