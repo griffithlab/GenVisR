@@ -28,7 +28,7 @@ genCov_buildTrack <- function(name, bg_fill="black", text_fill="white",
                    axis.text.y=element_blank(), axis.ticks.y=element_blank(),
                    plot.margin=unit(c(0, 0, 0, 0), "null"),
                    axis.ticks.length=unit(0,"null"),
-                   panel.margin=unit(0,"null"))
+                   panel.spacing=unit(0,"null"))
 
     # Define the main plot
     label <- ggplot(mapping=aes(xmin=0, xmax=1, ymin=0, ymax=1)) +
