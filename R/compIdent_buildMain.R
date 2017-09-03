@@ -9,7 +9,6 @@
 #' @return ggplot2 grob object
 #' @import ggplot2
 #' @importFrom grid unit.pmax
-#' @importFrom gridExtra rbind.gtable
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom gtable gtable_add_rows
 #' @importFrom gtable gtable_add_grob
