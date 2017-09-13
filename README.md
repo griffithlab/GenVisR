@@ -20,7 +20,7 @@ Development for GenVisR occurs on the griffith lab github repository available [
 
 We also encourage users to report bugs and suggest enhancements to GenVisR on the github issue page available [here](https://github.com/griffithlab/GenVisR/issues):
 
-To install the latest development version of GenVisR:
+To install the latest development version of GenVisR (not recommended for most users):
 
 ```R
 # install and load devtools package
