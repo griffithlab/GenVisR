@@ -19,7 +19,7 @@ waterfall_buildGenePrevelance <- function(data_frame, gene_label_size=8, layers=
     data_frame$trv_type[toupper(data_frame$trv_type) == toupper('silent')] <-
     'Synonymous'
     data_frame$trv_type <- factor(data_frame$trv_type,
-                                  levels=c('Synonymous', 'Non Synonymous'))
+                                  levels=c('Synonymous', 'Non Synonymous', NA))
 
     # Define the number of samples for the Percentage calculation
     # (Note: to pass a variable outside of aes into aes it needs to be
@@ -50,9 +50,9 @@ waterfall_buildGenePrevelance <- function(data_frame, gene_label_size=8, layers=
     }
 
     # Plotting call
-    p1 <- ggplot(stats::na.omit(data_frame),
+    p1 <- ggplot((data_frame),
                  aes_string(x='gene', y='prop', fill='trv_type')) +
-    geom_bar(position='stack', alpha=.75, width=1, stat='identity') +
+    geom_bar(position='stack', alpha=.75, width=1, stat='identity', na.rm = FALSE) +
     theme_bw() + coord_flip() + theme + y_label + scale_y_reverse() +
     legend + layers
 

@@ -25,8 +25,13 @@ waterfall_geneAlt <- function(x, genes)
                        "found in x or it's subsequent subsets")
         warning(memo)
     }
-    genes <- c(genes, NA)
+#    genes <- c(genes, NA)
     x <- x[(toupper(x$gene) %in% toupper(genes)), ]
+    
+    ## add back genes that were missing forcing them to be plotted
+    new_genes <- genes[which(!toupper(genes) %in% toupper(x$gene))]
+    new_genes <- data.frame("gene"=new_genes)
+    x <- plyr::rbind.fill(x, new_genes)
 
     return(x)
 }
