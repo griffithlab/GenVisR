@@ -357,3 +357,36 @@ setGeneric(
     name="toMutSpectra",
     def=function(object, ...){standardGeneric("toMutSpectra")}
 )
+
+#' Method annoMutSpectra
+#' 
+#' @name annoMutSpectra
+#' @rdname annoMutSpectra
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="annoMutSpectra",
+    def=function(object, ...){standardGeneric("annoMutSpectra")}
+)
+
+#' Method calcMutSpectra
+#' 
+#' @name calcMutSpectra
+#' @rdname calcMutSpectra
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="calcMutSpectra",
+    def=function(object, ...){standardGeneric("calcMutSpectra")}
+)
+
+#' Method calcMutSpectra
+#' 
+#' @name sortSamples
+#' @rdname sortSamples
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="sortSamples",
+    def=function(object, ...){standardGeneric("sortSamples")}
+)

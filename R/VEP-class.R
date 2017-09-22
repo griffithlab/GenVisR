@@ -448,7 +448,7 @@ setMethod(f="toMutSpectra",
               # combine everything into one GRanges object
               variantGR <- GenomicRanges::GRanges(seqnames=chr, IRanges::IRanges(start=start, end=stop))
               variantGR$sample <- sample$sample
-              variantGR$variantAllele <- variantAllele$Allele
+              variantGR$variantAllele <- toupper(variantAllele$Allele)
               
               # check that the reference chromosomes match the input and BSgenome
               seqMismatch <- unique(chr[!chr %in% seqnames(BSgenome)])
@@ -482,7 +482,7 @@ setMethod(f="toMutSpectra",
                   memo <- paste("Annotating reference bases")
                   message(memo)
               }
-              refAllele <- Rsamtools::getSeq(BSgenome, variantGR, as.character=TRUE)
+              refAllele <- toupper(Rsamtools::getSeq(BSgenome, variantGR, as.character=TRUE))
               
               # combine all columns into a consistent format and remove duplicate variants
               variantGR$refAllele <- refAllele
