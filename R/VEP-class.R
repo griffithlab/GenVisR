@@ -361,6 +361,9 @@ setMethod(f="toWaterfall",
 #' @importFrom GenomicRanges GRanges
 #' @importFrom BSgenome available.genomes
 #' @importFrom BSgenome installed.genomes
+#' @importFrom GenomeInfoDb seqlevels
+#' @importFrom GenomeInfoDb seqnames
+#' @importFrom data.table as.data.table
 #' @noRd
 setMethod(f="toMutSpectra",
           signature="VEP",
@@ -410,7 +413,11 @@ setMethod(f="toMutSpectra",
                   }
                   
                   # grab the genome
-                  requireNamespace(installedGenomes[1])
+                  BSgenome <- installedGenomes[1]
+                  if(verbose){
+                      memo <- paste("attempting to use", toString(BSgenome), "to annotate reference bases!")
+                  }
+                  requireNamespace(BSgenome)
                   BSgenome <- getExportedValue(BSgenome, BSgenome)
               }
               
@@ -438,17 +445,50 @@ setMethod(f="toMutSpectra",
               stop <- as.numeric(unlist(lapply(coord, function(x) x[[1]][2])))
               stop[is.na(stop)] <- start[is.na(stop)]
               
+              # combine everything into one GRanges object
+              variantGR <- GenomicRanges::GRanges(seqnames=chr, IRanges::IRanges(start=start, end=stop))
+              variantGR$sample <- sample$sample
+              variantGR$variantAllele <- variantAllele$Allele
+              
+              # check that the reference chromosomes match the input and BSgenome
+              seqMismatch <- unique(chr[!chr %in% seqnames(BSgenome)])
+              if(length(seqMismatch >= 1)){
+                  memo <- paste("The following chromosomes do not match the BSgenome specified:", toString(seqMismatch))
+                  warning(memo)
+                  if(length(unique(chr[!paste0("chr", chr) %in% seqnames(BSgenome)])) == 0){
+                      memo <- paste("appending \"chr\" to chromosomes to fix mismatch with the BSgenome")
+                      warning(memo)
+                      chr <- paste0("chr", chr)
+                      GenomeInfoDb::seqlevels(variantGR) <- unique(chr)
+                      GenomeInfoDb::seqnames(variantGR) <- chr
+                  } else {
+                      memo <- paste("removing entries with chromosomes not matching the BSgenome")
+                      warning(memo)
+                      variantGR_origSize <- length(variantGR) 
+                      variantGR <- variantGR[as.character(seqnames(variantGR)) %in% as.character(seqnames(BSgenome)),]
+                      if(verbose){
+                          memo <- paste("removed", variantGR_origSize - length(variantGR), "entries where chromosomes did",
+                                        "not match the BSgenome")
+                      }
+                  }
+              }
+              if(length(variantGR) == 0){
+                  memo <- paste("There are no variants left after subsets.")
+                  stop(memo)
+              }
+              
               # get the reference sequences
               if(verbose){
                   memo <- paste("Annotating reference bases")
                   message(memo)
               }
-              refAllele <- Rsamtools::getSeq(BSgenome, GenomicRanges::GRanges(seqnames=chr,
-                                                                              IRanges::IRanges(start=start, end=stop)),
-                                             as.character=TRUE)
+              refAllele <- Rsamtools::getSeq(BSgenome, variantGR, as.character=TRUE)
               
               # combine all columns into a consistent format and remove duplicate variants
-              mutSpectraFormat <- cbind(sample, chr, start, stop, refAllele, variantAllele)
+              variantGR$refAllele <- refAllele
+              mutSpectraFormat <- data.table::as.data.table(variantGR)
+              keep <- c("sample", "seqnames", "start", "end", "refAllele", "variantAllele")
+              mutSpectraFormat <- mutSpectraFormat[,keep, with=FALSE]
               colnames(mutSpectraFormat) <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
               
               # unique, to make sure no duplicate variants exist to throw off the counts

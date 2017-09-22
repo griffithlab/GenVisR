@@ -42,7 +42,8 @@ setMethod(f="initialize",
                               sectionWidths, verbose, plotALayers, plotBLayers,
                               plotCLayers){
               # convert object to mutSpectra format
-              toMutSpectra(input, BSgenome=BSgenome, verbose=verbose)
+              .Object@primaryData <- toMutSpectra(input, BSgenome=BSgenome, verbose=verbose)
+              browser()
           })
 
 #' Constructor for the MutSpectra class.
