@@ -1064,7 +1064,7 @@ setMethod(f="buildGenePlot",
           })
 
 #' @rdname formatClinicalData-methods
-#' @aliases formatClinicalData,MutationAnnotationFormat
+#' @aliases formatClinicalData,Waterfall
 #' @noRd
 #' @importFrom data.table setDT
 #' @importFrom data.table is.data.table

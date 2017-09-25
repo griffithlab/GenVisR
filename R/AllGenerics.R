@@ -380,7 +380,7 @@ setGeneric(
     def=function(object, ...){standardGeneric("calcMutSpectra")}
 )
 
-#' Method calcMutSpectra
+#' Method sortSamples
 #' 
 #' @name sortSamples
 #' @rdname sortSamples
@@ -390,3 +390,37 @@ setGeneric(
     name="sortSamples",
     def=function(object, ...){standardGeneric("sortSamples")}
 )
+
+#' Method buildFrequencyPlot
+#' 
+#' @name buildFrequencyPlot
+#' @rdname buildFrequencyPlot
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="buildFrequencyPlot",
+    def=function(object, ...){standardGeneric("buildFrequencyPlot")}
+)
+
+#' Method buildProportionPlot
+#' 
+#' @name buildProportionPlot
+#' @rdname buildProportionPlot
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="buildProportionPlot",
+    def=function(object, ...){standardGeneric("buildProportionPlot")}
+)
+
+#' Method arrangeMutSpectraPlot
+#' 
+#' @name arrangeMutSpectraPlot
+#' @rdname arrangeMutSpectraPlot
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="arrangeMutSpectraPlot",
+    def=function(object, ...){standardGeneric("arrangeMutSpectraPlot")}
+)
+

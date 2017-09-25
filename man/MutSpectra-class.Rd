@@ -5,8 +5,9 @@
 \alias{MutSpectra}
 \title{Class MutSpectra}
 \usage{
-MutSpectra(input, BSgenome = NULL, clinical = NULL, sectionHeights = NULL,
-  sectionWidths = NULL, verbose = FALSE, plotALayers = NULL,
+MutSpectra(input, BSgenome = NULL, sorting = NULL, palette = NULL,
+  clinical = NULL, sectionHeights = NULL, sectionWidths = NULL,
+  sampleNames = TRUE, verbose = FALSE, plotALayers = NULL,
   plotBLayers = NULL, plotCLayers = NULL)
 }
 \arguments{
@@ -15,6 +16,13 @@ MutSpectra(input, BSgenome = NULL, clinical = NULL, sectionHeights = NULL,
 \item{BSgenome}{Object of class BSgenome, used to extract reference bases if
 not supplied by the file format.}
 
+\item{sorting}{Character vector specifying how samples should be ordered in the plot, one
+of "mutation", "sample", or a vector of length equal to the number of samples explicitly 
+providing the order of samples.}
+
+\item{palette}{Character vector specifying the colors used for encoding transitions and transversions
+, should be of length 6. If NULL a default palette will be used.}
+
 \item{clinical}{Object of class Clinical, used for adding a clinical data subplot.}
 
 \item{sectionHeights}{Numeric vector specifying relative heights of each plot section,
@@ -22,6 +30,8 @@ should sum to one. Expects a value for each section.}
 
 \item{sectionWidths}{Numeric vector specifying relative heights of each plot section,
 should sum to one. Expects a value for each section.}
+
+\item{sampleNames}{Boolean specifying if samples should be labeled on the plot.}
 
 \item{verbose}{Boolean specifying if status messages should be reported}
 
