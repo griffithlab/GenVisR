@@ -361,9 +361,9 @@ setMethod(f="toWaterfall",
 #' @importFrom GenomicRanges GRanges
 #' @importFrom BSgenome available.genomes
 #' @importFrom BSgenome installed.genomes
+#' @importFrom data.table as.data.table
 #' @importFrom GenomeInfoDb seqlevels
 #' @importFrom GenomeInfoDb seqnames
-#' @importFrom data.table as.data.table
 #' @noRd
 setMethod(f="toMutSpectra",
           signature="VEP",
@@ -459,6 +459,7 @@ setMethod(f="toMutSpectra",
                       memo <- paste("appending \"chr\" to chromosomes to fix mismatch with the BSgenome")
                       warning(memo)
                       chr <- paste0("chr", chr)
+                      browser()
                       GenomeInfoDb::seqlevels(variantGR) <- unique(chr)
                       GenomeInfoDb::seqnames(variantGR) <- chr
                   } else {
