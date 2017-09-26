@@ -67,13 +67,26 @@ setMethod(f="initialize",
 #' @param path String specifying the path to clinical data, file must have the
 #' column "sample".
 #' @param inputData Optional data.table or data.frame object holding clinical
-#' data, used only if path is not specified.
+#' data, used only if path is not specified. Data must have the column "sample".
 #' @param inputFormat String specifying the input format of the data given, one
-#' of wide or long format.
+#' of wide or long format (see details).
 #' @param legendColumns Integer specifying the number of columns in the legend.
 #' @param palette Named character vector supplying colors for clinical variables.
 #' @param clinicalLayers list of ggplot2 layers to be passed to the plot.
 #' @param verbose Boolean specifying if progress should be reported.
+#' @details The Clinical() function is a constructor to create a GenVisR object
+#' of class Clinical. This is used to both display clinical data in the form
+#' of a heatmap and to add clinical data to various GenVisR plots.
+#' Input to this function can be either the path to a file containing clinical
+#' information using the parameter "path", or alternatively a data.table object
+#' if this information into R. By default the input is assumed to be in a wide
+#' format where each variable has it's own column, in such cases the data will
+#' be coerced into a long format where there is a key->value pair mapping to
+#' the data. The assumption of "wide"/"long" format can be changed with the 
+#' "inputFormat" parameter, in both cases there should be a column called
+#' "sample" within the data supplied which is used as an id variable.
+#' @seealso \code{\link{getData}}
+#' @seealso \code{\link{drawPlot}}
 #' @export
 Clinical <- function(path, inputData=NULL ,inputFormat=c("wide", "long"),
                      legendColumns=1, palette=NULL, clinicalLayers=NULL,
@@ -110,7 +123,8 @@ setMethod(f="formatClinicalData",
                                 "one of \"wide\", \"long\"!")
                   stop(memo)
               }
-              if(ncol(inputFormat) > 3 && toupper(inputFormat) == toupper("long")){
+              browser()
+              if(ncol(clinicalData) > 3 && toupper(inputFormat) == toupper("long")){
                   memo <- ("Number of columns found to be > 3... assuming wide format")
                   warning(memo)
                   inputFormat="wide"
