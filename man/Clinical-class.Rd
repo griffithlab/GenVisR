@@ -14,10 +14,10 @@ Clinical(path, inputData = NULL, inputFormat = c("wide", "long"),
 column "sample".}
 
 \item{inputData}{Optional data.table or data.frame object holding clinical
-data, used only if path is not specified.}
+data, used only if path is not specified. Data must have the column "sample".}
 
 \item{inputFormat}{String specifying the input format of the data given, one
-of wide or long format.}
+of wide or long format (see details).}
 
 \item{legendColumns}{Integer specifying the number of columns in the legend.}
 
@@ -32,6 +32,19 @@ An S4 class to store clinical information and plots
 
 Constructor for the Clinical class.
 }
+\details{
+The Clinical() function is a constructor to create a GenVisR object
+of class Clinical. This is used to both display clinical data in the form
+of a heatmap and to add clinical data to various GenVisR plots.
+Input to this function can be either the path to a file containing clinical
+information using the parameter "path", or alternatively a data.table object
+if this information into R. By default the input is assumed to be in a wide
+format where each variable has it's own column, in such cases the data will
+be coerced into a long format where there is a key->value pair mapping to
+the data. The assumption of "wide"/"long" format can be changed with the 
+"inputFormat" parameter, in both cases there should be a column called
+"sample" within the data supplied which is used as an id variable.
+}
 \section{Slots}{
 
 \describe{
@@ -42,3 +55,8 @@ Constructor for the Clinical class.
 \item{\code{clinicalData}}{data.table object to store clinical data}
 }}
 
+\seealso{
+\code{\link{getData}}
+
+\code{\link{drawPlot}}
+}

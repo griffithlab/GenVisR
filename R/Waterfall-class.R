@@ -1401,7 +1401,6 @@ setMethod(f="arrangeWaterfallPlot",
 
 #' @rdname drawPlot-methods
 #' @aliases drawPlot,Waterfall
-#' @param object Object of class Waterfall
 #' @importFrom grid grid.draw
 setMethod(
     f="drawPlot",

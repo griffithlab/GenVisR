@@ -259,8 +259,10 @@ setGeneric(
 #' 
 #' @name getData
 #' @rdname getData-methods
-#' @param object Object of class
+#' @param object Object of class Clinical
 #' @param ... additional arguments to passed
+#' @details The getData method is an accessor function used to access data held
+#' in GenVisR objects.
 #' @exportMethod getData
 setGeneric(
     name="getData",
@@ -282,7 +284,10 @@ setGeneric(
 #' 
 #' @name drawPlot
 #' @rdname drawPlot-methods
+#' @param object Object of class Waterfall, MutSpectra, or Clinical
 #' @param ... additional arguments to passed
+#' @details The drawPlot method is used to draw plots created by GenVisR plot 
+#' constructor functions.
 #' @exportMethod drawPlot
 setGeneric(
     name="drawPlot",
@@ -330,6 +335,8 @@ setGeneric(
 #' @param file Character string specifying a file to send output to.
 #' @param sep Delimiter used when writing output, defaults to tab.
 #' @param ... additional arguments to passed
+#' @details The writeData method is used to output data held in GenVisR objects
+#' to a file.
 #' @exportMethod writeData
 setGeneric(
     name="writeData",

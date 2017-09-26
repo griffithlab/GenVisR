@@ -28,3 +28,7 @@ writeData(object, ...)
 \description{
 Method writeData
 }
+\details{
+The writeData method is used to output data held in GenVisR objects
+to a file.
+}

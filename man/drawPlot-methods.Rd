@@ -17,10 +17,14 @@ drawPlot(object, ...)
 \S4method{drawPlot}{Waterfall}(object, ...)
 }
 \arguments{
-\item{object}{Object of class Waterfall}
+\item{object}{Object of class Waterfall, MutSpectra, or Clinical}
 
 \item{...}{additional arguments to passed}
 }
 \description{
 Method drawPlot
+}
+\details{
+The drawPlot method is used to draw plots created by GenVisR plot 
+constructor functions.
 }

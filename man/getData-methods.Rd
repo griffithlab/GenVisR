@@ -12,10 +12,14 @@ getData(object, ...)
 \S4method{getData}{Clinical}(object, ...)
 }
 \arguments{
-\item{object}{Object of class}
+\item{object}{Object of class Clinical}
 
 \item{...}{additional arguments to passed}
 }
 \description{
 Method getData
+}
+\details{
+The getData method is an accessor function used to access data held
+in GenVisR objects.
 }
