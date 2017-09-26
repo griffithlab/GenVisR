@@ -1635,6 +1635,7 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
                  clinVarOrder=NULL, clinLayer=NULL, progress=TRUE, out="plot",
                  sample_order_input, layers = NULL, return_plot = FALSE)
 { 
+    message("This function has been deprecated in order to implement an object oriented programming style! Please use MutSpectra() instead!")    
     # Perform quality checks
     output <- TvTi_qual(x, y, clinData, file_type=fileType)
     x <- output$input1
