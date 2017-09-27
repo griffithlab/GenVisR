@@ -71,6 +71,7 @@ test_that("setMutationHierarchy adds values for missing mutations not specified 
 
 # define table with duplicate mutations
 duplicateMutationHierarchy <- data.table::data.table("mutation"=c("RNA", "RNA"), "color"=c("blue", "red"))
+
 test_that("setMutationHierarchy checks for duplicate mutations supplied to input", {
     
     # test that warning is created
@@ -82,7 +83,26 @@ test_that("setMutationHierarchy checks for duplicate mutations supplied to input
     expect_true(boolean)
 })
 
+# define additional objects needed for testing
+mockWaterfall@primaryData <- toWaterfall(mafObject, hierarchy=mockWaterfall, labelColumn=NULL, verbose=FALSE)
 
+test_that("toWaterfall outputs the correct columns and data types", {
+    
+    # check that the data is of the proper class
+    expect_is(mockWaterfall@primaryData, "data.table")
+    
+    # check for the correct columns
+    expectedCol <- c("sample", "gene", "mutation", "label")
+    actualCol <- colnames(mockWaterfall@primaryData)
+    expect_true(all(actualCol %in% expectedCol))
+})
+
+test_that("toWaterfall adds a specified label column", {
+    
+    mockWaterfall@primaryData <- toWaterfall(mafObject, hierarchy=mockWaterfall, labelColumn="Hugo_Symbol", verbose=FALSE)
+    expectedValues <- mafObject@mafObject@meta$Hugo_Symbol
+    expect_true(all(mockWaterfall@primaryData$label %in% expectedValues))
+})
 
 
 

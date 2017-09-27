@@ -152,10 +152,10 @@ setMethod(f="toWaterfall",
                                     "Found length to be", length(labelColumn))
                       warning(memo)
                       next
-                  } else if(labelColumn %in% colnames(object@mafObject@meta)){
-                      memo <- paste("Did not find column:", labelColumn,
+                  } else if(!labelColumn %in% colnames(object@mafObject@meta)){
+                      memo <- paste("Did not find column:", toString(labelColumn),
                                     "in the meta slot of the mafObject! Valid",
-                                    "names are:", colnames(getMeta(object)))
+                                    "names are:", toString(colnames(getMeta(object))))
                       warning(memo)
                       next
                   } else {
