@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/griffithlab/GenVisR.svg?branch=master)](https://travis-ci.org/griffithlab/GenVisR)
+[![codecov](https://codecov.io/gh/griffithlab/GenVisR/branch/master/graph/badge.svg)](https://codecov.io/gh/griffithlab/GenVisR)
 
 ## GenVisR
 
