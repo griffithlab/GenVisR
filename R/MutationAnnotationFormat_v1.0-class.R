@@ -16,7 +16,7 @@
 setClass("MutationAnnotationFormat_v1.0",
          contains="MutationAnnotationFormat_Virtual",
          validity=function(object){
-             cat("!!!!! MutationAnnotationFormat_v1.0~Inspector !!!!!\n")
+
              expecPositionNames <- c("Chromosome", "Start_position", "End_position", "Strand")
              expecMutationNames <- c("Variant_Classification", "Variant_Type", "Reference_Allele",
                                      "Tumor_Seq_Allele1", "Tumor_Seq_Allele2")
@@ -52,7 +52,6 @@ setMethod(
     signature="MutationAnnotationFormat_v1.0",
     definition=function(.Object, mafData){
         
-        cat("!!!!! MutationAnnotationVersion_v1.0~Initalizer !!!!!\n")
         positionColNames <- c("Chromosome", "Start_Position", "End_Position", "Strand")
         .Object@position <- mafData[,positionColNames, with=FALSE]
         
@@ -79,7 +78,7 @@ setMethod(
 #' version 1.0 specification.
 
 MutationAnnotationFormat_v1.0 <- function(mafData){
-    cat("!!!!! MutationAnnotationFormat_v1.0~Constructor !!!!!\n")
+
     new("MutationAnnotationFormat_v1.0", mafData=mafData)
 }
 

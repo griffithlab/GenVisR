@@ -27,8 +27,6 @@ setMethod(
     f="initialize",
     signature="MutationAnnotationFormat",
     definition=function(.Object, path, version, verbose){
-        
-        cat("!!!!! MutationAnnotationFormat~Initalizer !!!!!\n")
 
         mafData <- suppressWarnings(data.table::fread(input=path,
                                                       stringsAsFactors=TRUE,
@@ -84,7 +82,7 @@ setMethod(
 #' @seealso \code{\link{MutSpectra}}
 #' @export
 MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
-    cat("!!!!! MutationAnnotationFormat~Constructor !!!!!\n")
+
     new("MutationAnnotationFormat", path=path, version=version, verbose=verbose)
 }
 
@@ -270,8 +268,9 @@ setMethod(f="setMutationHierarchy",
               # check for duplicate mutations
               if(any(duplicated(mutationHierarchy$mutation))){
                   duplicateMut <- mutationHierarchy[duplicated(mutationHierarchy$mutation),"mutation"]
-                  memo <- paste("The mutation type",toString(duplicateMut),
+                  memo <- paste("The mutation type",toString(as.character(duplicateMut)),
                                 "was duplicated in the supplied mutationHierarchy!")
+                  warning(memo)
                   mutationHierarchy <- mutationHierarchy[!duplicated(mutationHierarchy$mutation),]
               }
               
