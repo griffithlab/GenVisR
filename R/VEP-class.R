@@ -380,7 +380,7 @@ setMethod(f="toMutSpectra",
               if(is.null(BSgenome)){
                   if(verbose){
                       memo <- paste("Looking for correct genome for reference base annotation.")
-                      messsage(memo)
+                      message(memo)
                   }
                   
                   # look for assembly version in header

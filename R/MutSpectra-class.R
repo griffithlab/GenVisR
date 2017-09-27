@@ -484,12 +484,12 @@ setMethod(f="arrangeMutSpectraPlot",
                                 "but", length(plotList), "vertical sections...",
                                 "using default values!")
                   warning(memo)
-                  sectionHeights <- plotHeight
+                  sectionHeights <- defaultPlotHeights
               } else if(!all(is.numeric(sectionHeights))) {
                   memo <- paste("sectionHeights must be numeric... Using",
                                 "default values!")
                   warning(memo)
-                  sectionHeights <- plotHeight
+                  sectionHeights <- defaultPlotHeights
               }
               
               # arrange the final plot
