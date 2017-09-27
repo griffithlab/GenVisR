@@ -50,3 +50,8 @@ different GMS annotator version.
 \item{\code{gmsObject}}{gms object which inherits from gms_Virtual class.}
 }}
 
+\seealso{
+\code{\link{Waterfall}}
+
+\code{\link{MutSpectra}}
+}

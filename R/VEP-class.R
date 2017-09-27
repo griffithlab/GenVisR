@@ -158,6 +158,8 @@ setMethod(
 #' Alternatively if multiple files are specified at once using a wildcard, the
 #' initalizer will aggregate all the files and use the file names minus any
 #' extension to populate sample names.
+#' @seealso \code{\link{Waterfall}}
+#' @seealso \code{\link{MutSpectra}}
 #' @export
 VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
     new("VEP", path=path, data=data, version=version, verbose=verbose)}

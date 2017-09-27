@@ -80,6 +80,8 @@ setMethod(
 #' the version will be obtained from the header in the MAF file.
 #' @param verbose Boolean specifying if progress should be reported while reading
 #' in the MAF file.
+#' @seealso \code{\link{Waterfall}}
+#' @seealso \code{\link{MutSpectra}}
 #' @export
 MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
     cat("!!!!! MutationAnnotationFormat~Constructor !!!!!\n")

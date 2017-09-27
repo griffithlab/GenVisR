@@ -47,3 +47,8 @@ extension to populate sample names.
 \item{\code{vepObject}}{vep object which inherits from VEP_Virtual class.}
 }}
 
+\seealso{
+\code{\link{Waterfall}}
+
+\code{\link{MutSpectra}}
+}

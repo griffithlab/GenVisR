@@ -118,6 +118,8 @@ setMethod(
 #' The version defaults to 4 which is the default value of the GMS annotator.
 #' This value will need to be changed only if files were created using a
 #' different GMS annotator version.
+#' @seealso \code{\link{Waterfall}}
+#' @seealso \code{\link{MutSpectra}}
 #' @export
 GMS <- function(path, data=NULL, version=4, verbose=FALSE){
     cat("!!!!! GMS~Constructor !!!!!\n")

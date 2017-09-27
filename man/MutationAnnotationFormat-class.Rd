@@ -33,3 +33,8 @@ Constructor for the MutationAnnotationFormat container class.
 MutationAnnotationFormat_Virtual class.}
 }}
 
+\seealso{
+\code{\link{Waterfall}}
+
+\code{\link{MutSpectra}}
+}
