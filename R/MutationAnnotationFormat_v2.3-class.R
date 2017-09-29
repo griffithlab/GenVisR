@@ -12,7 +12,6 @@
 #' @slot meta data.table object containing meta data.
 #' @include MutationAnnotationFormat_Virtual-class.R
 #' @import methods
-
 setClass("MutationAnnotationFormat_v2.3",
          contains="MutationAnnotationFormat_Virtual",
          validity=function(object){
@@ -41,45 +40,26 @@ setClass("MutationAnnotationFormat_v2.3",
          }
 )
 
-#' Initalizer method for the MutationAnnotationFormat_v2.3 sub-class
-#' 
-#' @name MutationAnnotationFormat_v2.3
-#' @rdname MutationAnnotationFormat_v2.3-class
-#' @noRd
-#' @param .Object object of class MutationAnnotationFormat_v2.3
-
-setMethod(
-    f="initialize",
-    signature="MutationAnnotationFormat_v2.3",
-    definition=function(.Object, mafData){
-        
-        positionColNames <- c("Chromosome", "Start_Position", "End_Position", "Strand")
-        .Object@position <- mafData[,positionColNames, with=FALSE]
-        
-        mutationColNames <- c("Variant_Classification", "Variant_Type", "Reference_Allele",
-                              "Tumor_Seq_Allele1", "Tumor_Seq_Allele2")
-        .Object@mutation <- mafData[,mutationColNames, with=FALSE]
-        
-        sampleColNames <- c("Tumor_Sample_Barcode")
-        .Object@sample <- mafData[,sampleColNames, with=FALSE]
-        
-        metaColNames <- !colnames(mafData) %in% c(positionColNames, mutationColNames, sampleColNames)
-        .Object@meta <- mafData[,metaColNames, with=FALSE]
-        
-        validObject(.Object)
-        return(.Object)
-    }
-)
-
 #' Constructor for the MutationAnnotationFormat_v2.3 sub-class
 #' 
 #' @name MutationAnnotationFormat_v2.3
 #' @rdname MutationAnnotationFormat_v2.3-class
 #' @param mafData data.table object containing a maf file conforming to the
 #' version 2.3 specification.
-
 MutationAnnotationFormat_v2.3 <- function(mafData){
-
-    new("MutationAnnotationFormat_v2.3", mafData=mafData)
+    positionColNames <- c("Chromosome", "Start_Position", "End_Position", "Strand")
+    position <- mafData[,positionColNames, with=FALSE]
+    
+    mutationColNames <- c("Variant_Classification", "Variant_Type", "Reference_Allele",
+                          "Tumor_Seq_Allele1", "Tumor_Seq_Allele2")
+    mutation <- mafData[,mutationColNames, with=FALSE]
+    
+    sampleColNames <- c("Tumor_Sample_Barcode")
+    sample <- mafData[,sampleColNames, with=FALSE]
+    
+    metaColNames <- !colnames(mafData) %in% c(positionColNames, mutationColNames, sampleColNames)
+    meta <- mafData[,metaColNames, with=FALSE]
+    
+    new("MutationAnnotationFormat_v2.3", position=position, mutation=mutation, sample=sample, meta=meta)
 }
 

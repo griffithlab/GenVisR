@@ -5,13 +5,13 @@
 \alias{MutSpectra}
 \title{Class MutSpectra}
 \usage{
-MutSpectra(input, BSgenome = NULL, sorting = NULL, palette = NULL,
+MutSpectra(object, BSgenome = NULL, sorting = NULL, palette = NULL,
   clinical = NULL, sectionHeights = NULL, sectionWidths = NULL,
   sampleNames = TRUE, verbose = FALSE, plotALayers = NULL,
   plotBLayers = NULL, plotCLayers = NULL)
 }
 \arguments{
-\item{input}{Object of class MutationAnnotationFormat, GMS, VEP.}
+\item{object}{Object of class MutationAnnotationFormat, GMS, VEP.}
 
 \item{BSgenome}{Object of class BSgenome, used to extract reference bases if
 not supplied by the file format.}

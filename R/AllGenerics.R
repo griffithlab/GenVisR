@@ -259,14 +259,49 @@ setGeneric(
 #' 
 #' @name getData
 #' @rdname getData-methods
-#' @param object Object of class Clinical
+#' @param object Object of class Clinical, 
 #' @param ... additional arguments to passed
 #' @details The getData method is an accessor function used to access data held
 #' in GenVisR objects.
-#' @exportMethod getData
 setGeneric(
     name="getData",
     def=function(object, ...){standardGeneric("getData")}
+)
+
+#' Method getVersion
+#' 
+#' @name getVersion
+#' @rdname getVersion-methods
+#' @param object Object of class VEP, GMS, or MutationAnnotationFormat
+#' @param ... additional arguments to passed
+#' @exportMethod getVersion
+setGeneric(
+    name="getVersion",
+    def=function(object, ...){standardGeneric("getVersion")}
+)
+
+#' Method getPath
+#' 
+#' @name getPath
+#' @rdname getPath-methods
+#' @param object Object of class VEP, GMS, or MutationAnnotationFormat
+#' @param ... additional arguments to passed
+#' @exportMethod getPath
+setGeneric(
+    name="getPath",
+    def=function(object, ...){standardGeneric("getPath")}
+)
+
+#' Method getLayers
+#' 
+#' @name getLayers
+#' @rdname getLayers-methods
+#' @param object Object of class Clinical
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="getLayers",
+    def=function(object, ...){standardGeneric("getLayers")}
 )
 
 #' Method arrangeWaterfallPlot
@@ -299,7 +334,7 @@ setGeneric(
 #' @name parseDescription
 #' @rdname parseDescription-methods
 #' @param ... additional arguments to passed
-#' @exportMethod parseDescription
+#' @noRd
 setGeneric(
     name="parseDescription",
     def=function(object, ...){standardGeneric("parseDescription")}
@@ -310,7 +345,7 @@ setGeneric(
 #' @name parseHeader
 #' @rdname parseHeader-methods
 #' @param ... additional arguments to passed
-#' @exportMethod parseHeader
+#' @noRd
 setGeneric(
     name="parseHeader",
     def=function(object, ...){standardGeneric("parseHeader")}
@@ -321,7 +356,7 @@ setGeneric(
 #' @name parseExtra
 #' @rdname parseExtra-methods
 #' @param ... additional arguments to passed
-#' @exportMethod parseExtra
+#' @noRd
 setGeneric(
     name="parseExtra",
     def=function(object, ...){standardGeneric("parseExtra")}
@@ -431,3 +466,38 @@ setGeneric(
     def=function(object, ...){standardGeneric("arrangeMutSpectraPlot")}
 )
 
+#' Method getGrob
+#' 
+#' @name getGrob
+#' @rdname getGrob-methods
+#' @param object Object of clas MutSpectra
+#' @param ... additional arguments to passed
+#' @exportMethod getGrob
+setGeneric(
+    name="getGrob",
+    def=function(object, ...){standardGeneric("getGrob")}
+)
+
+#' Method getDescription
+#' 
+#' @name getDescription
+#' @rdname getDescription-methods
+#' @param object Object of class VEP
+#' @param ... additional arguments to passed
+#' @exportMethod getDescription
+setGeneric(
+    name="getDescription",
+    def=function(object, ...){standardGeneric("getDescription")}
+)
+
+#' Method getHeader
+#' 
+#' @name getHeader
+#' @rdname getHeader-methods
+#' @param object Object of class VEP
+#' @param ... additional arguments to passed
+#' @exportMethod getHeader
+setGeneric(
+    name="getHeader",
+    def=function(object, ...){standardGeneric("getHeader")}
+)

@@ -1,3 +1,6 @@
+################################################################################
+######################### Virtual Class Definitions ############################
+
 #' Class VEP_Virtual
 #' 
 #' An S4 class to act as a virtual class for VEP version sub-classes.
@@ -21,14 +24,78 @@ setClass(
                                   meta="data.table", "VIRTUAL")
 )
 
+################################################################################
+###################### Accessor function definitions ###########################
+
+#' @rdname getHeader-methods
+#' @aliases getHeader
+setMethod(f="getHeader",
+          signature="VEP_Virtual",
+          definition=function(object, ...){
+              header <- object@header
+              return(header)
+          })
+
+#' @rdname getDescription-methods
+#' @aliases getDescription
+setMethod(f="getDescription",
+          signature="VEP_Virtual",
+          definition=function(object, ...){
+              description <- object@description
+              return(description)
+          })
+
+#' @rdname getPosition-methods
+#' @aliases getPosition
+setMethod(f="getPosition",
+          signature="VEP_Virtual",
+          definition=function(object, ...){
+              positions <- object@position
+              return(positions)
+          })
+
+#' @rdname getMutation-methods
+#' @aliases getMutation
+setMethod(f="getMutation",
+          signature="VEP_Virtual",
+          definition=function(object, ...){
+              mutations <- object@mutation
+              return(mutations)
+          })
+
+#' @rdname getSample-methods
+#' @aliases getSample
+setMethod(f="getSample",
+          signature="VEP_Virtual",
+          definition=function(object, ...){
+              sample <- object@sample
+              return(sample)
+          })
+
+#' @rdname getMeta-methods
+#' @aliases getMeta
+setMethod(f="getMeta",
+          signature="VEP_Virtual",
+          definition=function(object, ...){
+              meta <- object@meta
+              return(meta)
+          })
+
+################################################################################
+####################### Method function definitions ############################
+
 #' @rdname parseDescription-methods
 #' @aliases parseDescription,VEP_Virtual
-#' @param object Object of class VEP_Virtual, needed for method dispatch on class.
-#' @param vepHeader List of character vectors obtained from the vep header
+#' @param object List of character vectors obtained from the vep header
 #' @importFrom data.table setDT
+#' @noRd
 setMethod(f="parseDescription",
-          signature="VEP_Virtual",
-          definition=function(object, vepHeader, ...){
+          signature="list",
+          definition=function(object, ...){
+              
+              # set the object
+              vepHeader <- object
+              
               # anonymous function to grab only the column descriptions
               a <- function(x){
                   descriptionFieldIndex <- which(grepl("Extra column keys", x)) + 1
@@ -52,11 +119,15 @@ setMethod(f="parseDescription",
 
 #' @rdname parseHeader-methods
 #' @aliases parseHeader,VEP_Virtual
-#' @param object Object of class VEP_Virtual, needed for method dispatch on class.
-#' @param vepHeader List of character vectors obtained from the vep header
+#' @param object List of character vectors obtained from the vep header
+#' @importFrom data.table as.data.table
+#' @noRd
 setMethod(f="parseHeader",
-          signature="VEP_Virtual",
-          definition=function(object, vepHeader, ...){
+          signature="list",
+          definition=function(object, ...){
+
+              # set the object
+              vepHeader <- object
               
               # anonymous function to grab only the column headers
               a <- function(x){
@@ -82,12 +153,15 @@ setMethod(f="parseHeader",
 
 #' @rdname parseExtra-methods
 #' @aliases parseExtra,VEP_Virtual
-#' @param object Object of class VEP_Virtual, needed for method dispatch on class.
-#' @param vepData Object of class data.table holding vep annotated data
+#' @param object Object of class data.table holding vep annotated data
 #' @import data.table
+#' @noRd
 setMethod(f="parseExtra",
-          signature="VEP_Virtual",
-          definition=function(object, vepData, ...){
+          signature="data.table",
+          definition=function(object, ...){
+              
+              # set the object
+              vepData <- object
               
               # check that "extra" column is present if not return data as it was
               if(!any(colnames(vepData) %in% c("Extra"))){

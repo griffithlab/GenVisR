@@ -1,3 +1,8 @@
+################################################################################
+##################### Public/Private Class Definitions #########################
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Public Class !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
 #' Class VEP
 #' 
 #' An S4 class for Variant Effect Predictor input.
@@ -13,129 +18,6 @@ setClass("VEP",
          representation=representation(path="character",
                                        version="numeric",
                                        vepObject="VEP_Virtual"))
-
-#' Initalizer method for the VEP container class
-#' 
-#' @name VEP
-#' @rdname VEP-class
-#' @param .Object object of class VEP
-#' @noRd
-#' @importFrom data.table fread
-#' @importFrom data.table rbindlist
-#' @importFrom data.table data.table
-setMethod(
-    f="initialize",
-    signature="VEP",
-    definition=function(.Object, path, data, version, verbose){
-
-        if(is.null(data)){
-            # Grab all files and assign to slot
-            vepFiles <- Sys.glob(path)
-            .Object@path <- vepFiles
-            
-            # anonymous function to read in files
-            a1 <- function(x, verbose){
-                # detect OS and remove slashes and extension
-                if(.Platform$OS.type == "windows"){
-                    sampleName <- gsub("(.*/)||(.*\\\\)", "", x)
-                    sampleName <- gsub("\\.[^.]+$", "", x)
-                } else {
-                    sampleName <- gsub("(.*/)", "", x)
-                    sampleName <- gsub("\\.[^.]+$", "", sampleName)
-                }
-                # read the header
-                header <- readLines(con=x, n=400)
-                header <- header[grepl("^##", header)]
-                # find where headers stop and read the data
-                skip <- length(header)
-                vepData <- suppressWarnings(data.table::fread(input=x,
-                                                              stringsAsFactors=TRUE,
-                                                              verbose=verbose,
-                                                              skip=skip))
-                # set sample if it's not already in the data table
-                if(any(colnames(vepData) %in% "sample")){
-                    return(vepData)
-                } else {
-                    vepData$sample <- sampleName
-                    return(list("data"=vepData, "header"=header))
-                }
-            }
-            
-            # aggregate data into a single data table if necessary
-            if(length(vepFiles) == 0){
-                memo <- paste("No files found using:", path)
-                stop(memo)
-            } else {
-                # Read in the information
-                vepInfo <- lapply(vepFiles, a1, verbose)
-                
-                # extract header and data information
-                vepHeader <- lapply(vepInfo, function(x) x[["header"]])
-                vepData <- lapply(vepInfo, function(x) x[["data"]])
-                
-                # aggregate the data
-                vepData <- data.table::rbindlist(vepData, fill=TRUE)
-            } 
-        } else if(is.data.table(data)){
-            .Object@path <- "none"
-            vepHeader <- data.table::data.table()
-            vepData <- data
-        } else {
-            memo <- paste("data is not of class data.table,",
-                          "attempting to coerce")
-            warning(memo)
-            .Object@path <- "none"
-            vepHeader <- data.table::data.table()
-            vepData <- data.table::as.data.table(data)
-        }
-
-        
-        # grab the version and assign it
-        a2 <- function(x){
-            # find the element which defines the VEP version
-            x <- x[grepl("VARIANT EFFECT PREDICTOR", x)]
-            
-            # extract the version
-            x <- regmatches(x,regexpr("[0-9]+\\.*[0-9]*",x))
-            
-            if(length(x) != 1){
-                memo <- paste("Expected 1 entry for VEP version, found:",
-                              length(x), "using", as.numeric(x[1]))
-                warning(memo)
-            }
-            return(as.numeric(x[1]))
-        }
-        if(version == "auto"){
-            version <- lapply(vepHeader, a2)
-            version <- unique(unlist(version))
-            if(length(version) > 1){
-                version <- version[1]
-                memo <- paste("Expect 1 version, the following versions were",
-                              "found:", toString(version), "Using version",
-                              version, "for parsing!")
-                warning(memo)
-            } else if(length(version) == 0){
-                memo <- paste("Cannot infer version from vep headers",
-                              "no versions found!")
-                stop(memo)
-            }
-            .Object@version <- version
-        } else {
-            .Object@version <- version
-        }
-        
-        # assign the vepData to it's slot
-        if(version >= 88 || version < 89){
-            .Object@vepObject <- VEP_v88(vepData=vepData, vepHeader=vepHeader)
-        } else {
-            memo <- paste("Currently only VEP version 88 is supported, make a",
-                          "feature request on",
-                          "https://github.com/griffithlab/GenVisR!")
-            stop(memo)
-        }
-        
-        return(.Object)
-    })
 
 #' Constructor for the VEP container class.
 #' 
@@ -160,20 +42,206 @@ setMethod(
 #' extension to populate sample names.
 #' @seealso \code{\link{Waterfall}}
 #' @seealso \code{\link{MutSpectra}}
+#' @importFrom data.table fread
+#' @importFrom data.table rbindlist
+#' @importFrom data.table data.table
 #' @export
 VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
-    new("VEP", path=path, data=data, version=version, verbose=verbose)}
+    
+    if(is.null(data)){
+        # Grab all files and assign to slot
+        vepFiles <- Sys.glob(path)
+        path <- vepFiles
+        
+        # anonymous function to read in files
+        a1 <- function(x, verbose){
+            # detect OS and remove slashes and extension
+            if(.Platform$OS.type == "windows"){
+                sampleName <- gsub("(.*/)||(.*\\\\)", "", x)
+                sampleName <- gsub("\\.[^.]+$", "", x)
+            } else {
+                sampleName <- gsub("(.*/)", "", x)
+                sampleName <- gsub("\\.[^.]+$", "", sampleName)
+            }
+            # read the header
+            header <- readLines(con=x, n=400)
+            header <- header[grepl("^##", header)]
+            # find where headers stop and read the data
+            skip <- length(header)
+            vepData <- suppressWarnings(data.table::fread(input=x,
+                                                          stringsAsFactors=TRUE,
+                                                          verbose=verbose,
+                                                          skip=skip))
+            # set sample if it's not already in the data table
+            if(any(colnames(vepData) %in% "sample")){
+                return(vepData)
+            } else {
+                vepData$sample <- sampleName
+                return(list("data"=vepData, "header"=header))
+            }
+        }
+        
+        # aggregate data into a single data table if necessary
+        if(length(vepFiles) == 0){
+            memo <- paste("No files found using:", path)
+            stop(memo)
+        } else {
+            # Read in the information
+            vepInfo <- lapply(vepFiles, a1, verbose)
+            
+            # extract header and data information
+            vepHeader <- lapply(vepInfo, function(x) x[["header"]])
+            vepData <- lapply(vepInfo, function(x) x[["data"]])
+            
+            # aggregate the data
+            vepData <- data.table::rbindlist(vepData, fill=TRUE)
+        } 
+    } else if(is.data.table(data)){
+        path <- "none"
+        vepHeader <- data.table::data.table()
+        vepData <- data
+    } else {
+        memo <- paste("data is not of class data.table,",
+                      "attempting to coerce")
+        warning(memo)
+        path <- "none"
+        vepHeader <- data.table::data.table()
+        vepData <- data.table::as.data.table(data)
+    }
+    
+    
+    # grab the version and assign it
+    a2 <- function(x){
+        # find the element which defines the VEP version
+        x <- x[grepl("VARIANT EFFECT PREDICTOR", x)]
+        
+        # extract the version
+        x <- regmatches(x,regexpr("[0-9]+\\.*[0-9]*",x))
+        
+        if(length(x) != 1){
+            memo <- paste("Expected 1 entry for VEP version, found:",
+                          length(x), "using", as.numeric(x[1]))
+            warning(memo)
+        }
+        return(as.numeric(x[1]))
+    }
+    if(version == "auto"){
+        version <- lapply(vepHeader, a2)
+        version <- unique(unlist(version))
+        if(length(version) > 1){
+            version <- version[1]
+            memo <- paste("Expect 1 version, the following versions were",
+                          "found:", toString(version), "Using version",
+                          version, "for parsing!")
+            warning(memo)
+        } else if(length(version) == 0){
+            memo <- paste("Cannot infer version from vep headers",
+                          "no versions found!")
+            stop(memo)
+        }
+    }
+    
+    # assign the vepData to it's slot
+    if(version >= 88 || version < 89){
+        vepObject <- VEP_v88(vepData=vepData, vepHeader=vepHeader)
+    } else {
+        memo <- paste("Currently only VEP version 88 is supported, make a",
+                      "feature request on",
+                      "https://github.com/griffithlab/GenVisR!")
+        stop(memo)
+    }
+    
+    new("VEP", path=path, vepObject=vepObject, version=version)
+}
+
+################################################################################
+###################### Accessor function definitions ###########################
 
 #' @rdname writeData-methods
-#' @aliases writeData,VEP
+#' @aliases writeData
 setMethod(f="writeData",
           signature="VEP",
           definition=function(object, file, ...){
               writeData(object@vepObject, file, sep="\t")
           })
 
+#' @rdname getVersion-methods
+#' @aliases getVersion
+setMethod(f="getVersion",
+          signature="VEP",
+          definition=function(object, ...){
+              version <- object@version
+              return(version)
+          })
+
+#' @rdname getPath-methods
+#' @aliases getPath
+setMethod(f="getPath",
+          signature="VEP",
+          definition=function(object, ...){
+              path <- object@path
+              return(path)
+          })
+
+#' @rdname getHeader-methods
+#' @aliases getHeader
+setMethod(f="getHeader",
+          signature="VEP",
+          definition=function(object, ...){
+              header <- getHeader(object@vepObject)
+              return(header)
+          })
+
+#' @rdname getDescription-methods
+#' @aliases getDescription
+setMethod(f="getDescription",
+          signature="VEP",
+          definition=function(object, ...){
+              description <- getDescription(object@vepObject)
+              return(description)
+          })
+
+#' @rdname getPosition-methods
+#' @aliases getPosition
+setMethod(f="getPosition",
+          signature="VEP",
+          definition=function(object, ...){
+              positions <- getPosition(object@vepObject)
+              return(positions)
+          })
+
+#' @rdname getMutation-methods
+#' @aliases getMutation
+setMethod(f="getMutation",
+          signature="VEP",
+          definition=function(object, ...){
+              mutations <- getMutation(object@vepObject)
+              return(mutations)
+          })
+
+#' @rdname getSample-methods
+#' @aliases getSample
+setMethod(f="getSample",
+          signature="VEP",
+          definition=function(object, ...){
+              sample <- getSample(object@vepObject)
+              return(sample)
+          })
+
+#' @rdname getMeta-methods
+#' @aliases getMeta
+setMethod(f="getMeta",
+          signature="VEP",
+          definition=function(object, ...){
+              meta <- getMeta(object@vepObject)
+              return(meta)
+          })
+
+################################################################################
+####################### Method function definitions ############################
+
 #' @rdname setMutationHierarchy-methods
-#' @aliases setMutationHierarchy,VEP
+#' @aliases setMutationHierarchy
 #' @noRd
 #' @importFrom data.table data.table
 #' @importFrom data.table setDT
@@ -274,7 +342,7 @@ setMethod(f="setMutationHierarchy",
           })
 
 #' @rdname toWaterfall-methods
-#' @aliases toWaterfall,VEP
+#' @aliases toWaterfall
 #' @noRd
 setMethod(f="toWaterfall",
           signature="VEP",
@@ -353,7 +421,7 @@ setMethod(f="toWaterfall",
           })
 
 #' @rdname toMutSpectra-methods
-#' @aliases toMutSpectra,VEP
+#' @aliases toMutSpectra
 #' @param object Object of class VEP
 #' @param BSgenome Object of class BSgenome, used to extract reference bases if
 #' not supplied by the file format.

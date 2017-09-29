@@ -122,7 +122,6 @@ Collate:
     'lolliplot_qual.R'
     'lolliplot_reduceLolli.R'
     'lolliplot_transcriptID2codingSeq.R'
-    'mockS4object.R'
     'multi_align.R'
     'multi_buildClin.R'
     'multi_chrBound.R'

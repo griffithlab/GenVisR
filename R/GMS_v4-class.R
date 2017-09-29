@@ -1,3 +1,8 @@
+################################################################################
+##################### Public/Private Class Definitions #########################
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Public Class !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
 #' Class GMS_v4
 #' 
 #' An S4 class to represent data in gms annotation version 4,
@@ -12,11 +17,10 @@
 #' @slot meta data.table object containing meta data.
 #' @include GMS_Virtual-class.R
 #' @import methods
-
 setClass("GMS_v4",
          contains="GMS_Virtual",
          validity=function(object){
-             cat("!!!!! GMS_v4~Inspector !!!!!\n")
+
              expecPositionNames <- c("chromosome_name", "start", "stop")
              expecMutationNames <- c("reference", "variant", "trv_type")
              expecSampleNames <- c("sample")
@@ -46,35 +50,6 @@ setClass("GMS_v4",
          }
 )
 
-#' Initalizer method for the GMS_v4 sub-class
-#' 
-#' @name GMS_v4
-#' @param .Object object of class GMS_v4
-#' @noRd
-#' @rdname GMS_v4-class
-setMethod(
-    f="initialize",
-    signature="GMS_v4",
-    definition=function(.Object, gmsData){
-        
-        cat("!!!!! GMS_v4~Initalizer !!!!!\n")
-        positionColNames <- c("chromosome_name", "start", "stop")
-        .Object@position <- gmsData[,positionColNames, with=FALSE]
-        
-        mutationColNames <- c("reference", "variant", "trv_type")
-        .Object@mutation <- gmsData[,mutationColNames, with=FALSE]
-        
-        sampleColNames <- c("sample")
-        .Object@sample <- gmsData[,sampleColNames, with=FALSE]
-        
-        metaColNames <- !colnames(gmsData) %in% c(positionColNames, mutationColNames, sampleColNames)
-        .Object@meta <- gmsData[,metaColNames, with=FALSE]
-        
-        validObject(.Object)
-        return(.Object)
-    }
-)
-
 #' Constructor for the GMS_v4 sub-class
 #' 
 #' @name GMS_v4
@@ -82,6 +57,18 @@ setMethod(
 #' @param gmsData data.table object containing a gms annotation file conforming
 #' to the version 4 specifications.
 GMS_v4 <- function(gmsData){
-    cat("!!!!! GMS_v4~Constructor !!!!!\n")
-    new("GMS_v4", gmsData=gmsData)
+    
+    positionColNames <- c("chromosome_name", "start", "stop")
+    position <- gmsData[,positionColNames, with=FALSE]
+    
+    mutationColNames <- c("reference", "variant", "trv_type")
+    mutation <- gmsData[,mutationColNames, with=FALSE]
+    
+    sampleColNames <- c("sample")
+    sample <- gmsData[,sampleColNames, with=FALSE]
+    
+    metaColNames <- !colnames(gmsData) %in% c(positionColNames, mutationColNames, sampleColNames)
+    meta <- gmsData[,metaColNames, with=FALSE]
+    
+    new("GMS_v4", position=position, mutation=mutation, sample=sample, meta=meta)
 }

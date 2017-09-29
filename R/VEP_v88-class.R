@@ -1,3 +1,8 @@
+################################################################################
+##################### Public/Private Class Definitions #########################
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Public Class !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
 #' Class VEP_v88
 #' 
 #' An S4 class to represent data in variant effect predictor version 88 format,
@@ -14,7 +19,6 @@
 #' @slot meta data.table object containing meta data.
 #' @include GMS_Virtual-class.R
 #' @import methods
-
 setClass("VEP_v88",
          contains="VEP_Virtual",
          validity=function(object){
@@ -41,52 +45,7 @@ setClass("VEP_v88",
          }
 )
 
-#' Initalizer method for the VEP_v88 sub-class
-#' 
-#' @name VEP_v88
-#' @rdname VEP_v88-class
-#' @noRd
-#' @importFrom data.table data.table
-setMethod(
-    f="initialize",
-    signature="VEP_v88",
-    definition=function(.Object, vepData, vepHeader){
-        
-        # set the columns descriptions for the object
-        if(length(vepHeader) == 0){
-            .Object@description <- data.table::data.table()
-        } else {
-            .Object@description <- parseDescription(.Object, vepHeader)
-        }
-        
-        # set the header for the object
-        if(length(vepHeader) == 0){
-            .Object@header <- data.table::data.table()
-        } else {
-            .Object@header <- parseHeader(.Object, vepHeader)
-        }
-        
-        # convert the "extra" field in vepData to separate columns
-        vepData <- parseExtra(.Object, vepData)
-        
-        positionColNames <- c("Location")
-        .Object@position <- vepData[,positionColNames, with=FALSE]
-        
-        mutationColNames <- c("Allele", "Consequence")
-        .Object@mutation <- vepData[,mutationColNames, with=FALSE]
-        
-        sampleColNames <- c("sample")
-        .Object@sample <- vepData[,sampleColNames, with=FALSE]
-        
-        metaColNames <- !colnames(vepData) %in% c(positionColNames, mutationColNames, sampleColNames)
-        .Object@meta <- vepData[,metaColNames, with=FALSE]
-        
-        validObject(.Object)
-        return(.Object)
-    }
-)
-
-#' Constructor for the VEP_v4 sub-class
+#' Constructor for the VEP_v88 sub-class
 #' 
 #' @name VEP_v88
 #' @rdname VEP_v88-class
@@ -95,5 +54,35 @@ setMethod(
 #' @param vepHeader Object of class list containing character vectors for vep
 #' header information.
 VEP_v88 <- function(vepData, vepHeader){
-    new("VEP_v88", vepData=vepData, vepHeader=vepHeader)
+    
+    # set the columns descriptions for the object
+    if(length(vepHeader) == 0){
+        description <- data.table::data.table()
+    } else {
+        description <- parseDescription(vepHeader)
+    }
+    
+    # set the header for the object
+    if(length(vepHeader) == 0){
+        header <- data.table::data.table()
+    } else {
+        header <- parseHeader(vepHeader)
+    }
+    
+    # convert the "extra" field in vepData to separate columns
+    vepData <- parseExtra(vepData)
+    
+    positionColNames <- c("Location")
+    position <- vepData[,positionColNames, with=FALSE]
+    
+    mutationColNames <- c("Allele", "Consequence")
+    mutation <- vepData[,mutationColNames, with=FALSE]
+    
+    sampleColNames <- c("sample")
+    sample <- vepData[,sampleColNames, with=FALSE]
+    
+    metaColNames <- !colnames(vepData) %in% c(positionColNames, mutationColNames, sampleColNames)
+    meta <- vepData[,metaColNames, with=FALSE]
+    
+    new("VEP_v88", header=header, description=description, position=position, mutation=mutation, sample=sample, meta=meta)
 }

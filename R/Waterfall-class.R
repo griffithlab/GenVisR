@@ -216,7 +216,7 @@ Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
 }
 
 #' @rdname Waterfall-methods
-#' @aliases sampSubset,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param samples Character vector of samples to keep
 #' @param verbose Boolean for status updates
@@ -266,7 +266,7 @@ setMethod(f="sampSubset",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases calcSimpleMutationBurden,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param coverage Integer specifying the size in base pairs of genome from
 #' which mutations could have been called (denominator of mutation burden).
@@ -332,7 +332,7 @@ setMethod(f="calcSimpleMutationBurden",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases calcComplexMutationBurden,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param coverage Integer specifying the size in base pairs of genome from
 #' which mutations could have been called (denominator of mutation burden).
@@ -387,7 +387,7 @@ setMethod(f="calcComplexMutationBurden",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases rmvMutation,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param verbose Boolean for status updates
 #' @return data.table object with mutations removed from primaryData slot.
@@ -442,7 +442,7 @@ setMethod(f="rmvMutation",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases geneSubset,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param genes character vector giving genes to keep
 #' @param verbose Boolean for status updates
@@ -479,7 +479,7 @@ setMethod(f="geneSubset",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases mutHierarchySubset,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param mutationHierarchy character vector giving the order of mutations for
 #' the hiearchy in order of most to least important
@@ -515,7 +515,7 @@ setMethod(f="mutHierarchySubset",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases recurrenceSubset,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param recurrence Numeric value specifying a recurrence cutoff to require,
 #' genes not meeting this threshold are removed.
@@ -582,7 +582,7 @@ definition=function(object, recurrence, verbose, ...){
 })
 
 #' @rdname Waterfall-methods
-#' @aliases orderGenes,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param geneOrder Character vector specifying the order in which to plot
 #' genes.
@@ -640,7 +640,7 @@ setMethod(f="orderGenes",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases maxGeneSubset,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param geneMax Integer specifying the maximum number of genes to be plotted.
 #' @param verbose Boolean for status updates
@@ -684,7 +684,7 @@ setMethod(f="maxGeneSubset",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases orderSamples,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param sampOrder Character vector specifying the order of samples
 #' @param verbose Boolean for status updates
@@ -804,7 +804,7 @@ setMethod(f="orderSamples",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases buildMutationPlot,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param plotA String specifying the type of plot for the top sub-plot, one of
 #' "burden", "frequency", or NULL for a mutation burden (requires coverage to be
@@ -934,7 +934,7 @@ setMethod(f="buildMutationPlot",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases constructGeneData,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param verbose Boolean for status updates
 #' @return data.table object containing summarized gene level data
@@ -960,7 +960,7 @@ setMethod(f="constructGeneData",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases buildGenePlot,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param plotB String specifying the type of plot for the left sub-plot, one of
 #' "proportion", "frequency", or NULL for a plot of gene proportions frequencies
@@ -1064,7 +1064,7 @@ setMethod(f="buildGenePlot",
           })
 
 #' @rdname formatClinicalData-methods
-#' @aliases formatClinicalData,Waterfall
+#' @aliases Waterfall
 #' @noRd
 #' @importFrom data.table setDT
 #' @importFrom data.table is.data.table
@@ -1120,7 +1120,7 @@ setMethod(f="formatClinicalData",
           })
 
 #' @rdname Waterfall-methods
-#' @aliases buildWaterfallPlot,Waterfall
+#' @aliases Waterfall
 #' @param object Object of class waterfall
 #' @param verbose Boolean for status updates
 #' @param gridOverlay Boolean specifying if a grid should be overlayed on the
@@ -1262,7 +1262,7 @@ setMethod(f="buildWaterfallPlot",
           })
 
 #' @rdname buildClinicalPlot-methods
-#' @aliases buildClinicalPlot,Waterfall
+#' @aliases Waterfall
 #' @param clinicalLayers List of ggplot2 layers to add to the clinical plot.
 #' @noRd
 #' @import ggplot2
@@ -1290,7 +1290,7 @@ setMethod(f="buildClinicalPlot",
           })
 
 #' @rdname arrangeWaterfallPlot-methods
-#' @aliases arrangeWaterfallPlot,Waterfall
+#' @aliases arrangeWaterfallPlot
 #' @param sectionHeights Relative heights of each plot section (should sum to one).
 #' @param sectionWidths Relative widths of each plot section (should sum to one).
 #' @noRd
@@ -1400,8 +1400,9 @@ setMethod(f="arrangeWaterfallPlot",
           })
 
 #' @rdname drawPlot-methods
-#' @aliases drawPlot,Waterfall
+#' @aliases drawPlot
 #' @importFrom grid grid.draw
+#' @exportMethod drawPlot
 setMethod(
     f="drawPlot",
     signature="Waterfall",
@@ -1412,7 +1413,7 @@ setMethod(
 )
 
 #' @rdname geneFilter-methods
-#' @aliases geneFilter,Waterfall
+#' @aliases geneFilter
 #' @param genes Character vector of genes to keep based on geneSubset and recurrenceSubset
 #' @noRd
 setMethod(

@@ -1,3 +1,8 @@
+################################################################################
+##################### Public/Private Class Definitions #########################
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Public Class !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
 #' Class MutSpectra
 #' 
 #' An S4 class for the MutSpectra plot object
@@ -15,7 +20,6 @@
 #' @import methods
 #' @importFrom gtable gtable
 #' @importFrom data.table data.table
-
 methods::setOldClass("gtable")
 setClass("MutSpectra",
          representation=representation(PlotA="gtable",
@@ -25,67 +29,14 @@ setClass("MutSpectra",
                                        primaryData="data.table",
                                        ClinicalData="data.table"),
          validity=function(object){
-             cat("!!!!! MutSpectra~Inspector !!!!!\n")
          }
 )
-
-#' Initalizer method for the MutSpectra class
-#' 
-#' @name MutSpectra
-#' @rdname MutSpectra-class
-#' @param .Object object of class MutSpectra
-#' @noRd
-#' @import ggplot2
-setMethod(f="initialize",
-          signature="MutSpectra",
-          definition=function(.Object, input, BSgenome, sorting, palette, clinical, sectionHeights,
-                              sectionWidths, sampleNames, verbose, plotALayers, plotBLayers,
-                              plotCLayers){
-              # convert object to mutSpectra format
-              .Object@primaryData <- toMutSpectra(input, BSgenome=BSgenome, verbose=verbose)
-
-              # annotate types of transitions and transversions
-              .Object@primaryData <- annoMutSpectra(.Object, verbose)
-              
-              # calculate rates of transitions and transversions
-              .Object@primaryData <- calcMutSpectra(.Object, verbose)
-              
-              # sort the samples for plotting
-              .Object@primaryData <- sortSamples(.Object, sorting ,verbose)
-              
-              # add the clinical data
-              if(is.null(clinical)){
-                  .Object@ClinicalData <- data.table::data.table()
-              } else {
-                  # fill in the clinical data slot
-                  .Object@ClinicalData <- getData(clinical)
-                  # format the clinical data object using the mutSpectra object
-                  .Object@ClinicalData <- formatClinicalData(.Object, verbose)
-                  # add layer to suppress the x-axis text in the proportion plot
-                  addLayer <- theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
-                  plotBLayers[[length(plotBLayers ) + 1]] <- addLayer
-              }
-              
-              # add the clinical data plot
-              .Object@PlotC <- buildClinicalPlot(.Object, clinicalLayers=clinical@clinicalLayers)
-              
-              # construct the frequency plot
-              .Object@PlotA <- buildFrequencyPlot(.Object, plotALayers, palette, verbose)
-              
-              # construct the proportion plot
-              .Object@PlotB <- buildProportionPlot(.Object, sampleNames, plotBLayers, palette, verbose)
-              
-              # align all the plots together
-              .Object@Grob <- arrangeMutSpectraPlot(.Object, sectionHeights, verbose)
-              
-              return(.Object)
-          })
 
 #' Constructor for the MutSpectra class.
 #' 
 #' @name MutSpectra
 #' @rdname MutSpectra-class
-#' @param input Object of class MutationAnnotationFormat, GMS, VEP.
+#' @param object Object of class MutationAnnotationFormat, GMS, VEP.
 #' @param BSgenome Object of class BSgenome, used to extract reference bases if
 #' not supplied by the file format.
 #' @param sorting Character vector specifying how samples should be ordered in the plot, one
@@ -104,26 +55,193 @@ setMethod(f="initialize",
 #' @param plotBLayers list of ggplot2 layers to be passed to the proportion plot.
 #' @param plotCLayers list of ggplot2 layers to be passed to the clinical plot.
 #' @export
-MutSpectra <- function(input, BSgenome=NULL, sorting=NULL, palette=NULL, clinical=NULL, sectionHeights=NULL,
+MutSpectra <- function(object, BSgenome=NULL, sorting=NULL, palette=NULL, clinical=NULL, sectionHeights=NULL,
                       sectionWidths=NULL, sampleNames=TRUE, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL,
                       plotCLayers=NULL){
-    cat("!!!!! MutSpectra~Constructor !!!!!\n")
-    new("MutSpectra", input=input, BSgenome=BSgenome, sorting=sorting, palette=palette, clinical=clinical, sectionHeights=sectionHeights,
-        sectionWidths=sectionWidths, sampleNames=sampleNames, verbose=verbose, plotALayers=plotALayers, plotBLayers = plotBLayers, 
-        plotCLayers=plotCLayers)
+    
+    # initalize the MutSpectraPrimaryData object
+    primaryData <- MutSpectraPrimaryData(object, BSgenome=BSgenome, sorting=sorting, verbose=verbose)
+    
+    # initalize the MutSpectraPlots object
+    plots <- MutSpectraPlots(primaryData=primaryData, clinical=clinical,
+                             plotALayers=plotALayers, plotBLayers=plotBLayers,
+                             plotCLayers=plotCLayers, sampleNames=sampleNames,
+                             palette=palette, verbose=verbose)
+    
+    # get the clinical data
+    if(is.null(clinical)){
+        ClinicalData <- data.table::data.table()
+    } else {
+        ClinicalData <- getData(clinical)
+    }
+    
+    # align all the plots together
+    Grob <- arrangeMutSpectraPlot(plots, sectionHeights, verbose)
+    
+    new("MutSpectra", PlotA=getGrob(plots, 1), PlotB=getGrob(plots, 2), PlotC=getGrob(plots, 3),
+        Grob=Grob, primaryData=getData(primaryData), ClinicalData=ClinicalData)
 }
 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
+#' Private Class MutSpectraPrimaryData
+#' 
+#' An S4 class for the Primary Data of the MutSpectra plot object
+#' @name MutSpectraPrimaryData-class
+#' @rdname MutSpectraPrimaryData-class
+#' @slot primaryData data.table object storing the primary data, should have
+#' column names sample, mutation, frequency, proportion.
+#' @import methods
+#' @importFrom data.table data.table
+#' @noRd
+setClass("MutSpectraPrimaryData",
+         representation=representation(primaryData="data.table"),
+         validity=function(object){
+         }
+)
+
+#' Constructor for the MutSpectraPrimaryData class.
+#' 
+#' @name MutSpectraPrimaryData
+#' @rdname MutSpectraPrimaryData-class
+#' @param object Object of class MutationAnnotationFormat
+#' @noRd
+MutSpectraPrimaryData <- function(object, BSgenome, sorting, verbose){
+    # convert object to mutSpectra format
+    primaryData <- toMutSpectra(object, BSgenome=BSgenome, verbose=verbose)
+    
+    # annotate types of transitions and transversions
+    primaryData <- annoMutSpectra(primaryData, verbose=verbose)
+    
+    # calculate rates of transitions and transversions
+    primaryData <- calcMutSpectra(primaryData, verbose=verbose)
+    
+    # sort the samples for plotting
+    primaryData <- sortSamples(primaryData, sorting=sorting, verbose=verbose)
+    
+    # initalize the object
+    new("MutSpectraPrimaryData", primaryData=primaryData)
+}
+
+#' Private Class MutSpectraPlots
+#' 
+#' An S4 class for the plots of the MutSpectra class
+#' @name MutSpectraPlots-class
+#' @rdname MutSpectraPlots-class
+#' @slot PlotA gtable object for the mutation frequencies.
+#' @slot PlotB gtable object for the mutation proportions.
+#' @slot PlotC gtable object for clinical data sub-plot.
+#' @import methods
+#' @importFrom gtable gtable
+#' @noRd
+methods::setOldClass("gtable")
+setClass("MutSpectraPlots",
+         representation=representation(PlotA="gtable",
+                                       PlotB="gtable",
+                                       PlotC="gtable"),
+         validity=function(object){
+         }
+)
+
+#' Constructor for the MutSpectraPlots class.
+#' 
+#' @name MutSpectraPlots
+#' @rdname MutSpectraPlots-class
+#' @param object Object of class MutationAnnotationFormat
+#' @importFrom gtable gtable
+#' @noRd
+MutSpectraPlots <- function(primaryData, clinical, plotALayers, plotBLayers, plotCLayers, sampleNames, palette, verbose){
+    
+    if(is(clinical, "Clinical")){
+        # format the clinical data object using the mutSpectra object
+        ClinicalData <- formatClinicalData(primaryData, clinical, verbose)
+        
+        # make sure the new formating conforms with ClinicalData class 
+        ClinicalData <- ClinicalData(ClinicalData, inputFormat="long", verbose=verbose)
+        
+        # add layer to suppress the x-axis text in the proportion plot
+        addLayer <- theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+        plotBLayers[[length(plotBLayers ) + 1]] <- addLayer
+        
+        # add the clinical data plot
+        PlotC <- buildClinicalPlot(ClinicalData, clinicalLayers=getLayers(clinical), verbose=verbose)
+    } else {
+        PlotC <- gtable::gtable()
+    }
+    
+    # construct the frequency plot
+    PlotA <- buildFrequencyPlot(primaryData, plotALayers, palette, verbose)
+    
+    # construct the proportion plot
+    PlotB <- buildProportionPlot(primaryData, sampleNames, plotBLayers, palette, verbose)
+    
+    # initalize the object
+    new("MutSpectraPlots", PlotA=PlotA, PlotB=PlotB, PlotC=PlotC)
+}
+
+################################################################################
+###################### Accessor function definitions ###########################
+
+#' @rdname getData-methods
+#' @aliases getData
+setMethod(f="getData",
+          signature="MutSpectraPrimaryData",
+          definition=function(object, ...){
+              primaryData <- object@primaryData
+              return(primaryData)
+          })
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+setMethod(f="getGrob",
+          signature="MutSpectra",
+          definition=function(object, ...){
+              grob <- object@Grob
+              return(grob)
+          })
+
+#' @rdname drawPlot-methods
+#' @aliases drawPlot
+#' @importFrom grid grid.draw
+#' @exportMethod drawPlot
+setMethod(f="drawPlot",
+          signature="MutSpectra",
+          definition=function(object, ...){
+              grob <- getGrob(object)
+              grid::grid.draw(grob)
+          })
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+setMethod(f="getGrob",
+          signature="MutSpectraPlots",
+          definition=function(object, index=1, ...){
+              if(index == 1){
+                  grob <- object@PlotA
+              } else if(index == 2) {
+                  grob <- object@PlotB
+              } else if(index == 3) {
+                  grob <- object@PlotC
+              } else {
+                  stop("Subscript out of bounds")
+              }
+              return(grob)
+          })
+
+################################################################################
+####################### Method function definitions ############################
+
 #' @rdname MutSpectra-methods
-#' @aliases annoMutSpectra,MutSpectra
-#' @param object Object of class MutSpectra
+#' @aliases MutSpectra
+#' @param object Object of class data.table
 #' @param verbose Boolean for status updates
 #' @return data.table object with transitions and transversions annotated
 #' @noRd
 setMethod(f="annoMutSpectra",
-          signature="MutSpectra",
+          signature="data.table",
           definition=function(object, verbose, ...){
               # access the part of the object we want to manipulate
-              primaryData <- object@primaryData
+              primaryData <- object
               
               # print status message
               if(verbose){
@@ -158,17 +276,17 @@ setMethod(f="annoMutSpectra",
           })
 
 #' @rdname MutSpectra-methods
-#' @aliases calcMutSpectra,MutSpectra
-#' @param object Object of class MutSpectra
+#' @aliases MutSpectra
+#' @param object Object of class data.table
 #' @param verbose Boolean for status updates
 #' @return data.table object with transitions and transversions rates calculated
 #' @importFrom data.table as.data.table
 #' @noRd
 setMethod(f="calcMutSpectra",
-          signature="MutSpectra",
+          signature="data.table",
           definition=function(object, verbose, ...){
               # access the part of the object we want to manipulate
-              primaryData <- object@primaryData
+              primaryData <- object
               
               # print status message
               if(verbose){
@@ -199,17 +317,17 @@ setMethod(f="calcMutSpectra",
           })
 
 #' @rdname MutSpectra-methods
-#' @aliases sortSamples,MutSpectra
-#' @param object Object of class MutSpectra
+#' @aliases MutSpectra
+#' @param object Object of class data.table
 #' @param verbose Boolean for status updates
 #' @return data.table object with samples refactored for plotting
 #' @importFrom gtools mixedsort
 #' @noRd
 setMethod(f="sortSamples",
-          signature="MutSpectra",
+          signature="data.table",
           definition=function(object, sorting, verbose, ...){
               # access the part of the object we want to manipulate
-              primaryData <- object@primaryData
+              primaryData <- object
               
               # do nothing if samples is null
               if(is.null(sorting)){
@@ -271,36 +389,9 @@ setMethod(f="sortSamples",
               return(primaryData)
           })
 
-#' @rdname buildClinicalPlot-methods
-#' @aliases buildClinicalPlot,MutSpectra
-#' @param clinicalLayers List of ggplot2 layers to add to the clinical plot.
-#' @noRd
-#' @import ggplot2
-#' @importFrom gtable gtable
-setMethod(f="buildClinicalPlot",
-          signature="MutSpectra",
-          definition=function(object, clinicalLayers, ...){
-              # extract necessary data
-              clinicalData <- object@ClinicalData
-              
-              # if clinical data is empty return empty gtable
-              if(nrow(clinicalData) == 0){
-                  return(gtable::gtable())
-              }
-              
-              # construct a plot
-              clinicalXLabel <- xlab(paste0("Sample n=", length(unique(clinicalData$sample))))
-              clinicalPlot <- ggplot(clinicalData, aes_string(x='sample',
-                                                              y='variable',
-                                                              fill='value')) +
-                  clinicalLayers + clinicalXLabel + theme(axis.text.x=element_blank())
-              
-              # contruct grob
-              clinicalGrob <- ggplotGrob(clinicalPlot)
-          })
-
 #' @rdname buildFrequencyPlot-methods
-#' @aliases buildFrequencyPlot,MutSpectra
+#' @aliases MutSpectra
+#' @param object Object of class MutSpectraPrimaryData
 #' @param palette Character vector specifying the colors used for encoding transitions and transversions
 #' , should be of length 6. If NULL a default palette will be used.
 #' @param verbose Boolean specifying if status messages should be reported
@@ -310,7 +401,7 @@ setMethod(f="buildClinicalPlot",
 #' @import ggplot2
 #' @importFrom gtable gtable
 setMethod(f="buildFrequencyPlot",
-          signature="MutSpectra",
+          signature="MutSpectraPrimaryData",
           definition=function(object, plotALayers, palette, verbose, ...){
               # extract the data to plot
               primaryData <- object@primaryData
@@ -371,7 +462,8 @@ setMethod(f="buildFrequencyPlot",
           })
 
 #' @rdname buildProportionPlot-methods
-#' @aliases buildProportionPlot,MutSpectra
+#' @aliases MutSpectra
+#' @param object Object of class MutSpectraPrimaryData
 #' @param palette Character vector specifying the colors used for encoding transitions and transversions
 #' , should be of length 6. If NULL a default palette will be used.
 #' @param sampleNames Boolean specifying if samples should be labeled on the plot.
@@ -381,7 +473,7 @@ setMethod(f="buildFrequencyPlot",
 #' @noRd
 #' @import ggplot2
 setMethod(f="buildProportionPlot",
-          signature="MutSpectra",
+          signature="MutSpectraPrimaryData",
           definition=function(object, sampleNames, plotBLayers, palette, verbose, ...){
               # extract the data to plot
               primaryData <- object@primaryData
@@ -446,19 +538,19 @@ setMethod(f="buildProportionPlot",
           })
 
 #' @rdname arrangeMutSpectraPlot-methods
-#' @aliases arrangeMutSpectraPlot,MutSpectra
+#' @aliases arrangeMutSpectraPlot
 #' @param sectionHeights Relative heights of each plot section (should sum to one).
 #' @noRd
 #' @importFrom grid nullGrob
 #' @importFrom gridExtra arrangeGrob
 setMethod(f="arrangeMutSpectraPlot",
-          signature="MutSpectra",
+          signature="MutSpectraPlots",
           definition=function(object, sectionHeights, verbose, ...){
               
               # grab the data we need
-              plotA <- object@PlotA
-              plotB <- object@PlotB
-              plotC <- object@PlotC
+              plotA <- getGrob(object, 1)
+              plotB <- getGrob(object, 2)
+              plotC <- getGrob(object, 3)
               
               # Obtain the max width for relevant plots
               plotList <- list(plotA, plotB, plotC)
@@ -472,7 +564,7 @@ setMethod(f="arrangeMutSpectraPlot",
               }
               
               # set section heights based upon the number of sections
-              defaultPlotHeights <- c(.5, .5, .25)
+              defaultPlotHeights <- c(1, 1, .75)
               
               if(is.null(sectionHeights)){
                   if(length(plotList) < 3){
@@ -480,7 +572,7 @@ setMethod(f="arrangeMutSpectraPlot",
                   }
                   sectionHeights <- defaultPlotHeights
               } else if(length(sectionHeights) != length(plotList)){
-                  memo <- paste("There are", length(sectionHeights), "provided",
+                  memo <- paste("There are", length(sectionHeights), "section heights provided",
                                 "but", length(plotList), "vertical sections...",
                                 "using default values!")
                   warning(memo)
@@ -499,7 +591,7 @@ setMethod(f="arrangeMutSpectraPlot",
           })
 
 #' @rdname formatClinicalData-methods
-#' @aliases formatClinicalData,MutSpectra
+#' @aliases formatClinicalData,MutSpectraPrimaryData
 #' @noRd
 #' @importFrom data.table setDT
 #' @importFrom data.table is.data.table
@@ -507,12 +599,12 @@ setMethod(f="arrangeMutSpectraPlot",
 #' @importFrom data.table data.table
 #' @importFrom data.table rbindlist
 setMethod(f="formatClinicalData",
-          signature="MutSpectra",
-          definition=function(object, verbose, ...){
-              
+          signature="MutSpectraPrimaryData",
+          definition=function(object, clinicalData, verbose, ...){
+
               # extract the data we need
-              clinicalData <- object@ClinicalData
-              primaryData <- object@primaryData
+              primaryData <- getData(object)
+              clinicalData <- getData(clinicalData)
               
               # print status message
               if(verbose){
@@ -522,8 +614,8 @@ setMethod(f="formatClinicalData",
               
               # remove clinical samples not found in the primary data
               primaryDataSamples <- levels(primaryData$Sample)
+              removedSamp <- unique(clinicalData$sample[!clinicalData$sample %in% primaryDataSamples])
               clinicalData <- clinicalData[clinicalData$sample %in% primaryDataSamples,]
-              removedSamp <- unique(object@ClinicalData$sample[!object@ClinicalData$sample %in% clinicalData$sample])
               memo <- paste("Removed", length(removedSamp), "samples from the clinical data",
                             "not found in the primary waterfall data! These samples are:",
                             toString(removedSamp))

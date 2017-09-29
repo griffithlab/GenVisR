@@ -12,7 +12,6 @@
 #' @slot meta data.table object containing meta data.
 #' @include MutationAnnotationFormat_Virtual-class.R
 #' @import methods
-
 setClass("MutationAnnotationFormat_v1.0",
          contains="MutationAnnotationFormat_Virtual",
          validity=function(object){
@@ -76,9 +75,21 @@ setMethod(
 #' @rdname MutationAnnotationFormat_v1.0-class
 #' @param mafData data.table object containing a maf file conforming to the
 #' version 1.0 specification.
-
 MutationAnnotationFormat_v1.0 <- function(mafData){
-
-    new("MutationAnnotationFormat_v1.0", mafData=mafData)
+    
+    positionColNames <- c("Chromosome", "Start_Position", "End_Position", "Strand")
+    position <- mafData[,positionColNames, with=FALSE]
+    
+    mutationColNames <- c("Variant_Classification", "Variant_Type", "Reference_Allele",
+                          "Tumor_Seq_Allele1", "Tumor_Seq_Allele2")
+    mutation <- mafData[,mutationColNames, with=FALSE]
+    
+    sampleColNames <- c("Tumor_Sample_Barcode")
+    sample <- mafData[,sampleColNames, with=FALSE]
+    
+    metaColNames <- !colnames(mafData) %in% c(positionColNames, mutationColNames, sampleColNames)
+    meta <- mafData[,metaColNames, with=FALSE]
+    
+    new("MutationAnnotationFormat_v1.0", position=position, mutation=mutation, sample=sample, meta=meta)
 }
 

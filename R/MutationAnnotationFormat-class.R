@@ -1,3 +1,8 @@
+################################################################################
+##################### Public/Private Class Definitions #########################
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Public Class !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
 #' Class MutationAnnotationFormat
 #' 
 #' An S4 class acting as a container for MutationAnnotationFormat version sub-classes.
@@ -16,59 +21,6 @@ setClass("MutationAnnotationFormat",
                                        mafObject="MutationAnnotationFormat_Virtual")
 )
 
-#' Initalizer method for the MutationAnnotationFormat container class
-#' 
-#' @name MutationAnnotationFormat
-#' @rdname MutationAnnotationFormat-class
-#' @param .Object object of class MutationAnnotationFormat
-#' @noRd
-#' @importFrom data.table fread
-setMethod(
-    f="initialize",
-    signature="MutationAnnotationFormat",
-    definition=function(.Object, path, version, verbose){
-
-        mafData <- suppressWarnings(data.table::fread(input=path,
-                                                      stringsAsFactors=TRUE,
-                                                      verbose=verbose))
-        # grab the maf version
-        if(toupper(version) == "AUTO"){
-            # read the version
-            mafVersion <- readLines(con=path, n=50)
-            mafVersion <- mafVersion[which(grepl("^#version", mafVersion))]
-            mafVersion <- as.numeric(as.character(gsub("#version\\W", "", mafVersion)))
-            if(length(mafVersion) == 0) stop("Unable to infer the maf Version from header, please specify")
-        } else {
-            mafVersion <- version
-        }
-
-        ##### Obtain the appropriate MutationAnnotationFormat sub-class ######
-        if(mafVersion == 1.0){
-            mafObject <- MutationAnnotationFormat_v1.0(mafData=mafData)
-        }else if(mafVersion == 2.0){
-            mafObject <- MutationAnnotationFormat_v2.0(mafData=mafData)
-        }else if(mafVersion == 2.1){
-            mafObject <- MutationAnnotationFormat_v2.1(mafData=mafData)
-        }else if(mafVersion == 2.2){
-            mafObject <- MutationAnnotationFormat_v2.2(mafData=mafData)
-        }else if(mafVersion == 2.3){
-            mafObject <- MutationAnnotationFormat_v2.3(mafData=mafData)
-        }else if(mafVersion == 2.4 ){
-            mafObject <- MutationAnnotationFormat_v2.4(mafData=mafData)
-        }else{
-            memo <- paste("The maf version:", toString(mafVersion),
-                          "is currently unsupported. Make a feature request on",
-                          "https://github.com/griffithlab/GenVisR!")
-            stop(memo)
-        }
-        .Object@path <- path
-        .Object@version <- mafVersion
-        .Object@mafObject <- mafObject
-        
-        return(.Object)
-    }
-)
-
 #' Constructor for the MutationAnnotationFormat container class.
 #' 
 #' @name MutationAnnotationFormat
@@ -80,50 +32,109 @@ setMethod(
 #' in the MAF file.
 #' @seealso \code{\link{Waterfall}}
 #' @seealso \code{\link{MutSpectra}}
+#' @importFrom data.table fread
 #' @export
 MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
+    mafData <- suppressWarnings(data.table::fread(input=path,
+                                                  stringsAsFactors=TRUE,
+                                                  verbose=verbose))
+    
+    # grab the maf version
+    if(toupper(version) == "AUTO"){
+        # read the version
+        mafVersion <- readLines(con=path, n=50)
+        mafVersion <- mafVersion[which(grepl("^#version", mafVersion))]
+        mafVersion <- as.numeric(as.character(gsub("#version\\W", "", mafVersion)))
+        if(length(mafVersion) == 0) stop("Unable to infer the maf Version from header, please specify")
+    } else {
+        mafVersion <- version
+    }
+    
+    ##### Obtain the appropriate MutationAnnotationFormat sub-class ######
+    if(mafVersion == 1.0){
+        mafObject <- MutationAnnotationFormat_v1.0(mafData=mafData)
+    }else if(mafVersion == 2.0){
+        mafObject <- MutationAnnotationFormat_v2.0(mafData=mafData)
+    }else if(mafVersion == 2.1){
+        mafObject <- MutationAnnotationFormat_v2.1(mafData=mafData)
+    }else if(mafVersion == 2.2){
+        mafObject <- MutationAnnotationFormat_v2.2(mafData=mafData)
+    }else if(mafVersion == 2.3){
+        mafObject <- MutationAnnotationFormat_v2.3(mafData=mafData)
+    }else if(mafVersion == 2.4 ){
+        mafObject <- MutationAnnotationFormat_v2.4(mafData=mafData)
+    }else{
+        memo <- paste("The maf version:", toString(mafVersion),
+                      "is currently unsupported. Make a feature request on",
+                      "https://github.com/griffithlab/GenVisR!")
+        stop(memo)
+    }
 
-    new("MutationAnnotationFormat", path=path, version=version, verbose=verbose)
+    new("MutationAnnotationFormat", path=path, version=mafVersion, mafObject=mafObject)
 }
 
+################################################################################
+###################### Accessor function definitions ###########################
+
+#' @rdname getVersion-methods
+#' @aliases getVersion
+setMethod(f="getVersion",
+          signature="MutationAnnotationFormat",
+          definition=function(object, ...){
+              version <- object@version
+              return(version)
+          })
+
+#' @rdname getPath-methods
+#' @aliases getPath
+setMethod(f="getPath",
+          signature="MutationAnnotationFormat",
+          definition=function(object, ...){
+              path <- object@path
+              return(path)
+          })
+
 #' @rdname getPosition-methods
-#' @aliases getPosition,MutationAnnotationFormat
+#' @aliases getPosition
 setMethod(f="getPosition",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              positions <- object@mafObject@position
+              positions <- getPosition(object@mafObject)
               return(positions)
           })
 
 #' @rdname getMutation-methods
-#' @aliases getMutation,MutationAnnotationFormat
+#' @aliases getMutation
 setMethod(f="getMutation",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              mutations <- object@mafObject@mutation
+              mutations <- getMutation(object@mafObject)
               return(mutations)
           })
 
 #' @rdname getSample-methods
-#' @aliases getSample,MutationAnnotationFormat
+#' @aliases getSample
 setMethod(f="getSample",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              sample <- object@mafObject@sample
+              sample <- getSample(object@mafObject)
               return(sample)
           })
 
 #' @rdname getMeta-methods
-#' @aliases getMeta,MutationAnnotationFormat
+#' @aliases getMeta
 setMethod(f="getMeta",
           signature="MutationAnnotationFormat",
           definition=function(object, ...){
-              meta <- object@mafObject@meta
+              meta <- getMeta(object@mafObject)
               return(meta)
           })
 
+################################################################################
+####################### Method function definitions ############################
+
 #' @rdname toWaterfall-methods
-#' @aliases toWaterfall,MutationAnnotationFormat
+#' @aliases toWaterfall
 #' @noRd
 setMethod(f="toWaterfall",
           signature="MutationAnnotationFormat",
@@ -159,7 +170,7 @@ setMethod(f="toWaterfall",
                       warning(memo)
                       next
                   } else {
-                      label <- object@mafObject@meta[,labelColumn]
+                      label <- object@mafObject@meta[,labelColumn, with=FALSE]
                   }
               }
               
@@ -200,7 +211,7 @@ setMethod(f="toWaterfall",
           })
 
 #' @rdname setMutationHierarchy-methods
-#' @aliases setMutationHierarchy,MutationAnnotationFormat
+#' @aliases setMutationHierarchy
 #' @noRd
 #' @importFrom data.table data.table
 #' @importFrom data.table setDT
@@ -286,7 +297,7 @@ setMethod(f="setMutationHierarchy",
           })
 
 #' @rdname toMutSpectra-methods
-#' @aliases toMutSpectra,MutationAnnotationFormat
+#' @aliases toMutSpectra
 #' @param object Object of class MutationAnnotationFormat
 #' @param verbose Boolean specifying if status messages should be reported
 #' @importFrom data.table rbindlist
@@ -314,9 +325,9 @@ setMethod(f="toMutSpectra",
               
               # grab the sample, mutation, position columns
               sample <- object@mafObject@sample[snvIndex]
-              variantAllele1 <- as.character(object@mafObject@mutation[snvIndex,"Tumor_Seq_Allele1"])
-              variantAllele2 <- as.character(object@mafObject@mutation[snvIndex,"Tumor_Seq_Allele2"])
-              refAllele <- as.character(object@mafObject@mutation[snvIndex,"Reference_Allele"])
+              variantAllele1 <- object@mafObject@mutation[snvIndex,"Tumor_Seq_Allele1"]
+              variantAllele2 <- object@mafObject@mutation[snvIndex,"Tumor_Seq_Allele2"]
+              refAllele <- object@mafObject@mutation[snvIndex,"Reference_Allele"]
               chr <- object@mafObject@position[snvIndex,"Chromosome"]
               start <- object@mafObject@position[snvIndex,"Start_Position"]
               stop <- object@mafObject@position[snvIndex,"End_Position"]
@@ -327,6 +338,11 @@ setMethod(f="toMutSpectra",
               colnames(mutSpectraFormat_Allele1) <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
               colnames(mutSpectraFormat_Allele2) <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
               mutSpectraFormat <- data.table::rbindlist(list(mutSpectraFormat_Allele1, mutSpectraFormat_Allele2))
+              
+              # Remove cases where there is not change between reference and variant
+              mutSpectraFormat$refAllele <- as.character(mutSpectraFormat$refAllele)
+              mutSpectraFormat$variantAllele <- as.character(mutSpectraFormat$variantAllele)
+              mutSpectraFormat <- mutSpectraFormat[mutSpectraFormat$refAllele != mutSpectraFormat$variantAllele,]
               
               # unique, to make sure no duplicate variants exist to throw off the counts
               rowCountOrig <- nrow(mutSpectraFormat)
@@ -340,9 +356,11 @@ setMethod(f="toMutSpectra",
                   message(memo)
               }
               
-              # remove rows where refAllele == variantAllele
-              alleleMatchIndex <- which(mutSpectraFormat$refAllele == mutSpectraFormat$variantAllele)
-              mutSpectraFormat <- mutSpectraFormat[-alleleMatchIndex,]
+              # Remove cases where there is not change between reference and variant
+              mutSpectraFormat$refAllele <- as.character(mutSpectraFormat$refAllele)
+              mutSpectraFormat$variantAllele <- as.character(mutSpectraFormat$variantAllele)
+              alleleMatchIndex <- mutSpectraFormat$refAllele == mutSpectraFormat$variantAllele
+              mutSpectraFormat <- mutSpectraFormat[!alleleMatchIndex,]
               if(verbose){
                   memo <- paste("Removed", length(alleleMatchIndex), "entries",
                                 "where the reference allele matched the tumor allele")

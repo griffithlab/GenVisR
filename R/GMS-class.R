@@ -1,3 +1,8 @@
+################################################################################
+##################### Public/Private Class Definitions #########################
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Public Class !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
 #' Class GMS
 #' 
 #' An S4 class for Genome Modeling System annotation files.
@@ -13,86 +18,6 @@ setClass("GMS",
          representation=representation(path="character",
                                        version="numeric",
                                        gmsObject="GMS_Virtual"))
-
-#' Initalizer method for the GMS container class
-#' 
-#' @name GMS
-#' @rdname GMS-class
-#' @param .Object object of class GMS
-#' @noRd
-#' @importFrom data.table fread
-#' @importFrom data.table rbindlist
-#' @importFrom data.table is.data.table
-#' @importFrom data.table as.data.table
-setMethod(
-    f="initialize",
-    signature="GMS",
-    definition=function(.Object, path, data, version, verbose){
-        cat("!!!!! GMS~Initalizer !!!!!\n")
-        
-        # assign the annotator version
-        .Object@version <- version
-        
-        # if data is null read from path variable
-        if(is.null(data)){
-            # Grab all files and assign to slot
-            gmsFiles <- Sys.glob(path)
-            .Object@path <- gmsFiles
-            
-            # anonymous function to read in files
-            a <- function(x, verbose){
-                # detect OS and remove slashes and extension
-                if(.Platform$OS.type == "windows"){
-                    sampleName <- gsub("(.*/)||(.*\\\\)", "", x)
-                    sampleName <- gsub("\\.[^.]+$", "", x)
-                } else {
-                    sampleName <- gsub("(.*/)", "", x)
-                    sampleName <- gsub("\\.[^.]+$", "", sampleName)
-                }
-                # read data
-                gmsData <- suppressWarnings(data.table::fread(input=x,
-                                                              stringsAsFactors=TRUE,
-                                                              verbose=verbose))
-                # set sample if it's not already in the data table
-                if(any(colnames(gmsData) %in% "sample")){
-                    return(gmsData)
-                } else {
-                    gmsData$sample <- sampleName
-                    return(gmsData)
-                }
-            }
-            
-            # aggregate data into a single data table if necessary
-            if(length(gmsFiles) == 0){
-                memo <- paste("No files found using:", path)
-                stop(memo)
-            } else {
-                gmsData <- lapply(gmsFiles, a, verbose)
-                gmsData <- data.table::rbindlist(gmsData)
-            }
-        } else if(is.data.table(data)){
-            .Object@path <- "none"
-            gmsData <- data
-        } else {
-            memo <- paste("data is not of class data.table,",
-                          "attempting to coerce")
-            warning(memo)
-            .Object@path <- "none"
-            gmsData <- data.table::as.data.table(data)
-        }
-        
-        # assign the gmsData to it's slot
-        if(version == 4){
-            .Object@gmsObject <- GMS_v4(gmsData=gmsData)
-        } else {
-            memo <- paste("Currently only GMS version 4 is supported, make a",
-                          "feature request on",
-                          "https://github.com/griffithlab/GenVisR!")
-            stop(memo)
-        }
-        
-        return(.Object)
-    })
 
 #' Constructor for the GMS container class.
 #' 
@@ -120,50 +45,141 @@ setMethod(
 #' different GMS annotator version.
 #' @seealso \code{\link{Waterfall}}
 #' @seealso \code{\link{MutSpectra}}
+#' @importFrom data.table fread
+#' @importFrom data.table rbindlist
+#' @importFrom data.table is.data.table
+#' @importFrom data.table as.data.table
 #' @export
 GMS <- function(path, data=NULL, version=4, verbose=FALSE){
-    cat("!!!!! GMS~Constructor !!!!!\n")
-    new("GMS", path=path, data=data, version=version, verbose=verbose)}
+    
+    # assign the annotator version
+    version <- version
+    
+    # if data is null read from path variable
+    if(is.null(data)){
+        # Grab all files and assign to slot
+        gmsFiles <- Sys.glob(path)
+        path <- gmsFiles
+        
+        # anonymous function to read in files
+        a <- function(x, verbose){
+            # detect OS and remove slashes and extension
+            if(.Platform$OS.type == "windows"){
+                sampleName <- gsub("(.*/)||(.*\\\\)", "", x)
+                sampleName <- gsub("\\.[^.]+$", "", x)
+            } else {
+                sampleName <- gsub("(.*/)", "", x)
+                sampleName <- gsub("\\.[^.]+$", "", sampleName)
+            }
+            # read data
+            gmsData <- suppressWarnings(data.table::fread(input=x,
+                                                          stringsAsFactors=TRUE,
+                                                          verbose=verbose))
+            # set sample if it's not already in the data table
+            if(any(colnames(gmsData) %in% "sample")){
+                return(gmsData)
+            } else {
+                gmsData$sample <- sampleName
+                return(gmsData)
+            }
+        }
+        
+        # aggregate data into a single data table if necessary
+        if(length(gmsFiles) == 0){
+            memo <- paste("No files found using:", path)
+            stop(memo)
+        } else {
+            gmsData <- lapply(gmsFiles, a, verbose)
+            gmsData <- data.table::rbindlist(gmsData)
+        }
+    } else if(is.data.table(data)){
+        path <- "none"
+        gmsData <- data
+    } else {
+        memo <- paste("data is not of class data.table,",
+                      "attempting to coerce")
+        warning(memo)
+        path <- "none"
+        gmsData <- data.table::as.data.table(data)
+    }
+    
+    # assign the gmsData to it's slot
+    if(version == 4){
+        gmsObject <- GMS_v4(gmsData=gmsData)
+    } else {
+        memo <- paste("Currently only GMS version 4 is supported, make a",
+                      "feature request on",
+                      "https://github.com/griffithlab/GenVisR!")
+        stop(memo)
+    }
+    
+    new("GMS", path=path, gmsObject=gmsObject, version=version)
+}
+
+################################################################################
+###################### Accessor function definitions ###########################
+
+#' @rdname getVersion-methods
+#' @aliases getVersion
+setMethod(f="getVersion",
+          signature="GMS",
+          definition=function(object, ...){
+              version <- object@version
+              return(version)
+          })
+
+#' @rdname getPath-methods
+#' @aliases getPath
+setMethod(f="getPath",
+          signature="GMS",
+          definition=function(object, ...){
+              path <- object@path
+              return(path)
+          })
 
 #' @rdname getPosition-methods
-#' @aliases getPosition,GMS
+#' @aliases getPosition
 setMethod(f="getPosition",
           signature="GMS",
           definition=function(object, ...){
-              positions <- object@gmsObject@position
+              positions <- getPosition(object@gmsObject)
               return(positions)
           })
 
 #' @rdname getMutation-methods
-#' @aliases getMutation,GMS
+#' @aliases getMutation
 setMethod(f="getMutation",
           signature="GMS",
           definition=function(object, ...){
-              mutations <- object@gmsObject@mutation
+              mutations <- getMutation(object@gmsObject)
               return(mutations)
           })
 
 #' @rdname getSample-methods
-#' @aliases getSample,GMS
+#' @aliases getSample
 setMethod(f="getSample",
           signature="GMS",
           definition=function(object, ...){
-              sample <- object@gmsObject@sample
+              sample <- getSample(object@gmsObject)
               return(sample)
           })
 
 #' @rdname getMeta-methods
-#' @aliases getMeta,GMS
+#' @aliases getMeta
 setMethod(
     f="getMeta",
     signature="GMS",
     definition=function(object, ...){
-        return(object@gmsObject@meta)
+        meta <- getMeta(object@gmsObject)
+        return(meta)
     }
 )
 
+################################################################################
+####################### Method function definitions ############################
+
 #' @rdname toWaterfall-methods
-#' @aliases toWaterfall,GMS
+#' @aliases toWaterfall
 #' @noRd
 setMethod(f="toWaterfall",
           signature="GMS",
@@ -239,7 +255,7 @@ setMethod(f="toWaterfall",
           })
 
 #' @rdname setMutationHierarchy-methods
-#' @aliases setMutationHierarchy,GMS
+#' @aliases setMutationHierarchy
 #' @noRd
 #' @importFrom data.table data.table
 #' @importFrom data.table setDT
@@ -330,7 +346,7 @@ setMethod(f="setMutationHierarchy",
           })
 
 #' @rdname toMutSpectra-methods
-#' @aliases toMutSpectra,GMS
+#' @aliases toMutSpectra
 #' @param object Object of class GMS
 #' @param verbose Boolean specifying if status messages should be reported
 #' @noRd

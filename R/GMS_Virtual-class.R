@@ -1,3 +1,6 @@
+################################################################################
+######################### Virtual Class Definitions ############################
+
 #' Class GMS_Virtual
 #' 
 #' An S4 class to act as a virtual class for GMS version sub-classes.
@@ -16,3 +19,42 @@ setClass(
                                   sample="data.table",
                                   meta="data.table", "VIRTUAL")
 )
+
+################################################################################
+###################### Accessor function definitions ###########################
+
+#' @rdname getPosition-methods
+#' @aliases getPosition
+setMethod(f="getPosition",
+          signature="GMS_Virtual",
+          definition=function(object, ...){
+              positions <- object@position
+              return(positions)
+          })
+
+#' @rdname getMutation-methods
+#' @aliases getMutation
+setMethod(f="getMutation",
+          signature="GMS_Virtual",
+          definition=function(object, ...){
+              mutations <- object@mutation
+              return(mutations)
+          })
+
+#' @rdname getSample-methods
+#' @aliases getSample
+setMethod(f="getSample",
+          signature="GMS_Virtual",
+          definition=function(object, ...){
+              sample <- object@sample
+              return(sample)
+          })
+
+#' @rdname getMeta-methods
+#' @aliases getMeta
+setMethod(f="getMeta",
+          signature="GMS_Virtual",
+          definition=function(object, ...){
+              meta <- object@meta
+              return(meta)
+          })
