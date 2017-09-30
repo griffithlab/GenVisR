@@ -213,6 +213,7 @@ setMethod(f="drawPlot",
 
 #' @rdname getGrob-methods
 #' @aliases getGrob
+#' @param index integer specifying the plot index to extract
 setMethod(f="getGrob",
           signature="MutSpectraPlots",
           definition=function(object, index=1, ...){

@@ -19,6 +19,8 @@ getGrob(object, ...)
 \item{object}{Object of clas MutSpectra}
 
 \item{...}{additional arguments to passed}
+
+\item{index}{integer specifying the plot index to extract}
 }
 \description{
 Method getGrob
