@@ -531,7 +531,6 @@ setMethod(f="toMutSpectra",
                       chr <- paste0("chr", chr)
                       GenomeInfoDb::seqlevels(variantGR) <- unique(chr)
                       GenomeInfoDb::seqnames(variantGR)[seq_along(variantGR)] <- chr
-                      #GenomeInfoDb::seqnames(variantGR) <- chr
                   } else {
                       memo <- paste("removing entries with chromosomes not matching the BSgenome")
                       warning(memo)
