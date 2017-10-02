@@ -529,9 +529,9 @@ setMethod(f="toMutSpectra",
                       memo <- paste("appending \"chr\" to chromosomes to fix mismatch with the BSgenome")
                       warning(memo)
                       chr <- paste0("chr", chr)
-                      browser()
                       GenomeInfoDb::seqlevels(variantGR) <- unique(chr)
-                      GenomeInfoDb::seqnames(variantGR) <- chr
+                      GenomeInfoDb::seqnames(variantGR)[seq_along(variantGR)] <- chr
+                      #GenomeInfoDb::seqnames(variantGR) <- chr
                   } else {
                       memo <- paste("removing entries with chromosomes not matching the BSgenome")
                       warning(memo)

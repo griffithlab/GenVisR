@@ -762,7 +762,7 @@ setMethod(f="orderSamples",
               
               # reverse the columns so that genes with highest mutation's are 
               # listed first (assumes gene_sort has been run on the data frame)
-              wideBoolean <- wideBoolean[,c(1, rev(2:ncol(wideBoolean)))]
+              wideBoolean <- wideBoolean[,c(1, rev(2:ncol(wideBoolean))), with=FALSE]
               
               # if there are any NA values present in a sample at the gene put that
               # remove that sample and save (at this stage it should be samples)
@@ -785,7 +785,7 @@ setMethod(f="orderSamples",
               
               # hiearchial sort on all column's (i.e. genes) such that samples are
               # rearranged if there is a mutation in that gene
-              sampleOrder <- wideBoolean[do.call(order, as.list(-wideBoolean[2:ncol(wideBoolean)])),]$sample
+              sampleOrder <- wideBoolean[do.call(order, as.list(-wideBoolean[,2:ncol(wideBoolean), with=F])),]$sample
               
               # Put those samples not in sample order in from the original levels of the
               # data (these are samples with no mutations)
