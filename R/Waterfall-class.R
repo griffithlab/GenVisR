@@ -1,3 +1,8 @@
+################################################################################
+##################### Public/Private Class Definitions #########################
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Public Class !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
 #' Class Waterfall
 #' 
 #' An S4 class for the waterfall plot object
@@ -25,7 +30,6 @@
 #' @import methods
 #' @importFrom gtable gtable
 #' @importFrom data.table data.table
-
 methods::setOldClass("gtable")
 setClass("Waterfall",
          representation=representation(PlotA="gtable",
@@ -40,103 +44,8 @@ setClass("Waterfall",
                                        ClinicalData="data.table",
                                        MutationHierarchy="data.table"),
          validity=function(object){
-             cat("!!!!! Waterfall~Inspector !!!!!\n")
          }
          )
-
-#' Initalizer method for the Waterfall class
-#' 
-#' @name Waterfall
-#' @rdname Waterfall-class
-#' @param .Object object of class Waterfall
-#' @noRd
-#' @import ggplot2
-setMethod(f="initialize",
-          signature="Waterfall",
-          definition=function(.Object, input, labelColumn, samples, coverage,
-                              mutation, genes, mutationHierarchy, recurrence, 
-                              geneOrder, geneMax, sampleOrder, plotA,
-                              plotATally, plotALayers, plotB, plotBTally,
-                              plotBLayers, gridOverlay, drop, labelSize, labelAngle,
-                              sampleNames, clinical, sectionHeights, sectionWidths, 
-                              plotCLayers, verbose){
-             
-              # assign the mapping of mutations and colors
-              .Object@MutationHierarchy <- setMutationHierarchy(input, mutationHierarchy, verbose)
-              
-              # convert to initial data to waterfall format
-              .Object@primaryData <- toWaterfall(input, .Object, labelColumn, verbose)
-              
-              # subset samples if specified
-              .Object@primaryData <- sampSubset(.Object, samples, verbose)
-              
-              # calculate the frequency and mutation burden
-              .Object@simpleMutationCounts <- calcSimpleMutationBurden(.Object, coverage, verbose)
-              .Object@complexMutationCounts <- calcComplexMutationBurden(.Object, coverage, verbose)
-              
-              # remove mutations if specified
-              .Object@primaryData <- rmvMutation(.Object, mutation, verbose)
-              
-              # remove entries for the same gene/sample based on a hierarchy leaving one
-              # (must happen before recurrenceSubset)
-              .Object@primaryData <- mutHierarchySubset(.Object, verbose)
-              
-              # Get genes which should be kept based on genes param
-              keepGenes_a <- geneSubset(.Object, genes, verbose)
-              
-              # get genes which should be kept based on recurrence parameter
-              keepGenes_b <- recurrenceSubset(.Object, recurrence, verbose)
-              
-              # Filter the necessary genes from geneSubset and recurrenceSubset
-              keepGenes <- unique(c(keepGenes_a, keepGenes_b))
-              .Object@primaryData <- geneFilter(.Object, keepGenes, verbose)
-              
-              # set the order of genes for plotting
-              .Object@primaryData <- orderGenes(.Object, geneOrder, verbose)
-              
-              # limit to a maximum number of genes
-              .Object@primaryData <- maxGeneSubset(.Object, geneMax, verbose)
-              
-              # set the order of samples for plotting
-              .Object@primaryData <- orderSamples(.Object, sampleOrder, verbose)
-              
-              # create the top sub-plot
-              .Object@PlotA <- buildMutationPlot(.Object, plotA, plotATally, 
-                                                 plotALayers, verbose)
-              # summarize gene level data
-              .Object@geneData <- constructGeneData(.Object, verbose)
-              
-              # create left sub-plot
-              .Object@PlotB <- buildGenePlot(.Object, plotB, plotBTally,
-                                             plotBLayers, verbose)
-              
-              # add the clinical data
-              if(is.null(clinical)){
-                  .Object@ClinicalData <- data.table::data.table()
-                  xTitle <- sampleNames
-              } else {
-                  .Object@ClinicalData <- getData(clinical)
-                  .Object@ClinicalData <- formatClinicalData(.Object, verbose)
-                  addLayer <- theme(axis.title.x=element_blank())
-                  plotCLayers[[length(plotCLayers ) + 1]] <- addLayer
-                  xTitle <- FALSE
-              }
-
-              # add the clinical data plot
-              .Object@PlotD <- buildClinicalPlot(.Object, clinicalLayers=clinical@clinicalLayers)
-             
-              # create the main plot
-              .Object@PlotC <- buildWaterfallPlot(.Object, gridOverlay, drop,
-                                                  labelSize, labelAngle, xTitle,
-                                                  sampleNames, plotCLayers, verbose)
-              
-              # align all plots together
-              .Object@Grob <- arrangeWaterfallPlot(.Object, sectionHeights=sectionHeights,
-                                                   sectionWidths=sectionWidths,
-                                                   verbose=verbose)
-              
-              return(.Object)
-          })
 
 #' Constructor for the Waterfall class.
 #' 
@@ -204,16 +113,278 @@ Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
                       gridOverlay=FALSE, drop=TRUE, labelSize=5, labelAngle=0,
                       sampleNames=TRUE, clinical=NULL, sectionHeights=NULL,
                       sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL){
-    cat("!!!!! Waterfall~Constructor !!!!!\n")
-    new("Waterfall", input=input, labelColumn=labelColumn, samples=samples, coverage=coverage,
-        mutation=mutation, genes=genes, mutationHierarchy=mutationHierarchy,
-        recurrence=recurrence, geneOrder=geneOrder, geneMax=geneMax, sampleOrder=sampleOrder,
-        plotA=plotA, plotATally=plotATally, plotALayers=plotALayers, plotB=plotB,
-        plotBTally=plotBTally, plotBLayers=plotBLayers, gridOverlay=gridOverlay, drop=drop,
-        labelSize=labelSize, labelAngle=labelAngle, sampleNames=sampleNames,
-        clinical=clinical, sectionHeights=sectionHeights, sectionWidths=sectionWidths,
-        verbose=verbose, plotCLayers=plotCLayers)
+    
+    # calculate all data for plots
+    data <- WaterfallData(input, labelColumn=labelColumn, mutationHierarchy=mutationHierarchy,
+                          samples=samples, coverage=coverage, mutation=mutation, genes=genes,
+                          recurrence=recurrence, geneOrder=geneOrder, geneMax=geneMax,
+                          sampleOrder=sampleOrder, verbose=verbose)
+    
+    # get the clinical data
+    if(is.null(clinical)){
+        ClinicalData <- data.table::data.table()
+    } else {
+        ClinicalData <- getData(clinical)
+    }
+    
+    # construct all the plots based on the data
+    plots <- WaterfallPlots(data, clinical=clinical, plotA=plotA,
+                            plotATally=plotATally, plotALayers=plotALayers,
+                            plotB=plotB, plotBTally=plotBTally,
+                            plotBLayers=plotBLayers, plotCLayers=plotCLayers,
+                            gridOverlay=gridOverlay, drop=drop,
+                            labelSize=labelSize, labelAngle=labelAngle,
+                            sampleNames=sampleNames, verbose=verbose)
+
+    # align all plots together
+    Grob <- arrangeWaterfallPlot(plots, sectionHeights=sectionHeights,
+                                 sectionWidths=sectionWidths, verbose=verbose)
+    
+    new("Waterfall", PlotA=getGrob(plots, index=1), PlotB=getGrob(plots, index=2),
+        PlotC=getGrob(plots, index=3), PlotD=getGrob(plots, index=4),
+        Grob=Grob, primaryData=getData(data, name="primaryData"),
+        simpleMutationCounts=getData(data, name="simpleMutationCounts"),
+        complexMutationCounts=getData(data, name="complexMutationCounts"),
+        geneData=getData(data, name="geneData"),
+        ClinicalData=ClinicalData,
+        MutationHierarchy=getData(data, name="mutationHierarchy"))
 }
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
+#' Private Class WaterfallData
+#' 
+#' An S4 class for the Data of the Waterfall plot object
+#' @name WaterfallData-class
+#' @rdname WaterfallData-class
+#' @slot primaryData data.table object storing the primary data, should have
+#' column names sample, gene, mutation, label.
+#' @slot simpleMutationCounts data.table object storing simplified mutation
+#' counts, should have column names sample, mutation, Freq, mutationBurden
+#' @slot complexMutationCounts data.table object storing mutation counts per
+#' mutation type should have column names sample, mutation, Freq, mutationBurden.
+#' @slot geneData data.table object storing gene counts, should have column
+#' names gene, mutation, count.
+#' @import methods
+#' @importFrom data.table data.table
+#' @noRd
+setClass("WaterfallData",
+         representation=representation(primaryData="data.table",
+                                       simpleMutationCounts="data.table",
+                                       complexMutationCounts="data.table",
+                                       geneData="data.table",
+                                       mutationHierarchy="data.table"),
+         validity=function(object){
+         }
+)
+
+#' Constructor for the WaterfallData class.
+#' 
+#' @name WaterfallData
+#' @rdname WaterfallData-class
+#' @param object Object of class MutationAnnotationFormat
+#' @noRd
+WaterfallData <- function(object, labelColumn, samples, mutationHierarchy,
+                          coverage, mutation, genes, recurrence, geneOrder,
+                          geneMax, sampleOrder, verbose){
+    
+    # assign the mapping of mutations and colors
+    mutationHierarchy <- setMutationHierarchy(object, mutationHierarchy, verbose)
+    
+    # convert to initial data to waterfall format
+    primaryData <- toWaterfall(object, mutationHierarchy, labelColumn, verbose)
+    
+    # subset samples if specified
+    primaryData <- sampSubset(primaryData, samples, verbose)
+    
+    # calculate the frequency and mutation burden
+    simpleMutationCounts <- calcSimpleMutationBurden(primaryData, coverage, verbose)
+    complexMutationCounts <- calcComplexMutationBurden(primaryData, coverage, verbose)
+    
+    # remove mutations if specified
+    primaryData <- rmvMutation(primaryData, mutation, verbose)
+    
+    # remove entries for the same gene/sample based on a hierarchy leaving one
+    # (must happen before recurrenceSubset)
+    primaryData <- mutHierarchySubset(primaryData, mutationHierarchy, verbose)
+    
+    # Get genes which should be kept based on genes param
+    keepGenes_a <- geneSubset(primaryData, genes, verbose)
+    
+    # get genes which should be kept based on recurrence parameter
+    keepGenes_b <- recurrenceSubset(primaryData, recurrence, verbose)
+    
+    # Filter the necessary genes from geneSubset and recurrenceSubset
+    keepGenes <- unique(c(keepGenes_a, keepGenes_b))
+    primaryData <- geneFilter(primaryData, keepGenes, verbose)
+    
+    # set the order of genes for plotting
+    primaryData <- orderGenes(primaryData, geneOrder, verbose)
+    
+    # limit to a maximum number of genes
+    primaryData <- maxGeneSubset(primaryData, geneMax, verbose)
+    
+    # set the order of samples for plotting
+    primaryData <- orderSamples(primaryData, sampleOrder, verbose)
+    
+    # summarize gene level data
+    geneData <- constructGeneData(primaryData, verbose)
+    
+    # initalize the object
+    new("WaterfallData", primaryData=primaryData, simpleMutationCounts=simpleMutationCounts,
+        complexMutationCounts=complexMutationCounts, geneData=geneData, mutationHierarchy=mutationHierarchy)
+}
+
+#' Private Class WaterfallPlots
+#' 
+#' An S4 class for the grobs of the Waterfall plot object
+#' @name WaterfallPlots-class
+#' @rdname WaterfallPlots-class
+#' @slot PlotA gtable object for the top sub-plot.
+#' @slot PlotB gtable object for the left sub-plot.
+#' @slot PlotC gtable object for the main plot.
+#' @slot PlotD gtable object for the bottom sub-plot.
+#' @import methods
+#' @importFrom gtable gtable
+#' @noRd
+setClass("WaterfallPlots",
+         representation=representation(PlotA="gtable",
+                                       PlotB="gtable",
+                                       PlotC="gtable",
+                                       PlotD="gtable"),
+         validity=function(object){
+         }
+)
+
+#' Constructor for the WaterfallPlots class.
+#' 
+#' @name WaterfallPlots
+#' @rdname WaterfallPlots-class
+#' @param object Object of class WaterfallData
+#' @noRd
+WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers, 
+                           plotB, plotBTally, plotBLayers, gridOverlay, drop,
+                           labelSize, labelAngle, sampleNames,
+                           plotCLayers, verbose){
+
+    # create the top sub-plot
+    PlotA <- buildMutationPlot(object, plotA, plotATally, plotALayers, verbose)
+    
+    # create left sub-plot
+    PlotB <- buildGenePlot(object, plotB, plotBTally, plotBLayers, verbose)
+    
+    # add the clinical data
+    if(is(clinical, "Clinical")){
+        # format the clinical data object using the WaterfallData object
+        ClinicalData <- formatClinicalData(object, clinical, verbose)
+        
+        # make sure the new formating conforms with ClinicalData class 
+        ClinicalData <- ClinicalData(ClinicalData, inputFormat="long", verbose=verbose)
+        
+        # add layer to suppress the x-axis text in the proportion plot
+        addLayer <- theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+        plotCLayers[[length(plotCLayers ) + 1]] <- addLayer
+        xTitle <- FALSE
+        
+        # add the clinical data plot
+        PlotD <- buildClinicalPlot(ClinicalData, clinicalLayers=getLayers(clinical), verbose=verbose)
+    } else {
+        PlotD <- gtable::gtable()
+        xTitle <- TRUE
+    }
+    
+    # create the main plot
+    PlotC <- buildWaterfallPlot(object, gridOverlay, drop, labelSize,
+                                labelAngle, xTitle, sampleNames, plotCLayers,
+                                verbose)
+    
+    # initalize the object
+    new("WaterfallPlots", PlotA=PlotA, PlotB=PlotB, PlotC=PlotC, PlotD=PlotD)
+}
+
+
+################################################################################
+###################### Accessor function definitions ###########################
+
+#' @rdname getData-methods
+#' @param name String corresponding to the slot for which to extract data from
+#' the object WaterfallData, one of "primaryData", "simpleMutationCounts",
+#' "complexMutationCounts", "geneData", or "mutationHierarchy
+#' @param index Integer specifying the slot for which to extract data from the
+#' object WaterfallData, must be a value between 1-4.
+#' @aliases getData
+setMethod(f="getData",
+          signature="WaterfallData",
+          definition=function(object, name=NULL, index=NULL, ...){
+             
+              if(is.null(index)){
+                  index <- 0
+              } else {
+                  if(index > 4){
+                      memo <- paste("index out of bounds")
+                      stop(memo)
+                  }
+              }
+              
+              if(is.null(name)){
+                  name <- "noMatch"
+              } else {
+                  if(!(name %in% c("primaryData", "simpleMutationCounts", "complexMutationCounts", "geneData", "mutationHierarchy"))){
+                      memo <- paste("slot name not found")
+                      stop(memo)
+                  }
+              }
+              
+              if(name == "primaryData" | index == 1){
+                  data <- object@primaryData
+              } else if(name == "simpleMutationCounts" | index == 2){
+                  data <- object@simpleMutationCounts
+              } else if(name == "complexMutationCounts" | index == 3){
+                  data <- object@complexMutationCounts
+              } else if(name == "geneData" | index == 4){
+                  data <- object@geneData
+              } else if(name == "mutationHierarchy" | index == 5) {
+                  data <- object@mutationHierarchy
+              }
+              
+              return(data)
+          })
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+#' @param index integer specifying the plot index to extract
+setMethod(f="getGrob",
+          signature="WaterfallPlots",
+          definition=function(object, index=1, ...){
+              if(index == 1){
+                  grob <- object@PlotA
+              } else if(index == 2) {
+                  grob <- object@PlotB
+              } else if(index == 3) {
+                  grob <- object@PlotC
+              } else if(index == 4) {
+                  grob <- object@PlotD
+              } else {
+                  stop("Subscript out of bounds")
+              }
+              return(grob)
+          })
+
+#' @rdname drawPlot-methods
+#' @aliases drawPlot
+#' @importFrom grid grid.draw
+#' @exportMethod drawPlot
+setMethod(
+    f="drawPlot",
+    signature="Waterfall",
+    definition=function(object, ...){
+        mainPlot <- object@Grob
+        grid::grid.draw(mainPlot)
+    }
+)
+
+################################################################################
+####################### Method function definitions ############################
 
 #' @rdname Waterfall-methods
 #' @aliases Waterfall
@@ -223,10 +394,11 @@ Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
 #' @return data.table object subset on "samples" if "samples" is not null.
 #' @noRd
 setMethod(f="sampSubset",
-          signature="Waterfall",
+          signature="data.table",
           definition=function(object, samples, verbose, ...){
-              # access the part of the object we want to manipulate
-              primaryData <- object@primaryData
+              
+              # set the object to primary data
+              primaryData <- object
               
               # Dont do anything if samples is null
               if(is.null(samples)) return(primaryData)
@@ -275,10 +447,11 @@ setMethod(f="sampSubset",
 #' @noRd
 #' @importFrom data.table as.data.table
 setMethod(f="calcSimpleMutationBurden",
-          signature="Waterfall",
+          signature="data.table",
           definition=function(object, coverage, verbose, ...){
-              # access the part of the object we want to manipulate
-              primaryData <- object@primaryData
+              
+              # set primaryData as the object
+              primaryData <- object
               
               # quality checks
               if(length(coverage) > 1 && !is.null(coverage)){
@@ -342,10 +515,11 @@ setMethod(f="calcSimpleMutationBurden",
 #' @importFrom data.table setDT
 #' @importFrom data.table data.table
 setMethod(f="calcComplexMutationBurden",
-          signature="Waterfall",
+          signature="data.table",
           definition=function(object, coverage, verbose, ...){
-              # access the part of the object we want to manipulate
-              primaryData <- object@primaryData
+              
+              # set primaryData as the object
+              primaryData <- object
               
               # quality checks
               if(length(coverage) > 1 && !is.null(coverage)){
@@ -393,11 +567,11 @@ setMethod(f="calcComplexMutationBurden",
 #' @return data.table object with mutations removed from primaryData slot.
 #' @noRd
 setMethod(f="rmvMutation",
-          signature="Waterfall",
+          signature="data.table",
           definition=function(object, mutation, verbose, ...){
               
-              # access the part of the object we want to manipulate
-              primaryData <- object@primaryData
+              # set primaryData as the object
+              primaryData <- object
               mutation <- unique(mutation)
               
               # do nothing if mutation is null
@@ -449,10 +623,10 @@ setMethod(f="rmvMutation",
 #' @return Character vector of genes which should be kept.
 #' @noRd
 setMethod(f="geneSubset",
-          signature="Waterfall",
+          signature="data.table",
           definition=function(object, genes, verbose, ...){
               # access the part of the object we want to manipulate
-              primaryData <- object@primaryData
+              primaryData <- object
               
               # Dont do anything if genes is null
               if(is.null(genes)) return(NA)
@@ -488,11 +662,13 @@ setMethod(f="geneSubset",
 #' most important if there is more than one record for the same gene/sample.
 #' @noRd
 setMethod(f="mutHierarchySubset",
-          signature="Waterfall",
-          definition=function(object, verbose, ...){
+          signature="data.table",
+          definition=function(object, mutationHierarchy, verbose, ...){
+              
               # grab the data
-              primaryData <- object@primaryData
-              mutationHierarchy <- object@MutationHierarchy
+              primaryData <- object
+              rowsPrimaryData <- nrow(primaryData)
+              mutationHierarchy
               
               # refactor the data frame
               primaryData$mutation<- factor(primaryData$mutation, levels=mutationHierarchy$mutation)
@@ -506,7 +682,7 @@ setMethod(f="mutHierarchySubset",
               
               # print status message
               if(verbose){
-                  memo <- paste("Removed", nrow(object@primaryData)-nrow(primaryData),
+                  memo <- paste("Removed", rowsPrimaryData-nrow(primaryData),
                                 "rows when setting the mutation hierarchy.")
                   message(memo)
               }
@@ -524,10 +700,10 @@ setMethod(f="mutHierarchySubset",
 #' @noRd
 #' @importFrom stats na.omit
 setMethod(f="recurrenceSubset",
-signature="Waterfall",
+signature="data.table",
 definition=function(object, recurrence, verbose, ...){
     # access the part of the object we want to manipulate
-    primaryData <- object@primaryData
+    primaryData <- object
     
     # Dont do anything if recurrence is null
     if(is.null(recurrence)) return(NA)
@@ -590,10 +766,10 @@ definition=function(object, recurrence, verbose, ...){
 #' @return data.table object genes reordered
 #' @noRd
 setMethod(f="orderGenes",
-          signature="Waterfall",
+          signature="data.table",
           definition=function(object, geneOrder, verbose, ...){
               # access the part of the object we want to manipulate
-              primaryData <- object@primaryData
+              primaryData <- object
              
               # print status message
               if(verbose){
@@ -647,10 +823,10 @@ setMethod(f="orderGenes",
 #' @return data.table object subset to contain only the max number of genes.
 #' @noRd
 setMethod(f="maxGeneSubset",
-          signature="Waterfall",
+          signature="data.table",
           definition=function(object, geneMax, verbose, ...){
               # access the part of the object we want to manipulate
-              primaryData <- object@primaryData
+              primaryData <- object
 
               # do nothing if null
               if(is.null(geneMax)){
@@ -692,10 +868,10 @@ setMethod(f="maxGeneSubset",
 #' @importFrom data.table dcast
 #' @noRd
 setMethod(f="orderSamples",
-          signature="Waterfall",
+          signature="data.table",
           definition=function(object, sampleOrder, verbose, ...){
               # access the part of the object we want to manipulate
-              primaryData <- object@primaryData
+              primaryData <- object
               
               # print status message
               if(verbose){
@@ -818,8 +994,9 @@ setMethod(f="orderSamples",
 #' @import ggplot2
 #' @importFrom gtable gtable
 setMethod(f="buildMutationPlot",
-          signature="Waterfall",
+          signature="WaterfallData",
           definition=function(object, plotA, plotATally, plotALayers, verbose, ...){
+              
               # grab only the first element for parameters
               plotA <- plotA[1]
               plotATally <- plotATally[1]
@@ -834,9 +1011,9 @@ setMethod(f="buildMutationPlot",
               }
               # extract the data for the type of plot we need
               if(toupper(plotATally) == toupper("simple")){
-                  mutationData <- object@simpleMutationCounts
+                  mutationData <- getData(object, name="simpleMutationCounts")
               } else if(toupper(plotATally) == toupper("complex")) {
-                  mutationData <- object@complexMutationCounts
+                  mutationData <- getData(object, name="complexMutationCounts")
               }
               
               # perform quality checks
@@ -872,9 +1049,9 @@ setMethod(f="buildMutationPlot",
               }
               
               # make sure sample levels match primaryData for plotting
-              mutationData$sample <- factor(mutationData$sample, levels=levels(object@primaryData$sample))
+              mutationData$sample <- factor(mutationData$sample, levels=levels(getData(object, name="primaryData")$sample))
               if(toupper(plotATally) == toupper("complex")) {
-                  mutationData$mutation <- factor(mutationData$mutation, levels=levels(object@primaryData$mutation))
+                  mutationData$mutation <- factor(mutationData$mutation, levels=levels(getData(object, name="primaryData")$mutation))
               } else if(toupper(plotATally) == toupper("simple")) {
                   # Do Nothing
               }
@@ -902,8 +1079,8 @@ setMethod(f="buildMutationPlot",
                                                   na.value="deepskyblue4", values="deepskyblue4")
               } else if(toupper(plotATally) == toupper("complex")){
                   plotLegend <- scale_fill_manual(name="Translational Effect",
-                                                  values=object@MutationHierarchy$color,
-                                                  breaks=object@MutationHierarchy$mutation,
+                                                  values=getData(object, name="mutationHierarchy")$color,
+                                                  breaks=getData(object, name="mutationHierarchy")$mutation,
                                                   drop=FALSE)
               }
               
@@ -940,10 +1117,10 @@ setMethod(f="buildMutationPlot",
 #' @return data.table object containing summarized gene level data
 #' @noRd
 setMethod(f="constructGeneData",
-          signature="Waterfall",
+          signature="data.table",
           definition=function(object, verbose, ...){
               # extract the data to work with
-              geneData <- object@primaryData
+              primaryData <- object
               
               # status message
               if(verbose){
@@ -952,9 +1129,9 @@ setMethod(f="constructGeneData",
               
               # construct geneData
               gene <- mutation <- NULL # appeases R CMD CHECK
-              geneData <- geneData[, count := .N, by = list(gene, mutation)]
+              geneData <- primaryData[, count := .N, by = list(gene, mutation)]
               geneData <- unique(geneData[,c("gene", "mutation", "count")])
-              geneData$gene <- factor(geneData$gene, levels=levels(object@primaryData$gene))
+              geneData$gene <- factor(geneData$gene, levels=levels(primaryData$gene))
               
               return(geneData)
           })
@@ -974,7 +1151,7 @@ setMethod(f="constructGeneData",
 #' @import ggplot2
 #' @importFrom gtable gtable
 setMethod(f="buildGenePlot",
-          signature="Waterfall",
+          signature="WaterfallData",
           definition=function(object, plotB, plotBTally, plotBLayers, verbose, ...){
               # grab only the first element for parameters
               plotB <- plotB[1]
@@ -984,7 +1161,7 @@ setMethod(f="buildGenePlot",
               if(is.null(plotB)) return(gtable::gtable())
               
               # extract the data needed for this plot
-              geneData <- na.omit(object@geneData)
+              geneData <- na.omit(getData(object, name="geneData"))
               
               # print status message
               if(verbose) {
@@ -1018,7 +1195,7 @@ setMethod(f="buildGenePlot",
               }
               
               # determine proportion of gene mutations
-              sampleCount <- nlevels(object@primaryData$sample)
+              sampleCount <- nlevels(getData(object, name="primaryData")$sample)
               geneData$proportion <- geneData$count/sampleCount * 100
               
               ################ ggplot2 #########################################
@@ -1037,13 +1214,13 @@ setMethod(f="buildGenePlot",
               # legend
               if(plotBTally == "simple"){
                   plotLegend <- scale_fill_manual(name="Translational Effect",
-                                                  values=object@MutationHierarchy$color,
-                                                  breaks=object@MutationHierarchy$mutation,
+                                                  values=getData(object, name="mutationHierarchy")$color,
+                                                  breaks=getData(object, name="mutationHierarchy")$mutation,
                                                   drop=FALSE)
               }else if(plotBTally == "complex"){
                   plotLegend <- scale_fill_manual(name="Translational Effect",
-                                                  values=object@MutationHierarchy$color,
-                                                  breaks=object@MutationHierarchy$mutation,
+                                                  values=getData(object, name="mutationHierarchy")$color,
+                                                  breaks=getData(object, name="mutationHierarchy")$mutation,
                                                   drop=FALSE)
               }
               
@@ -1072,12 +1249,12 @@ setMethod(f="buildGenePlot",
 #' @importFrom data.table data.table
 #' @importFrom data.table rbindlist
 setMethod(f="formatClinicalData",
-          signature="Waterfall",
-          definition=function(object, verbose, ...){
+          signature="WaterfallData",
+          definition=function(object, clinical, verbose, ...){
 
               # extract the data we need
-              clinicalData <- object@ClinicalData
-              primaryData <- object@primaryData
+              clinicalData <- getData(clinical)
+              primaryData <- getData(object, name="primaryData")
               
               # print status message
               if(verbose){
@@ -1086,9 +1263,9 @@ setMethod(f="formatClinicalData",
               }
               
               # remove clinical samples not found in the primary data
-              primaryDataSamples <- levels(primaryData$sample)
+              primaryDataSamples <- levels(primaryData$Sample)
+              removedSamp <- unique(clinicalData$sample[!clinicalData$sample %in% primaryDataSamples])
               clinicalData <- clinicalData[clinicalData$sample %in% primaryDataSamples,]
-              removedSamp <- unique(object@ClinicalData$sample[!object@ClinicalData$sample %in% clinicalData$sample])
               memo <- paste("Removed", length(removedSamp), "samples from the clinical data",
                             "not found in the primary waterfall data! These samples are:",
                             toString(removedSamp))
@@ -1133,12 +1310,12 @@ setMethod(f="formatClinicalData",
 #' @import ggplot2
 #' @importFrom gtable gtable
 setMethod(f="buildWaterfallPlot",
-          signature="Waterfall",
+          signature="WaterfallData",
           definition=function(object, gridOverlay, drop, labelSize, labelAngle,
                               sampleNames, xTitle, plotCLayers, verbose, ...){
               # extract the data we need
-              primaryData <- object@primaryData
-              paletteData <- object@MutationHierarchy
+              primaryData <- getData(object, name="primaryData")
+              paletteData <- getData(object, name="mutationHierarchy")
               
               # there could be samples with no gene information assign these a gene but no
               # mutation so they are plotted correctly
@@ -1261,34 +1438,6 @@ setMethod(f="buildWaterfallPlot",
               return(waterfallGrob)
           })
 
-#' @rdname buildClinicalPlot-methods
-#' @aliases Waterfall
-#' @param clinicalLayers List of ggplot2 layers to add to the clinical plot.
-#' @noRd
-#' @import ggplot2
-#' @importFrom gtable gtable
-setMethod(f="buildClinicalPlot",
-          signature="Waterfall",
-          definition=function(object, clinicalLayers, ...){
-              # extract necessary data
-              clinicalData <- object@ClinicalData
-              
-              # if clinical data is empty return empty gtable
-              if(nrow(clinicalData) == 0){
-                  return(gtable::gtable())
-              }
-              
-              # construct a plot
-              clinicalXLabel <- xlab(paste0("Sample n=", length(unique(clinicalData$sample))))
-              clinicalPlot <- ggplot(clinicalData, aes_string(x='sample',
-                                                              y='variable',
-                                                              fill='value')) +
-                  clinicalLayers + clinicalXLabel + theme(axis.text.x=element_blank())
-              
-              # contruct grob
-              clinicalGrob <- ggplotGrob(clinicalPlot)
-          })
-
 #' @rdname arrangeWaterfallPlot-methods
 #' @aliases arrangeWaterfallPlot
 #' @param sectionHeights Relative heights of each plot section (should sum to one).
@@ -1297,14 +1446,14 @@ setMethod(f="buildClinicalPlot",
 #' @importFrom grid nullGrob
 #' @importFrom gridExtra arrangeGrob
 setMethod(f="arrangeWaterfallPlot",
-          signature="Waterfall",
+          signature="WaterfallPlots",
           definition=function(object, sectionHeights, sectionWidths, verbose, ...){
               
               # grab the data we need
-              plotA <- object@PlotA
-              plotB <- object@PlotB
-              plotC <- object@PlotC
-              plotD <- object@PlotD
+              plotA <- getGrob(object, 1)
+              plotB <- getGrob(object, 2)
+              plotC <- getGrob(object, 3)
+              plotD <- getGrob(object, 4)
               
               # set default widths
               if(is.null(sectionWidths)){
@@ -1399,30 +1548,17 @@ setMethod(f="arrangeWaterfallPlot",
               return(finalPlot)
           })
 
-#' @rdname drawPlot-methods
-#' @aliases drawPlot
-#' @importFrom grid grid.draw
-#' @exportMethod drawPlot
-setMethod(
-    f="drawPlot",
-    signature="Waterfall",
-    definition=function(object, ...){
-        mainPlot <- object@Grob
-        grid::grid.draw(mainPlot)
-    }
-)
-
 #' @rdname geneFilter-methods
 #' @aliases geneFilter
 #' @param genes Character vector of genes to keep based on geneSubset and recurrenceSubset
 #' @noRd
 setMethod(
     f="geneFilter",
-    signature="Waterfall",
+    signature="data.table",
     definition=function(object, genes, verbose, ...){
         
         # extract the data we need
-        primaryData <- object@primaryData
+        primaryData <- object
         
         # do nothing if there are no genes to remove
         if(all(is.na(genes))) return(primaryData)

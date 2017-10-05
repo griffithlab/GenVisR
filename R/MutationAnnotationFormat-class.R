@@ -147,13 +147,10 @@ setMethod(f="toWaterfall",
                   message(memo)
               }
               
-              # grab the mutation hierarchy
-              hierarchy <- hierarchy@MutationHierarchy
-              
               # grab the sample, mutation, gene columns and set a label
-              sample <- object@mafObject@sample
-              mutation <- object@mafObject@mutation[,"Variant_Classification"]
-              gene <- object@mafObject@meta[,"Hugo_Symbol"]
+              sample <- getSample(object)
+              mutation <- getMutation(object)[,"Variant_Classification"]
+              gene <- getMeta(object)[,"Hugo_Symbol"]
               label <- NA
               
               # if a label column exists and is proper overwrite the label variable
@@ -163,14 +160,14 @@ setMethod(f="toWaterfall",
                                     "Found length to be", length(labelColumn))
                       warning(memo)
                       next
-                  } else if(!labelColumn %in% colnames(object@mafObject@meta)){
+                  } else if(!labelColumn %in% colnames(getMeta(object))){
                       memo <- paste("Did not find column:", toString(labelColumn),
                                     "in the meta slot of the mafObject! Valid",
                                     "names are:", toString(colnames(getMeta(object))))
                       warning(memo)
                       next
                   } else {
-                      label <- object@mafObject@meta[,labelColumn, with=FALSE]
+                      label <- getMeta(object)[,labelColumn, with=FALSE]
                   }
               }
               
@@ -180,13 +177,13 @@ setMethod(f="toWaterfall",
               
               # make a temporary ID column for genomic features to collapse on
               # this will ensure the mutation burden/frequency plot will be accurate
-              waterfallFormat$key <- paste0(object@mafObject@position$Chromosome, ":",
-                                            object@mafObject@position$Start_Position, ":",
-                                            object@mafObject@position$End_Position, ":",
-                                            object@mafObject@mutation$Reference_Allele, ":",
-                                            object@mafObject@mutation$Tumor_Seq_Allele1, ":",
-                                            object@mafObject@mutation$Tumor_Seq_Allele2, ":",
-                                            object@mafObject@sample$sample)
+              waterfallFormat$key <- paste0(getPosition(object)$Chromosome, ":",
+                                            getPosition(object)$Start_Position, ":",
+                                            getPosition(object)$End_Position, ":",
+                                            getPosition(object)$Reference_Allele, ":",
+                                            getPosition(object)$Tumor_Seq_Allele1, ":",
+                                            getPosition(object)$Tumor_Seq_Allele2, ":",
+                                            getSample(object)$sample)
               rowCountOrig <- nrow(waterfallFormat)
               
               # order the data based on the mutation hierarchy,
