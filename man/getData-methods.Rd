@@ -12,6 +12,8 @@
 \alias{getData}
 \alias{getData,WaterfallData-method}
 \alias{getData}
+\alias{getData,Waterfall-method}
+\alias{getData}
 \title{Method getData}
 \usage{
 getData(object, ...)
@@ -23,11 +25,20 @@ getData(object, ...)
 \S4method{getData}{MutSpectraPrimaryData}(object, ...)
 
 \S4method{getData}{WaterfallData}(object, name = NULL, index = NULL, ...)
+
+\S4method{getData}{Waterfall}(object, name = NULL, index = NULL, ...)
 }
 \arguments{
 \item{object}{Object of class Clinical,}
 
 \item{...}{additional arguments to passed}
+
+\item{name}{String corresponding to the slot for which to extract data from
+the object WaterfallData, one of "primaryData", "simpleMutationCounts",
+"complexMutationCounts", "geneData", or "mutationHierarchy}
+
+\item{index}{Integer specifying the slot for which to extract data from the
+object WaterfallData, must be a value between 1-4.}
 
 \item{name}{String corresponding to the slot for which to extract data from
 the object WaterfallData, one of "primaryData", "simpleMutationCounts",

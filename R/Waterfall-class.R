@@ -266,7 +266,7 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
                            plotB, plotBTally, plotBLayers, gridOverlay, drop,
                            labelSize, labelAngle, sampleNames,
                            plotCLayers, verbose){
-
+    
     # create the top sub-plot
     PlotA <- buildMutationPlot(object, plotA, plotATally, plotALayers, verbose)
     
@@ -306,6 +306,51 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
 ################################################################################
 ###################### Accessor function definitions ###########################
 
+#' Helper function to getData from classes
+#'
+#' @rdname getData-methods
+#' @param name String corresponding to the slot for which to extract data from
+#' the object WaterfallData, one of "primaryData", "simpleMutationCounts",
+#' "complexMutationCounts", "geneData", or "mutationHierarchy
+#' @param index Integer specifying the slot for which to extract data from the
+#' object WaterfallData, must be a value between 1-4.
+#' @aliases getData
+#' @noRd
+.getData <- function(object, name=NULL, index=NULL, ...){
+    
+    if(is.null(index)){
+        index <- 0
+    } else {
+        if(index > 4){
+            memo <- paste("index out of bounds")
+            stop(memo)
+        }
+    }
+    
+    if(is.null(name)){
+        name <- "noMatch"
+    } else {
+        if(!(name %in% c("primaryData", "simpleMutationCounts", "complexMutationCounts", "geneData", "mutationHierarchy"))){
+            memo <- paste("slot name not found")
+            stop(memo)
+        }
+    }
+    
+    if(name == "primaryData" | index == 1){
+        data <- object@primaryData
+    } else if(name == "simpleMutationCounts" | index == 2){
+        data <- object@simpleMutationCounts
+    } else if(name == "complexMutationCounts" | index == 3){
+        data <- object@complexMutationCounts
+    } else if(name == "geneData" | index == 4){
+        data <- object@geneData
+    } else if(name == "mutationHierarchy" | index == 5) {
+        data <- object@mutationHierarchy
+    }
+    
+    return(data)
+}
+
 #' @rdname getData-methods
 #' @param name String corresponding to the slot for which to extract data from
 #' the object WaterfallData, one of "primaryData", "simpleMutationCounts",
@@ -315,60 +360,53 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
 #' @aliases getData
 setMethod(f="getData",
           signature="WaterfallData",
-          definition=function(object, name=NULL, index=NULL, ...){
-             
-              if(is.null(index)){
-                  index <- 0
-              } else {
-                  if(index > 4){
-                      memo <- paste("index out of bounds")
-                      stop(memo)
-                  }
-              }
-              
-              if(is.null(name)){
-                  name <- "noMatch"
-              } else {
-                  if(!(name %in% c("primaryData", "simpleMutationCounts", "complexMutationCounts", "geneData", "mutationHierarchy"))){
-                      memo <- paste("slot name not found")
-                      stop(memo)
-                  }
-              }
-              
-              if(name == "primaryData" | index == 1){
-                  data <- object@primaryData
-              } else if(name == "simpleMutationCounts" | index == 2){
-                  data <- object@simpleMutationCounts
-              } else if(name == "complexMutationCounts" | index == 3){
-                  data <- object@complexMutationCounts
-              } else if(name == "geneData" | index == 4){
-                  data <- object@geneData
-              } else if(name == "mutationHierarchy" | index == 5) {
-                  data <- object@mutationHierarchy
-              }
-              
-              return(data)
-          })
+          definition=.getData)
+
+#' @rdname getData-methods
+#' @param name String corresponding to the slot for which to extract data from
+#' the object WaterfallData, one of "primaryData", "simpleMutationCounts",
+#' "complexMutationCounts", "geneData", or "mutationHierarchy
+#' @param index Integer specifying the slot for which to extract data from the
+#' object WaterfallData, must be a value between 1-4.
+#' @aliases getData
+setMethod(f="getData",
+          signature="Waterfall",
+          definition=.getData)
+
+#' Helper function to extract grobs from objects
+#'
+#' @rdname getGrob-methods
+#' @aliases getGrob
+#' @param index integer specifying the plot index to extract
+#' @noRd
+.getGrob <- function(object, index=1, ...){
+    if(index == 1){
+        grob <- object@PlotA
+    } else if(index == 2) {
+        grob <- object@PlotB
+    } else if(index == 3) {
+        grob <- object@PlotC
+    } else if(index == 4) {
+        grob <- object@PlotD
+    } else {
+        stop("Subscript out of bounds")
+    }
+    return(grob)
+}
 
 #' @rdname getGrob-methods
 #' @aliases getGrob
 #' @param index integer specifying the plot index to extract
 setMethod(f="getGrob",
           signature="WaterfallPlots",
-          definition=function(object, index=1, ...){
-              if(index == 1){
-                  grob <- object@PlotA
-              } else if(index == 2) {
-                  grob <- object@PlotB
-              } else if(index == 3) {
-                  grob <- object@PlotC
-              } else if(index == 4) {
-                  grob <- object@PlotD
-              } else {
-                  stop("Subscript out of bounds")
-              }
-              return(grob)
-          })
+          definition=.getGrob)
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+#' @param index integer specifying the plot index to extract
+setMethod(f="getGrob",
+          signature="Waterfall",
+          definition=.getGrob)
 
 #' @rdname drawPlot-methods
 #' @aliases drawPlot
@@ -1251,7 +1289,7 @@ setMethod(f="buildGenePlot",
 setMethod(f="formatClinicalData",
           signature="WaterfallData",
           definition=function(object, clinical, verbose, ...){
-
+              
               # extract the data we need
               clinicalData <- getData(clinical)
               primaryData <- getData(object, name="primaryData")
@@ -1263,7 +1301,7 @@ setMethod(f="formatClinicalData",
               }
               
               # remove clinical samples not found in the primary data
-              primaryDataSamples <- levels(primaryData$Sample)
+              primaryDataSamples <- levels(primaryData$sample)
               removedSamp <- unique(clinicalData$sample[!clinicalData$sample %in% primaryDataSamples])
               clinicalData <- clinicalData[clinicalData$sample %in% primaryDataSamples,]
               memo <- paste("Removed", length(removedSamp), "samples from the clinical data",
@@ -1386,13 +1424,13 @@ setMethod(f="buildWaterfallPlot",
               
               if(all(is.na(primaryData$label)))
               {
+                  label <- geom_blank()
+              } else {
                   label <- geom_text(data=primaryData,
                                      mapping=aes_string(x='sample', y='gene',
                                                         label='label'),
                                      size=labelSize, colour='white',
                                      angle=labelAngle)
-              } else {
-                  label <- geom_blank()
               }
               
               # base theme

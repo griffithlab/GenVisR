@@ -10,6 +10,8 @@
 \alias{getGrob}
 \alias{getGrob,WaterfallPlots-method}
 \alias{getGrob}
+\alias{getGrob,Waterfall-method}
+\alias{getGrob}
 \title{Method getGrob}
 \usage{
 getGrob(object, ...)
@@ -19,11 +21,15 @@ getGrob(object, ...)
 \S4method{getGrob}{MutSpectraPlots}(object, index = 1, ...)
 
 \S4method{getGrob}{WaterfallPlots}(object, index = 1, ...)
+
+\S4method{getGrob}{Waterfall}(object, index = 1, ...)
 }
 \arguments{
 \item{object}{Object of clas MutSpectra}
 
 \item{...}{additional arguments to passed}
+
+\item{index}{integer specifying the plot index to extract}
 
 \item{index}{integer specifying the plot index to extract}
 
