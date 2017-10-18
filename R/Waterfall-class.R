@@ -358,6 +358,7 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
 #' @param index Integer specifying the slot for which to extract data from the
 #' object WaterfallData, must be a value between 1-4.
 #' @aliases getData
+#' @noRd
 setMethod(f="getData",
           signature="WaterfallData",
           definition=.getData)
@@ -369,6 +370,7 @@ setMethod(f="getData",
 #' @param index Integer specifying the slot for which to extract data from the
 #' object WaterfallData, must be a value between 1-4.
 #' @aliases getData
+#' @noRd
 setMethod(f="getData",
           signature="Waterfall",
           definition=.getData)
@@ -397,6 +399,7 @@ setMethod(f="getData",
 #' @rdname getGrob-methods
 #' @aliases getGrob
 #' @param index integer specifying the plot index to extract
+#' @noRd
 setMethod(f="getGrob",
           signature="WaterfallPlots",
           definition=.getGrob)
@@ -404,6 +407,7 @@ setMethod(f="getGrob",
 #' @rdname getGrob-methods
 #' @aliases getGrob
 #' @param index integer specifying the plot index to extract
+#' @noRd
 setMethod(f="getGrob",
           signature="Waterfall",
           definition=.getGrob)

@@ -39,84 +39,87 @@ test_that("accessor method getMeta extracts all meta columns", {
     expect_true(extractedColNum == expectedColNum)
 })
 
-# # define additional objects needed for testing
-# mockWaterfall <- mockS4object("Waterfall")
-# mockWaterfall@MutationHierarchy <- setMutationHierarchy(mafObject, mutationHierarchy=NULL, verbose=FALSE)
-# 
-# test_that("setMutationHierarchy outputs a data.table with proper columns", {
-#     
-#     # test that it is a data.table
-#     expect_is(mockWaterfall@MutationHierarchy, "data.table")
-#     
-#     # test that it has the proper columns
-#     actualCol <- colnames(mockWaterfall@MutationHierarchy)
-#     expectedCol <- c("mutation", "color", "label")
-#     expect_true(all(actualCol %in% expectedCol))
-# })
-# 
-# # define an empty table of mutation hierarchies
-# emptyMutationHierarchy <- data.table::data.table()
-# 
-# test_that("setMutationHierarchy adds values for missing mutations not specified but in the primary data", {
-#     
-#     # test that a warning message is created
-#     expect_warning(setMutationHierarchy(mafObject, mutationHierarchy=emptyMutationHierarchy, verbose=FALSE), "The following mutations")
-#     
-#     # test that output is created for every mutation
-#     mockWaterfall@MutationHierarchy <- suppressWarnings(setMutationHierarchy(mafObject, mutationHierarchy=emptyMutationHierarchy, verbose=FALSE))
-#     expectedMutations <- unique(mafObject@mafObject@mutation$Variant_Classification)
-#     actualMutations <- mockWaterfall@MutationHierarchy$mutation
-#     expect_true(all(expectedMutations %in% actualMutations))
-# })
-# 
-# # define table with duplicate mutations
-# duplicateMutationHierarchy <- data.table::data.table("mutation"=c("RNA", "RNA"), "color"=c("blue", "red"))
-# 
-# test_that("setMutationHierarchy checks for duplicate mutations supplied to input", {
-#     
-#     # test that warning is created
-#     expect_warning(setMutationHierarchy(mafObject, mutationHierarchy=duplicateMutationHierarchy, verbose=FALSE), "was duplicated")
-#     
-#     # test that the duplicate is removed
-#     output <- suppressWarnings(setMutationHierarchy(mafObject, mutationHierarchy=duplicateMutationHierarchy, verbose=FALSE)$mutation)
-#     boolean <- !any(duplicated(output))
-#     expect_true(boolean)
-# })
-# 
-# # define additional objects needed for testing
-# mockWaterfall@primaryData <- toWaterfall(mafObject, hierarchy=mockWaterfall, labelColumn=NULL, verbose=FALSE)
-# 
-# test_that("toWaterfall outputs the correct columns and data types", {
-#     
-#     # check that the data is of the proper class
-#     expect_is(mockWaterfall@primaryData, "data.table")
-#     
-#     # check for the correct columns
-#     expectedCol <- c("sample", "gene", "mutation", "label")
-#     actualCol <- colnames(mockWaterfall@primaryData)
-#     expect_true(all(actualCol %in% expectedCol))
-# })
-# 
-# test_that("toWaterfall adds a specified label column", {
-#     
-#     mockWaterfall@primaryData <- toWaterfall(mafObject, hierarchy=mockWaterfall, labelColumn="Hugo_Symbol", verbose=FALSE)
-#     expectedValues <- mafObject@mafObject@meta$Hugo_Symbol
-#     expect_true(all(mockWaterfall@primaryData$label %in% expectedValues))
-# })
-# 
-# test_that("toWaterfall removes duplicate mutations", {
-#     
-    # # create maf object with a duplicate row
-    # mafObject@mafObject@position <- mafObject@mafObject@position[c(1, 1),]
-    # mafObject@mafObject@mutation <- mafObject@mafObject@mutation[c(1, 1),]
-    # mafObject@mafObject@sample <- mafObject@mafObject@sample[c(1, 1),]
-    # mafObject@mafObject@meta <- mafObject@mafObject@meta[c(1, 1),]
-#     
-#     # create mock waterfall
-#     mockWaterfall@primaryData <- toWaterfall(mafObject, hierarchy=mockWaterfall, labelColumn=NULL, verbose=FALSE)
-#     
-#     expect_true(nrow(mockWaterfall@primaryData) == 1)
-# })
+
+mutationHierarchy <- setMutationHierarchy(mafObject, mutationHierarchy=NULL, verbose=F)
+test_that("setMutationHierarchy outputs a data.table with proper columns", {
+
+    # test that it is a data.table
+    expect_is(mutationHierarchy, "data.table")
+
+    # test that it has the proper columns
+    actualCol <- colnames(mutationHierarchy)
+    expectedCol <- c("mutation", "color", "label")
+    expect_true(all(actualCol %in% expectedCol))
+})
+
+# define an empty table of mutation hierarchies
+emptyMutationHierarchy <- data.table::data.table()
+
+test_that("setMutationHierarchy adds values for missing mutations not specified but in the primary data", {
+
+    # test that a warning message is created
+    expect_warning(setMutationHierarchy(mafObject, mutationHierarchy=emptyMutationHierarchy, verbose=FALSE), "The following mutations")
+
+    # test that output is created for every mutation
+    mutationHierarchy <- suppressWarnings(setMutationHierarchy(mafObject, mutationHierarchy=emptyMutationHierarchy, verbose=FALSE))
+    expectedMutations <- unique(getMutation(mafObject)$Variant_Classification)
+    actualMutations <- mutationHierarchy$mutation
+    expect_true(all(expectedMutations %in% actualMutations))
+})
+
+
+
+# define table with duplicate mutations
+duplicateMutationHierarchy <- data.table::data.table("mutation"=c("RNA", "RNA"), "color"=c("blue", "red"))
+
+test_that("setMutationHierarchy checks for duplicate mutations supplied to input", {
+
+    # test that warning is created
+    expect_warning(setMutationHierarchy(mafObject, mutationHierarchy=duplicateMutationHierarchy, verbose=FALSE), "was duplicated")
+
+    # test that the duplicate is removed
+    output <- suppressWarnings(setMutationHierarchy(mafObject, mutationHierarchy=duplicateMutationHierarchy, verbose=FALSE)$mutation)
+    
+    boolean <- !any(duplicated(output))
+    expect_true(boolean)
+})
+
+
+# define additional objects needed for testing
+setMutationHierarchy.out <- setMutationHierarchy(mafObject, mutationHierarchy=NULL, verbose=FALSE)
+toWaterfall.out <- toWaterfall(mafObject, hierarchy=setMutationHierarchy.out, labelColumn=NULL, verbose=FALSE)
+
+test_that("toWaterfall outputs the correct columns and data types", {
+
+    # check that the data is of the proper class
+    expect_is(toWaterfall.out, "data.table")
+
+    # check for the correct columns
+    expectedCol <- c("sample", "gene", "mutation", "label")
+    actualCol <- colnames(toWaterfall.out)
+    expect_true(all(actualCol %in% expectedCol))
+})
+
+test_that("toWaterfall adds a specified label column", {
+
+    toWaterfall.out <- toWaterfall(mafObject, hierarchy=setMutationHierarchy.out, labelColumn="Hugo_Symbol", verbose=FALSE)
+    expectedValues <- getMeta(mafObject)$Hugo_Symbol
+    expect_true(all(toWaterfall.out$label %in% expectedValues))
+})
+
+test_that("toWaterfall removes duplicate mutations", {
+    browser()
+    # create maf object with a duplicate row
+    mafObject@mafObject@position <- getPosition(mafObject)[c(1, 1),]
+    mafObject@mafObject@mutation <- getMutation(mafObject)[c(1, 1),]
+    mafObject@mafObject@sample <- getSample(mafObject)[c(1, 1),]
+    mafObject@mafObject@meta <- getMeta(mafObject)[c(1, 1),]
+
+    # create mock waterfall
+    toWaterfall.out <- toWaterfall(mafObject, hierarchy=setMutationHierarchy.out, labelColumn=NULL, verbose=FALSE)
+    
+    expect_true(nrow(toWaterfall.out) == 1)
+})
 
 # create output to test
 primaryData <- toMutSpectra(mafObject, verbose=FALSE)
