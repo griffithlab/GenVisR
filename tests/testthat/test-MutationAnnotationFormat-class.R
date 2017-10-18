@@ -5,6 +5,10 @@ testFile <- Sys.glob(paste0(testFileDir, "/brca.maf"))
 # define the object for testing
 mafObject <- MutationAnnotationFormat(testFile)
 
+################################################################################
+################## test MutationAnnotationFormat class construction ############
+################################################################################
+
 test_that("Vesion number is correctly extracted", {
     
     expectedVersion <- 2.4
@@ -17,6 +21,10 @@ test_that("accessor method getPosition extracts the proper columns", {
     extractedCol <- colnames(getPosition(mafObject))
     expect_true(all(extractedCol %in% expectedCol))
 })
+
+################################################################################
+################## test accessor methods #######################################
+################################################################################
 
 test_that("accessor method getMutation extracts the proper columns", {
     
@@ -39,6 +47,9 @@ test_that("accessor method getMeta extracts all meta columns", {
     expect_true(extractedColNum == expectedColNum)
 })
 
+################################################################################
+############# test the setMutationHierarchy method in Waterfall ################
+################################################################################
 
 mutationHierarchy <- setMutationHierarchy(mafObject, mutationHierarchy=NULL, verbose=F)
 test_that("setMutationHierarchy outputs a data.table with proper columns", {
@@ -84,6 +95,9 @@ test_that("setMutationHierarchy checks for duplicate mutations supplied to input
     expect_true(boolean)
 })
 
+################################################################################
+############# test the toWaterfall method in Waterfall #########################
+################################################################################
 
 # define additional objects needed for testing
 setMutationHierarchy.out <- setMutationHierarchy(mafObject, mutationHierarchy=NULL, verbose=FALSE)
@@ -108,7 +122,7 @@ test_that("toWaterfall adds a specified label column", {
 })
 
 test_that("toWaterfall removes duplicate mutations", {
-    browser()
+    
     # create maf object with a duplicate row
     mafObject@mafObject@position <- getPosition(mafObject)[c(1, 1),]
     mafObject@mafObject@mutation <- getMutation(mafObject)[c(1, 1),]
@@ -120,6 +134,10 @@ test_that("toWaterfall removes duplicate mutations", {
     
     expect_true(nrow(toWaterfall.out) == 1)
 })
+
+################################################################################
+############# test the toMutSpectra method in MutSpectra #######################
+################################################################################
 
 # create output to test
 primaryData <- toMutSpectra(mafObject, verbose=FALSE)

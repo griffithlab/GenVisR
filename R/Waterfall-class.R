@@ -407,7 +407,7 @@ setMethod(
 
 #' @rdname Waterfall-methods
 #' @aliases Waterfall
-#' @param object Object of class waterfall
+#' @param object Object of class data.table
 #' @param samples Character vector of samples to keep
 #' @param verbose Boolean for status updates
 #' @return data.table object subset on "samples" if "samples" is not null.
@@ -496,7 +496,7 @@ setMethod(f="calcSimpleMutationBurden",
               primaryData <- primaryData[!is.na(primaryData$gene),]
               
               # obtain a data table of mutation counts on the sample level
-              simpleMutationCounts <- data.table::as.data.table(table(primaryData[,c('sample')]))
+              simpleMutationCounts <- data.table::as.data.table(table(primaryData[,c('sample')], exclude=samples))
               colnames(simpleMutationCounts) <- c("sample", "Freq")
               simpleMutationCounts$mutation <- NA
               
