@@ -309,13 +309,7 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
 #' Helper function to getData from classes
 #'
 #' @rdname getData-methods
-#' @param name String corresponding to the slot for which to extract data from
-#' the object WaterfallData, one of "primaryData", "simpleMutationCounts",
-#' "complexMutationCounts", "geneData", or "mutationHierarchy
-#' @param index Integer specifying the slot for which to extract data from the
-#' object WaterfallData, must be a value between 1-4.
 #' @aliases getData
-#' @noRd
 .getData <- function(object, name=NULL, index=NULL, ...){
     
     if(is.null(index)){
@@ -352,25 +346,13 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
 }
 
 #' @rdname getData-methods
-#' @param name String corresponding to the slot for which to extract data from
-#' the object WaterfallData, one of "primaryData", "simpleMutationCounts",
-#' "complexMutationCounts", "geneData", or "mutationHierarchy
-#' @param index Integer specifying the slot for which to extract data from the
-#' object WaterfallData, must be a value between 1-4.
 #' @aliases getData
-#' @noRd
 setMethod(f="getData",
           signature="WaterfallData",
           definition=.getData)
 
 #' @rdname getData-methods
-#' @param name String corresponding to the slot for which to extract data from
-#' the object WaterfallData, one of "primaryData", "simpleMutationCounts",
-#' "complexMutationCounts", "geneData", or "mutationHierarchy
-#' @param index Integer specifying the slot for which to extract data from the
-#' object WaterfallData, must be a value between 1-4.
 #' @aliases getData
-#' @noRd
 setMethod(f="getData",
           signature="Waterfall",
           definition=.getData)
@@ -379,7 +361,6 @@ setMethod(f="getData",
 #'
 #' @rdname getGrob-methods
 #' @aliases getGrob
-#' @param index integer specifying the plot index to extract
 #' @noRd
 .getGrob <- function(object, index=1, ...){
     if(index == 1){
@@ -398,16 +379,12 @@ setMethod(f="getData",
 
 #' @rdname getGrob-methods
 #' @aliases getGrob
-#' @param index integer specifying the plot index to extract
-#' @noRd
 setMethod(f="getGrob",
           signature="WaterfallPlots",
           definition=.getGrob)
 
 #' @rdname getGrob-methods
 #' @aliases getGrob
-#' @param index integer specifying the plot index to extract
-#' @noRd
 setMethod(f="getGrob",
           signature="Waterfall",
           definition=.getGrob)

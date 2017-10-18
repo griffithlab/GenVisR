@@ -260,9 +260,12 @@ setGeneric(
 #' @name getData
 #' @rdname getData-methods
 #' @param object Object of class Clinical, 
+#' @param name String corresponding to the slot for which to extract data from.
+#' @param index Integer specifying the slot for which to extract data from.
 #' @param ... additional arguments to passed
 #' @details The getData method is an accessor function used to access data held
 #' in GenVisR objects.
+#' @exportMethod getData
 setGeneric(
     name="getData",
     def=function(object, ...){standardGeneric("getData")}
@@ -471,6 +474,7 @@ setGeneric(
 #' @name getGrob
 #' @rdname getGrob-methods
 #' @param object Object of clas MutSpectra
+#' @param index integer specifying the plot index to extract
 #' @param ... additional arguments to passed
 #' @exportMethod getGrob
 setGeneric(
