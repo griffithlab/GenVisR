@@ -159,6 +159,65 @@ test_that("mutHierarchySubset leaves on one entry per gene/sample", {
 
 ############################## geneSubset ######################################
 
-
+geneSubset.out <- geneSubset(mutHierarchySubset.out, genes=NULL, verbose=FALSE)
+test_that("geneSubset keeps samples by outputing an NA value in addition to genes", {
+    
+    expect_true(any(is.na(geneSubset.out)))
+    
+    geneSubset.out <- geneSubset(mutHierarchySubset.out, genes=c("ARC"), verbose=FALSE)
+    expect_true(any(is.na(geneSubset.out)))
+})
 
 ############################## recurrenceSubset ################################
+
+recurrenceSubset.out <- recurrenceSubset(mutHierarchySubset.out, recurrence=.4, verbose=FALSE) 
+test_that("recurrenceSubset correctly outputs a vector of genes above a set recurrence", {
+    geneProp <- table(mutHierarchySubset.out[,c("gene")])/length(unique(mutHierarchySubset.out$sample))
+    expected <- c(names(geneProp[geneProp >= .4]), NA)
+    actual <- recurrenceSubset.out
+    expect_true(all(actual %in% expected))
+})
+
+test_that("recurrenceSubset correctly resets the recurrence parameter if above the max observed recurrence", {
+    expect_warning(recurrenceSubset(mutHierarchySubset.out, recurrence=.5, verbose=FALSE), "exceeds the recurrence")
+    
+    recurrenceSubset.out <- suppressWarnings(recurrenceSubset(mutHierarchySubset.out, recurrence=.8, verbose=FALSE))
+    geneProp <- table(mutHierarchySubset.out[,c("gene")])/length(unique(mutHierarchySubset.out$sample))
+    expected <- c(names(geneProp[geneProp >= .4]), NA)
+    actual <- recurrenceSubset.out
+    expect_true(all(actual %in% expected))
+})
+
+######################### geneFilter ###########################################
+
+keepGenes <- unique(c(geneSubset.out, recurrenceSubset.out))
+geneFilter.out <- geneFilter(mutHierarchySubset.out, genes=keepGenes, verbose=FALSE)
+
+test_that("geneFilter correctly subsets data to only genes specified", {
+    expect_true(all(geneFilter.out$gene %in% keepGenes))
+})
+
+test_that("geneFilter correctly identifies if a gene is specified to be filtered but is not found", {
+    keepGenes <- c(keepGenes, "not_in_data")
+    expect_warning(geneFilter(mutHierarchySubset.out, genes=keepGenes, verbose=FALSE), "not found in")
+})
+
+############################# orderGenes #######################################
+# browser()
+# orderGenes.out <- orderGenes(geneFilter.out, geneOrder=NULL, verbose=FALSE)
+# test_that("orderGenes correctly refactors genes based on observed frequencies if no gene order is given", {
+#     levels
+# })
+# 
+# test_that("orderGenes correctly refactors genes based on input to the geneOrder parameter", {
+#     
+# })
+# 
+# ############################# maxGeneSubset ####################################
+# 
+# ############################# orderSamples #####################################
+# 
+# ############################# construcGeneData #################################
+# 
+# 
+# browser()
