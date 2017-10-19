@@ -606,7 +606,7 @@ setMethod(f="rmvMutation",
               }
               
               # store how many mutations there are originaly to figure out how
-              # manyt mutations are removed
+              # many mutations are removed
               totalMut <- length(na.omit(primaryData$mutation))
               
               # check if any mutations were specified but are not in the data
@@ -617,11 +617,12 @@ setMethod(f="rmvMutation",
                   warning(memo)
               }
               
-              # assign NA to any rows/columns with silent mutations, keep the
-              # sample so the cohort size is not accidently reduced
-              primaryData <- primaryData[primaryData$mutation %in% mutation,]
+              # remove mutations not specified to be kept, samples should remain
+              # because they are in the factor levels
+              keep <- primaryData$mutation %in% mutation
+              primaryData <- primaryData[keep,]
 
-              # figure out number of silent mutations that existed
+              # figure out number of mutations that existed
               mutCount <- totalMut - length(na.omit(primaryData$mutation))
               
               # print status message
