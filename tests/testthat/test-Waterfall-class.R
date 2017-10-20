@@ -242,11 +242,132 @@ test_that("orderGenes detects if no genes supplied are present in the data and a
     expect_true(expected)
 })
 
-# ############################# maxGeneSubset ####################################
-# 
-# ############################# orderSamples #####################################
-# 
-# ############################# construcGeneData #################################
-# 
-# 
-# browser()
+############################# maxGeneSubset ####################################
+
+maxGeneSubset.out <- maxGeneSubset(orderGenes.out, geneMax=2, verbose=FALSE)
+
+test_that("maxGeneSubset correctly limits genes to a maximum number", {
+    
+    # test1
+    expected <- 2
+    actual <- length(unique(maxGeneSubset.out$gene))
+    expect_equal(expected, actual)
+    
+    #test2
+    maxGeneSubset.out <- maxGeneSubset(orderGenes.out, geneMax=1, verbose=FALSE)
+    expected <- 1
+    actual <- length(unique(maxGeneSubset.out$gene))
+    expect_equal(expected, actual)
+})
+
+test_that("maxGeneSubset correctly deals with situations where geneMax is not an integer", {
+    
+    expect_warning(maxGeneSubset(orderGenes.out, geneMax=1.3, verbose=FALSE), "not a whole number")
+    maxGeneSubset.out <- suppressWarnings(maxGeneSubset(orderGenes.out, geneMax=1.3, verbose=FALSE))
+    expected <- 1
+    actual <- length(unique(maxGeneSubset.out$gene))
+    expect_equal(expected, actual)
+})
+
+############################# orderSamples #####################################
+
+orderSamples.out <- orderSamples(maxGeneSubset.out, sampleOrder=NULL, verbose=FALSE)
+
+test_that("orderSamples correctly reorders samples based on a hierarchy", {
+    
+    # test1
+    expected1 <- c("TCGA-A1-A0SF-01A-11D-A142-09", "TCGA-A1-A0SD-01A-11D-A10Y-09",
+                   "TCGA-A1-A0SG-01A-11D-A142-09", "TCGA-A1-A0SE-01A-11D-A099-09",
+                   "TCGA-A1-A0SB-01A-11D-A142-09")
+    expected2 <- c("TCGA-A1-A0SF-01A-11D-A142-09", "TCGA-A1-A0SD-01A-11D-A10Y-09",
+                   "TCGA-A1-A0SG-01A-11D-A142-09", "TCGA-A1-A0SB-01A-11D-A142-09",
+                   "TCGA-A1-A0SE-01A-11D-A099-09")
+    actual <- levels(orderSamples.out$sample)
+    expect_true(any(c(all(expected1 == actual), all(expected2 == actual))))
+    
+    # test2 special case is needed for this to ensure proper ordering, this is created here
+    testDT <- data.table::data.table("sample"=c("testSamp1", "testSamp1", "testSamp2", "testSamp3"),
+                                     "gene"=c("FAM182B", "ZNF91", "ZNF91", "ZNF740"),
+                                     "mutation"=rep("RNA", 4),
+                                     "label"=NA,
+                                     "count"=2)
+    testDT$sample <- factor(testDT$sample, levels=c(levels(testDT$sample), "testSamp1", "testSamp2", "testSamp3"))
+    testDT <- data.table::rbindlist(list(maxGeneSubset.out, testDT))
+    orderSamples.out <- orderSamples(testDT, sampleOrder=NULL, verbose=FALSE)
+    # both outcomes are correct
+    expected1 <- c("TCGA-A1-A0SF-01A-11D-A142-09", "testSamp1", "TCGA-A1-A0SD-01A-11D-A10Y-09",
+                   "TCGA-A1-A0SG-01A-11D-A142-09", "testSamp2", "testSamp3",
+                   "TCGA-A1-A0SB-01A-11D-A142-09", "TCGA-A1-A0SE-01A-11D-A099-09")
+    expected2 <- c("TCGA-A1-A0SF-01A-11D-A142-09", "testSamp1", "TCGA-A1-A0SD-01A-11D-A10Y-09",
+                   "TCGA-A1-A0SG-01A-11D-A142-09", "testSamp2", "testSamp3",
+                   "TCGA-A1-A0SE-01A-11D-A099-09", "TCGA-A1-A0SB-01A-11D-A142-09")
+    actual <- levels(orderSamples.out$sample)
+    expect_true(any(c(all(expected1 == actual), all(expected2 == actual))))
+})
+
+test_that("orderSamples correctly orders samples in a custom order if specified", {
+
+    sampleCustomOrder <- c("TCGA-A1-A0SF-01A-11D-A142-09", "TCGA-A1-A0SD-01A-11D-A10Y-09",
+                           "TCGA-A1-A0SG-01A-11D-A142-09", "TCGA-A1-A0SE-01A-11D-A099-09",
+                           "TCGA-A1-A0SB-01A-11D-A142-09")
+    orderSamples.out <- orderSamples(maxGeneSubset.out, sampleOrder=sampleCustomOrder, verbose=FALSE)
+    expected <- sampleCustomOrder
+    actual <- levels(orderSamples.out$sample)
+    expect_true(all(expected == actual))
+})
+
+test_that("orderSamples removes any duplicate samples provided when using a custom order", {
+
+    sampleCustomOrder <- c("TCGA-A1-A0SF-01A-11D-A142-09", "TCGA-A1-A0SD-01A-11D-A10Y-09",
+                           "TCGA-A1-A0SG-01A-11D-A142-09", "TCGA-A1-A0SE-01A-11D-A099-09",
+                           "TCGA-A1-A0SB-01A-11D-A142-09", "TCGA-A1-A0SF-01A-11D-A142-09")
+    expect_warning(orderSamples(maxGeneSubset.out, sampleOrder=sampleCustomOrder, verbose=FALSE), "Found duplicate elements")
+    
+    orderSamples.out <- suppressWarnings(orderSamples(maxGeneSubset.out, sampleOrder=sampleCustomOrder, verbose=FALSE))
+    expected <- sampleCustomOrder[1:5]
+    actual <- levels(orderSamples.out$sample)
+    expect_equal(expected, actual)
+})
+
+test_that("orderSamples adds extra samples to the data if provided", {
+    
+    # check that warning is produced
+    sampleCustomOrder <- c("TCGA-A1-A0SF-01A-11D-A142-09", "TCGA-A1-A0SD-01A-11D-A10Y-09",
+                           "TCGA-A1-A0SG-01A-11D-A142-09", "TCGA-A1-A0SE-01A-11D-A099-09",
+                           "TCGA-A1-A0SB-01A-11D-A142-09", "new_sample")
+    expect_warning(orderSamples(maxGeneSubset.out, sampleOrder=sampleCustomOrder, verbose=FALSE), "were not detected")
+    
+    # check sample is added to levels
+    orderSamples.out <- suppressWarnings(orderSamples(maxGeneSubset.out, sampleOrder=sampleCustomOrder, verbose=FALSE))
+    expected <- sampleCustomOrder
+    actual <- levels(orderSamples.out$sample)
+    expect_equal(expected, actual)
+    
+    # check sample is added to data
+    expect_true("new_sample" %in% orderSamples.out$sample)
+})
+
+############################# constructGeneData #################################
+constructGeneData.out <- constructGeneData(orderSamples.out, verbose=FALSE)
+
+test_that("constructGeneData properly summarizes gene reccurrence", {
+    expected <- 1
+    actual <- constructGeneData.out[constructGeneData.out$gene == "FAM182B" & constructGeneData.out$mutation == "Missense_Mutation",]$count
+    expect_equal(expected, actual)
+    
+    expected <- 2
+    actual <- constructGeneData.out[constructGeneData.out$gene == "CECR2" & constructGeneData.out$mutation == "Missense_Mutation",]$count
+    expect_equal(expected, actual)
+})
+
+######### test WaterfallData class construction with various parameters ########
+
+# TODO figure out a better way to do or drop it
+messages <- capture.output(WaterfallData(mafObject, labelColumn = NULL, samples = NULL,
+                                   mutationHierarchy = NULL, coverage = NULL, mutation = NULL,
+                                   genes = NULL, recurrence = NULL, geneOrder = NULL, geneMax = NULL,
+                                   sampleOrder = NULL, verbose = TRUE), type="message")
+
+test_that("WaterfallData constructor outputs a minimum number of status messages", {
+    expect_true(length(messages) > 5)
+})

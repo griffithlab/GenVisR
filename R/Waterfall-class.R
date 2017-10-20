@@ -870,6 +870,7 @@ setMethod(f="maxGeneSubset",
               if(geneMax %% 1 != 0){
                   memo <- paste("geneMax is not a whole number, rounding.")
                   geneMax <- round(geneMax)
+                  warning(memo)
               }
               
               # limit to max genes
@@ -937,7 +938,7 @@ setMethod(f="orderSamples",
                   }
                   
                   # status message
-                  removeSample <- unique(primaryData$sample[!primaryData$sample %in% sampleOrder])
+                  removeSample <- unique(levels(primaryData$sample)[!levels(primaryData$sample) %in% sampleOrder])
                   if(length(removeSample) != 0){
                       memo <- paste("Removing the samples:", toString(removeSample),
                                     "which were found in the data but not sampleOrder")
