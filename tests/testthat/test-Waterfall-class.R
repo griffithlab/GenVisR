@@ -203,16 +203,45 @@ test_that("geneFilter correctly identifies if a gene is specified to be filtered
 })
 
 ############################# orderGenes #######################################
-# browser()
-# orderGenes.out <- orderGenes(geneFilter.out, geneOrder=NULL, verbose=FALSE)
-# test_that("orderGenes correctly refactors genes based on observed frequencies if no gene order is given", {
-#     levels
-# })
-# 
-# test_that("orderGenes correctly refactors genes based on input to the geneOrder parameter", {
-#     
-# })
-# 
+
+orderGenes.out <- orderGenes(geneFilter.out, geneOrder=NULL, verbose=FALSE)
+test_that("orderGenes correctly refactors genes based on observed frequencies if no gene order is given", {
+    geneFreq <- table(orderGenes.out$gene)
+    maxGene <- geneFreq[geneFreq == max(geneFreq)]
+    maxGene <- unlist(as.list(maxGene))
+    expected <- tail(levels(orderGenes.out$gene), n=1) %in% names(maxGene)
+    expect_true(expected)
+})
+
+test_that("orderGenes correctly refactors genes based on input to the geneOrder parameter", {
+    orderGenes.out <- orderGenes(geneFilter.out, geneOrder=c("FAM182B", "CECR2"), verbose=FALSE)
+    expected <- all(tail(levels(orderGenes.out), n=2) == c("FAM182B", "CECR2"))
+    expect_true(expected)
+})
+
+test_that("orderGenes handles cases where genes are supplied which are not in the data", {
+    expect_warning(orderGenes(geneFilter.out, geneOrder=c("FAM182B", "CECR2", "notPresent"), verbose=FALSE), "The following arguments to geneOrder were")
+    
+    # check that an order is still set correctly
+    orderGenes.out <- suppressWarnings(orderGenes(geneFilter.out, geneOrder=c("FAM182B", "CECR2", "notPresent"), verbose=FALSE))
+    expected <- all(tail(levels(orderGenes.out), n=2) == c("FAM182B", "CECR2"))
+    expect_true(expected)
+    
+    # check that the missing gene is not included in the levels
+    expect_true(!"notPresent" %in% levels(orderGenes.out$gene))
+})
+
+test_that("orderGenes detects if no genes supplied are present in the data and acts accordingly", {
+    expect_warning(orderGenes(geneFilter.out, geneOrder=c("notPresent"), verbose=FALSE), "Found no genes")
+    
+    orderGenes.out <- suppressWarnings(orderGenes(geneFilter.out, geneOrder=c("notPresent"), verbose=FALSE))
+    geneFreq <- table(orderGenes.out$gene)
+    maxGene <- geneFreq[geneFreq == max(geneFreq)]
+    maxGene <- unlist(as.list(maxGene))
+    expected <- tail(levels(orderGenes.out$gene), n=1) %in% names(maxGene)
+    expect_true(expected)
+})
+
 # ############################# maxGeneSubset ####################################
 # 
 # ############################# orderSamples #####################################

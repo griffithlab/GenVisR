@@ -796,7 +796,11 @@ setMethod(f="orderGenes",
                   memo <- paste("Setting gene order")
               }
               
-              # order the genes based of frequency
+              # order based on mutation frequency
+              gene_mutation_table <- table(primaryData[,c('gene', 'mutation')])
+              geneOrderFreq <- names(sort(rowSums(gene_mutation_table)))
+              
+              # order the genes based on custom order
               if(!is.null(geneOrder)) {
                   # perform quality checks on geneOrder
                   if(!is.character(geneOrder)){
@@ -818,19 +822,22 @@ setMethod(f="orderGenes",
                       memo <- paste("The following arguments to geneOrder were",
                                     "not found in the data:", toString(gene_to_rmv))
                       warning(memo)
-                      geneOrder <- geneOrder[geneOrder %in% unique(primaryData$gene)]
-                      primaryData$gene <- factor(primaryData$gene, levels=rev(geneOrder))
-                      return(primaryData)
-                  } else if(length(gene_to_rmv) == length(geneOrder)) {
+                      geneOrder <- geneOrder[!geneOrder %in% gene_to_rmv]
+                  }
+                  if(length(geneOrder) == 0) {
                       memo <- paste0("Found no genes supplied to geneOrder in the",
-                                     "data, check case.")
+                                     "data, defaulting to an order based on frequency.")
                       warning(memo)
                   }
+                  
+                  # merge the custom gene order with the frequency order in case a user did not specify all genes
+                  geneOrderFreq <- geneOrderFreq[!geneOrderFreq %in% geneOrder]
+                  geneOrder <- c(geneOrderFreq, geneOrder)
+                  
+              } else {
+                  geneOrder <- geneOrderFreq
               }
               
-              # order based on mutation frequency
-              gene_mutation_table <- table(primaryData[,c('gene', 'mutation')])
-              geneOrder <- names(sort(rowSums(gene_mutation_table)))
               primaryData$gene <- factor(primaryData$gene, levels=geneOrder)
               return(primaryData)
           })
