@@ -415,10 +415,10 @@ test_that("constructGeneData works in verbose mode", {
 
 ######### test WaterfallData class construction with various parameters ########
 
-WaterfallData.out <- WaterfallData(mafObject, labelColumn = NULL, samples = NULL,
-                                   mutationHierarchy = NULL, coverage = NULL, mutation = NULL,
-                                   genes = NULL, recurrence = NULL, geneOrder = NULL, geneMax = NULL,
-                                   sampleOrder = NULL, verbose = FALSE)
+WaterfallData.out <- WaterfallData(mafObject, labelColumn=NULL, samples=NULL,
+                                   mutationHierarchy=NULL, coverage=44000000, mutation=NULL,
+                                   genes=NULL, recurrence=NULL, geneOrder=NULL, geneMax=15,
+                                   sampleOrder=NULL, verbose=FALSE)
 
 test_that("WaterfallData constructor outputs a S4 class object", {
     expect_s4_class(WaterfallData.out, "WaterfallData")
@@ -439,4 +439,247 @@ test_that("buildMutationPlot draws correctly", {
     
     buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="complex", plotALayers=NULL, verbose=FALSE)
     vdiffr::expect_doppelganger("mutation plot frequency complex", grid::grid.draw(buildMutationPlot.out))
+    
+    buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="burden", plotATally="simple", plotALayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("mutation plot burden simple", grid::grid.draw(buildMutationPlot.out))
+    
+    buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="burden", plotATally="complex", plotALayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("mutation plot burden complex", grid::grid.draw(buildMutationPlot.out))
 })
+
+################################# buildGenePlot ################################
+
+context("Waterfall Gene Plot")
+
+test_that("buildGenePlot draws correctly", {
+    
+    buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="proportion", plotBTally="simple", plotBLayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("gene plot proportion simple", grid::grid.draw(buildGenePlot.out))
+
+    buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="proportion", plotBTally="complex", plotBLayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("gene plot proportion complex", grid::grid.draw(buildGenePlot.out))
+
+    buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="simple", plotBLayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("gene plot frequency simple", grid::grid.draw(buildGenePlot.out))
+
+    buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="complex", plotBLayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("gene plot frequency complex", grid::grid.draw(buildGenePlot.out))
+})
+
+########################### buildWaterfallPlot #################################
+
+context("Waterfall main Plot")
+
+test_that("buildWaterfallPlot draws correctly", {
+    
+    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+                                                 drop=FALSE, labelSize=5, labelAngle=0,
+                                                 sampleNames=TRUE, xTitle=TRUE, plotCLayers=NULL,
+                                                 verbose=FALSE)
+    vdiffr::expect_doppelganger("main waterfall plot base", grid::grid.draw(buildWaterfallPlot.out))
+    
+    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =TRUE,
+                                                 drop=FALSE, labelSize=5, labelAngle=0,
+                                                 sampleNames=TRUE, xTitle=TRUE, plotCLayers=NULL,
+                                                 verbose=FALSE)
+    vdiffr::expect_doppelganger("main waterfall plot grid true", grid::grid.draw(buildWaterfallPlot.out))
+    
+    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+                                                 drop=TRUE, labelSize=5, labelAngle=0,
+                                                 sampleNames=TRUE, xTitle=TRUE, plotCLayers=NULL,
+                                                 verbose=FALSE)
+    vdiffr::expect_doppelganger("main waterfall plot drop true", grid::grid.draw(buildWaterfallPlot.out))
+    
+    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+                                                 drop=FALSE, labelSize=5, labelAngle=0,
+                                                 sampleNames=FALSE, xTitle=TRUE, plotCLayers=NULL,
+                                                 verbose=FALSE)
+    vdiffr::expect_doppelganger("main waterfall plot sampleNames false", grid::grid.draw(buildWaterfallPlot.out))
+    
+    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+                                                 drop=FALSE, labelSize=5, labelAngle=0,
+                                                 sampleNames=FALSE, xTitle=FALSE, plotCLayers=NULL,
+                                                 verbose=FALSE)
+    vdiffr::expect_doppelganger("main waterfall plot xtitle false", grid::grid.draw(buildWaterfallPlot.out))
+    
+    # test labeling feature
+    WaterfallData.out <- WaterfallData(mafObject, labelColumn="Hugo_Symbol", samples=NULL,
+                                       mutationHierarchy=NULL, coverage=44000000, mutation=NULL,
+                                       genes=NULL, recurrence=NULL, geneOrder=NULL, geneMax=15,
+                                       sampleOrder=NULL, verbose=FALSE)
+    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+                                                 drop=FALSE, labelSize=5, labelAngle=0,
+                                                 sampleNames=FALSE, xTitle=FALSE, plotCLayers=NULL,
+                                                 verbose=FALSE)
+    vdiffr::expect_doppelganger("main waterfall plot label", grid::grid.draw(buildWaterfallPlot.out))
+    
+})
+
+########################### formatClinicalData #################################
+
+context("Waterfall Clinical Plot setup")
+
+# create simple ClinicalObject for testing
+library(ggplot2)
+clinData <- data.table::data.table("sample"=c(as.character(unique(getSample(mafObject)$Tumor_Sample_Barcode))), "variable"="a", "value"="b")
+clinObject <- Clinical(inputData=clinData, inputFormat = "long", clinicalLayers = theme(axis.text.x=element_text(angle=20)), verbose=FALSE)
+
+formatClinicalData.out <- formatClinicalData(WaterfallData.out, clinical=clinObject, verbose=FALSE)
+
+test_that("formatClinicalData adjusts the Clinical object to match samples in WaterfallData", {
+    expected <- levels(getData(WaterfallData.out, name="primaryData")$sample)
+    actual <- levels(formatClinicalData.out$sample)
+    expect_true(all(expected == actual))
+})
+
+test_that("formatClinicalData removes samples not in the WaterfallData", {
+    
+    # create simple test
+    clinData <- data.table::data.table("sample"=c(as.character(unique(getSample(mafObject)$Tumor_Sample_Barcode)), "test"), "variable"="a", "value"="b")
+    clinObject <- Clinical(inputData=clinData, inputFormat = "long", clinicalLayers = theme(axis.text.x=element_text(angle=20)), verbose=FALSE)
+    
+    # expect warning
+    expect_warning(formatClinicalData(WaterfallData.out, clinical=clinObject, verbose=FALSE), "Removed")
+    
+    # expect levels match
+    formatClinicalData.out <- suppressWarnings(formatClinicalData(WaterfallData.out, clinical=clinObject, verbose=FALSE))
+    expected <- levels(getData(WaterfallData.out, name="primaryData")$sample)
+    actual <- levels(formatClinicalData.out$sample)
+    expect_true(all(expected == actual))
+    
+})
+
+test_that("formatClinicalData fills missing samples not in the Clinical object", {
+    
+    # create simple test
+    clinData <- data.table::data.table("sample"=c(as.character(unique(getSample(mafObject)$Tumor_Sample_Barcode)[-1])), "variable"="a", "value"="b")
+    clinObject <- Clinical(inputData=clinData, inputFormat = "long", clinicalLayers = theme(axis.text.x=element_text(angle=20)), verbose=FALSE)
+    
+    # expect warning
+    expect_warning(formatClinicalData(WaterfallData.out, clinical=clinObject, verbose=FALSE), "Added")
+    
+    # expect levels match
+    formatClinicalData.out <- suppressWarnings(formatClinicalData(WaterfallData.out, clinical=clinObject, verbose=FALSE))
+    expected <- levels(getData(WaterfallData.out, name="primaryData")$sample)
+    actual <- levels(formatClinicalData.out$sample)
+    expect_true(all(expected == actual))
+    
+})
+
+test_that("formatClinicalData works in verbose mode", {
+    expect_message(formatClinicalData(WaterfallData.out, clinical=clinObject, verbose=TRUE))
+})
+
+#################### test WaterfallPlot class construction #####################
+
+context("WaterfallPlots Constructor")
+
+WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA=NULL,
+                                     plotATally="simple", plotALayers=NULL,
+                                     plotB=NULL, plotBTally="simple", plotBLayers=NULL,
+                                     gridOverlay=FALSE, drop=TRUE, labelSize=5,
+                                     labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+                                     verbose=FALSE)
+
+test_that("WaterfallPlots constructor outputs a S4 class object", {
+    expect_s4_class(WaterfallPlots.out, "WaterfallPlots")
+})
+
+################################################################################
+################ test Waterfall constructor and associated functions ###########
+
+######################### arrangeWaterfallPlot #################################
+
+context("Waterfall Final Plot")
+
+test_that("arrangeWaterfallPlot draws correctly", {
+    
+    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("final waterfall base", grid::grid.draw(arrangeWaterfallPlot.out))
+
+    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA="frequency",
+                                         plotATally="simple", plotALayers=NULL,
+                                         plotB=NULL, plotBTally="simple", plotBLayers=NULL,
+                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
+                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+                                         verbose=FALSE)
+    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("final waterfall and top sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
+    
+    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA=NULL,
+                                         plotATally="simple", plotALayers=NULL,
+                                         plotB="frequency", plotBTally="simple", plotBLayers=NULL,
+                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
+                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+                                         verbose=FALSE)
+    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("final waterfall and left sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
+    
+    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA="frequency",
+                                         plotATally="simple", plotALayers=NULL,
+                                         plotB="frequency", plotBTally="simple", plotBLayers=NULL,
+                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
+                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+                                         verbose=FALSE)
+    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("final waterfall and top and left sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
+    
+    
+    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=clinObject, plotA="frequency",
+                                         plotATally="simple", plotALayers=NULL,
+                                         plotB="frequency", plotBTally="simple", plotBLayers=NULL,
+                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
+                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+                                         verbose=FALSE)
+
+    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("final waterfall and top and left and bottom sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
+})
+
+test_that("arrangeWaterfallPlot re-sizes plots based on sectionWidths", {
+    
+    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA=NULL,
+                                         plotATally="simple", plotALayers=NULL,
+                                         plotB="frequency", plotBTally="simple", plotBLayers=NULL,
+                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
+                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+                                         verbose=FALSE)
+    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=c(.5, .5), verbose=FALSE)
+    vdiffr::expect_doppelganger("final waterfall and left sub plot alter sectionWidth", grid::grid.draw(arrangeWaterfallPlot.out))
+    
+})
+
+test_that("arrangeWaterfallPlot re-sizes plots based on sectionHeights", {
+    
+    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA="frequency",
+                                         plotATally="simple", plotALayers=NULL,
+                                         plotB=NULL, plotBTally="simple", plotBLayers=NULL,
+                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
+                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+                                         verbose=FALSE)
+    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=c(.5, .5), sectionWidths=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("final waterfall and top sub plot alter sectionHeights", grid::grid.draw(arrangeWaterfallPlot.out))
+    
+    
+    expect_warning(arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=c(.5, .5, .5), sectionWidths=NULL, verbose=FALSE))
+})
+
+################################################################################
+############## Test Waterfall Constructor and accessors ########################
+
+Waterfall.out <- Waterfall(mafObject, labelColumn=NULL, samples=NULL, coverage=NULL,
+                           mutation=NULL, genes=NULL, mutationHierarchy=NULL,
+                           recurrence=NULL, geneOrder=NULL, geneMax=5,
+                           sampleOrder=NULL, plotA=c("frequency", "burden", NULL),
+                           plotATally=c("simple", "complex"), plotALayers=NULL,
+                           plotB=c("proportion", "frequency", NULL),
+                           plotBTally=c("simple", "complex"), plotBLayers=NULL,
+                           gridOverlay=FALSE, drop=TRUE, labelSize=5, labelAngle=0,
+                           sampleNames=TRUE, clinical=NULL, sectionHeights=NULL,
+                           sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL)
+
+test_that("Waterfall constructor outputs a S4 class object", {
+    expect_s4_class(Waterfall.out, "Waterfall")
+})
+
+

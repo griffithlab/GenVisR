@@ -312,6 +312,11 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
 #' @aliases getData
 .getData <- function(object, name=NULL, index=NULL, ...){
     
+    if(is.null(name) & is.null(index)){
+        memo <- paste("Both name and index are NULL, one must be specified!")
+        stop(memo)
+    }
+    
     if(is.null(index)){
         index <- 0
     } else {
@@ -324,8 +329,9 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
     if(is.null(name)){
         name <- "noMatch"
     } else {
-        if(!(name %in% c("primaryData", "simpleMutationCounts", "complexMutationCounts", "geneData", "mutationHierarchy"))){
-            memo <- paste("slot name not found")
+        slotAvailableName <- c("primaryData", "simpleMutationCounts", "complexMutationCounts", "geneData", "mutationHierarchy")
+        if(!(name %in% slotAvailableName)){
+            memo <- paste("slot name not found, specify one of:", toString(slotAvailableName))
             stop(memo)
         }
     }
@@ -1244,10 +1250,10 @@ setMethod(f="buildGenePlot",
               
               # legend
               if(plotBTally == "simple"){
+                  # if simple we have to reset mutations to NA
+                  geneData$mutation <- NA
                   plotLegend <- scale_fill_manual(name="Translational Effect",
-                                                  values=getData(object, name="mutationHierarchy")$color,
-                                                  breaks=getData(object, name="mutationHierarchy")$mutation,
-                                                  drop=FALSE)
+                                                  na.value="deepskyblue4", values="deepskyblue4")
               }else if(plotBTally == "complex"){
                   plotLegend <- scale_fill_manual(name="Translational Effect",
                                                   values=getData(object, name="mutationHierarchy")$color,
@@ -1315,8 +1321,6 @@ setMethod(f="formatClinicalData",
                             "to the clinical data! These samples are:", toString(fillSamp))
               if(length(fillSamp) != 0){
                   warning(memo)
-              } else if(verbose) {
-                  message(memo)
               }
               
               # set levels of clinicalData to match primaryData for ordering
@@ -1374,9 +1378,9 @@ setMethod(f="buildWaterfallPlot",
               ######### start building the plot ################################
               # grid overlay
               if(gridOverlay){
-                  verticalPlotGrid <- geom_vline(xintercept = seq(.5, nlevels(primaryData$sample),
+                  verticalPlotGrid <- geom_vline(xintercept = seq(1.5, nlevels(primaryData$sample),
                                                                   by=1),
-                                                 linetype='solid', colour='grey80', size=.01)
+                                                 linetype='solid', colour='grey40', size=.1)
                   
                   if(length(unique(primaryData$gene)) == 1)
                   {
@@ -1384,8 +1388,8 @@ setMethod(f="buildWaterfallPlot",
                   } else {
                       horizontalPlotGrid <- geom_hline(yintercept = seq(1.5, length(unique(primaryData$gene)),
                                                                         by=1),
-                                                       linetype='solid', colour='grey80',
-                                                       size=.01)
+                                                       linetype='solid', colour='grey40',
+                                                       size=.1)
                   }
                   plotGridOverlay <- list(horizontalPlotGrid, verticalPlotGrid)
               } else {
@@ -1462,7 +1466,7 @@ setMethod(f="buildWaterfallPlot",
              
               # combine plot elements
               waterfallPlot <- waterfallPlot + plotGeom + plotGridOverlay + x_scale +
-                  plotLegend + plotXLabel + plotTheme + sampleLabels + plotXtitle + plotCLayers
+                  plotLegend + plotXLabel + label + plotTheme + sampleLabels + plotXtitle + plotCLayers
               
               # covert to grob
               waterfallGrob <- ggplotGrob(waterfallPlot)
@@ -1487,18 +1491,24 @@ setMethod(f="arrangeWaterfallPlot",
               plotD <- getGrob(object, 4)
               
               # set default widths
-              if(is.null(sectionWidths)){
-                  sectionWidths <- c(.25, .75)
-              } else if(length(sectionWidths) != 2){
-                  memo <- paste("sectionWidths should be of length 2... Using",
-                                "default values!")
-                  warning(memo)
-                  sectionWidths <- c(.25, .75)
-              } else if(!all(is.numeric(sectionWidths))) {
-                  memo <- paste("sectionWidths must be numeric... Using",
-                                "default values!")
-                  warning(memo)
-                  sectionWidths <- c(.25, .75)
+              
+              # Future Zach, what were you thinking TODO fix this hack
+              if(length(plotB) == 0){
+                  sectionWidths <- c(0, 1)
+              } else {
+                  if(is.null(sectionWidths)){
+                      sectionWidths <- c(.25, .75)
+                  } else if(length(sectionWidths) != 2){
+                      memo <- paste("sectionWidths should be of length 2... Using",
+                                    "default values!")
+                      warning(memo)
+                      sectionWidths <- c(.25, .75)
+                  } else if(!all(is.numeric(sectionWidths))) {
+                      memo <- paste("sectionWidths must be numeric... Using",
+                                    "default values!")
+                      warning(memo)
+                      sectionWidths <- c(.25, .75)
+                  }
               }
               
               # set up a blank plot for alignment purposes
@@ -1524,7 +1534,7 @@ setMethod(f="arrangeWaterfallPlot",
               plotList4Width <- lapply(plotList4Width, function(x) x$widths)
               maxWidth <- do.call(grid::unit.pmax, plotList4Width)
               
-              # section plots into rows rows, also define preliminary heights
+              # section plots into rows, also define preliminary heights
               plotList <- list()
               plotHeight <- list()
               # set width for first row of plots
@@ -1554,8 +1564,11 @@ setMethod(f="arrangeWaterfallPlot",
               }
               
               # set section heights based upon the number of sections
+              # TODO another hack, make this more like auto-magic
               plotHeight <- as.vector(do.call(rbind, plotHeight))
-              plotHeight[which(plotHeight == min(plotHeight))] <- min(plotHeight)/length(which(plotHeight == min(plotHeight)))
+              if(length(plotHeight) == 3){
+                  plotHeight <- c(.2, .6, .2)
+              }
               
               if(is.null(sectionHeights)){
                   sectionHeights <- plotHeight
