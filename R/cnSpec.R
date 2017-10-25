@@ -41,8 +41,8 @@
 #' ggplot2 graphic (see vignette).
 #' @return One of the following, a list of dataframes containing data to be
 #' plotted, a grob object, or a plot.
-#' @importFrom reshape2 dcast
-#' @importFrom reshape2 melt
+#' @importFrom data.table dcast
+#' @importFrom data.table melt
 #' @importFrom stats na.omit
 #' @importFrom gtools mixedsort
 #' @examples
@@ -100,7 +100,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
 
     # Dcast the input data into a recognizable format this will set as NA
     # segment calls in one sample but not the other
-    CN_data <- reshape2::dcast(x, chromosome + start + end ~ sample,
+    CN_data <- data.table::dcast(x, chromosome + start + end ~ sample,
                                value.var = "segmean")
 
     # Create the dummy data (make sure entire chromosome is plotted)
@@ -112,7 +112,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
     
     # Format the Copy Number data
     CN_data$chromosome <- gsub('chr', '', CN_data$chromosome)
-    CN_data <- reshape2::melt(CN_data, id.vars=c('chromosome', 'start', 'end'))
+    CN_data <- data.table::melt(CN_data, id.vars=c('chromosome', 'start', 'end'))
     CN_data <- stats::na.omit(CN_data)
     colnames(CN_data) <- c('chromosome', 'start', 'end', 'sample', 'cn')
     
