@@ -11,6 +11,8 @@ toWaterfall.out <- toWaterfall(mafObject, hierarchy=setMutationHierarchy.out, la
 ###### Test WaterfallData class and associated functions in constructor ########
 ################################################################################
 
+context("WaterfalData")
+
 ##################### sampSubset ###############################################
 
 test_that("sampSubset filters samples not specified to be kept", {
@@ -43,6 +45,12 @@ test_that("sampSubset outputs samples as factors", {
     sampSubset.out <- sampSubset(toWaterfall.out, sample=testSample, verbose=F)
     
     expect_is(sampSubset.out$sample, "factor")
+})
+
+test_that("sampSubset works with verbose mode", {
+    
+    testSample <- as.character(toWaterfall.out$sample[1])
+    expect_message(sampSubset(toWaterfall.out, samples=testSample, verbose=TRUE))
 })
 
 ########################### calcSimpleMutationBurden ###########################
@@ -80,6 +88,10 @@ test_that("calcSimpleMutationBurden calculates a mutation burden if coverage is 
     expected <- nrow(toWaterfall.out[toWaterfall.out$sample == "TCGA-A1-A0SB-01A-11D-A142-09",])
     actual <- as.numeric(calcSimpleMutationBurden.out[calcSimpleMutationBurden.out$sample=="TCGA-A1-A0SB-01A-11D-A142-09", "mutationBurden"])
     expect_equal(expected, actual)
+})
+
+test_that("calcSimpleMutationBurden works in verbose mode", {
+    expect_message(calcSimpleMutationBurden(toWaterfall.out, coverage=NULL, verbose=TRUE))
 })
 
 ############################ calcComplexMutationBurden #########################
@@ -124,6 +136,10 @@ test_that("calcSimpleMutationBurden calculates a mutation burden if coverage is 
     expect_equal(expected, actual)
 })
 
+test_that("calcComplexMutationBurden works in verbose mode", {
+    expect_message(calcComplexMutationBurden(toWaterfall.out, coverage=NULL, verbose=TRUE))
+})
+
 ############################### rmvMutation ####################################
 
 test_that("rmvMutation warns if a mutation was specified to be kept but is not found", {
@@ -133,6 +149,10 @@ test_that("rmvMutation warns if a mutation was specified to be kept but is not f
 rmvMutation.out <- rmvMutation(toWaterfall.out, mutation=c("Missense_Mutation"), verbose=FALSE)
 test_that("rmvMutation keeps only mutation specified to be kept", {
     expect_true(all(rmvMutation.out$mutation == "Missense_Mutation"))
+})
+
+test_that("rmvMutation works in verbose mode", {
+    expect_message(rmvMutation(toWaterfall.out, mutation="Missense_Mutation", verbose=TRUE))
 })
 
 ############################## mutHiearchySubset ###############################
@@ -157,6 +177,10 @@ test_that("mutHierarchySubset leaves on one entry per gene/sample", {
     expect_true(all(table(mutHierarchySubset.out$sample, mutHierarchySubset.out$gene) <= 1))
 })
 
+test_that("mutHierarchySubset works in verbose mode", {
+    expect_message(mutHierarchySubset(toWaterfall.out, mutationHierarchy=setMutationHierarchy.out, verbose=TRUE))
+})
+
 ############################## geneSubset ######################################
 
 geneSubset.out <- geneSubset(mutHierarchySubset.out, genes=NULL, verbose=FALSE)
@@ -166,6 +190,10 @@ test_that("geneSubset keeps samples by outputing an NA value in addition to gene
     
     geneSubset.out <- geneSubset(mutHierarchySubset.out, genes=c("ARC"), verbose=FALSE)
     expect_true(any(is.na(geneSubset.out)))
+})
+
+test_that("geneSubset works in verbose mode", {
+    expect_message(geneSubset(mutHierarchySubset.out, genes=c("ARC"), verbose=TRUE))
 })
 
 ############################## recurrenceSubset ################################
@@ -188,6 +216,10 @@ test_that("recurrenceSubset correctly resets the recurrence parameter if above t
     expect_true(all(actual %in% expected))
 })
 
+test_that("recurrenceSubset works in verbose mode", {
+    expect_message(recurrenceSubset(mutHierarchySubset.out, recurrence=.4, verbose=TRUE))
+})
+
 ######################### geneFilter ###########################################
 
 keepGenes <- unique(c(geneSubset.out, recurrenceSubset.out))
@@ -200,6 +232,11 @@ test_that("geneFilter correctly subsets data to only genes specified", {
 test_that("geneFilter correctly identifies if a gene is specified to be filtered but is not found", {
     keepGenes <- c(keepGenes, "not_in_data")
     expect_warning(geneFilter(mutHierarchySubset.out, genes=keepGenes, verbose=FALSE), "not found in")
+})
+
+test_that("geneFilter works in verbose mode", {
+    keepGenes <- unique(c(geneSubset.out, recurrenceSubset.out))
+    expect_message(geneFilter(mutHierarchySubset.out, genes=keepGenes, verbose=TRUE))
 })
 
 ############################# orderGenes #######################################
@@ -242,6 +279,10 @@ test_that("orderGenes detects if no genes supplied are present in the data and a
     expect_true(expected)
 })
 
+test_that("orderGenes works in verbose mode", {
+    expect_message(orderGenes(geneFilter.out, geneOrder=NULL, verbose=TRUE))
+})
+
 ############################# maxGeneSubset ####################################
 
 maxGeneSubset.out <- maxGeneSubset(orderGenes.out, geneMax=2, verbose=FALSE)
@@ -267,6 +308,10 @@ test_that("maxGeneSubset correctly deals with situations where geneMax is not an
     expected <- 1
     actual <- length(unique(maxGeneSubset.out$gene))
     expect_equal(expected, actual)
+})
+
+test_that("maxGeneSubset works in verbose mode", {
+    expect_message(maxGeneSubset(orderGenes.out, geneMax=2, verbose=TRUE))
 })
 
 ############################# orderSamples #####################################
@@ -347,6 +392,10 @@ test_that("orderSamples adds extra samples to the data if provided", {
     expect_true("new_sample" %in% orderSamples.out$sample)
 })
 
+test_that("orderSamples works in verbose mode", {
+    expect_message(orderSamples(maxGeneSubset.out, sampleOrder=NULL, verbose=TRUE))
+})
+
 ############################# constructGeneData #################################
 constructGeneData.out <- constructGeneData(orderSamples.out, verbose=FALSE)
 
@@ -360,14 +409,34 @@ test_that("constructGeneData properly summarizes gene reccurrence", {
     expect_equal(expected, actual)
 })
 
+test_that("constructGeneData works in verbose mode", {
+    expect_message(constructGeneData(orderSamples.out, verbose=TRUE))
+})
+
 ######### test WaterfallData class construction with various parameters ########
 
-# TODO figure out a better way to do or drop it
-messages <- capture.output(WaterfallData(mafObject, labelColumn = NULL, samples = NULL,
+WaterfallData.out <- WaterfallData(mafObject, labelColumn = NULL, samples = NULL,
                                    mutationHierarchy = NULL, coverage = NULL, mutation = NULL,
                                    genes = NULL, recurrence = NULL, geneOrder = NULL, geneMax = NULL,
-                                   sampleOrder = NULL, verbose = TRUE), type="message")
+                                   sampleOrder = NULL, verbose = FALSE)
 
-test_that("WaterfallData constructor outputs a minimum number of status messages", {
-    expect_true(length(messages) > 5)
+test_that("WaterfallData constructor outputs a S4 class object", {
+    expect_s4_class(WaterfallData.out, "WaterfallData")
+})
+
+################################################################################
+######### test the WaterfallPlots constructor and various methods ##############
+################################################################################
+
+################## buildMutationPlot ###########################################
+
+context("Waterfall Mutation Plot")
+
+test_that("buildMutationPlot draws correctly", {
+    
+    buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="simple", plotALayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("mutation plot frequency simple", grid::grid.draw(buildMutationPlot.out))
+    
+    buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="complex", plotALayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("mutation plot frequency complex", grid::grid.draw(buildMutationPlot.out))
 })

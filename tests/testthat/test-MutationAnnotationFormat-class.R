@@ -9,6 +9,8 @@ mafObject <- MutationAnnotationFormat(testFile)
 ################## test MutationAnnotationFormat class construction ############
 ################################################################################
 
+context("MutationAnnotationFormat")
+
 test_that("Vesion number is correctly extracted", {
     
     expectedVersion <- 2.4

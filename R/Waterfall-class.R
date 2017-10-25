@@ -794,6 +794,7 @@ setMethod(f="orderGenes",
               # print status message
               if(verbose){
                   memo <- paste("Setting gene order")
+                  message(memo)
               }
               
               # order based on mutation frequency
@@ -882,6 +883,7 @@ setMethod(f="maxGeneSubset",
               if(verbose){
                   memo <- paste("geneMax is set to", geneMax, "removing",
                                 nrow(removeGenes),"genes")
+                  message(memo)
               }
               
               return(primaryData)
@@ -1153,6 +1155,7 @@ setMethod(f="constructGeneData",
               # status message
               if(verbose){
                   memo <- paste("Constructing GeneData")
+                  message(memo)
               }
               
               # construct geneData
