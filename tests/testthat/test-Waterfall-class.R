@@ -681,5 +681,3 @@ Waterfall.out <- Waterfall(mafObject, labelColumn=NULL, samples=NULL, coverage=N
 test_that("Waterfall constructor outputs a S4 class object", {
     expect_s4_class(Waterfall.out, "Waterfall")
 })
-
-
