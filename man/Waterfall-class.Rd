@@ -128,7 +128,7 @@ names gene, mutation, count.}
 \item{\code{ClinicalData}}{data.table object stroring the data used to plot the
 clinical sub-plot.}
 
-\item{\code{MutationHierarchy}}{data.table object storing the hierarchy of mutation
+\item{\code{mutationHierarchy}}{data.table object storing the hierarchy of mutation
 type in order of most to least important and the mapping of mutation type to
 color. Should have column names mutation, color, and label.}
 }}

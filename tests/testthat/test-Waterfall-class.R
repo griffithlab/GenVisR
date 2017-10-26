@@ -1,3 +1,6 @@
+# packges needed
+library(ggplot2)
+
 # get the disk location for test files
 testFileDir <- system.file("extdata", package="GenVisR")
 testFile <- Sys.glob(paste0(testFileDir, "/brca.maf"))
@@ -11,7 +14,7 @@ toWaterfall.out <- toWaterfall(mafObject, hierarchy=setMutationHierarchy.out, la
 ###### Test WaterfallData class and associated functions in constructor ########
 ################################################################################
 
-context("WaterfalData")
+context("WaterfalData Constructor")
 
 ##################### sampSubset ###############################################
 
@@ -53,6 +56,12 @@ test_that("sampSubset works with verbose mode", {
     expect_message(sampSubset(toWaterfall.out, samples=testSample, verbose=TRUE))
 })
 
+test_that("sampSubset outputs warning if samples is not a character", {
+    
+    testSample <- as.factor(toWaterfall.out$sample[1])
+    expect_warning(sampSubset(toWaterfall.out, samples=testSample, verbose=FALSE))
+})
+
 ########################### calcSimpleMutationBurden ###########################
 
 calcSimpleMutationBurden.out <- calcSimpleMutationBurden(toWaterfall.out, coverage=NULL, verbose=FALSE)
@@ -91,7 +100,19 @@ test_that("calcSimpleMutationBurden calculates a mutation burden if coverage is 
 })
 
 test_that("calcSimpleMutationBurden works in verbose mode", {
+    
     expect_message(calcSimpleMutationBurden(toWaterfall.out, coverage=NULL, verbose=TRUE))
+})
+
+test_that("calcSimpleMutationBurden warns if coverage contains more than 1 element", {
+    
+    expect_warning(calcSimpleMutationBurden(toWaterfall.out, coverage=c(10000, 40000), verbose=FALSE))
+})
+
+test_that("calcSimpleMutationBurden warns if coverage is not numeric", {
+    
+    testCov <- as.character(10000)
+    expect_warning(calcSimpleMutationBurden(toWaterfall.out, coverage=testCov, verbose=FALSE))
 })
 
 ############################ calcComplexMutationBurden #########################
@@ -140,6 +161,17 @@ test_that("calcComplexMutationBurden works in verbose mode", {
     expect_message(calcComplexMutationBurden(toWaterfall.out, coverage=NULL, verbose=TRUE))
 })
 
+test_that("calcComplexMutationBurden warns if coverage contains more than 1 element", {
+    
+    expect_warning(calcComplexMutationBurden(toWaterfall.out, coverage=c(10000, 40000), verbose=FALSE))
+})
+
+test_that("calcComplexMutationBurden warns if coverage is not numeric", {
+    
+    testCov <- as.character(10000)
+    expect_warning(calcComplexMutationBurden(toWaterfall.out, coverage=testCov, verbose=FALSE))
+})
+
 ############################### rmvMutation ####################################
 
 test_that("rmvMutation warns if a mutation was specified to be kept but is not found", {
@@ -153,6 +185,11 @@ test_that("rmvMutation keeps only mutation specified to be kept", {
 
 test_that("rmvMutation works in verbose mode", {
     expect_message(rmvMutation(toWaterfall.out, mutation="Missense_Mutation", verbose=TRUE))
+})
+
+test_that("rmvMutation outputs warning if mutation is not of class character", {
+    
+    expect_warning(rmvMutation(toWaterfall.out, mutation=as.factor("Missense_Mutation"), verbose=FALSE))
 })
 
 ############################## mutHiearchySubset ###############################
@@ -181,6 +218,7 @@ test_that("mutHierarchySubset works in verbose mode", {
     expect_message(mutHierarchySubset(toWaterfall.out, mutationHierarchy=setMutationHierarchy.out, verbose=TRUE))
 })
 
+
 ############################## geneSubset ######################################
 
 geneSubset.out <- geneSubset(mutHierarchySubset.out, genes=NULL, verbose=FALSE)
@@ -194,6 +232,11 @@ test_that("geneSubset keeps samples by outputing an NA value in addition to gene
 
 test_that("geneSubset works in verbose mode", {
     expect_message(geneSubset(mutHierarchySubset.out, genes=c("ARC"), verbose=TRUE))
+})
+
+test_that("geneSubset outputs warning if genes in not of class character", {
+    
+    expect_warning(geneSubset(mutHierarchySubset.out, genes=as.factor(c("ARC")), verbose=FALSE)) 
 })
 
 ############################## recurrenceSubset ################################
@@ -218,6 +261,16 @@ test_that("recurrenceSubset correctly resets the recurrence parameter if above t
 
 test_that("recurrenceSubset works in verbose mode", {
     expect_message(recurrenceSubset(mutHierarchySubset.out, recurrence=.4, verbose=TRUE))
+})
+
+test_that("recurrenceSubset warns if recurrence is not of class numeric", {
+    
+    expect_warning(recurrenceSubset(mutHierarchySubset.out, recurrence=as.character(.4), verbose=FALSE))
+})
+
+test_that("recurrenceSubset warns if recurrence contains more than one element", {
+    
+    expect_warning(recurrenceSubset(mutHierarchySubset.out, recurrence=c(.4, .2), verbose=FALSE))
 })
 
 ######################### geneFilter ###########################################
@@ -283,6 +336,16 @@ test_that("orderGenes works in verbose mode", {
     expect_message(orderGenes(geneFilter.out, geneOrder=NULL, verbose=TRUE))
 })
 
+test_that("orderGenes warns if geneOrder is not of class character", {
+    
+   expect_warning(orderGenes(geneFilter.out, geneOrder=as.factor(c("FAM182B", "CECR2")), verbose=FALSE))
+})
+
+test_that("orderGenes warns if geneOrder contains duplicates", {
+    
+    expect_warning(orderGenes(geneFilter.out, geneOrder=c("FAM182B", "CECR2", "FAM182B"), verbose=FALSE))
+})
+
 ############################# maxGeneSubset ####################################
 
 maxGeneSubset.out <- maxGeneSubset(orderGenes.out, geneMax=2, verbose=FALSE)
@@ -312,6 +375,10 @@ test_that("maxGeneSubset correctly deals with situations where geneMax is not an
 
 test_that("maxGeneSubset works in verbose mode", {
     expect_message(maxGeneSubset(orderGenes.out, geneMax=2, verbose=TRUE))
+})
+
+test_that("maxGeneSubset warns if geneMax is not numeric", {
+    expect_warning(maxGeneSubset(orderGenes.out, geneMax=as.character(2), verbose=FALSE))
 })
 
 ############################# orderSamples #####################################
@@ -396,6 +463,24 @@ test_that("orderSamples works in verbose mode", {
     expect_message(orderSamples(maxGeneSubset.out, sampleOrder=NULL, verbose=TRUE))
 })
 
+test_that("orderSamples warns if sampleOrder is not a character", {
+    test_sampleOrder <- as.list(c("TCGA-A1-A0SF-01A-11D-A142-09", "TCGA-A1-A0SD-01A-11D-A10Y-09",
+                          "TCGA-A1-A0SG-01A-11D-A142-09", "TCGA-A1-A0SE-01A-11D-A099-09",
+                          "TCGA-A1-A0SB-01A-11D-A142-09"))
+    expect_warning(orderSamples(maxGeneSubset.out, sampleOrder=test_sampleOrder, verbose=TRUE))
+})
+
+test_that("orderSamples warns if sampleOrder contains a sample not in the primary data", {
+    
+    test_sampleOrder <- c("TCGA-A1-A0SF-01A-11D-A142-09", "TCGA-A1-A0SD-01A-11D-A10Y-09",
+                          "TCGA-A1-A0SG-01A-11D-A142-09", "TCGA-A1-A0SE-01A-11D-A099-09",
+                          "TCGA-A1-A0SB-01A-11D-A142-09", "does_not_belong")
+    expect_warning(orderSamples(maxGeneSubset.out, sampleOrder=test_sampleOrder, verbose=TRUE))
+    
+    actual <- suppressWarnings(orderSamples(maxGeneSubset.out, sampleOrder=test_sampleOrder, verbose=TRUE))
+    expect_true(!"does_not_belong" %in% actual)
+})
+
 ############################# constructGeneData #################################
 constructGeneData.out <- constructGeneData(orderSamples.out, verbose=FALSE)
 
@@ -460,6 +545,40 @@ test_that("buildMutationPlot draws a complex burden plot correctly", {
     
 })
 
+test_that("buildMutationPlot works in verbose mode", {
+    
+    expect_message(buildMutationPlot(WaterfallData.out, plotA="burden", plotATally="complex", plotALayers=NULL, verbose=TRUE))
+})
+
+test_that("buildMutationPlot warns if input to plotA is unexpected", {
+    
+    expect_warning(buildMutationPlot(WaterfallData.out, plotA="not_possible", plotATally="simple", plotALayers=NULL, verbose=FALSE))
+})
+
+test_that("buildMutationPlot warns if input to plotATally is unexpected", {
+    
+    expect_warning(buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="not_possible", plotALayers=NULL, verbose=FALSE))
+})
+
+test_that("buildMutationPlot warns if plotALayers is not passed as a list", {
+    
+    test_plotALayers <- ggplot2::scale_y_log10()
+    expect_error(buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="simple", plotALayers=test_plotALayers, verbose=FALSE))
+})
+
+test_that("buildMutationPlot warns if plotALayers does not contain valid ggplot2 layers", {
+    
+    test_plotALayers <- list(c("THIS IS A TEST"))
+    expect_warning(buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="simple", plotALayers=test_plotALayers, verbose=FALSE))
+})
+
+test_that("buildMutationPlot succesfully adds layers to the plot", {
+    
+    test_plotALayers <- list(ggtitle("THIS IS A TEST"), xlab("THIS IS A TEST"), ylab("THIS IS A TEST"))
+    buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="simple", plotALayers=test_plotALayers, verbose=FALSE)
+    vdiffr::expect_doppelganger("mutation plot add layers", grid::grid.draw(buildMutationPlot.out))
+})
+
 ################################# buildGenePlot ################################
 
 context("Waterfall Gene Plot")
@@ -490,6 +609,40 @@ test_that("buildGenePlot draws a complex frequency plot correctly", {
     buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="complex", plotBLayers=NULL, verbose=FALSE)
     vdiffr::expect_doppelganger("gene plot frequency complex", grid::grid.draw(buildGenePlot.out))
     
+})
+
+test_that("buildGenePlot works in verbose mode", {
+    
+    expect_message(buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="complex", plotBLayers=NULL, verbose=TRUE))
+})
+
+test_that("buildGenePlot warns if input to plotB is unexpected", {
+    
+    expect_warning(buildGenePlot(WaterfallData.out, plotB="not_possible", plotBTally="simple", plotBLayers=NULL, verbose=FALSE))
+})
+
+test_that("buildGenePlot warns if input to plotBTally is unexpected", {
+    
+    expect_warning(buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="not_possible", plotBLayers=NULL, verbose=FALSE))
+})
+
+test_that("buildGenePlot warns if plotBLayers is not passed as a list", {
+    
+    test_plotBLayers <- ggplot2::scale_y_log10()
+    expect_error(buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="simple", plotBLayers=test_plotBLayers, verbose=FALSE))
+})
+
+test_that("buildGenePlot warns if plotBLayers does not contain valid ggplot2 layers", {
+    
+    test_plotBLayers <- list(c("THIS IS A TEST"))
+    expect_warning(buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="simple", plotBLayers=test_plotBLayers, verbose=FALSE))
+})
+
+test_that("buildGenePlot succesfully adds layers to the plot", {
+    
+    test_plotBLayers <- list(ggtitle("THIS IS A TEST"), xlab("THIS IS A TEST"), ylab("THIS IS A TEST"))
+    buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="simple", plotBLayers=test_plotBLayers, verbose=FALSE)
+    vdiffr::expect_doppelganger("gene plot add layers", grid::grid.draw(buildGenePlot.out))
 })
 
 ########################### buildWaterfallPlot #################################
@@ -560,6 +713,43 @@ test_that("buildWaterfallPlot labels plot cells", {
     vdiffr::expect_doppelganger("main waterfall plot label", grid::grid.draw(buildWaterfallPlot.out))
     
 })
+
+test_that("buildWaterfallPlot works in verbose mode", {
+    
+    expect_message(buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+                                      drop=FALSE, labelSize=5, labelAngle=0,
+                                      sampleNames=TRUE, xTitle=TRUE, plotCLayers=NULL,
+                                      verbose=TRUE))
+})
+
+test_that("buildWaterfallPlot warns if plotCLayers is not a list", {
+    
+    test_plotCLayers <- ggplot2::scale_x_discrete()
+    expect_error(buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+                                      drop=FALSE, labelSize=5, labelAngle=0,
+                                      sampleNames=TRUE, xTitle=TRUE, plotCLayers=test_plotCLayers,
+                                      verbose=TRUE))
+})
+
+test_that("buildWaterfallPlot warns if plotCLayers contains an invalid ggplot object", {
+    
+    test_plotCLayers <- list(c("THIS IS A TEST"))
+    expect_warning(buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+                                      drop=FALSE, labelSize=5, labelAngle=0,
+                                      sampleNames=TRUE, xTitle=TRUE, plotCLayers=test_plotCLayers,
+                                      verbose=TRUE))
+})
+
+test_that("buildWaterfallPlot successfully adds layers to a plot", {
+    
+    test_plotCLayers <- list(ggtitle("THIS IS A TEST"), xlab("THIS IS A TEST"), ylab("THIS IS A TEST"))
+    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+                                                 drop=FALSE, labelSize=5, labelAngle=0,
+                                                 sampleNames=TRUE, xTitle=TRUE, plotCLayers=test_plotCLayers,
+                                                 verbose=FALSE)
+    vdiffr::expect_doppelganger("main waterfall add layers", grid::grid.draw(buildWaterfallPlot.out))
+})
+
 
 ########################### formatClinicalData #################################
 
@@ -729,6 +919,8 @@ test_that("arrangeWaterfallPlot re-sizes plots based on sectionHeights", {
 ################################################################################
 ############## Test Waterfall Constructor and accessors ########################
 
+context("Waterfall Constructor")
+
 Waterfall.out <- Waterfall(mafObject, labelColumn=NULL, samples=NULL, coverage=NULL,
                            mutation=NULL, genes=NULL, mutationHierarchy=NULL,
                            recurrence=NULL, geneOrder=NULL, geneMax=5,
@@ -748,4 +940,58 @@ test_that("drawPlot constructs a waterfall plot from grob objects in Waterfall o
     vdiffr::expect_doppelganger("drawPlot waterfall", drawPlot(Waterfall.out))
 })
 
+########################### getData ############################################
 
+context("Waterfall Accessors")
+
+test_that("getData outputs error if no name or index is given", {
+    
+    expect_error(getData(Waterfall.out))
+    
+})
+
+test_that("getData outputs error if index exceeds the number of slots", {
+    
+    expect_error(getData(Waterfall.out, index=10))
+    
+})
+
+test_that("getData outputs error if supplied name is not a valid slot name", {
+    
+    expect_error(getData(Waterfall.out, name="shouldNotexist"))
+    
+})
+
+test_that("getData retrieves specified slot data correctly", {
+    
+    expect_s3_class(getData(Waterfall.out, index=1), "data.table")
+    expect_equivalent(getData(Waterfall.out, name="primaryData"), getData(Waterfall.out, index=1))
+    
+    expect_s3_class(getData(Waterfall.out, index=2), "data.table")
+    expect_equivalent(getData(Waterfall.out, name="simpleMutationCounts"), getData(Waterfall.out, index=2))
+    
+    expect_s3_class(getData(Waterfall.out, index=3), "data.table")
+    expect_equivalent(getData(Waterfall.out, name="complexMutationCounts"), getData(Waterfall.out, index=3))
+    
+    expect_s3_class(getData(Waterfall.out, index=4), "data.table")
+    expect_equivalent(getData(Waterfall.out, name="geneData"), getData(Waterfall.out, index=4))
+    
+    expect_s3_class(getData(Waterfall.out, index=5), "data.table")
+    expect_equivalent(getData(Waterfall.out, name="mutationHierarchy"), getData(Waterfall.out, index=5))
+    
+})
+
+################## getGrob #####################################################
+
+test_that("getGrob outputs error if index is out of bounds", {
+    
+    expect_error(getGrob(Waterfall.out, index=10))
+})
+
+test_that("getGrob successfully retrieves grob objects from Waterfall object", {
+    
+    expect_s3_class(getGrob(Waterfall.out, index=1), "gtable")
+    expect_s3_class(getGrob(Waterfall.out, index=2), "gtable")
+    expect_s3_class(getGrob(Waterfall.out, index=3), "gtable")
+    expect_s3_class(getGrob(Waterfall.out, index=4), "gtable")
+})

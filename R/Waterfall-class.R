@@ -23,7 +23,7 @@
 #' names gene, mutation, count.
 #' @slot ClinicalData data.table object stroring the data used to plot the
 #' clinical sub-plot.
-#' @slot MutationHierarchy data.table object storing the hierarchy of mutation
+#' @slot mutationHierarchy data.table object storing the hierarchy of mutation
 #' type in order of most to least important and the mapping of mutation type to
 #' color. Should have column names mutation, color, and label.
 #' @exportClass Waterfall
@@ -42,7 +42,7 @@ setClass("Waterfall",
                                        complexMutationCounts="data.table",
                                        geneData="data.table",
                                        ClinicalData="data.table",
-                                       MutationHierarchy="data.table"),
+                                       mutationHierarchy="data.table"),
          validity=function(object){
          }
          )
@@ -147,7 +147,7 @@ Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
         complexMutationCounts=getData(data, name="complexMutationCounts"),
         geneData=getData(data, name="geneData"),
         ClinicalData=ClinicalData,
-        MutationHierarchy=getData(data, name="mutationHierarchy"))
+        mutationHierarchy=getData(data, name="mutationHierarchy"))
 }
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
@@ -320,7 +320,7 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
     if(is.null(index)){
         index <- 0
     } else {
-        if(index > 4){
+        if(index > 5){
             memo <- paste("index out of bounds")
             stop(memo)
         }
@@ -609,6 +609,7 @@ setMethod(f="rmvMutation",
                   memo <- paste("mutation is defined but is not a character vector,",
                                 "attempting to coerce.")
                   mutation <- as.character(mutation)
+                  warning(memo)
               }
               
               # store how many mutations there are originaly to figure out how
@@ -872,6 +873,7 @@ setMethod(f="maxGeneSubset",
                   memo <- paste("geneMax is not numeric, attempting to convert",
                                 "to an integer.")
                   geneMax <- as.integer(geneMax)
+                  warning(memo)
               }
               
               if(geneMax %% 1 != 0){
@@ -1045,6 +1047,15 @@ setMethod(f="buildMutationPlot",
                   memo <- paste("Constructing top sub-plot")
                   message(memo)
               }
+              
+              # make sure plotATally is valid
+              if(!toupper(plotATally) %in% toupper(c("simple", "complex"))){
+                  memo <- paste("plotATally is not set to either \"simple\" or",
+                                " \"complex\"... defaulting to \"simple\"")
+                  warning(memo)
+                  plotATally <- "simple"
+              }
+              
               # extract the data for the type of plot we need
               if(toupper(plotATally) == toupper("simple")){
                   mutationData <- getData(object, name="simpleMutationCounts")
@@ -1053,21 +1064,24 @@ setMethod(f="buildMutationPlot",
               }
               
               # perform quality checks
-              if(!is.null(plotALayers) && !is.list(plotALayers)){
-                  memo <- paste("plotALayers is not a list... attempting to coerce.")
-                  warning(memo)
-                  plotALayers <- as.list(plotALayers)
-                  if(any(lapply(plotALayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x)))){
+              if(!is.null(plotALayers)){
+                  if(!is.list(plotALayers)){
+                      memo <- paste("plotALayers is not a list")
+                      stop(memo)
+                  }
+                  
+                  if(any(!unlist(lapply(plotALayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
                       memo <- paste("plotALayers is not a list of ggproto or ",
                                     "theme objects... setting plotALayers to NULL")
                       warning(memo)
                       plotALayers <- NULL
                   }
               }
+
               if(!is.null(plotA) && !toupper(plotA) %in% toupper(c("frequency", "burden"))){
                   memo <- paste("plotA is not set to \"frequency\", \"burden\"",
                                 " or NULL... defaulting to \"frequency\".")
-                  message(memo)
+                  warning(memo)
                   plotA <- "frequency"
               }
               if(all(is.na(mutationData$mutationBurden)) && toupper(plotA) == toupper("burden")){
@@ -1076,12 +1090,6 @@ setMethod(f="buildMutationPlot",
                                 "specify coverage!, Resetting plotA to frequency.")
                   warning(memo)
                   plotA <- "frequency"
-              }
-              if(!toupper(plotATally) %in% toupper(c("simple", "complex"))){
-                  memo <- paste("plotATally is not set to either \"simple\" or",
-                                " \"complex\"... defaulting to \"simple\"")
-                  message(memo)
-                  plotATally <- "simple"
               }
               
               # make sure sample levels match primaryData for plotting
@@ -1206,28 +1214,32 @@ setMethod(f="buildGenePlot",
                   message(memo)
               }
               
+              
               # perform quality checks
-              if(!is.null(plotBLayers) && !is.list(plotBLayers)){
-                  memo <- paste("plotBLayers is not a list... attempting to coerce.")
-                  warning(memo)
-                  plotBLayers <- as.list(plotBLayers)
-                  if(any(lapply(plotBLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x)))){
+              if(!is.null(plotBLayers)){
+                  if(!is.list(plotBLayers)){
+                      memo <- paste("plotBLayers is not a list")
+                      stop(memo)
+                  }
+                  
+                  if(any(!unlist(lapply(plotBLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
                       memo <- paste("plotBLayers is not a list of ggproto or ",
                                     "theme objects... setting plotBLayers to NULL")
                       warning(memo)
                       plotBLayers <- NULL
                   }
               }
+
               if(!is.null(plotB) && !toupper(plotB) %in% toupper(c("frequency", "proportion"))){
                   memo <- paste("plotB is not set to \"frequency\", \"proportion\"",
                                 " or NULL... defaulting to \"proportion\".")
-                  message(memo)
+                  warning(memo)
                   plotB <- "proportion"
               }
               if(!toupper(plotBTally) %in% toupper(c("simple", "complex"))){
                   memo <- paste("plotBTally is not set to either \"simple\" or",
                                 " \"complex\"... defaulting to \"simple\"")
-                  message(memo)
+                  warning(memo)
                   plotBTally <- "simple"
               }
               
@@ -1363,11 +1375,14 @@ setMethod(f="buildWaterfallPlot",
               }
               
               # perform quality checks
-              if(!is.null(plotCLayers) && !is.list(plotCLayers)){
-                  memo <- paste("plotCLayers is not a list... attempting to coerce.")
-                  warning(memo)
-                  plotCLayers <- as.list(plotCLayers)
-                  if(any(lapply(plotCLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x)))){
+              # perform quality checks
+              if(!is.null(plotCLayers)){
+                  if(!is.list(plotCLayers)){
+                      memo <- paste("plotCLayers is not a list")
+                      stop(memo)
+                  }
+                  
+                  if(any(!unlist(lapply(plotCLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
                       memo <- paste("plotCLayers is not a list of ggproto or ",
                                     "theme objects... setting plotCLayers to NULL")
                       warning(memo)
