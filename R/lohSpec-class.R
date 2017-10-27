@@ -69,7 +69,7 @@ lohSpec <- function(input, chr=NULL, samples=NULL, y=NULL, genome='hg19',
                     normal=normal, verbose)
     
     ## Use the lohData to generate lohSpec plots
-    lohSpec_plot <- lohSpec_buildMainPlot(object=loh_data)
+    lohSpec_plot <- lohSpec_buildMainPlot(object=loh_data, plotLayer=NULL)
     
     
 }
@@ -378,6 +378,7 @@ setMethod(f = "getLohStepCalculation",
                   step_boundaries$sample <- sample
                   
                   ## Get the average loh within each step-sized window
+                  loh_df <- x
                   loh_step_avg <- apply(step_boundaries, 1, function(x, loh_df_data) {
                       start <- as.numeric(as.character(x[2]))
                       stop <- as.numeric(as.character(x[3]))
@@ -406,14 +407,13 @@ setMethod(f = "getLohStepCalculation",
 setMethod(f = "lohSpec_buildMainPlot",
           signature="lohData",
           definition=function(object, ...) {
-              object=loh_data
               x <- object@windowCalcData
               x <- x[loh_step_avg > 0]
               
               ## Set the order of the chromosomes
               chr <- gtools::mixedsort((unique(x$chromosome)))
-              sample <- gtools:mixedsort((unique(x$sample)))
-              x$chromosome <- factor(x$chromosome, levels=chr, labels=chr)
+              sample <- gtools::mixedsort((unique(x$sample)))
+              x$chromosome_f <- factor(x$chromosome, levels=chr)
               x$sample <- factor(x$sample, levels=sample, labels=sample)
               
               dummyData <- object@chrData
@@ -429,7 +429,7 @@ setMethod(f = "lohSpec_buildMainPlot",
                                                    ymax=1, fill='loh_step_avg'))
               
               # Define additional plot parameters
-              facet <- facet_grid(sample ~ chromosome, scales="free", space="free")
+              facet <- facet_grid(sample ~ chromosome_f, scales="free", space="free")
               
               x_scale <- scale_x_continuous(expand = c(0, 0))
               y_scale <- scale_y_continuous(expand = c(0,0))
@@ -465,6 +465,7 @@ setMethod(f = "lohSpec_buildMainPlot",
               tmp <- data.frame(x=0, y=0)
               p1 <- ggplot(data=tmp, aes(y=0)) + dummy_data + data + facet + x_scale + y_scale + 
                   lab_x + lab_y + BWscheme + LOHgradient + plotTheme + plotLayer
+              print(p1)
               return(p1)
           })
 

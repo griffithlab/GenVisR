@@ -16,7 +16,7 @@ setClass("VarScanFormat",
          representation=representation(path="character"), 
          contains="VarScanFormat_Virtual",
          validity = function(object) {
-             head(object)
+             head(object@varscan)
              ## Expected varscan column names
              cnames <- c("chrom", "position", "ref", "var",
                          "normal_reads1", "normal_reads2", "normal_var_freq",
@@ -28,7 +28,7 @@ setClass("VarScanFormat",
                          "normal_reads2_plus", "normal_reads2_minus", "sample")
              
              ## Check the column names to see if there is the appropriate input
-             varscan_column_names <- colnames(object@varscanData)
+             varscan_column_names <- colnames(object@varscan)
              num <- which(!varscan_column_names%in%cnames)
              if (length(num) > 0 & length(varscan_column_names) == length(cnames)) {
                  stop("Column names of varscan input are not what is expected. Please
@@ -57,10 +57,8 @@ setClass("VarScanFormat",
 #' @importFrom data.table fread
 #' @export
 VarScanFormat <- function(path, verbose=FALSE) {
-    browser()
     ## Read in VarScan data
-    varscanData <- suppressWarnings(data.table::fread(input=path, 
-                                                      stringsAsFactors=FALSE,
+    varscanData <- suppressWarnings(fread(input=path, stringsAsFactors=FALSE,
                                                       verbose=verbose))
     ## Put in sample name for now
     varscanData$sample <- "HCC1395"
@@ -68,7 +66,7 @@ VarScanFormat <- function(path, verbose=FALSE) {
     sample <- varscanData[,which(colnames(varscanData)=="sample"), with=FALSE]
     
     ## Create the varscan object
-    varscanObject <- new("VarScanFormat", path=path, varscan=varscanData, sample=sample)
+    varscanObject <- new(Class="VarScanFormat", path=path, varscan=varscanData, sample=sample)
     return(varscanObject)
     
 }
