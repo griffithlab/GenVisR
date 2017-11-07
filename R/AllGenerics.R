@@ -505,3 +505,106 @@ setGeneric(
     name="getHeader",
     def=function(object, ...){standardGeneric("getHeader")}
 )
+
+################################################################################
+##### Functions used for lohSpec ###############################################
+################################################################################
+#' Method getVarScan
+#' 
+#' @name getVarScan
+#' @rdname getVarScan-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+#' @exportMethod getVarScan
+setGeneric(
+    name="getVarScan",
+    def=function(object, ...){standardGeneric("getVarScan")}
+)
+
+#' Method getLohData
+#' 
+#' @name getLohData
+#' @rdname getLohData-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+#' @exportMethod getLohData
+setGeneric(
+    name="getLohData",
+    def=function(object, ...){standardGeneric("getLohData")}
+)
+
+#' Method lohSpec_qual
+#' 
+#' @name lohSpec_qual
+#' @rdname lohSpec_qual-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+#' @exportMethod lohSpec_qual
+setGeneric(
+    name="lohSpec_qual",
+    def=function(object, ...){standardGeneric("lohSpec_qual")}
+)
+
+#' Method getChrBoundaries
+#' 
+#' @name getChrBoundaries
+#' @rdname getChrBoundaries-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+#' @exportMethod getChrBoundaries
+setGeneric(
+    name="getChrBoundaries",
+    def=function(object, ...){standardGeneric("getChrBoundaries")}
+)
+
+#' Method getLohSlidingWindow
+#' 
+#' @name getLohSlidingWindow
+#' @rdname getLohSlidingWindow-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+#' @exportMethod getLohSlidingWindow
+setGeneric(
+    name="getLohSlidingWindow",
+    def=function(object, ...){standardGeneric("getLohSlidingWindow")}
+)
+
+#' Method getLohCalculation
+#' 
+#' @name getLohCalculation
+#' @rdname getLohCalculation-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+#' @exportMethod getLohSlidingWindow
+setGeneric(
+    name="getLohCalculation",
+    def=function(object, ...){standardGeneric("getLohCalculation")}
+)
+
+#' Method getLohStepCalculation
+#' 
+#' @name getLohStepCalculation
+#' @rdname getLohStepCalculation-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+#' @exportMethod getLohSlidingWindow
+setGeneric(
+    name="getLohStepCalculation",
+    def=function(object, ...){standardGeneric("getLohStepCalculation")}
+)
+
+#' Method lohSpec_buildMainPlot
+#' 
+#' @name lohSpec_buildMainPlot
+#' @rdname lohSpec_buildMainPlot-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+#' @exportMethod getLohSlidingWindow
+setGeneric(
+    name="lohSpec_buildMainPlot",
+    def=function(object, ...){standardGeneric("lohSpec_buildMainPlot")}
+)
+
+
+
+

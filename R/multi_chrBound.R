@@ -21,7 +21,7 @@ multi_chrBound <- function(x)
     data <- x[,c('chrom' ,'chromStart' , 'chromEnd')]
 
     # Obtain max for each chromosome
-    maxChrom <- stats::aggregate(chromEnd ~ chrom, data=data, max)
+    maxChrom <- aggregate(chromEnd ~ chrom, data=data, max)
     maxChrom <- cbind(maxChrom, maxChrom[,2])
     colnames(maxChrom) <- c('chromosome', 'start', 'end')
 
