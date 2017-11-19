@@ -35,4 +35,3 @@ ggplotGrob object
 \description{
 given a named list of plots, display them on tracks
 }
-

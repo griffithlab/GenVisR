@@ -26,4 +26,3 @@ object of class ggplot2
 \description{
 Build a ggplot2 object displaying calculated LOH data
 }
-

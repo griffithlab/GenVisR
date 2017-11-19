@@ -14,6 +14,17 @@ lolliplot_constructGene <- function(gene, domain_data, length)
     # message
     message("Constructing gene track")
     
+    # Construct basic gene information, if there are no domains return the gene
+    gene <- data.frame(Domain=gene, pos_from=1, pos_to=length, nest=1)
+    if(nrow(na.omit(domain_data)) == 0)
+    {
+        gene$height_min <- .1/(as.numeric(gene$nest))
+        gene$height_max <- -.1/(as.numeric(gene$nest))
+        gene$pos_from <- as.numeric(gene$pos_from)
+        gene$pos_to <- as.numeric(gene$pos_to)
+        return(gene)
+    }
+    
     # rename columns for domain_data and make sure description column is
     # not a factor
     colnames(domain_data) <- c("description", "start", "end")
@@ -63,9 +74,6 @@ lolliplot_constructGene <- function(gene, domain_data, length)
     # add this nest information to the data frame
     domain_data$nest <- nest + 1
     colnames(domain_data) <- c("Domain", "pos_from", "pos_to", "nest")
-    
-    # add in the actual transcript track to the domain information
-    gene <- data.frame(Domain=gene, pos_from=1, pos_to=length, nest=1)
     
     # combine gene and domain information
     gene <- rbind(gene, domain_data)

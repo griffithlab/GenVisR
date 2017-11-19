@@ -28,4 +28,3 @@ a grob object
 given a data frame with columns names sample, variable, and value create a
 ggplot2 object
 }
-

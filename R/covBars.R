@@ -19,7 +19,7 @@
 #' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @return One of the following, a list of dataframes containing data to be
 #' plotted, a grob object, or a plot.
-#' @importFrom reshape2 melt
+#' @importFrom data.table melt
 #' @examples
 #' # Create data
 #' x <- matrix(sample(100000,500), nrow=50, ncol=10, dimnames=list(0:49,paste0("Sample",1:10)))
@@ -46,7 +46,7 @@ covBars <- function(x, colour=NULL, plot_title=NULL, x_title_size=12,
     xcs <- apply(xnorm, 2, cumsum)
 
     # melt the data for ggplot2 call
-    xmelt <- reshape2::melt(xcs)
+    xmelt <- data.table::melt(xcs)
     colnames(xmelt) <- c('depth', 'sample', 'bp')
 
     # define the xmin to be used in the plot (xmax is bp)

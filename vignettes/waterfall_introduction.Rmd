@@ -208,6 +208,23 @@ waterfall(brcaMAF, clinDat=clinical,
 
 ```
 
+### Adding Proportion sub-plots
+Parameters covered: `plot_proportions`, `proportions_type`, `proportions_layer`
+
+In addition to the clinical subplot users have the ability to display the proportion of mutations observed in the cohort. This is achieved by setting the argument to `plot_proportions` to TRUE and will by default calculate and display the proportion of Mutation Types before any subsetting occurs.
+
+```{r, fig.keep='last', fig.width=14, fig.height=6.5, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE}
+# plot the proportion of mutation types oserved
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, plot_proportions = TRUE)
+```
+
+It is also possible to calculate and display the transition/transversion rate observed by setting the `proportion_type` to the string "TvTi" while the `plot_propotions` switch is set to TRUE. This will make a call to the primary GenVisR function TvTi and display the results as a subplot.
+
+```{r, fig.keep='last', fig.width=14, fig.height=6.5, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE}
+# plot the proportion of mutation types oserved
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, plot_proportions = TRUE, proportions_type="TvTi")
+```
+
 ### Adding cell labels
 Parameters covered: `mainLabelCol`, `mainLabelSize`, `mainLabelAngle`
 
@@ -226,7 +243,7 @@ waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainLabelCol="amino_acid_ch
 ```
 
 ### Altering Plot Aesthetics
-Parameters covered: `mainGrid`, `mainXlabel`, `main_geneLabSize`, `mainDropMut`, `mainPalette`, `mainLayer`, `mutBurdenLayer`, `clinLayer`
+Parameters covered: `mainGrid`, `mainXlabel`, `main_geneLabSize`, `mainDropMut`, `mainPalette`, `mainLayer`, `mutBurdenLayer`, `clinLayer`, `proportions_layer`, `section_heights`
 
 In order to give the user maximum control with minimal effort a variety of parameters exist to alter the visual aesthetics of the waterfall plot. The `mainGrid` parameter will overlay a grid ontop of the main plot to visually line up cells. The `mainXlabel` parameter will label the x axis with samples. The `main_geneLabSize` parameter will alter the text sizes of the gene labels. `mainDropMut` will remove from the main legend those variables which are not present in the main plot. Finally the `mainPalette` allows for the mapping of a custom colour pallete to mutation types. These parameters are illustrated below.
 
@@ -253,7 +270,14 @@ custom_pallete <- c("#A069C7", "#9CD05B", "#C46839", "#97BDBD", "#513C4D", "#6B7
 waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainDropMut=TRUE, mainPalette=custom_pallete)
 ```
 
-For users with a familiarity with `ggplot2` the option exists to add a single layer to all subplots in waterfall giving control over virtually all aesthetic aspects of the plot. The parameters for this control are `mainLayer`, `mutBurdenLayer`, `clinLayer` and will add a ggplot2 layer to the main, mutation burden and clinical plot respectively. This parameter is recommended only for advance use as it may have unintential consequences (see ggplot2 docs for help).
+It may be desireable to emphasize different aspects of the waterfall plot for exploratory or publication purposes. A use parameter for this is `section_heights` which will alter the heights of any plot vertically aligned to the main plot. Input to this parameter is a numeric vector the same length as the number of plots aligned. As an example a waterfall plot having a proportion, main, and mutation burden plot would expect a vector of length 3.
+
+```{r, fig.keep='last', fig.width=14, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+# Increase the subplot size to be equal with the main plot
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainDropMut=TRUE, section_heights=c(1, 1))
+```
+
+For users with a familiarity with `ggplot2` the option exists to add a single layer to all subplots in waterfall giving control over virtually all aesthetic aspects of the plot. The parameters for this control are `mainLayer`, `mutBurdenLayer`, `clinLayer`, `proportions_layer` and will add a ggplot2 layer to the main, mutation burden and clinical plot respectively. This parameter is recommended only for advance use as it may have unintential consequences (see ggplot2 docs for help).
 
 ```{r, fig.keep='last', fig.width=14, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, fig.cap="As can be seen we have changed the theme via ggplot2 however this has overwritten the previously defined theme which had suppressed the x-axis labels and removed the rotation.", error=TRUE}
 # load ggplot2

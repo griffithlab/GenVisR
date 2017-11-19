@@ -22,4 +22,3 @@ columns for transformed coord
 Reference a master genomic region file to map original positions to a
 transformed space
 }
-

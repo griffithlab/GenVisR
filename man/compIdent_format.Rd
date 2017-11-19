@@ -16,4 +16,3 @@ Formated data frame
 \description{
 Format readcount tables from compIdent for input into compIdent_buildMain
 }
-

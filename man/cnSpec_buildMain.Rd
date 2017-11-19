@@ -43,4 +43,3 @@ ggplot object
 given a data frame construct a plot to display CN information for a group
 of samples
 }
-

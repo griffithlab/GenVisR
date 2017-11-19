@@ -1,0 +1,22 @@
+language: r
+r: 
+  - bioc-release
+  - bioc-devel
+sudo: required
+warnings_are_errors: true
+
+bioc_packages:
+  - BiocInstaller
+  - AnnotationDbi
+  - biomaRt
+  - BiocGenerics
+  - Biostrings
+  - GenomicFeatures
+  - GenomicRanges
+  - Rsamtools
+
+r_packages:
+  - covr
+
+after_success:
+  - Rscript -e 'library(covr); codecov()'

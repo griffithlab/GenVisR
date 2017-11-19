@@ -41,4 +41,3 @@ object of class data frame giving mutation observations
 \description{
 Create a data frame of mutation observations
 }
-

@@ -20,4 +20,3 @@ data frame of protien domains and start/stop coordinates
 \description{
 Retrieve protein domains given ensembl transcript ID
 }
-

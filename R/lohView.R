@@ -34,13 +34,15 @@
 #' manually supply this information as a data frame to the `y` parameter, input
 #' to the `y` parameter take precedence of input to `genome`.
 #' 
-#' A word of caution, users are advised to only use heterozygous germline calls in input to `x`, failure to do so may result in a misleading visual!
+#' A word of caution, users are advised to only use heterozygous germline calls
+#' in input to `x`, failure to do so may result in a misleading visual!
 #' @examples
 #' # Plot loh for chromosome 5
 #' lohView(HCC1395_Germline, chr='chr5', genome='hg19', ideogram_txtSize=4)
 #' @return One of the following, a list of dataframes containing data to be
 #' plotted, a grob object, or a plot.
 #' @importFrom stats aggregate
+#' @importFrom data.table melt
 #' @export
 
 lohView <- function(x, y=NULL, genome='hg19', chr='chr1',
@@ -83,7 +85,7 @@ lohView <- function(x, y=NULL, genome='hg19', chr='chr1',
     dummyData <- multi_subsetChr(dummyData, chr)
     
     # Format the main data in x
-    x <- reshape2::melt(x, id.vars=c("chromosome", "position", "sample"))
+    x <- data.table::melt(x, id.vars=c("chromosome", "position", "sample"))
     colnames(x) <- c("chromosome", "position", "sample", "Tissue", "vaf")
     x$Tissue <- sapply(as.character(x$Tissue),
                        function(x) switch(x, "n_vaf"="Normal", "t_vaf"="Tumor"))

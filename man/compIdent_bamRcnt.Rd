@@ -23,4 +23,3 @@ object of class data frame containing readcount information
 \description{
 Given the bam file path, count the number of reads at specified snp locations
 }
-

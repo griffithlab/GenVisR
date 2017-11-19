@@ -1,17 +1,14 @@
 #' check input to cnFreq
 #'
-#' Perform a data quality check for inputs to cnFreq
+#' Perform a data quality check for input to cnFreq
 #' @name cnFreq_qual
-#' @param x a data frame with columns chromosome, start, end, gain, and loss,
-#' or chromosome, start, end, segmean, and sample
-#' @return list containing data frame passing quality checks and the type
-#' of plot (proportional losses/gain or frequency of losses/gains)
+#' @param x a data frame with columns chromosome, start, end, segmean, and sample
+#' @return  data frame passing quality checks 
 
 cnFreq_qual <- function(x)
 {
     # Check that x is a data frame
-    if(!is.data.frame(x))
-    {
+    if(!is.data.frame(x)){
         memo <- paste0("Did not detect a data frame in argument supplied",
                        " to x... attempting to coerce")
         warning(memo)
@@ -20,36 +17,43 @@ cnFreq_qual <- function(x)
     }
 
     # Check that x has at least 1 row
-    if(nrow(x) < 1)
-    {
+    if(nrow(x) < 1){
         memo <- paste0("x needs at least one row")
         stop(memo)
     }
+    
+    # remove any NA values in the data
+    if(any(is.na(x))){
+        na_rows_removed <- nrow(x) - nrow(na.omit(x))
+        memo <- paste0("Removing ", na_rows_removed, " rows containing NA values")
+        message(memo)
+        x <- na.omit(x)
+    }
 
-    # Check that columns have the correct headers
-    plotType <- NULL
-    if(all(c('chromosome',
-             'start',
-             'end',
-             'gain',
-             'loss') %in% colnames(x)))
-    {
-        plotType <- "prop"
-        x$chromosome <- as.factor(x$chromosome)
-        x$start <- as.integer(as.character(x$start))
-        x$end <- as.integer(as.character(x$end))
-        x$loss <- as.numeric(as.character(x$loss))
-        x$gain <- as.numeric(as.character(x$gain))
-    } else if(all(c('chromosome',
-                    'start','end',
-                    'segmean',
-                    'sample') %in% colnames(x))) {
-        plotType <- "freq"
+    if(all(c('chromosome', 'start','end', 'segmean', 'sample') %in% colnames(x))){
+        
+        # make sure columns are of the correct type
         x$chromosome <- as.factor(x$chromosome)
         x$start <- as.integer(as.character(x$start))
         x$end <- as.integer(as.character(x$end))
         x$segmean <- as.numeric(as.character(x$segmean))
         x$sample <- as.factor(x$sample)
+        
+        # make sure windows are consistent if not disjoin them
+        tmp <- split(x, x$sample)
+        tmp_vec <- tmp[[1]]$end
+        if(any(!unlist(sapply(tmp, function(x) x[,"end"] %in% tmp_vec), use.names=F))){
+            memo <- paste0("Did not detect identical genomic segments for all samples",
+                           " ...Performing disjoin operation")
+            message(memo) 
+            
+            # here we split the DF up in an attempt to avoid complaints that lists are to large 
+            x <- split(x, f=x$chromosome)
+            x <- lapply(x, cnFreq_disjoin)
+            x <- do.call(rbind, x)
+        }
+        rm(tmp)
+        rm(tmp_vec)
     } else {
         memo <- paste0("Did not detect correct columns in argument supplied",
                        " to x!")
@@ -57,12 +61,12 @@ cnFreq_qual <- function(x)
     }
 
     # Check chromosome column in x
-    if(!all(grepl("^chr", x$chromosome)))
-    {
+    if(!all(grepl("^chr", x$chromosome))){
         memo <- paste0("Did not detect the prefix \"chr\" in the chromosome",
                        " column of x... adding prefix")
         message(memo)
         x$chromosome <- paste0("chr", x$chromosome)
+        x$chromosome <- as.factor(x$chromosome)
     } else if(all(grepl("^chr", x$chromosome))) {
         memo <- paste0("Detected \"chr\" in the chromosome column of x...",
                        " proceeding")
@@ -74,46 +78,5 @@ cnFreq_qual <- function(x)
         stop(memo)
     }
 
-    # Make sure the chromosome column is of class factor
-    x$chromosome <- as.factor(x$chromosome)
-
-    if(plotType=="prop")
-    {
-        # Check that all proportions are between 0 and 1
-        if(any(x$gain<0) | any(x$gain>1) | any(x$loss<0) | any(x$loss>1))
-        {
-            stop("Gain and loss columns must be in the range [0,1]")
-        }
-
-        # Check that no proportions add up to more than 1 for the same window
-        tmpsum <- apply(x[,c("gain","loss")], 1, sum, na.rm=TRUE)
-		if(any(round(tmpsum, digits=1) > 1))
-        {
-            memo <- paste0("The proportions of gain + loss sums to greater ",
-                           "than 1 for ", sum(tmpsum>1), " elements!")
-            warning(memo)
-        }
-
-    }
-
-    # Make sure that columns are the correct data type
-    if(!all(x$start == as.numeric(as.character(x$start))))
-    {
-        stop("The start column is not numeric")
-    }
-
-    if(!all(x$end == as.numeric(as.character(x$end))))
-    {
-        stop("The end column is not numeric")
-    }
-
-    if(plotType=="freq")
-    {
-        if(!all(x$segmean == as.numeric(as.character(x$segmean))))
-        {
-            stop("The segmean column is not numeric")
-        }
-    }
-
-    return(list(x,plotType))
+    return(x)
 }

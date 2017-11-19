@@ -17,4 +17,3 @@ ggplotGrob
 \description{
 assign width of ggplotGrob object
 }
-

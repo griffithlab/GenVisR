@@ -15,4 +15,3 @@ object of class data frame
 \description{
 given a genome query UCSC for cytogenetic band locations
 }
-

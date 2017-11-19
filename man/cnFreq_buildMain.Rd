@@ -4,16 +4,19 @@
 \alias{cnFreq_buildMain}
 \title{Construct CN frequency plot}
 \usage{
-cnFreq_buildMain(data_frame, plotType, plot_title = NULL,
+cnFreq_buildMain(x, plotType, dummy_data, plot_title = NULL,
   CN_low_colour = "#002EB8", CN_high_colour = "#A30000", x_lab_size = 12,
   y_lab_size = 12, facet_lab_size = 10, plotLayer = NULL)
 }
 \arguments{
-\item{data_frame}{object of class data frame containing columns chromosome,
+\item{x}{object of class data frame containing columns chromosome,
 start, end, gain, and loss}
 
 \item{plotType}{character string to determine whether to plot proportions or
 frequencies}
+
+\item{dummy_data}{Object of class data frame containing columns chromosome,
+start, end, cn, sample. Used for defining chromosome boundaries}
 
 \item{plot_title}{character string for title of plot}
 
@@ -38,4 +41,3 @@ ggplot object
 given a data frame construct a plot to display proportions of losses and
 gains across the genome
 }
-

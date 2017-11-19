@@ -56,15 +56,20 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
                                                   ymin='height_min',
                                                   ymax='height_max'),
                                fill='#999999', colour='#000000')
-        domain_plot <- geom_rect(data=gene_data[-1,],
-                                 mapping=aes_string(xmin='pos_from',
-                                                    xmax='pos_to',
-                                                    ymin='height_min',
-                                                    ymax='height_max',
-                                                    fill='Domain'),
-                                 alpha=1, colour='black')
+        # Take into account there might not be any domains
+        if(nrow(gene_data) == 1)
+        {
+            domain_plot <- geom_blank()
+        } else {
+            domain_plot <- geom_rect(data=gene_data[-1,],
+                                     mapping=aes_string(xmin='pos_from',
+                                                        xmax='pos_to',
+                                                        ymin='height_min',
+                                                        ymax='height_max',
+                                                        fill='Domain'),
+                                     alpha=1, colour='black')
+        }
     }
-
 
     # Build the Observed track
     observed_plot <- geom_point(data=mutation_observed,

@@ -19,4 +19,3 @@ object of class data frame
 \description{
 given a data frame of cytogenetic bands, format it for ggplot call
 }
-

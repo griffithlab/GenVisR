@@ -29,4 +29,3 @@ ggplot object
 \description{
 given data build a coverage plot to represent the data
 }
-

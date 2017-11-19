@@ -13,7 +13,7 @@ lohSpec(x = NULL, path = NULL, fileExt = NULL, y = NULL,
 \item{x}{object of class data frame with rows representing germline calls.
 The data frame must contain columns with the following names "chromosome",
 "position", "n_vaf", "t_vaf", "sample". required if path is set to NULL (see
-details).}
+details). vaf should range from 0-1.}
 
 \item{path}{Character string specifying the path to a directory containing
 germline calls for each sample. Germline calls are expected to be stored as
@@ -42,9 +42,9 @@ pairs to move the window). required when method is set to slide
 \item{window_size}{Integer value specifying the size of the window in base
 pairs in which to calculate the mean Loss of Heterozygosity (see details).}
 
-\item{normal}{Numeric value within the range 0-50 specifying the expected
+\item{normal}{Numeric value within the range 0-1 specifying the expected
 normal variant allele frequency to be used in Loss of Heterozygosity 
-calculations. defaults to 50\%}
+calculations. defaults to .50\%}
 
 \item{colourScheme}{Character vector specifying the colour scale to use from
 the viridis package. One of "viridis", "magma", "plasma", or "inferno".}
@@ -73,7 +73,7 @@ normal variant allele frequency, tumor variant allele frequency, and the
 sample. In lieu of this format a series of .tsv files can be supplied via the 
 path and fileExt arguments. If this method is choosen samples will be infered
 from the file names. In both cases columns containing the variant allele
-frequency for normal and tumor samples should range from 0-100.
+frequency for normal and tumor samples should range from 0-1.
 Two methods exist to calculate and display LOH events. If the method is set
 to "tile" mean LOH is calculated based on the window_size argument with
 windows being placed next to each other. If the method is set to slide the
@@ -93,4 +93,3 @@ information can be supplied to the 'y' parameter which has priority over the
 # plot loh within the example dataset
 lohSpec(x=HCC1395_Germline)
 }
-

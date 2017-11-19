@@ -6,12 +6,13 @@
 \usage{
 cnView(x, y = NULL, z = NULL, genome = "hg19", chr = "chr1",
   CNscale = "absolute", ideogram_txtAngle = 45, ideogram_txtSize = 5,
-  plotLayer = NULL, ideogramLayer = NULL, out = "plot")
+  plotLayer = NULL, ideogramLayer = NULL, out = "plot",
+  segmentColor = NULL)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing copy number calls
 from a single sample. The data frame must contain columns with the following
-names "chromosome", "coordinate", "cn", and optionally "p_value" 
+names "chromosome", "coordinate", "cn", and optionally "p_value"
 (see details).}
 
 \item{y}{Object of class data frame with rows representing cytogenetic bands
@@ -29,7 +30,7 @@ calls. The data frame must contain columns with the following names
 "chr..." or "all"}
 
 \item{CNscale}{Character string specifying if copy number calls supplied are
-relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of
 "relative" or "absolute"}
 
 \item{ideogram_txtAngle}{Integer specifying the angle of cytogenetic labels
@@ -45,6 +46,9 @@ sub-plot.}
 
 \item{out}{Character vector specifying the the object to output, one of
 "data", "grob", or "plot", defaults to "plot" (see returns).}
+
+\item{segmentColor}{Character string specifying the color of segment lines. Used only if 
+Z is not null.}
 }
 \value{
 One of the following, a list of dataframes containing data to be
@@ -69,7 +73,7 @@ to the `y` parameter take precedence of input to `genome`.
 
 cnView is also able to represent p-values for copy-number calls if they are
 supplied via the "p_value" column in the argument supplied to x. The presence
-of this column in x will set a transparency value to copy-number calls with 
+of this column in x will set a transparency value to copy-number calls with
 calls of less significance becoming more transparent.
 
 If it is available cnView can plot copy-number segment calls on top of raw
@@ -85,4 +89,3 @@ data <- as.data.frame(cbind(chromosome, coordinate, cn))
 # Plot raw copy number calls
 cnView(data, chr='chr14', genome='hg19', ideogram_txtSize=4)
 }
-

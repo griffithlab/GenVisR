@@ -23,4 +23,3 @@ list of inputs passing basic quality controls
 \description{
 Perform data quality checks on input supplied to lohSpec
 }
-

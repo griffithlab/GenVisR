@@ -4,7 +4,8 @@
 \alias{cnView_buildMain}
 \title{construct CN plot}
 \usage{
-cnView_buildMain(x, y, z = NULL, chr, CNscale = FALSE, layers = NULL)
+cnView_buildMain(x, y, z = NULL, chr, CNscale = FALSE, layers = NULL,
+  segmentColor = NULL)
 }
 \arguments{
 \item{x}{a data frame with columns chromosome, coordinate, cn, p_value}
@@ -18,10 +19,13 @@ segments called from copy number (optional)}
 \item{chr}{a character string specifying chromosome}
 
 \item{CNscale}{Character string specifying if copy number calls supplied are
-relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of 
+relative (i.e.copy neutral == 0) or absolute (i.e. copy neutral ==2). One of
 "relative" or "absolute"}
 
 \item{layers}{additional ggplot2 layers to add}
+
+\item{segmentColor}{Character string specifying the color of segment lines. Used only if 
+Z is not null.}
 }
 \value{
 ggplot2 object
@@ -29,4 +33,3 @@ ggplot2 object
 \description{
 given a CN data frame plot points in ggplot
 }
-
