@@ -60,6 +60,57 @@ test_that("calcMutSpectra correctly calculates the proportion of transitions/tra
     
 })
 
+######################## test sortSamples ######################################
 
+sortSamples.out <- sortSamples(calcMutSpectra.out, sorting="sample", verbose=FALSE)
 
+test_that("sortSamples correctly sorts samples by name", {
+    
+    expected <- c("FLX001-Naive", "FLX003-Naive", "FLX004-Naive", "FLX005-Naive", "FLX007-Naive")
+    actual <- levels(sortSamples.out$Sample)
+    
+    expect_equal(expected, actual)
+    
+})
 
+test_that("sortSamples correctly sorts by the observed proportion of mutations", {
+    
+    sortSamples.out <- sortSamples(calcMutSpectra.out, sorting="mutation", verbose=FALSE)
+    expected <- c("FLX007-Naive", "FLX005-Naive", "FLX001-Naive", "FLX004-Naive", "FLX003-Naive")
+    actual <- levels(sortSamples.out$Sample)
+    
+    expect_equal(expected, actual)
+})
+
+test_that("sortSamples correctly sorts in a custom order if supplied", {
+    
+    sampleOrder <- c("FLX005-Naive", "FLX007-Naive", "FLX001-Naive", "FLX004-Naive", "FLX003-Naive")
+    sortSamples.out <- sortSamples(calcMutSpectra.out, sorting=sampleOrder, verbose=FALSE)
+    expected <- sampleOrder
+    actual <- levels(sortSamples.out$Sample)
+    
+    expect_equal(expected, actual)
+    
+})
+
+test_that("sortSamples correctly adds samples if not specified in a custom order", {
+    
+    sampleOrder <- c("FLX007-Naive", "FLX001-Naive", "FLX004-Naive", "FLX003-Naive")
+    sortSamples.out <- suppressWarnings(sortSamples(calcMutSpectra.out, sorting=sampleOrder, verbose=FALSE))
+    expected <- c(sampleOrder, "FLX005-Naive")
+    actual <- levels(sortSamples.out$Sample)
+    
+    expect_equal(expected, actual)
+    
+})
+
+test_that("sortSamples correctly removes samples if specified in a custom order", {
+    
+    sampleOrder <- c("FLX007-Naive", "FLX001-Naive", "FLX004-Naive", "FLX003-Naive", "FLX005-Naive", "not_expected")
+    sortSamples.out <- suppressWarnings(sortSamples(calcMutSpectra.out, sorting=sampleOrder, verbose=FALSE))
+    expected <- c("FLX007-Naive", "FLX001-Naive", "FLX004-Naive", "FLX003-Naive", "FLX005-Naive")
+    actual <- levels(sortSamples.out$Sample)
+    
+    expect_equal(expected, actual)
+    
+})

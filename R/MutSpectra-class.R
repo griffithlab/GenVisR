@@ -342,50 +342,55 @@ setMethod(f="sortSamples",
                   sorting <- as.character(sorting)
               }
               
-              # Perform sorting based on the input to sorting
-              if(toupper(sorting) == "SAMPLE" | toupper(sorting) == "SAMPLES"){
-                  if(verbose){
-                      memo <- paste("sorting samples by name")
-                      message(memo)
+              if(length(sorting) == 1){
+                  
+                  # Perform sorting based on the input to sorting
+                  if(toupper(sorting) == "SAMPLE" | toupper(sorting) == "SAMPLES"){
+                      if(verbose){
+                          memo <- paste("sorting samples by name")
+                          message(memo)
+                      }
+                      sampleOrder <- unique(gtools::mixedsort(primaryData$Sample))
+                  }else if(toupper(sorting) == "MUTATION" | toupper(sorting) == "MUTATIONS"){
+                      if(verbose){
+                          memo <- paste("sorting samples by transition/transversion proportions")
+                          message(memo)
+                      }
+                      sampleOrder <- primaryData[order(primaryData$TransTranv, -primaryData$Proportion)]
+                      sampleOrder <- sampleOrder[sampleOrder$Proportion != 0,]
+                      sampleOrder <- unique(sampleOrder$Sample)
                   }
-                  sampleOrder <- gtools::mixedsort(primaryData$Sample)
-                  primaryData$Sample <- factor(primaryData$Sample, levels=sampleOrder)
-              }else if(toupper(sorting) == "MUTATION" | toupper(sorting) == "MUTATIONS"){
-                  if(verbose){
-                      memo <- paste("sorting samples by transition/transversion proportions")
-                      message(memo)
-                  }
-                  sampleOrder <- primaryData[order(primaryData$TransTranv, -primaryData$Proportion)]
-                  sampleOrder <- sampleOrder[sampleOrder$Proportion != 0,]
-                  sampleOrder <- unique(sampleOrder$Sample)
-                  primaryData$Sample <- factor(primaryData$Sample, levels=sampleOrder)
-              }else if(length(sorting) > 1){
+              } else {
+                  
                   if(verbose){
                       memo <- paste("sorting samples by supplied samples in the parameter \"sorting\"")
                       message(memo)
                   }
+                  
                   # check if input to sorting is missing samples
-                  if(any(!primaryData$Sample %in% sorting)){
+                  sampleOrder <- sorting
+                  if(any(!primaryData$Sample %in% sampleOrder)){
                       expecSamples <- unique(primaryData$Sample)
-                      missingSamples <-  expecSamples[!expecSamples %in% sorting]
+                      missingSamples <-  as.character(expecSamples[!expecSamples %in% sampleOrder])
                       memo <- paste("The following samples were missing from the parameter", 
                                     "\"sorting\": ", toString(missingSamples),
                                     "adding these to the end of the sort order")
                       warning(memo)
-                      sorting <- c(sorting, missingSamples)
+                      sampleOrder <- c(sampleOrder, missingSamples)
                   }
                   
                   # check if input to sorting has extra samples
-                  if(any(!sorting %in% primaryData$Sample)){
+                  if(any(!sampleOrder %in% primaryData$Sample)){
                       extraSamples <- sorting[!sorting %in% primaryData$Sample]
                       memo <- paste("The following samples were specified in the parameter",
                                     "\"sorting\" but were not found in the primary data:",
                                     toString(extraSamples), "removing these samples!")
-                      sorting <- sorting[!sorting %in% extraSamples]
+                      sampleOrder <- sampleOrder[!sampleOrder %in% extraSamples]
                   }
-                  primaryData$Sample <- factor(primaryData$Sample, levels=sorting)
               }
-              
+             
+              primaryData$Sample <- factor(primaryData$Sample, levels=sampleOrder)
+                  
               return(primaryData)
           })
 
