@@ -1,3 +1,6 @@
+# packages needed
+library(ggplot2)
+
 # get the disk location for test files
 testFileDir <- system.file("extdata", package="GenVisR")
 testFile <- Sys.glob(paste0(testFileDir, "/FL.gms"))
@@ -182,7 +185,68 @@ test_that("formatClinicalData works in verbose mode", {
     expect_message(formatClinicalData(MutSpectraPrimaryData.out, clinical=clinObject, verbose=TRUE))
 })
 
+######################### test buildFrequencyPlot ##############################
+
+context("MutSpectra Frequency Plot")
 
 
+test_that("buildFrequencyPlot constructs a plot based on frequencies", {
+    
+    buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=NULL, palette=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("mutspectra frequency plot", grid::grid.draw(buildFrequencyPlot.out))
+    
+})
 
+test_that("buildFrequencyPlot is able to add layers to the plot", {
+    
+    test_plotALayers <- list(ggplot2::geom_hline(yintercept=c(30), colour="black", size=2), ggplot2::geom_vline(xintercept=c(2), colour="black", size=2))
+    buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=test_plotALayers, palette=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("mutspectra frequency plot add layer", grid::grid.draw(buildFrequencyPlot.out))
+      
+})
+
+test_that("buildFrequencyPlot warns if plotALayers is not passed as a list", {
+    
+    test_plotALayers <- ggplot2::geom_hline(yintercept=c(30), colour="black", size=2)
+    expect_error(buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=test_plotALayers, palette=NULL, verbose=FALSE))
+    
+})
+
+test_that("buildFrequencyPlot warns if plotALayers does not contain valid ggplot2 layers", {
+    
+    test_plotALayers <- list(c("THIS IS A TEST"))
+    expect_warning(buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=test_plotALayers, palette=NULL, verbose=FALSE))
+})
+
+######################### test buildProportionPlot #############################
+
+context("MutSpectra Proportion Plot")
+
+test_that("buildProportionPlot constructs a plot based on Proportions", {
+    
+    buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=NULL, palette=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("mutspectra proportion plot", grid::grid.draw(buildProportionPlot.out))
+    
+})
+
+test_that("buildProportionPlot is able to add layers to the plot", {
+    
+    test_plotBLayers <- list(ggplot2::geom_hline(yintercept=c(.5), colour="black", size=2), ggplot2::geom_vline(xintercept=c(2), colour="black", size=2))
+    buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=test_plotBLayers, palette=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("mutspectra proportion plot add layer", grid::grid.draw(buildProportionPlot.out))
+    
+})
+
+test_that("buildProportionPlot warns if plotBLayers is not passed as a list", {
+    
+    test_plotBLayers <- ggplot2::geom_hline(yintercept=c(.5), colour="black", size=2)
+    expect_error(buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=test_plotBLayers, palette=NULL, verbose=FALSE))
+    
+})
+
+test_that("buildProportionPlot warns if plotBLayers does not contain valid ggplot2 layers", {
+    
+    test_plotBLayers <- list(c("THIS IS A TEST"))
+    expect_warning(buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=test_plotBLayers, palette=NULL, verbose=FALSE))
+})
 

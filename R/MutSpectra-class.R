@@ -444,11 +444,13 @@ setMethod(f="buildFrequencyPlot",
               yLimits <- scale_y_continuous(expand=c(0,0))
               
               # perform quality checks
-              if(!is.null(plotALayers) && !is.list(plotALayers)){
-                  memo <- paste("plotALayers is not a list... attempting to coerce.")
-                  warning(memo)
-                  plotALayers <- as.list(plotALayers)
-                  if(any(lapply(plotALayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x)))){
+              if(!is.null(plotALayers)){
+                  if(!is.list(plotALayers)){
+                      memo <- paste("plotALayers is not a list")
+                      stop(memo)
+                  }
+                  
+                  if(any(!unlist(lapply(plotALayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
                       memo <- paste("plotALayers is not a list of ggproto or ",
                                     "theme objects... setting plotALayers to NULL")
                       warning(memo)
@@ -519,12 +521,14 @@ setMethod(f="buildProportionPlot",
               # adjust limits
               yLimits <- scale_y_continuous(expand=c(0,0))
               
-              # add additional plot layers
-              if(!is.null(plotBLayers) && !is.list(plotBLayers)){
-                  memo <- paste("plotBLayers is not a list... attempting to coerce.")
-                  warning(memo)
-                  plotBLayers <- as.list(plotBLayers)
-                  if(any(lapply(plotBLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x)))){
+              # perform quality checks
+              if(!is.null(plotBLayers)){
+                  if(!is.list(plotBLayers)){
+                      memo <- paste("plotBLayers is not a list")
+                      stop(memo)
+                  }
+                  
+                  if(any(!unlist(lapply(plotBLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
                       memo <- paste("plotBLayers is not a list of ggproto or ",
                                     "theme objects... setting plotBLayers to NULL")
                       warning(memo)
