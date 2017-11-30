@@ -114,3 +114,75 @@ test_that("sortSamples correctly removes samples if specified in a custom order"
     expect_equal(expected, actual)
     
 })
+
+#### test MutSpectraPrimaryData class construction with various parameters #####
+
+MutSpectraPrimaryData.out <- MutSpectraPrimaryData(gmsObject, BSgenome=NULL, sorting=NULL, verbose=FALSE)
+
+test_that("MutSpectraPrimaryData outputs a S4 class object", {
+    expect_s4_class(MutSpectraPrimaryData.out, "MutSpectraPrimaryData")
+})
+
+################################################################################
+######### test the MutSpectraPlots constructor and various methods #############
+################################################################################
+
+################## test formatClinicalData #####################################
+
+context("MutSpectra Clinical Plot setup")
+
+# create simple ClinicalObject for testing
+library(ggplot2)
+clinData <- data.table::data.table("sample"=c(as.character(unique(getSample(gmsObject)$sample))), "variable"="a", "value"="b")
+clinObject <- Clinical(inputData=clinData, inputFormat = "long", clinicalLayers = theme(axis.text.x=element_text(angle=20)), verbose=FALSE)
+
+formatClinicalData.out <- formatClinicalData(MutSpectraPrimaryData.out, clinical=clinObject, verbose=FALSE)
+
+test_that("formatClinicalData adjusts the Clinical object to match samples in MutSpectraPrimaryData", {
+    expected <- levels(getData(MutSpectraPrimaryData.out, name="primaryData")$sample)
+    actual <- levels(formatClinicalData.out$sample)
+    expect_true(all(expected == actual))
+})
+
+test_that("formatClinicalData removes samples not in the MutSpectraPrimaryData", {
+    
+    # create simple test
+    clinData <- data.table::data.table("sample"=c(as.character(unique(getSample(gmsObject)$sample)), "test"), "variable"="a", "value"="b")
+    clinObject <- Clinical(inputData=clinData, inputFormat = "long", clinicalLayers = theme(axis.text.x=element_text(angle=20)), verbose=FALSE)
+    
+    # expect warning
+    expect_warning(formatClinicalData(MutSpectraPrimaryData.out, clinical=clinObject, verbose=FALSE), "Removed")
+    
+    # expect levels match
+    formatClinicalData.out <- suppressWarnings(formatClinicalData(MutSpectraPrimaryData.out, clinical=clinObject, verbose=FALSE))
+    expected <- levels(getData(MutSpectraPrimaryData.out, name="primaryData")$sample)
+    actual <- levels(formatClinicalData.out$sample)
+    expect_true(all(expected == actual))
+    
+})
+
+test_that("formatClinicalData fills missing samples not in the Clinical object", {
+    
+    # create simple test
+    clinData <- data.table::data.table("sample"=c(as.character(unique(getSample(gmsObject)$sample)[-1])), "variable"="a", "value"="b")
+    clinObject <- Clinical(inputData=clinData, inputFormat = "long", clinicalLayers = theme(axis.text.x=element_text(angle=20)), verbose=FALSE)
+    
+    # expect warning
+    expect_warning(formatClinicalData(MutSpectraPrimaryData.out, clinical=clinObject, verbose=FALSE), "Added")
+    
+    # expect levels match
+    formatClinicalData.out <- suppressWarnings(formatClinicalData(MutSpectraPrimaryData.out, clinical=clinObject, verbose=FALSE))
+    expected <- levels(getData(MutSpectraPrimaryData.out, name="primaryData")$sample)
+    actual <- levels(formatClinicalData.out$sample)
+    expect_true(all(expected == actual))
+    
+})
+
+test_that("formatClinicalData works in verbose mode", {
+    expect_message(formatClinicalData(MutSpectraPrimaryData.out, clinical=clinObject, verbose=TRUE))
+})
+
+
+
+
+
