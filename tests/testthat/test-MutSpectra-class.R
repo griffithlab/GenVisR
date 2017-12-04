@@ -325,3 +325,15 @@ test_that("getGrob successfully retrieves grob objects from MutSpectra object", 
     expect_s3_class(getGrob(MutSpectra.out, index=3), "gtable")
     expect_s3_class(getGrob(MutSpectra.out, index=4), "gtable")
 })
+
+################## getData #####################################################
+
+test_that("getData retrieves specified slot data correctly", {
+    
+    expect_s3_class(getData(MutSpectra.out, index=1), "data.table")
+    expect_equivalent(getData(MutSpectra.out, name="primaryData"), getData(MutSpectra.out, index=1))
+    
+    expect_s3_class(getData(MutSpectra.out, index=2), "data.table")
+    expect_equivalent(getData(MutSpectra.out, name="ClinicalData"), getData(MutSpectra.out, index=2))
+    
+})

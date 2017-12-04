@@ -76,7 +76,7 @@ MutSpectra <- function(object, BSgenome=NULL, sorting=NULL, palette=NULL, clinic
     Grob <- arrangeMutSpectraPlot(plots, sectionHeights, verbose)
     
     new("MutSpectra", PlotA=getGrob(plots, 1), PlotB=getGrob(plots, 2), PlotC=getGrob(plots, 3),
-        Grob=Grob, primaryData=getData(primaryData), ClinicalData=ClinicalData)
+        Grob=Grob, primaryData=getData(primaryData, name="primaryData"), ClinicalData=ClinicalData)
 }
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
@@ -179,14 +179,56 @@ MutSpectraPlots <- function(primaryData, clinical, plotALayers, plotBLayers, plo
 ################################################################################
 ###################### Accessor function definitions ###########################
 
+#' Helper function to getData from classes
+#'
+#' @rdname getData-methods
+#' @aliases getData
+.getData_MutSpectra <- function(object, name=NULL, index=NULL, ...){
+    
+    if(is.null(name) & is.null(index)){
+        memo <- paste("Both name and index are NULL, one must be specified!")
+        stop(memo)
+    }
+    
+    if(is.null(index)){
+        index <- 0
+    } else {
+        if(index > 2){
+            memo <- paste("index out of bounds")
+            stop(memo)
+        }
+    }
+    
+    if(is.null(name)){
+        name <- "noMatch"
+    } else {
+        slotAvailableName <- c("primaryData", "ClinicalData")
+        if(!(name %in% slotAvailableName)){
+            memo <- paste("slot name not found, specify one of:", toString(slotAvailableName))
+            stop(memo)
+        }
+    }
+    
+    if(name == "primaryData" | index == 1){
+        data <- object@primaryData
+    } else if(name == "ClinicalData" | index == 2){
+        data <- object@ClinicalData
+    }
+    
+    return(data)
+}
+
 #' @rdname getData-methods
 #' @aliases getData
 setMethod(f="getData",
           signature="MutSpectraPrimaryData",
-          definition=function(object, ...){
-              primaryData <- object@primaryData
-              return(primaryData)
-          })
+          definition=.getData_MutSpectra)
+
+#' @rdname getData-methods
+#' @aliases getData
+setMethod(f="getData",
+          signature="MutSpectra",
+          definition=.getData_MutSpectra)
 
 #' @rdname drawPlot-methods
 #' @aliases drawPlot
@@ -615,7 +657,7 @@ setMethod(f="formatClinicalData",
           definition=function(object, clinicalData, verbose, ...){
 
               # extract the data we need
-              primaryData <- getData(object)
+              primaryData <- getData(object, name="primaryData")
               clinicalData <- getData(clinicalData)
               
               # print status message

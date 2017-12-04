@@ -16,7 +16,7 @@ drawPlot(object, ...)
 
 \S4method{drawPlot}{Clinical}(object, ...)
 
-\S4method{drawPlot}{MutSpectra}(object, index = 4, ...)
+\S4method{drawPlot}{MutSpectra}(object, ...)
 
 \S4method{drawPlot}{Waterfall}(object, ...)
 }
