@@ -285,13 +285,43 @@ test_that("arrangeMutSpectraPlots alters section heights", {
     
 })
 
-test_that("MutSpectra plots correctly adds clinical data", {
-    
+################################################################################
+############## Test MutSpectra Constructor and accessors ########################
+
+MutSpectra.out <- MutSpectra(gmsObject, BSgenome=NULL, sorting=NULL, palette=NULL,
+                             clinical=NULL, sectionHeights=NULL, sampleNames=TRUE,
+                             verbose=FALSE, plotALayers=NULL, plotBLayers=NULL,
+                             plotCLayers=NULL)
+
+test_that("MutSpectra constructor outputs a S4 class object", {
+    expect_s4_class(MutSpectra.out, "MutSpectra")
+})
+
+test_that("drawPlot constructs a MutSpectra plot from grob objects in MutSpectra object", {
+    vdiffr::expect_doppelganger("drawPlot MutSpectra", drawPlot(MutSpectra.out))
+})
+
+test_that("MutSpectra correctly adds clinical data", {
+
     MutSpectra.out <- MutSpectra(gmsObject, BSgenome=NULL, sorting=NULL, palette=NULL,
                                  clinical=clinObject, sectionHeights=NULL, sampleNames=TRUE,
                                  verbose=FALSE, plotALayers=NULL, plotBLayers=NULL,
                                  plotCLayers=NULL)
     vdiffr::expect_doppelganger("MutSpectra Clinical", drawPlot(MutSpectra.out))
-    
+
 })
 
+################## getGrob #####################################################
+
+test_that("getGrob outputs error if index is out of bounds", {
+
+    expect_error(getGrob(MutSpectra.out, index=10))
+})
+
+test_that("getGrob successfully retrieves grob objects from MutSpectra object", {
+
+    expect_s3_class(getGrob(MutSpectra.out, index=1), "gtable")
+    expect_s3_class(getGrob(MutSpectra.out, index=2), "gtable")
+    expect_s3_class(getGrob(MutSpectra.out, index=3), "gtable")
+    expect_s3_class(getGrob(MutSpectra.out, index=4), "gtable")
+})

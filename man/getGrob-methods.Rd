@@ -4,9 +4,9 @@
 \docType{methods}
 \name{getGrob}
 \alias{getGrob}
-\alias{getGrob,MutSpectra-method}
-\alias{getGrob}
 \alias{getGrob,MutSpectraPlots-method}
+\alias{getGrob}
+\alias{getGrob,MutSpectra-method}
 \alias{getGrob}
 \alias{getGrob,WaterfallPlots-method}
 \alias{getGrob}
@@ -16,9 +16,9 @@
 \usage{
 getGrob(object, ...)
 
-\S4method{getGrob}{MutSpectra}(object, ...)
-
 \S4method{getGrob}{MutSpectraPlots}(object, index = 1, ...)
+
+\S4method{getGrob}{MutSpectra}(object, index = 1, ...)
 
 \S4method{getGrob}{WaterfallPlots}(object, index = 1, ...)
 

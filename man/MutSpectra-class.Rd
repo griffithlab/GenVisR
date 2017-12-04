@@ -6,9 +6,9 @@
 \title{Class MutSpectra}
 \usage{
 MutSpectra(object, BSgenome = NULL, sorting = NULL, palette = NULL,
-  clinical = NULL, sectionHeights = NULL, sectionWidths = NULL,
-  sampleNames = TRUE, verbose = FALSE, plotALayers = NULL,
-  plotBLayers = NULL, plotCLayers = NULL)
+  clinical = NULL, sectionHeights = NULL, sampleNames = TRUE,
+  verbose = FALSE, plotALayers = NULL, plotBLayers = NULL,
+  plotCLayers = NULL)
 }
 \arguments{
 \item{object}{Object of class MutationAnnotationFormat, GMS, VEP.}
@@ -26,9 +26,6 @@ providing the order of samples.}
 \item{clinical}{Object of class Clinical, used for adding a clinical data subplot.}
 
 \item{sectionHeights}{Numeric vector specifying relative heights of each plot section,
-should sum to one. Expects a value for each section.}
-
-\item{sectionWidths}{Numeric vector specifying relative heights of each plot section,
 should sum to one. Expects a value for each section.}
 
 \item{sampleNames}{Boolean specifying if samples should be labeled on the plot.}

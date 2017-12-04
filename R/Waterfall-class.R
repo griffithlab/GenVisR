@@ -368,7 +368,7 @@ setMethod(f="getData",
 #' @rdname getGrob-methods
 #' @aliases getGrob
 #' @noRd
-.getGrob <- function(object, index=1, ...){
+.getGrob_Waterfall <- function(object, index=1, ...){
     if(index == 1){
         grob <- object@PlotA
     } else if(index == 2) {
@@ -387,13 +387,13 @@ setMethod(f="getData",
 #' @aliases getGrob
 setMethod(f="getGrob",
           signature="WaterfallPlots",
-          definition=.getGrob)
+          definition=.getGrob_Waterfall)
 
 #' @rdname getGrob-methods
 #' @aliases getGrob
 setMethod(f="getGrob",
           signature="Waterfall",
-          definition=.getGrob)
+          definition=.getGrob_Waterfall)
 
 #' @rdname drawPlot-methods
 #' @aliases drawPlot

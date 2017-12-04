@@ -188,42 +188,48 @@ setMethod(f="getData",
               return(primaryData)
           })
 
-#' @rdname getGrob-methods
-#' @aliases getGrob
-setMethod(f="getGrob",
-          signature="MutSpectra",
-          definition=function(object, ...){
-              grob <- object@Grob
-              return(grob)
-          })
-
 #' @rdname drawPlot-methods
 #' @aliases drawPlot
 #' @importFrom grid grid.draw
 #' @exportMethod drawPlot
 setMethod(f="drawPlot",
           signature="MutSpectra",
-          definition=function(object, ...){
-              grob <- getGrob(object)
+          definition=function(object, index=4, ...){
+              grob <- getGrob(object, index=index)
               grid::grid.draw(grob)
           })
+
+#' Helper function to extract grobs from objects
+#'
+#' @rdname getGrob-methods
+#' @aliases getGrob
+#' @noRd
+.getGrob_MutSpectra <- function(object, index=1, ...){
+    if(index == 1){
+        grob <- object@PlotA
+    } else if(index == 2) {
+        grob <- object@PlotB
+    } else if(index == 3) {
+        grob <- object@PlotC
+    } else if(index == 4) {
+        grob <- object@Grob
+    } else {
+        stop("Subscript out of bounds")
+    }
+    return(grob)
+}
 
 #' @rdname getGrob-methods
 #' @aliases getGrob
 setMethod(f="getGrob",
           signature="MutSpectraPlots",
-          definition=function(object, index=1, ...){
-              if(index == 1){
-                  grob <- object@PlotA
-              } else if(index == 2) {
-                  grob <- object@PlotB
-              } else if(index == 3) {
-                  grob <- object@PlotC
-              } else {
-                  stop("Subscript out of bounds")
-              }
-              return(grob)
-          })
+          definition=.getGrob_MutSpectra)
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+setMethod(f="getGrob",
+          signature="MutSpectra",
+          definition=.getGrob_MutSpectra)
 
 ################################################################################
 ####################### Method function definitions ############################
