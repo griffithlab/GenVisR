@@ -194,8 +194,8 @@ setMethod(f="getData",
 #' @exportMethod drawPlot
 setMethod(f="drawPlot",
           signature="MutSpectra",
-          definition=function(object, index=4, ...){
-              grob <- getGrob(object, index=index)
+          definition=function(object, ...){
+              grob <- getGrob(object, index=4)
               grid::grid.draw(grob)
           })
 
