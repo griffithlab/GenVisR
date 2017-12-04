@@ -47,8 +47,6 @@ setClass("MutSpectra",
 #' @param clinical Object of class Clinical, used for adding a clinical data subplot.
 #' @param sectionHeights Numeric vector specifying relative heights of each plot section,
 #' should sum to one. Expects a value for each section.
-#' @param sectionWidths Numeric vector specifying relative heights of each plot section,
-#' should sum to one. Expects a value for each section.
 #' @param sampleNames Boolean specifying if samples should be labeled on the plot.
 #' @param verbose Boolean specifying if status messages should be reported
 #' @param plotALayers list of ggplot2 layers to be passed to the frequency plot.
@@ -56,8 +54,7 @@ setClass("MutSpectra",
 #' @param plotCLayers list of ggplot2 layers to be passed to the clinical plot.
 #' @export
 MutSpectra <- function(object, BSgenome=NULL, sorting=NULL, palette=NULL, clinical=NULL, sectionHeights=NULL,
-                      sectionWidths=NULL, sampleNames=TRUE, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL,
-                      plotCLayers=NULL){
+                       sampleNames=TRUE, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL, plotCLayers=NULL){
     
     # initalize the MutSpectraPrimaryData object
     primaryData <- MutSpectraPrimaryData(object, BSgenome=BSgenome, sorting=sorting, verbose=verbose)

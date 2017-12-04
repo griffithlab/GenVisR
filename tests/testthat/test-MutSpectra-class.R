@@ -250,3 +250,48 @@ test_that("buildProportionPlot warns if plotBLayers does not contain valid ggplo
     expect_warning(buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=test_plotBLayers, palette=NULL, verbose=FALSE))
 })
 
+######################### test MutSpectraPlots class construction ##############
+
+context("MutSpectraPlots Constructor")
+
+MutSpectraPlots.out <- MutSpectraPlots(MutSpectraPrimaryData.out, clinical=NULL, plotALayers=NULL,
+                                       plotBLayers=NULL, plotCLayers=NULL, sampleNames=FALSE,
+                                       palette=NULL, verbose=FALSE)
+
+test_that("MutSpectraPlots constructor outputs a s4 class object", {
+    
+    expect_s4_class(MutSpectraPlots.out, "MutSpectraPlots")
+    
+})
+
+################################################################################
+############# test MutSpectra constructor and associated functions #############
+
+context("MutSpectra Final Plot")
+
+################# arrangeMutSpectraPlot ########################################
+
+test_that("arrangeMutSpectraPlot plots a base plot", {
+    
+    arrangeMutSpectraPlot.out <- arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("final MutSpectra base", grid::grid.draw(arrangeMutSpectraPlot.out))
+    
+})
+
+test_that("arrangeMutSpectraPlots alters section heights", {
+    
+    arrangeMutSpectraPlot.out <- arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=c(1, 3), verbose=FALSE)
+    vdiffr::expect_doppelganger("final MutSpectra alter section heights", grid::grid.draw(arrangeMutSpectraPlot.out))
+    
+})
+
+test_that("MutSpectra plots correctly adds clinical data", {
+    
+    MutSpectra.out <- MutSpectra(gmsObject, BSgenome=NULL, sorting=NULL, palette=NULL,
+                                 clinical=clinObject, sectionHeights=NULL, sampleNames=TRUE,
+                                 verbose=FALSE, plotALayers=NULL, plotBLayers=NULL,
+                                 plotCLayers=NULL)
+    vdiffr::expect_doppelganger("MutSpectra Clinical", drawPlot(MutSpectra.out))
+    
+})
+
