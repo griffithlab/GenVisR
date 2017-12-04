@@ -313,6 +313,8 @@ test_that("MutSpectra correctly adds clinical data", {
 
 ################## getGrob #####################################################
 
+context("MutSpectra accessors")
+
 test_that("getGrob outputs error if index is out of bounds", {
 
     expect_error(getGrob(MutSpectra.out, index=10))
@@ -327,6 +329,24 @@ test_that("getGrob successfully retrieves grob objects from MutSpectra object", 
 })
 
 ################## getData #####################################################
+
+test_that("getData outputs error if no name or index is given", {
+    
+    expect_error(getData(MutSpectra.out))
+    
+})
+
+test_that("getData outputs error if index exceeds the number of slots", {
+    
+    expect_error(getData(MutSpectra.out, index=10))
+    
+})
+
+test_that("getData outputs error if supplied name is not a valid slot name", {
+    
+    expect_error(getData(MutSpectra.out, name="shouldNotexist"))
+    
+})
 
 test_that("getData retrieves specified slot data correctly", {
     

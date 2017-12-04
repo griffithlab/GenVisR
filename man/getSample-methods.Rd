@@ -6,17 +6,11 @@
 \name{getSample}
 \alias{getSample}
 \alias{getSample,GMS_Virtual-method}
-\alias{getSample}
 \alias{getSample,GMS-method}
-\alias{getSample}
 \alias{getSample,MutationAnnotationFormat_Virtual-method}
-\alias{getSample}
 \alias{getSample,MutationAnnotationFormat-method}
-\alias{getSample}
 \alias{getSample,VEP_Virtual-method}
-\alias{getSample}
 \alias{getSample,VEP-method}
-\alias{getSample}
 \title{Method getSample}
 \usage{
 getSample(object, ...)

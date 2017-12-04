@@ -5,11 +5,8 @@
 \name{getPath}
 \alias{getPath}
 \alias{getPath,GMS-method}
-\alias{getPath}
 \alias{getPath,MutationAnnotationFormat-method}
-\alias{getPath}
 \alias{getPath,VEP-method}
-\alias{getPath}
 \title{Method getPath}
 \usage{
 getPath(object, ...)

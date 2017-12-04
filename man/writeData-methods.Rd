@@ -7,7 +7,6 @@
 \alias{writeData,VEP_Virtual-method}
 \alias{writeData,VEP_Virtual}
 \alias{writeData,VEP-method}
-\alias{writeData}
 \title{Method writeData}
 \usage{
 writeData(object, ...)

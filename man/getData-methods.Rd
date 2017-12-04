@@ -5,17 +5,13 @@
 \name{getData}
 \alias{getData}
 \alias{getData,Clinical-method}
-\alias{getData}
 \alias{getData,ClinicalData-method}
-\alias{getData}
+\alias{.getData_MutSpectra}
 \alias{getData,MutSpectraPrimaryData-method}
-\alias{getData}
+\alias{getData,MutSpectra-method}
 \alias{.getData}
-\alias{getData}
 \alias{getData,WaterfallData-method}
-\alias{getData}
 \alias{getData,Waterfall-method}
-\alias{getData}
 \title{Method getData}
 \usage{
 getData(object, ...)
@@ -24,7 +20,12 @@ getData(object, ...)
 
 \S4method{getData}{ClinicalData}(object, ...)
 
-\S4method{getData}{MutSpectraPrimaryData}(object, ...)
+.getData_MutSpectra(object, name = NULL, index = NULL, ...)
+
+\S4method{getData}{MutSpectraPrimaryData}(object, name = NULL, index = NULL,
+  ...)
+
+\S4method{getData}{MutSpectra}(object, name = NULL, index = NULL, ...)
 
 .getData(object, name = NULL, index = NULL, ...)
 
@@ -43,6 +44,8 @@ getData(object, ...)
 }
 \description{
 Method getData
+
+Helper function to getData from classes
 
 Helper function to getData from classes
 }

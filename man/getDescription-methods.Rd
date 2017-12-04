@@ -5,9 +5,7 @@
 \name{getDescription}
 \alias{getDescription}
 \alias{getDescription,VEP_Virtual-method}
-\alias{getDescription}
 \alias{getDescription,VEP-method}
-\alias{getDescription}
 \title{Method getDescription}
 \usage{
 getDescription(object, ...)

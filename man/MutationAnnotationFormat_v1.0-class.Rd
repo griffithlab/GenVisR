@@ -15,8 +15,6 @@ version 1.0 specification.}
 \description{
 An S4 class to represent data in mutation annotation format version 1.0,
 inherits from the MutationAnnotationFormat_Virtual class.
-
-Constructor for the MutationAnnotationFormat_v1.0 sub-class
 }
 \section{Slots}{
 

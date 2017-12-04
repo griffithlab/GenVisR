@@ -40,8 +40,6 @@ should sum to one. Expects a value for each section.}
 }
 \description{
 An S4 class for the MutSpectra plot object
-
-Constructor for the MutSpectra class.
 }
 \section{Slots}{
 

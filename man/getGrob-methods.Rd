@@ -5,13 +5,9 @@
 \name{getGrob}
 \alias{getGrob}
 \alias{getGrob,MutSpectraPlots-method}
-\alias{getGrob}
 \alias{getGrob,MutSpectra-method}
-\alias{getGrob}
 \alias{getGrob,WaterfallPlots-method}
-\alias{getGrob}
 \alias{getGrob,Waterfall-method}
-\alias{getGrob}
 \title{Method getGrob}
 \usage{
 getGrob(object, ...)

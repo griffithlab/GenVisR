@@ -5,11 +5,8 @@
 \name{drawPlot}
 \alias{drawPlot}
 \alias{drawPlot,Clinical-method}
-\alias{drawPlot}
 \alias{drawPlot,MutSpectra-method}
-\alias{drawPlot}
 \alias{drawPlot,Waterfall-method}
-\alias{drawPlot}
 \title{Method drawPlot}
 \usage{
 drawPlot(object, ...)
