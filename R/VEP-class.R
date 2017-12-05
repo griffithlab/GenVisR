@@ -301,7 +301,7 @@ setMethod(f="setMutationHierarchy",
                                 "mutationHierarchy, missing", toString(missingCol))
                   stop(memo)
               }
-              browser()
+              
               # check that all mutations are specified
               if(!all(object@vepObject@mutation$Consequence %in% mutationHierarchy$mutation)){
                   missingMutations <- unique(object@vepObject@mutation$Consequence[!object@vepObject@mutation$Consequence %in% mutationHierarchy$mutation])
