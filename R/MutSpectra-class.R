@@ -472,7 +472,7 @@ setMethod(f="buildFrequencyPlot",
               } else if(length(palette) != 6){
                   memo <- paste("The input to the parameter \"palette\" is not of length",
                                 "6, a color should be specified for each transition/transversion in:",
-                                toString(unique(primaryData$TransTranv), "! using the default palette."))
+                                toString(unique(primaryData$TransTranv)), "! using the default palette.")
                   warning(memo)
                   palette <- c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753")
               }
@@ -546,7 +546,7 @@ setMethod(f="buildProportionPlot",
               } else if(length(palette) != 6){
                   memo <- paste("The input to the parameter \"palette\" is not of length",
                                 "6, a color should be specified for each transition/transversion in:",
-                                toString(unique(primaryData$TransTranv), "! using the default palette."))
+                                toString(unique(primaryData$TransTranv)), "! using the default palette.")
                   warning(memo)
                   palette <- c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753")
               }

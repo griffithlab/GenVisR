@@ -35,6 +35,10 @@ test_that("annoMutSpectra properly classifies reference and variant bases as tra
     
 })
 
+test_that("annoMutSpectra works in verbose mode", {
+    expect_message(annoMutSpectra(toMutSpectra.out, verbose=TRUE))
+})
+
 ###################### test calcMutSpectra #####################################
 
 calcMutSpectra.out <- calcMutSpectra(annoMutSpectra.out, verbose=FALSE)
@@ -61,6 +65,10 @@ test_that("calcMutSpectra correctly calculates the proportion of transitions/tra
     
     expect_equal(expected, actual)
     
+})
+
+test_that("calcMutSpectra works in verbose mode", {
+    expect_message(calcMutSpectra(annoMutSpectra.out, verbose=TRUE))
 })
 
 ######################## test sortSamples ######################################
@@ -116,6 +124,17 @@ test_that("sortSamples correctly removes samples if specified in a custom order"
     
     expect_equal(expected, actual)
     
+})
+
+test_that("sortSamples warns if incorrect input is detected to sorting", {
+    expect_warning(sortSamples(calcMutSpectra.out, sorting=as.factor("sample"), verbose=FALSE))
+})
+
+test_that("sortSamples works in verbose mode", {
+    sampleOrder <- c("FLX005-Naive", "FLX007-Naive", "FLX001-Naive", "FLX004-Naive", "FLX003-Naive")
+    expect_message(sortSamples(calcMutSpectra.out, sorting="sample", verbose=TRUE))
+    expect_message(sortSamples(calcMutSpectra.out, sorting="mutation", verbose=TRUE))
+    expect_message(sortSamples(calcMutSpectra.out, sorting=sampleOrder, verbose=TRUE))
 })
 
 #### test MutSpectraPrimaryData class construction with various parameters #####
@@ -205,6 +224,12 @@ test_that("buildFrequencyPlot is able to add layers to the plot", {
       
 })
 
+test_that("buildFrequencyPlot is able to add a custom pallete to the plot", {
+    testPallete <- c("red", "blue", "green", "black", "darkorchid4", "seagreen3")
+    buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=NULL, palette=testPallete, verbose=FALSE)
+    vdiffr::expect_doppelganger("mutspectra frequency plot custom pallette", grid::grid.draw(buildFrequencyPlot.out))
+})
+
 test_that("buildFrequencyPlot warns if plotALayers is not passed as a list", {
     
     test_plotALayers <- ggplot2::geom_hline(yintercept=c(30), colour="black", size=2)
@@ -216,6 +241,15 @@ test_that("buildFrequencyPlot warns if plotALayers does not contain valid ggplot
     
     test_plotALayers <- list(c("THIS IS A TEST"))
     expect_warning(buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=test_plotALayers, palette=NULL, verbose=FALSE))
+})
+
+test_that("buildFrequencyPlot works in verbose mode", {
+    expect_message(buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=NULL, palette=NULL, verbose=TRUE))
+})
+
+test_that("buildFrequencyPlot warns if a pallete is not the correct length", {
+    testPallete <- c("red", "blue", "green", "black", "darkorchid4", "seagreen3", "salmon")
+    expect_warning(buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=NULL, palette=testPallete, verbose=FALSE))
 })
 
 ######################### test buildProportionPlot #############################
@@ -237,6 +271,12 @@ test_that("buildProportionPlot is able to add layers to the plot", {
     
 })
 
+test_that("buildProportionPlot is able to add a custom pallete to the plot", {
+    testPallete <- c("red", "blue", "green", "black", "darkorchid4", "seagreen3")
+    buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=FALSE, plotBLayers=NULL, palette=testPallete, verbose=FALSE)
+    vdiffr::expect_doppelganger("mutspectra proportion plot custom pallette", grid::grid.draw(buildProportionPlot.out))
+})
+
 test_that("buildProportionPlot warns if plotBLayers is not passed as a list", {
     
     test_plotBLayers <- ggplot2::geom_hline(yintercept=c(.5), colour="black", size=2)
@@ -249,6 +289,16 @@ test_that("buildProportionPlot warns if plotBLayers does not contain valid ggplo
     test_plotBLayers <- list(c("THIS IS A TEST"))
     expect_warning(buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=test_plotBLayers, palette=NULL, verbose=FALSE))
 })
+
+test_that("buildProportionPlot works in verbose mode", {
+    expect_message(buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=FALSE, plotBLayers=NULL, palette=NULL, verbose=TRUE))
+})
+
+test_that("buildProportionPlot warns if a pallete is not the correct length", {
+    testPallete <- c("red", "blue", "green", "black", "darkorchid4", "seagreen3", "salmon")
+    expect_warning(buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=FALSE, plotBLayers=NULL, palette=testPallete, verbose=FALSE))
+})
+
 
 ######################### test MutSpectraPlots class construction ##############
 
@@ -283,6 +333,14 @@ test_that("arrangeMutSpectraPlots alters section heights", {
     arrangeMutSpectraPlot.out <- arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=c(1, 3), verbose=FALSE)
     vdiffr::expect_doppelganger("final MutSpectra alter section heights", grid::grid.draw(arrangeMutSpectraPlot.out))
     
+})
+
+test_that("arrangeMutSpectraPlots correctly warns if section heights does not match the number of plots", {
+    expect_warning(arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=c(1), verbose=FALSE))
+})
+
+test_that("arrangeMutSpectraPlots correctly warns if section heights is not numeric", {
+    expect_warning(arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=c("A"), verbose=FALSE))
 })
 
 ################################################################################
