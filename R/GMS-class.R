@@ -192,13 +192,10 @@ setMethod(f="toWaterfall",
                   message(memo)
               }
               
-              # grab the mutation hierarchy
-              hierarchy <- hierarchy@MutationHierarchy
-              
               # grab the sample, mutation, gene columns and set a label
-              sample <- object@gmsObject@sample
-              mutation <- object@gmsObject@mutation[,"trv_type"]
-              gene <- object@gmsObject@meta[,"gene_name"]
+              sample <- getSample(object)
+              mutation <- getMutation(object)[,"trv_type"]
+              gene <- getMeta(object)[,"gene_name"]
               label <- NA
               
               # if a label column exists and is proper overwrite the label variable
@@ -208,14 +205,14 @@ setMethod(f="toWaterfall",
                                     "Found length to be", length(labelColumn))
                       warning(memo)
                       next
-                  } else if(labelColumn %in% colnames(object@gmsObject@meta)){
-                      memo <- paste("Did not find column:", labelColumn,
+                  } else if(!labelColumn %in% colnames(getMeta(object))){
+                      memo <- paste("Did not find column:", toString(labelColumn),
                                     "in the meta slot of the gmsObject! Valid",
-                                    "names are:", colnames(getMeta(object)))
+                                    "names are:", toString(colnames(getMeta(object))))
                       warning(memo)
                       next
                   } else {
-                      label <- object@gmsObject@meta[,labelColumn]
+                      label <- getMeta(object)[,labelColumn, with=FALSE]
                   }
               }
               
@@ -225,12 +222,12 @@ setMethod(f="toWaterfall",
               
               # make a temporary ID column for genomic features to collapse on
               # this will ensure the mutation burden/frequency plot will be accurate
-              waterfallFormat$key <- paste0(object@gmsObject@position$chromosome_name, ":",
-                                            object@gmsObject@position$start, ":",
-                                            object@gmsObject@position$stop, ":",
-                                            object@gmsObject@mutation$reference, ":",
-                                            object@gmsObject@mutation$variant, ":",
-                                            object@gmsObject@sample$sample)
+              waterfallFormat$key <- paste0(getPosition(object)$chromosome_name, ":",
+                                            getPosition(object)$start, ":",
+                                            getPosition(object)$stop, ":",
+                                            getPosition(object)$reference, ":",
+                                            getPosition(object)$variant, ":",
+                                            getSample(object)$sample)
               rowCountOrig <- nrow(waterfallFormat)
 
               # order the data based on the mutation hierarchy,
@@ -297,16 +294,13 @@ setMethod(f="setMutationHierarchy",
                   mutationHierarchy <- data.table::setDT(mutationHierarchy)
               }
               
-              # check for the correct columns and make sure they are character vectors
-              correctCol <- c("mutation", "color")
-              if(!all(correctCol %in% colnames(mutationHierarchy))){
-                  missingCol <- correctCol[!correctCol %in% colnames(mutationHierarchy)]
+              # check for the correct columns
+              if(!all(colnames(mutationHierarchy) %in% c("mutation", "color"))){
+                  missingCol <- colnames(mutationHierarchy)[!c("mutation", "color") %in% colnames(mutationHierarchy)]
                   memo <- paste("The correct columns were not found in",
                                 "mutationHierarchy, missing", toString(missingCol))
                   stop(memo)
               }
-              mutationHierarchy$color <- as.character(mutationHierarchy$color)
-              mutationHierarchy$mutation <- as.character(mutationHierarchy$mutation)
               
               # check that all mutations are specified
               if(!all(object@gmsObject@mutation$trv_type %in% mutationHierarchy$mutation)){
@@ -325,6 +319,7 @@ setMethod(f="setMutationHierarchy",
               
               # add in a pretty print mutation labels
               mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
+              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$mutation)
               
               # check for duplicate mutations
               if(any(duplicated(mutationHierarchy$mutation))){
@@ -333,6 +328,10 @@ setMethod(f="setMutationHierarchy",
                                 "was duplicated in the supplied mutationHierarchy!")
                   mutationHierarchy <- mutationHierarchy[!duplicated(mutationHierarchy$mutation),]
               }
+              
+              # ensure columns are of the proper type
+              mutationHierarchy$color <- as.character(mutationHierarchy$color)
+              mutationHierarchy$mutation <- as.character(mutationHierarchy$mutation)
               
               # print status message
               if(verbose){
@@ -349,6 +348,7 @@ setMethod(f="setMutationHierarchy",
 #' @aliases toMutSpectra
 #' @param object Object of class GMS
 #' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom data.table rbindlist
 #' @noRd
 setMethod(f="toMutSpectra",
           signature="GMS",
@@ -392,6 +392,17 @@ setMethod(f="toMutSpectra",
                   memo <- paste("Removed", rowCountOrig - nrow(mutSpectraFormat),
                                 "rows from the data which harbored duplicate",
                                 "genomic locations")
+                  message(memo)
+              }
+              
+              # Remove cases where there is not change between reference and variant
+              mutSpectraFormat$refAllele <- as.character(mutSpectraFormat$refAllele)
+              mutSpectraFormat$variantAllele <- as.character(mutSpectraFormat$variantAllele)
+              alleleMatchIndex <- mutSpectraFormat$refAllele == mutSpectraFormat$variantAllele
+              mutSpectraFormat <- mutSpectraFormat[!alleleMatchIndex,]
+              if(verbose){
+                  memo <- paste("Removed", length(alleleMatchIndex), "entries",
+                                "where the reference allele matched the tumor allele")
                   message(memo)
               }
               

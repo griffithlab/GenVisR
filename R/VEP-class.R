@@ -295,17 +295,16 @@ setMethod(f="setMutationHierarchy",
               }
               
               # check for the correct columns
-              correctCol <- c("mutation", "color")
-              if(!all(correctCol %in% colnames(mutationHierarchy))){
-                  missingCol <- correctCol[!correctCol %in% colnames(mutationHierarchy)]
+              if(!all(colnames(mutationHierarchy) %in% c("mutation", "color"))){
+                  missingCol <- colnames(mutationHierarchy)[!c("mutation", "color") %in% colnames(mutationHierarchy)]
                   memo <- paste("The correct columns were not found in",
                                 "mutationHierarchy, missing", toString(missingCol))
                   stop(memo)
               }
-              
+              browser()
               # check that all mutations are specified
-              if(!all(object@vepObject@mutation$trv_type %in% mutationHierarchy$mutation)){
-                  missingMutations <- unique(object@vepObject@mutation$trv_type[!object@vepObject@mutation$trv_type %in% mutationHierarchy$mutation])
+              if(!all(object@vepObject@mutation$Consequence %in% mutationHierarchy$mutation)){
+                  missingMutations <- unique(object@vepObject@mutation$Consequence[!object@vepObject@mutation$Consequence %in% mutationHierarchy$mutation])
                   memo <- paste("The following mutations were found in the",
                                 "input however were not specified in the",
                                 "mutationHierarchy!", toString(missingMutations),

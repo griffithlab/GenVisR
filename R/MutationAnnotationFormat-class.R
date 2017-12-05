@@ -282,6 +282,10 @@ setMethod(f="setMutationHierarchy",
                   mutationHierarchy <- mutationHierarchy[!duplicated(mutationHierarchy$mutation),]
               }
               
+              # ensure columns are of the proper type
+              mutationHierarchy$color <- as.character(mutationHierarchy$color)
+              mutationHierarchy$mutation <- as.character(mutationHierarchy$mutation)
+              
               # print status message
               if(verbose){
                   memo <- paste("Setting the hierarchy of mutations from most",
