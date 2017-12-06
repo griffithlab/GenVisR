@@ -302,9 +302,16 @@ setMethod(f="setMutationHierarchy",
                   stop(memo)
               }
               
-              # check that all mutations are specified
-              if(!all(object@vepObject@mutation$Consequence %in% mutationHierarchy$mutation)){
-                  missingMutations <- unique(object@vepObject@mutation$Consequence[!object@vepObject@mutation$Consequence %in% mutationHierarchy$mutation])
+              # don't want to add mutations from vep which are valid but are comma seperated on one line
+              # these are split up and taken care of in toWaterfall(), see below
+              consequences <- as.character(unique(object@vepObject@mutation$Consequence))
+              consequences <- consequences[grepl(",", consequences, fixed=TRUE)]
+              consequencesSplit <- strsplit(consequences, ",", fixed=TRUE)
+              consequences <- consequences[sapply(consequencesSplit, function(x) all(x %in% mutationHierarchy$mutation))]
+              
+              # check that all mutations are specified, if not add entries for them
+              if(!all(object@vepObject@mutation$Consequence %in% c(mutationHierarchy$mutation, consequences))){
+                  missingMutations <- unique(object@vepObject@mutation$Consequence[!object@vepObject@mutation$Consequence %in% c(mutationHierarchy$mutation, consequences)])
                   memo <- paste("The following mutations were found in the",
                                 "input however were not specified in the",
                                 "mutationHierarchy!", toString(missingMutations),
@@ -312,14 +319,14 @@ setMethod(f="setMutationHierarchy",
                                 "assigning random colors!")
                   warning(memo)
                   newCol <- grDevices::colors(distinct=TRUE)[!grepl("^gray", grDevices::colors(distinct=TRUE))]
-                  tmp <- data.table::data.table("mutation"=missingMutations,
+                  missingMutations <- data.table::data.table("mutation"=missingMutations,
                                                 "color"=sample(newCol, length(missingMutations)))
-                  mutationHierarchy <- data.table::rbindlist(list(mutationHierarchy, tmp), use.names=TRUE, fill=TRUE)
+                  mutationHierarchy <- data.table::rbindlist(list(mutationHierarchy, missingMutations), use.names=TRUE, fill=TRUE)
               }
               
               # add in a pretty print mutation labels
               mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
-              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$mutation)
+              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$label)
               
               # check for duplicate mutations
               if(any(duplicated(mutationHierarchy$mutation))){
@@ -342,6 +349,7 @@ setMethod(f="setMutationHierarchy",
 
 #' @rdname toWaterfall-methods
 #' @aliases toWaterfall
+#' @importFrom data.table rbindlist
 #' @noRd
 setMethod(f="toWaterfall",
           signature="VEP",
@@ -353,9 +361,6 @@ setMethod(f="toWaterfall",
                                 "to expected waterfall format")
                   message(memo)
               }
-              
-              # grab the mutation hierarchy
-              hierarchy <- hierarchy@MutationHierarchy
               
               # grab the sample, mutation, gene columns and set a label
               sample <- object@vepObject@sample
@@ -370,14 +375,14 @@ setMethod(f="toWaterfall",
                                     "Found length to be", length(labelColumn))
                       warning(memo)
                       next
-                  } else if(labelColumn %in% colnames(object@gmsObject@meta)){
+                  } else if(!labelColumn %in% colnames(getMeta(object))){
                       memo <- paste("Did not find column:", labelColumn,
                                     "in the meta slot of the vepObject! Valid",
-                                    "names are:", colnames(getMeta(object)))
+                                    "names are:", toString(colnames(getMeta(object))))
                       warning(memo)
                       next
                   } else {
-                      label <- object@vepObject@meta[,labelColumn]
+                      label <- getMeta(object)[,labelColumn, with=FALSE]
                   }
               }
               
@@ -392,11 +397,31 @@ setMethod(f="toWaterfall",
                                             object@vepObject@sample$sample)
               rowCountOrig <- nrow(waterfallFormat)
               
+              # seperate out any comma delimited mutation types not specified in the hierarchy
+              # if it's in the hierarchy we don't want to split it out later
+              index_multiConsequence <- (grepl(',', waterfallFormat$mutation, fixed=F) & !waterfallFormat$mutation %in% hierarchy$mutation)
+              waterfallFormat_multiConsequence <- waterfallFormat[index_multiConsequence,]
+              waterfallFormat_singleConsequence <- waterfallFormat[!index_multiConsequence,]
+              
+              # status message
+              if(length(index_multiConsequence) > 0 & verbose){
+                  memo <- paste("Found", length(index_multiConsequence), "rows with comma delimited mutations",
+                                "which are valid. Splitting these into multiple entries and collapsing via the",
+                                "specified hierarchy")
+                  message(memo)
+              }
+              
               # cast data into form where mutation column is not comma delimited
               # the hierarchy will sort out any duplicates
-              V1 <- . <- NULL # appease R CMD CHECK
-              waterfallFormat <- waterfallFormat[, strsplit(as.character(mutation), ",", fixed=TRUE),
-                                                 by = .(sample, gene, label, mutation, key)][,.(mutation = V1, sample, gene, label, key)]
+              if(length(index_multiConsequence) > 0){
+                  V1 <- . <- NULL # appease R CMD CHECK
+                  waterfallFormat_multiConsequence <- waterfallFormat_multiConsequence[, strsplit(as.character(mutation), ",", fixed=TRUE),
+                                                                                       by = .(sample, gene, label, mutation, key)][,.(mutation = V1, sample, gene, label, key)]
+                  # combine everything back together
+                  waterfallFormat <- data.table::rbindlist(list(waterfallFormat_multiConsequence, waterfallFormat_singleConsequence), use.names=TRUE, fill=TRUE)
+              } else {
+                  waterfallFormat <- waterfallFormat_singleConsequence
+              }
               
               # order the data based on the mutation hierarchy,
               # remove all duplicates based on key, and remove the key column
@@ -406,11 +431,11 @@ setMethod(f="toWaterfall",
               waterfallFormat[,key:=NULL]
               
               # print status message
-              if(verbose){
+              if((rowCountOrig - nrow(waterfallFormat)) != 0){
                   memo <- paste("Removed", rowCountOrig - nrow(waterfallFormat),
                                 "rows from the data which harbored duplicate",
                                 "genomic locations")
-                  message(memo)
+                  warning(memo)
               }
               
               # convert appropriate columns to factor

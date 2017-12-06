@@ -80,8 +80,6 @@ test_that("setMutationHierarchy adds values for missing mutations not specified 
     expect_true(all(expectedMutations %in% actualMutations))
 })
 
-
-
 # define table with duplicate mutations
 duplicateMutationHierarchy <- data.table::data.table("mutation"=c("RNA", "RNA"), "color"=c("blue", "red"))
 
