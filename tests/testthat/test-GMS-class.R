@@ -194,7 +194,7 @@ test_that("toWaterfall works in verbose mode", {
 
 test_that("toWaterfall checks the label parameter", {
     
-    expect_warning(toWaterfall(gmsObject, hierarchy=setMutationHierarchy.out, labelColumn=c("VARIANT_CLASS", "BIOTYPE"), verbose=FALSE))
+    expect_warning(toWaterfall(gmsObject, hierarchy=setMutationHierarchy.out, labelColumn=c("default_gene_name", "gene_name_source"), verbose=FALSE))
     expect_warning(toWaterfall(gmsObject, hierarchy=setMutationHierarchy.out, labelColumn=c("Not Here"), verbose=FALSE))
 })
 

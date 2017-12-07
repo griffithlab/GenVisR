@@ -11,10 +11,12 @@ mafObject <- MutationAnnotationFormat(testFile)
 
 context("MutationAnnotationFormat")
 
-test_that("Vesion number is correctly extracted", {
-    
-    expectedVersion <- 2.4
-    expect_equal(expectedVersion, mafObject@version)
+test_that("MutationAnnotationFormat can construct object from a file path", {
+    expect_s4_class(mafObject, "MutationAnnotationFormat")
+})
+
+test_that("MutationAnnotationFormat stops if version is not supported", {
+    expect_error(MutationAnnotationFormat(testFile, version=0))
 })
 
 ################################################################################
@@ -49,18 +51,32 @@ test_that("accessor method getMeta extracts all meta columns", {
     expect_true(extractedColNum == expectedColNum)
 })
 
+test_that("accessor method getVersion extracts the version number", {
+    
+    expected <- 2.4
+    actual <- getVersion(mafObject)
+    expect_equal(expected, actual)
+})
+
+test_that("accessor method getPath extracts the appropriate maf file paths", {
+    
+    expected <- 1
+    actual <- length(getPath(mafObject))
+    expect_equal(expected, actual)
+})
+
 ################################################################################
 ############# test the setMutationHierarchy method in Waterfall ################
 ################################################################################
 
-mutationHierarchy <- setMutationHierarchy(mafObject, mutationHierarchy=NULL, verbose=F)
+setMutationHierarchy.out <- setMutationHierarchy(mafObject, mutationHierarchy=NULL, verbose=F)
 test_that("setMutationHierarchy outputs a data.table with proper columns", {
 
     # test that it is a data.table
-    expect_is(mutationHierarchy, "data.table")
+    expect_is(setMutationHierarchy.out, "data.table")
 
     # test that it has the proper columns
-    actualCol <- colnames(mutationHierarchy)
+    actualCol <- colnames(setMutationHierarchy.out)
     expectedCol <- c("mutation", "color", "label")
     expect_true(all(actualCol %in% expectedCol))
 })
@@ -74,9 +90,9 @@ test_that("setMutationHierarchy adds values for missing mutations not specified 
     expect_warning(setMutationHierarchy(mafObject, mutationHierarchy=emptyMutationHierarchy, verbose=FALSE), "The following mutations")
 
     # test that output is created for every mutation
-    mutationHierarchy <- suppressWarnings(setMutationHierarchy(mafObject, mutationHierarchy=emptyMutationHierarchy, verbose=FALSE))
+    setMutationHierarchy.out <- suppressWarnings(setMutationHierarchy(mafObject, mutationHierarchy=emptyMutationHierarchy, verbose=FALSE))
     expectedMutations <- unique(getMutation(mafObject)$Variant_Classification)
-    actualMutations <- mutationHierarchy$mutation
+    actualMutations <- setMutationHierarchy.out$mutation
     expect_true(all(expectedMutations %in% actualMutations))
 })
 
@@ -93,6 +109,16 @@ test_that("setMutationHierarchy checks for duplicate mutations supplied to input
     
     boolean <- !any(duplicated(output))
     expect_true(boolean)
+})
+
+test_that("setMutationHierarchy errors if the proper columns are not found in hierarchy", {
+    mutations <- setMutationHierarchy.out[,c("mutation", "color")]
+    colnames(mutations) <- c("wrong", "columns")
+    expect_error(setMutationHierarchy(mafObject, mutationHierarchy=mutations, verbose=FALSE))
+})
+
+test_that("setMutationHierarchy works in verbose mode", {
+    expect_message(setMutationHierarchy(mafObject, mutationHierarchy=NULL, verbose=TRUE))
 })
 
 ################################################################################
@@ -135,6 +161,16 @@ test_that("toWaterfall removes duplicate mutations", {
     expect_true(nrow(toWaterfall.out) == 1)
 })
 
+test_that("toWaterfall works in verbose mode", {
+    expect_message(toWaterfall(mafObject, hierarchy=setMutationHierarchy.out, labelColumn=NULL, verbose=TRUE))
+})
+
+test_that("toWaterfall checks the label parameter", {
+    
+    expect_warning(toWaterfall(mafObject, hierarchy=setMutationHierarchy.out, labelColumn=c("Mutation_Status", "Validation_Method"), verbose=FALSE))
+    expect_warning(toWaterfall(mafObject, hierarchy=setMutationHierarchy.out, labelColumn=c("Not Here"), verbose=FALSE))
+})
+
 ################################################################################
 ############# test the toMutSpectra method in MutSpectra #######################
 ################################################################################
@@ -170,4 +206,8 @@ test_that("toMutSpectra creates a data.table with appropriate column names", {
     actualCol <- colnames(primaryData)
     expectedCol <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
     expect_true(all(actualCol %in% expectedCol))
+})
+
+test_that("toMutSpectra works in verbose mode", {
+    expect_message(toMutSpectra(mafObject, verbose=TRUE))
 })

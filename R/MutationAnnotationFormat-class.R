@@ -152,21 +152,27 @@ setMethod(f="toWaterfall",
               mutation <- getMutation(object)[,"Variant_Classification"]
               gene <- getMeta(object)[,"Hugo_Symbol"]
               label <- NA
+              labelFlag <- TRUE
               
               # if a label column exists and is proper overwrite the label variable
+              # if not change the flag
               if(!is.null(labelColumn)){
                   if(length(labelColumn) != 1) {
                       memo <- paste("Parameter \"labelColumn\" must be of length 1!",
                                     "Found length to be", length(labelColumn))
                       warning(memo)
-                      next
-                  } else if(!labelColumn %in% colnames(getMeta(object))){
-                      memo <- paste("Did not find column:", toString(labelColumn),
-                                    "in the meta slot of the mafObject! Valid",
+                      labelFlag <- FALSE
+                  }
+                  
+                  if(!labelColumn %in% colnames(getMeta(object))){
+                      memo <- paste("Did not find column:", labelColumn,
+                                    "in the meta slot of the vepObject! Valid",
                                     "names are:", toString(colnames(getMeta(object))))
                       warning(memo)
-                      next
-                  } else {
+                      labelFlag <- FALSE
+                  }
+                  
+                  if(labelFlag){
                       label <- getMeta(object)[,labelColumn, with=FALSE]
                   }
               }
