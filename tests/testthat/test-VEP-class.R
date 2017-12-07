@@ -198,6 +198,11 @@ test_that("setMutationHierarchy errors if the proper columns are not found in hi
     expect_error(setMutationHierarchy(vepObject, mutationHierarchy=mutations, verbose=FALSE))
 })
 
+
+test_that("setMutationHierarchy works in verbose mode", {
+    expect_message(setMutationHierarchy(vepObject, mutationHierarchy=NULL, verbose=TRUE))
+})
+
 ################################################################################
 ############# test the toWaterfall method in Waterfall #########################
 ################################################################################

@@ -35,6 +35,9 @@ test_that("GMS errors if no files are found", {
     expect_error(GMS(path=paste0(testFileDir, "/*.not_here")))
 })
 
+test_that("GMS stops if version is not supported", {
+    expect_error(GMS(testFile, version=0))
+})
 ################################################################################
 ##################### test GMS accessors #######################################
 ################################################################################
@@ -67,11 +70,25 @@ test_that("accessor method getMeta extracts all meta columns", {
     expect_true(extractedColNum == expectedColNum)
 })
 
+test_that("accessor method getVersion extracts the version number", {
+    
+    expected <- 4
+    actual <- getVersion(gmsObject)
+    expect_equal(expected, actual)
+})
+
+test_that("accessor method getPath extracts the appropriate gms file paths", {
+    
+    expected <- 1
+    actual <- length(getPath(gmsObject))
+    expect_equal(expected, actual)
+})
+
 ################################################################################
 ############## test the setMutationHierarchy method in Waterfall ###############
 ################################################################################
 
-setMutationHierarchy.out <- setMutationHierarchy(gmsObject, mutationHierarchy=NULL, verbose=F)
+setMutationHierarchy.out <- setMutationHierarchy(gmsObject, mutationHierarchy=NULL, verbose=FALSE)
 test_that("setMutationHierarchy outputs a data.table with proper columns", {
     
     # test that it is a data.table
@@ -113,6 +130,25 @@ test_that("setMutationHierarchy checks for duplicate mutations supplied to input
     expect_true(boolean)
 })
 
+test_that("setMutationHierarchy warns if input is not a data.table", {
+    
+    mutations <- as.data.frame(setMutationHierarchy.out[,c("mutation", "color")])
+    expect_warning(setMutationHierarchy(gmsObject, mutationHierarchy=mutations, verbose=FALSE))
+    
+    setMutationHierarchy.out.t3 <- setMutationHierarchy(gmsObject, mutationHierarchy=mutations, verbose=FALSE)
+    expect_equivalent(setMutationHierarchy.out.t3, setMutationHierarchy.out)
+})
+
+test_that("setMutationHierarchy errors if the proper columns are not found in hierarchy", {
+    mutations <- setMutationHierarchy.out[,c("mutation", "color")]
+    colnames(mutations) <- c("wrong", "columns")
+    expect_error(setMutationHierarchy(gmsObject, mutationHierarchy=mutations, verbose=FALSE))
+})
+
+test_that("setMutationHierarchy works in verbose mode", {
+    expect_message(setMutationHierarchy(gmsObject, mutationHierarchy=NULL, verbose=TRUE))
+})
+
 ################################################################################
 ############# test the toWaterfall method in Waterfall #########################
 ################################################################################
@@ -152,6 +188,16 @@ test_that("toWaterfall removes duplicate mutations", {
     expect_true(nrow(toWaterfall.out) == 1)
 })
 
+test_that("toWaterfall works in verbose mode", {
+    expect_message(toWaterfall(gmsObject, hierarchy=setMutationHierarchy.out, labelColumn=NULL, verbose=TRUE))
+})
+
+test_that("toWaterfall checks the label parameter", {
+    
+    expect_warning(toWaterfall(gmsObject, hierarchy=setMutationHierarchy.out, labelColumn=c("VARIANT_CLASS", "BIOTYPE"), verbose=FALSE))
+    expect_warning(toWaterfall(gmsObject, hierarchy=setMutationHierarchy.out, labelColumn=c("Not Here"), verbose=FALSE))
+})
+
 ################################################################################
 ############# test the toMutSpectra method in MutSpectra #######################
 ################################################################################
@@ -188,4 +234,8 @@ test_that("toMutSpectra creates a data.table with appropriate column names", {
     actualCol <- colnames(primaryData)
     expectedCol <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
     expect_true(all(actualCol %in% expectedCol))
+})
+
+test_that("toMutSpectra works in verbose mode", {
+    expect_message(toMutSpectra(gmsObject, verbose=TRUE))
 })
