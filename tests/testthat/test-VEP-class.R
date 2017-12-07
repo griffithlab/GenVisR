@@ -57,6 +57,10 @@ test_that("VEP stops if version is not supported", {
     expect_error(VEP(testFile, version=0))
 })
 
+test_that("VEP warns if more than one version is found", {
+    expect_warning(VEP(testFile, version=c(88, 89)))
+})
+
 ################################################################################
 ####################### test accessor methods ##################################
 ################################################################################
@@ -87,6 +91,30 @@ test_that("accessor method getMeta extracts all meta columns", {
     expectedColNum <- 58
     extractedColNum <- ncol(getMeta(vepObject))
     expect_true(extractedColNum == expectedColNum)
+})
+
+test_that("accessor method getVersion extracts the version number", {
+    
+    expected <- 88
+    actual <- getVersion(vepObject)
+    expect_equal(expected, actual)
+})
+
+test_that("accessor method getPath extracts the appropriate vep file paths", {
+    
+    expected <- 5
+    actual <- length(getPath(vepObject))
+    expect_equal(expected, actual)
+})
+
+test_that("accessor method getHeader expracts the header slot", {
+    
+    expect_is(getHeader(vepObject), "data.table")
+})
+
+test_that("accessor method getDescription extracts the description slot", {
+    
+    expect_is(getDescription(vepObject), "data.table")
 })
 
 ################################################################################
@@ -153,6 +181,21 @@ test_that("setMutationHierarchy checks for duplicate mutations supplied to input
     
     boolean <- !any(duplicated(output))
     expect_true(boolean)
+})
+
+test_that("setMutationHierarchy warns if input is not a data.table", {
+    
+    mutations <- as.data.frame(setMutationHierarchy.out[,c("mutation", "color")])
+    expect_warning(setMutationHierarchy(vepObject, mutationHierarchy=mutations, verbose=FALSE))
+    
+    setMutationHierarchy.out.t3 <- setMutationHierarchy(vepObject, mutationHierarchy=mutations, verbose=FALSE)
+    expect_equivalent(setMutationHierarchy.out.t3, setMutationHierarchy.out)
+})
+
+test_that("setMutationHierarchy errors if the proper columns are not found in hierarchy", {
+    mutations <- setMutationHierarchy.out[,c("mutation", "color")]
+    colnames(mutations) <- c("wrong", "columns")
+    expect_error(setMutationHierarchy(vepObject, mutationHierarchy=mutations, verbose=FALSE))
 })
 
 ################################################################################
@@ -245,6 +288,12 @@ test_that("toWaterfall works in verbose mode", {
     expect_message(suppressWarnings(setMutationHierarchy(vepObject, mutationHierarchy=NULL, verbose=TRUE)))
 })
 
+test_that("toWaterfall checks the label parameter", {
+    
+    expect_warning(toWaterfall(vepObject, hierarchy=setMutationHierarchy.out, labelColumn=c("VARIANT_CLASS", "BIOTYPE"), verbose=FALSE))
+    expect_warning(toWaterfall(vepObject, hierarchy=setMutationHierarchy.out, labelColumn=c("Not Here"), verbose=FALSE))
+})
+
 ################################################################################
 ############# test the toMutSpectra method in MutSpectra #######################
 ################################################################################
@@ -297,7 +346,13 @@ test_that("toMutSpectra grabs the appropriate reference base for a given genomic
     expect_equal(actual, expected)
 })
 
-test_that("toMutSpectra works in verbose mode", {
-    
-    expect_message(toMutSpectra(vepObject, BSgenome=BSgenome.Hsapiens.UCSC.hg19, verbose=TRUE))
+test_that("toMutSpectra looks for a valid BSgenome object if one is not supplied", {
+    expect_error(toMutSpectra(vepObject, BSgenome=NULL, verbose=FALSE))
 })
+
+test_that("toMutSpectra works in verbose mode", {
+
+    expect_message(suppressWarnings(toMutSpectra(vepObject, BSgenome=BSgenome.Hsapiens.UCSC.hg19, verbose=TRUE)))
+})
+
+

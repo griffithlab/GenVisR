@@ -362,26 +362,33 @@ setMethod(f="toWaterfall",
                   message(memo)
               }
               
-              # grab the sample, mutation, gene columns and set a label
+              # grab the sample, mutation, gene columns and set a label and a flag
+              # to set the label
               sample <- object@vepObject@sample
               mutation <- object@vepObject@mutation[,"Consequence"]
               gene <- object@vepObject@meta[,"SYMBOL"]
               label <- NA
+              labelFlag <- TRUE
               
               # if a label column exists and is proper overwrite the label variable
+              # if not change the flag
               if(!is.null(labelColumn)){
                   if(length(labelColumn) != 1) {
                       memo <- paste("Parameter \"labelColumn\" must be of length 1!",
                                     "Found length to be", length(labelColumn))
                       warning(memo)
-                      next
-                  } else if(!labelColumn %in% colnames(getMeta(object))){
+                      labelFlag <- FALSE
+                  }
+                  
+                  if(!labelColumn %in% colnames(getMeta(object))){
                       memo <- paste("Did not find column:", labelColumn,
                                     "in the meta slot of the vepObject! Valid",
                                     "names are:", toString(colnames(getMeta(object))))
                       warning(memo)
-                      next
-                  } else {
+                      labelFlag <- FALSE
+                  }
+                  
+                  if(labelFlag){
                       label <- getMeta(object)[,labelColumn, with=FALSE]
                   }
               }
