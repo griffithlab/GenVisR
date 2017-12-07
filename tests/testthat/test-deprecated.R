@@ -1,3 +1,5 @@
+context("Deprecated")
+
 test_that("waterfall levels data correctly and as such data aligns", {
     out <- waterfall(brcaMAF, plotGenes=c("PIK3CA", "TP53"), out="data")
     expect_equal(levels(out[["main"]]$sample), levels(out[["mutation_count"]]$sample))    

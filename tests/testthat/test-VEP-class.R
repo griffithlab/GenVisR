@@ -11,6 +11,27 @@ vepObject <- VEP(testFile)
 
 context("VEP")
 
+test_that("VEP can construct object from a file path", {
+    expect_s4_class(vepObject, "VEP")
+})
+
+test_that("VEP can construct object from data already loaded in R", {
+    testData <- fread(testFile[1], skip=91)
+    testData$sample <- "samp1"
+    expect_s4_class(VEP(data=testData, version=88), "VEP")
+})
+
+test_that("VEP warns if conversion to a data.table in required", {
+    testData <- read.delim(testFile[1], skip=91)
+    testData$sample <- "samp1"
+    expect_warning(VEP(data=testData, version=88))
+    expect_s4_class(suppressWarnings(VEP(data=testData, version=88)), "VEP")
+})
+
+test_that("VEP errors if no files are found", {
+    expect_error(VEP(path=paste0(testFileDir, "/*.not_here")))
+})
+
 test_that("Samples are added from file name", {
     
     # single file
@@ -30,6 +51,10 @@ test_that("Extra columns are properly split", {
     expect_equal(ncol(metaFields), 57)
     
     expect_true("HGNC" %in% metaFields$SYMBOL_SOURCE)
+})
+
+test_that("VEP stops if version is not supported", {
+    expect_error(VEP(testFile, version=0))
 })
 
 ################################################################################
