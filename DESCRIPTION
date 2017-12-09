@@ -28,7 +28,7 @@ NeedsCompilation: no
 Author: Zachary Skidmore [aut, cre], Alex Wagner [aut], Robert Lesurf [aut],
     Katie Campbell [aut], Jason Kunisaki [aut], Obi Griffith [aut], Malachi Griffith
     [aut]
-Collate:
+Collate: 
     'AllGenerics.R'
     'Clinical-class.R'
     'GMS_Virtual-class.R'
@@ -44,6 +44,7 @@ Collate:
     'MutationAnnotationFormat_v2.2-class.R'
     'MutationAnnotationFormat_v2.3-class.R'
     'MutationAnnotationFormat_v2.4-class.R'
+    'Rainfall.R'
     'VEP_Virtual-class.R'
     'VEP-class.R'
     'VEP_v88-class.R'

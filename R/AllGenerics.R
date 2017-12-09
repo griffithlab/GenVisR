@@ -505,3 +505,69 @@ setGeneric(
     name="getHeader",
     def=function(object, ...){standardGeneric("getHeader")}
 )
+
+#' Method toRainfall
+#'
+#' @name toRainfall
+#' @rdname toRainfall-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="toRainfall",
+    def=function(object, ...){standardGeneric("toRainfall")}
+)
+
+#' Method annoRainfall
+#'
+#' @name annoRainfall
+#' @rdname annoRainfall-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="annoRainfall",
+    def=function(object, ...){standardGeneric("annoRainfall")}
+)
+
+#' Method calcMutDist
+#'
+#' @name calcMutDist
+#' @rdname calcMutDist-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="calcMutDist",
+    def=function(object, ...){standardGeneric("calcMutDist")}
+)
+
+#' Method annoGenomeCoord
+#'
+#' @name annoGenomeCoord
+#' @rdname annoGenomeCoord-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="annoGenomeCoord",
+    def=function(object, ...){standardGeneric("annoGenomeCoord")}
+)
+
+#' Method chrSubset
+#'
+#' @name chrSubset
+#' @rdname chrSubset-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="chrSubset",
+    def=function(object, ...){standardGeneric("chrSubset")}
+)
+
+#' Method highlightSampleData
+#'
+#' @name formatSample
+#' @rdname formatSample-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="formatSample",
+    def=function(object, ...){standardGeneric("formatSample")}
+)

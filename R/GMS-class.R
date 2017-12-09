@@ -417,3 +417,65 @@ setMethod(f="toMutSpectra",
               
               return(mutSpectraFormat)
           })
+
+#' @rdname toRainfall-methods
+#' @aliases toRainfall
+#' @param object Object of class GMS
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+setMethod(f="toRainfall",
+          signature="GMS",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("converting", class(object), "to expected Rainfall format")
+                  message(memo)
+              }
+              
+              # grab the sample, position, and mutation columns
+              sample <- getSample(object)
+              chromosome <- getPosition(object)$chromosome_name
+              start <- getPosition(object)$start
+              end <- getPosition(object)$stop
+              reference <- as.character(getMutation(object)$reference)
+              variant <- as.character(getMutation(object)$variant)
+              
+              # combine all the relevant data into a single data table
+              rainfallFormat <- cbind(sample, chromosome, start, end, reference, variant)
+              
+              # remove cases where a mutation does not exist
+              rowCountOrig <- nrow(rainfallFormat)
+              rainfallFormat <- rainfallFormat[rainfallFormat$reference != rainfallFormat$variant,]
+              if(rowCountOrig != nrow(rainfallFormat)){
+                  memo <- paste("Removed", rowCountOrig - nrow(rainfallFormat),
+                                "entries where the reference matches the variant")
+                  warning(memo)
+              }
+              
+              # remove mutations at duplicate genomic mutation as this could artifically increase
+              # the density of mutations
+              rowCountOrig <- nrow(rainfallFormat)
+              rainfallFormat <- rainfallFormat[!duplicated(rainfallFormat[,c("sample", "chromosome", "start", "end")]),]
+              if(rowCountOrig != nrow(rainfallFormat)){
+                  memo <- paste("Removed", rowCountOrig - nrow(rainfallFormat),
+                                "entries with duplicate genomic positions")
+                  warning(memo)
+              }
+              
+              # create a flag column for where these entries came from
+              rainfallFormat$origin <- 'mutation'
+              
+              # make sure everything is of the proper type
+              rainfallFormat$sample <- factor(rainfallFormat$sample, levels=unique(rainfallFormat$sample))
+              rainfallFormat$chromosome <- factor(rainfallFormat$chromosome, levels=unique(rainfallFormat$chromosome))
+              rainfallFormat$start <- as.integer(rainfallFormat$start)
+              rainfallFormat$end <- as.integer(rainfallFormat$end)
+              rainfallFormat$reference <- factor(rainfallFormat$reference, levels=unique(rainfallFormat$reference))
+              rainfallFormat$variant <- factor(rainfallFormat$variant, levels=unique(rainfallFormat$variant))
+              
+              # return the standardized format
+              return(rainfallFormat)
+          })
+
+

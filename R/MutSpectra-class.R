@@ -101,7 +101,7 @@ setClass("MutSpectraPrimaryData",
 #' 
 #' @name MutSpectraPrimaryData
 #' @rdname MutSpectraPrimaryData-class
-#' @param object Object of class MutationAnnotationFormat
+#' @param object Object of class MutationAnnotationFormat, GMS, VEP
 #' @noRd
 MutSpectraPrimaryData <- function(object, BSgenome, sorting, verbose){
     # convert object to mutSpectra format
