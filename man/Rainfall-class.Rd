@@ -6,8 +6,8 @@
 \title{Class Rainfall}
 \usage{
 Rainfall(object, BSgenome = NULL, palette = NULL, sectionHeights = NULL,
-  chromosomes = NULL, highlightSample = NULL, verbose = FALSE,
-  plotALayers = NULL, plotBLayers = NULL)
+  chromosomes = NULL, highlightSample = NULL, pointSize = NULL,
+  verbose = FALSE, plotALayers = NULL, plotBLayers = NULL)
 }
 \arguments{
 \item{object}{Object of class MutationAnnotationFormat, GMS, VEP.}
@@ -15,7 +15,7 @@ Rainfall(object, BSgenome = NULL, palette = NULL, sectionHeights = NULL,
 \item{BSgenome}{Object of class BSgenome to extract genome wide chromosome coordinates}
 
 \item{palette}{Character vector specifying colors used for encoding transitions and transversions
-, should be of length 6. If NULL a default palette will be used.}
+, should be of length 7. If NULL a default palette will be used.}
 
 \item{sectionHeights}{Numeric vector specifying relative heights of each plot section,
 should sum to one. Expects a value for each section.}
@@ -24,6 +24,8 @@ should sum to one. Expects a value for each section.}
 
 \item{highlightSample}{Character vector specifying the sample for which to highlight, if
 NULL (the default) no differentiation will be made between samples.}
+
+\item{pointSize}{numeric value giving the size of points to plot (defaults to 2)}
 
 \item{verbose}{Boolean specifying if status messages should be reported.}
 

@@ -571,3 +571,15 @@ setGeneric(
     name="formatSample",
     def=function(object, ...){standardGeneric("formatSample")}
 )
+
+#' Method buildRainfallPlot
+#'
+#' @name buildRainfallPlot
+#' @rdname buildRainfallPlot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="buildRainfallPlot",
+    def=function(object, ...){standardGeneric("buildRainfallPlot")}
+)
+

@@ -1375,7 +1375,6 @@ setMethod(f="buildWaterfallPlot",
               }
               
               # perform quality checks
-              # perform quality checks
               if(!is.null(plotCLayers)){
                   if(!is.list(plotCLayers)){
                       memo <- paste("plotCLayers is not a list")

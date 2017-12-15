@@ -34,22 +34,27 @@ setClass("Rainfall",
 #' @param object Object of class MutationAnnotationFormat, GMS, VEP.
 #' @param BSgenome Object of class BSgenome to extract genome wide chromosome coordinates
 #' @param palette Character vector specifying colors used for encoding transitions and transversions
-#' , should be of length 6. If NULL a default palette will be used.
+#' , should be of length 7. If NULL a default palette will be used.
 #' @param sectionHeights Numeric vector specifying relative heights of each plot section,
 #' should sum to one. Expects a value for each section.
 #' @param chromosomes Character vector specifying chromosomes for which to plot
 #' @param highlightSample Character vector specifying the sample for which to highlight, if
 #' NULL (the default) no differentiation will be made between samples.
+#' @param pointSize numeric value giving the size of points to plot (defaults to 2)
 #' @param verbose Boolean specifying if status messages should be reported.
 #' @param plotALayers list of ggplot2 layers to be passed to the rainfall plot.
 #' @param plotBLayers list of ggplot2 layers to be passed to the density plot.
 #' @export
 Rainfall <- function(object, BSgenome=NULL, palette=NULL, sectionHeights=NULL, chromosomes=NULL,
-                     highlightSample=NULL, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL){
+                     highlightSample=NULL, pointSize=NULL, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL){
     
-    # initalize the RainfallPrimaryData object
+    # construct the RainfallPrimaryData object
     primaryData <- RainfallPrimaryData(object, BSgenome=BSgenome, chromosomes=chromosomes,
                                        highlightSample=highlightSample, verbose=verbose)
+    
+    # construct the Rainfallplots object
+    rainfallPlots <- buildRainfallPlot(primaryData, palette=palette, pointSize=pointSize, plotALayers=plotALayers, verbose=verbose)
+    browser()
     
 }
 
@@ -100,8 +105,89 @@ RainfallPrimaryData <- function(object, BSgenome, chromosomes, highlightSample, 
     new("RainfallPrimaryData", primaryData=primaryData)
 }
 
+#' Private Class RainfallPlots
+#' 
+#' An S4 class for the grobs of the Rainfall plot object
+#' @name RainfallPlots-class
+#' @rdname RainfallPlots-Class
+#' @slot PlotA gtable object for the rainfall plot
+#' @slot PlotB gtable object for density plots based on the rainfall plot
+#' @import methods
+#' @importFrom gtable gtable
+#' @noRd
+setClass("RainfallPlots",
+         representation=representation(PlotA="gtable",
+                                       PlotB="gtable"),
+         validity=function(object){
+             
+         }
+)
+
+#' Constructor for the RainfallPlots class
+#' 
+#' @name RainfallPlots
+#' @rdname RainfallPlots-class
+#' @param object Object of class RainfallPrimaryData
+#' @noRd
+RainfallPlots <- function(object, palette=palette, pointSize=pointSize, plotALayers=plotALayers, verbose=verbose){
+    
+    # build the rainfall plot
+    PlotA <- buildRainfallPlot(object, palette=palette, pointSize=pointSize, plotALayers=plotALayers, verbose=verbose)
+    
+    # build the corresponding density plot
+}
+
 ################################################################################
 #################### Accessor function definitions #############################
+
+#' Helper function to get data from classes
+#' 
+#' @rdname getData-methods
+#' @aliases getData
+.getData_Rainfall <- function(object, name=NULL, index=NULL, ...){
+    
+    if(is.null(name) & is.null(index)){
+        memo <- paste("Both name and index are NULL, one must be specified!")
+        stop(memo)
+    }
+    
+    if(is.null(index)){
+        index <- 0
+    } else {
+        if(index > 1){
+            memo <- paste("index out of bounds")
+            stop(memo)
+        }
+    }
+    
+    if(is.null(name)){
+        name <- "noMatch"
+    } else {
+        slotAvailableName <- c("primaryData")
+        if(!(name %in% slotAvailableName)){
+            memo <- paste("slot name not found, specify one of:", toString(slotAvailableName))
+            stop(memo)
+        }
+    }
+    
+    if(name == "primaryData" | index == 1){
+        data <- object@primaryData
+    }
+    
+    return(data)
+}
+
+#' @rdname getData-methods
+#' @aliases getData
+setMethod(f="getData",
+          signature="RainfallPrimaryData",
+          definition=.getData_Rainfall)
+
+#' @rdname getData-methods
+#' @aliases getData
+setMethod(f="getData",
+          signature="Rainfall",
+          definition=.getData_Rainfall)
 
 ################################################################################
 #################### Method function definitions ###############################
@@ -266,6 +352,9 @@ setMethod(f="annoGenomeCoord",
                   memo <- paste("BSgenome object is not specified, whole chromosomes",
                                 "will not be plotted, this is not recommended!")
                   warning(memo)
+                  object$chromosome <- factor(object$chromosome, levels=gtools::mixedsort(unique(as.character(object$chromosome))))
+                  
+                  return(object)
               } else if(is(BSgenome, "BSgenome")) {
                   if(verbose){
                       memo <- paste("BSgenome passed object validity checks")
@@ -334,7 +423,7 @@ setMethod(f="annoGenomeCoord",
               object <- data.table::rbindlist(object, use.names=TRUE, fill=TRUE)
               
               # re-factor such that chromosomes are naturally ordered
-              object$chromosome <- factor(object$chromosome, levels=unique(gtools::mixedsort(object$chromosome)))
+              object$chromosome <- factor(object$chromosome, levels=gtools::mixedsort(unique(as.character(object$chromosome))))
               
               # return the new object
               return(object)
@@ -396,4 +485,104 @@ setMethod(f="formatSample",
               
               # return the formated object
               return(object)
+          })
+
+#' @rdname buildRainfallPlot-methods
+#' @aliases Rainfall
+#' @param object Object of class RainfallPrimaryData
+#' @return gtable object containg a rainfall plot
+#' @noRd
+#' @import ggplot2
+setMethod(f="buildRainfallPlot",
+          signature="RainfallPrimaryData",
+          definition=function(object, palette, pointSize, plotALayers, verbose=verbose){
+              
+              # extract the data we need
+              primaryData <- getData(object, name="primaryData")
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Building the Rainfall plot")
+                  message(memo)
+              }
+              
+              # perform quality checks
+              if(!is.null(plotALayers)){
+                  if(!is.list(plotALayers)){
+                      memo <- paste("plotALayers is not a list")
+                      stop(memo)
+                  }
+                  
+                  if(any(!unlist(lapply(plotALayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
+                      memo <- paste("plotALayers is not a list of ggproto or ",
+                                    "theme objects... setting plotALayers to NULL")
+                      warning(memo)
+                      plotALayers <- NULL
+                  }
+              }
+              
+              if(is.null(pointSize)){
+                  pointSize <- 2
+              } else {
+                  if(!is.numeric(pointSize)){
+                      memo <- paste("pointSize should be of class numeric, attempting to coerce")
+                      warning(memo)
+                      pointSize <- as.numeric(pointSize)
+                  }
+                  if(length(pointSize) != 1){
+                      memo <- paste("pointSize should be of length one, using only the first value to set size")
+                      warning(memo)
+                      pointSize <- pointSize[1]
+                  }
+              }
+              
+              # remove na values from plot where distance could not be calculated
+              primaryData <- primaryData[!is.na(primaryData$log10_difference),]
+              
+              # add the palette for encoding transitions/transversions
+              if(is.null(palette)){
+                  palette <- c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753", "#ff9999")
+              } else if(length(palette) != 7){
+                  memo <- paste("The input to the parameter \"palette\" is not of length",
+                                "7, a color should be specified for each transition/transversion in:",
+                                toString(unique(primaryData$TransTranv)), "! using the default palette.")
+                  warning(memo)
+                  palette <- c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753", "#ff9999")
+              }
+              
+              ############ start building the plot #############################
+              
+              # define a palette
+              plotPalette <- scale_color_manual("Transitions/Transversions", values=palette, na.value="grey70")
+              
+              # base theme
+              baseTheme <- theme_bw()
+              
+              # define the plot theme
+              plotTheme <- theme(axis.text.x=element_text(angle=60, hjust=1),
+                                 legend.position="bottom",
+                                 strip.background=element_rect(fill="black"),
+                                 strip.text=element_text(color="white", face="bold"))
+              
+              # define plot labels
+              plotLabels <- labs(x="Genomic Position",
+                                 y="log10 intra-mutation distance")
+              
+              # define the geom
+              plotGeom <- geom_point(mapping=aes_string(color='trans_tranv'), size=pointSize)
+              
+              # define the faceting
+              plotFacet <- facet_grid(. ~ chromosome)
+              
+              # define the plot
+              rainfallPlot <- ggplot(data=primaryData, mapping=aes_string(x='start', y='log10_difference'))
+              
+              # combine plot elements
+              rainfallPlot <- rainfallPlot + plotGeom + plotFacet + baseTheme +
+                  plotTheme + plotLabels + plotPalette + plotALayers
+              
+              # convert to grob
+              rainfallGrob <- ggplotGrob(rainfallPlot)
+              return(rainfallGrob)
+              
           })
