@@ -1548,6 +1548,26 @@ setMethod(f="arrangeWaterfallPlot",
               plotList4Width <- lapply(plotList4Width, function(x) x$widths)
               maxWidth <- do.call(grid::unit.pmax, plotList4Width)
               
+              ################# Adjust the x-label of the gene plot ############
+              # Find the necessary height adjustment
+              if(length(plotB) != 0){
+                  axis_b_mainPlot_Height_index <- plotC$layout[which(plotC$layout$name == "axis-b"),"t"]
+                  axis_b_mainPlot_Height <- plotC$heights[axis_b_mainPlot_Height_index]
+                  axis_b_genePlot_Height_index <- getGrob(object, 2)$layout[which(getGrob(object, 2)$layout$name == "axis-b"),"t"]
+                  axis_b_genePlot_Height <- getGrob(object, 2)$heights[axis_b_genePlot_Height_index]
+                  
+                  heightAdjustment <- axis_b_mainPlot_Height - axis_b_genePlot_Height
+                  
+                  # set the gene plot back axis-b back to it's original value
+                  plotB$heights[axis_b_genePlot_Height_index] <- getGrob(object, 2)$heights[axis_b_genePlot_Height_index]
+                  
+                  # add a row to the gene plot below the  the x-axis title of the appropriate adjustment
+                  xlab_b_genePlot_Height_index <- plotB$layout[which(plotB$layout$name == "xlab-b"),"t"]
+                  plotB <- gtable::gtable_add_rows(plotB, heights=heightAdjustment, pos=xlab_b_genePlot_Height_index)
+              }
+              
+              ############ section plots into rows and set relative widths ###################
+              
               # section plots into rows, also define preliminary heights
               plotList <- list()
               plotHeight <- list()
