@@ -42,6 +42,17 @@ setClass("VarScanFormat",
                       http://varscan.sourceforge.net/somatic-calling.html#somatic-output
                       for appropriate columns and column names.")
              }
+             
+             ## Check to see if the VAF columns are percentages as opposed to proportions
+             tumor_false <- any(grepl("%", object@varscan$tumor_var_freq) == FALSE)
+             normal_false <- any(grepl("%", object@varscan$normal_var_freq) == FALSE)
+             if (tumor_false == TRUE | normal_false == TRUE) {
+                 stop("Make sure the tumor/normal VAF column is in percentages and not proportion. 
+                      (i.e. 75.00% as opposed to 0.75)")
+             }
+             
+             ## Check to see if the VAF provided are somatic or not
+             
              return(TRUE)
          }
 )
@@ -64,6 +75,7 @@ VarScanFormat <- function(path, verbose=FALSE) {
     varscanData$sample <- "HCC1395"
     ## Get the sample names
     sample <- varscanData[,which(colnames(varscanData)=="sample"), with=FALSE]
+    length(colnames(varscanData))
     
     ## Create the varscan object
     varscanObject <- new(Class="VarScanFormat", path=path, varscan=varscanData, sample=sample)

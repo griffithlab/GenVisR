@@ -14,10 +14,6 @@
 #' @exportClass lohSpec
 #' @importFrom data.table data.table
 #' @importFrom gtable gtable
-#' @importFrom GenVisR multi_cytobandRet
-#' @importFrom GenVisR multi_chrBound
-#' @importFrom GenVisR cytoGeno
-#' @import methods
 methods::setOldClass("gtable")
 setClass(
     Class="lohSpec",
@@ -55,9 +51,7 @@ setClass(
 #' normal variant allele frequency to be used in Loss of Heterozygosity 
 #' calculations. defaults to .50\%
 
-path <- "~/Google Drive/varscan.example.tsv"
-varscanObject <- VarScanFormat(path = path)
-input <- varscanObject
+
 lohSpec <- function(input, chr=NULL, samples=NULL, y=NULL, genome='hg19',
                     gender=NULL, step=1000000, window_size=2500000, 
                     normal=.50, gradient_midpoint=.2, gradient_low="#ffffff",
@@ -98,10 +92,16 @@ setClass("lohData",
 lohData <- function(object, chr, samples, y, genome, step, window_size, 
                     normal, verbose) {
     ## Get the primary loh data
+    object <- VarScanFormat(path = "~/Google Drive/HCC1395.varscan.tsv")
     primaryData <- getLohData(object=object, chr=chr, verbose = verbose)
     
     ## Quality check on the primary data
+    ## To-Do: Put the quality check in the validity check
     primaryData <- lohSpec_qual(object=primaryData)
+    
+    library(BiocInstaller)
+    biocLite("BSgenome.Hsapiens.UCSC.hg19")
+    BSgenome <- getBSgenome(genome = "BSgenome.Hsapiens.UCSC.hg19")
     
     ## Get the chromosome data
     if(is.null(y)) {

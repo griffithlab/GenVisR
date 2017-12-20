@@ -535,7 +535,6 @@ setGeneric(
 #' @rdname lohSpec_qual-methods
 #' @param object Object of class VarScanFormat
 #' @param ... additional arguments to passed
-#' @exportMethod lohSpec_qual
 setGeneric(
     name="lohSpec_qual",
     def=function(object, ...){standardGeneric("lohSpec_qual")}

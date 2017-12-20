@@ -35,7 +35,6 @@ setClass("MutationAnnotationFormat",
 #' @importFrom data.table fread
 #' @export
 MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
-    browser()
     mafData <- suppressWarnings(data.table::fread(input=path,
                                                   stringsAsFactors=TRUE,
                                                   verbose=verbose))

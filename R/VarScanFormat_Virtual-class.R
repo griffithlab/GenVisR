@@ -10,6 +10,7 @@
 #' @slot sample data.table object holding sample data.
 #' @importClassesFrom data.table data.table
 #' @import methods
+#' 
 setClass(
     Class="VarScanFormat_Virtual",
     representation=representation(varscan="data.table",
