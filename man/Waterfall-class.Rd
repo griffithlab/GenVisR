@@ -27,7 +27,9 @@ all samples in "input" not specified with this parameter are removed.}
 
 \item{coverage}{Integer specifying the size in base pairs of the genome
 covered by sequence data from which mutations could be called. Required for
-the mutation burden sub-plot (see details and vignette).}
+the mutation burden sub-plot (see details and vignette). Optionally a named 
+vector of integers corresponding to each sample can be supplied for more accurate
+calculations.}
 
 \item{mutation}{Character vector specifying mutations to keep, if defined
 mutations not supplied are removed from the main plot.}

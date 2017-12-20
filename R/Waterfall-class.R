@@ -58,7 +58,9 @@ setClass("Waterfall",
 #' all samples in "input" not specified with this parameter are removed.
 #' @param coverage Integer specifying the size in base pairs of the genome
 #' covered by sequence data from which mutations could be called. Required for
-#' the mutation burden sub-plot (see details and vignette).
+#' the mutation burden sub-plot (see details and vignette). Optionally a named 
+#' vector of integers corresponding to each sample can be supplied for more accurate
+#' calculations.
 #' @param mutation Character vector specifying mutations to keep, if defined
 #' mutations not supplied are removed from the main plot.
 #' @param mutationHierarchy Data.table object with rows specifying the order of
@@ -478,23 +480,48 @@ setMethod(f="calcSimpleMutationBurden",
               # set primaryData as the object
               primaryData <- object
               
-              # quality checks
-              if(length(coverage) > 1 && !is.null(coverage)){
-                  memo <- paste("coverage has a length > 1, using only the",
-                                "first element.")
-                  warning(memo)
-                  coverage <- coverage[1]
+              # status message
+              if(verbose){
+                  memo <- paste("Calculating frequency and mutation burden.")
+                  message(memo)
               }
-              if(!is.numeric(coverage) && !is.null(coverage)){
+              
+              # quality checks
+              if(!all(is.numeric(coverage)) && !is.null(coverage)){
                   memo <- paste("coverage is not numeric, attempting to coerce.")
                   warning(memo)
                   coverage <- as.numeric(coverage)
               }
               
-              # status message
-              if(verbose){
-                  memo <- paste("Calculating frequency and mutation burden.")
-                  message(memo)
+              # if coverage is a vector check that each sample has a corresponding coverage value
+              if(length(coverage) > 1 && !is.null(coverage)){
+                  
+                  # check that there are no duplicate samples in coverage
+                  if(any(duplicated(names(coverage)))){
+                      memo <- paste("Found duplicate names in coverage, removing duplicates!")
+                      warning(memo)
+                      coverage <- coverage[!duplicated(names(coverage))]
+                  }
+                  
+                  # check that there are no "extra" samples in coverage
+                  if(any(!names(coverage) %in% unique(primaryData$sample))){
+                      extraSamples <- names(coverage)[!names(coverage) %in% unique(primaryData$sample)]
+                      memo <- paste("The following names in coverage are were not found in the data",
+                                    toString(extraSamples), "removing these from coverage!")
+                      warning(memo)
+                      coverage <- coverage[!names(coverage) %in% extraSamples]
+                  }
+                  
+                  # check that each sample has a value for coverage
+                  if(any(!unique(primaryData$sample) %in% names(coverage))){
+                      missingSamples <- unique(primaryData$sample)
+                      missingSamples <- missingSamples[!missingSamples %in% names(coverage)]
+                      memo <- paste("coverage has length > 1 however a coverage value could",
+                                    "not be found for all samples, samples missing a coverage",
+                                    "value are:", toString(missingSamples), "...setting coverage to NULL!")
+                      warning(memo)
+                      coverage <- NULL
+                  }
               }
               
               # dont include any samples with NA values for genes
@@ -513,19 +540,33 @@ setMethod(f="calcSimpleMutationBurden",
                                                                 use.names=TRUE, fill=TRUE)
               }
               
-              # if coverage is not specified return just frequencies
-              if(!is.numeric(coverage)){
+              # if coverage is not specified return just frequencies else use it in the calculations
+              if(is.null(coverage)){
+                  
                   if(verbose){
                       memo <- paste("coverage not specified, could not",
                                     "calculate the mutation burden")
                       message(memo)
-                      simpleMutationCounts$mutationBurden <- NA
-                      return(simpleMutationCounts)
-                  }
-              } 
+                  }      
+
+                  simpleMutationCounts$mutationBurden <- NA
+                  simpleMutationCounts$coverage <- NA
+                  return(simpleMutationCounts)
+              } else if(length(coverage) > 1){
+                  
+                  # need to match coverage to sample
+                  coverage <- data.table::as.data.table(coverage, keep.rownames=TRUE)
+                  colnames(coverage) <- c("sample", "coverage")
+                  simpleMutationCounts <- merge(simpleMutationCounts, coverage, by=c("sample"))
+                  
+              } else {
+                  
+                  # assign just the single coverage value
+                  simpleMutationCounts$coverage <- coverage
+              }
               
               # mutation burden calculation
-              simpleMutationCounts$mutationBurden <- simpleMutationCounts$Freq/coverage * 1000000
+              simpleMutationCounts$mutationBurden <- simpleMutationCounts$Freq/simpleMutationCounts$coverage * 1000000
               return(simpleMutationCounts)
           })
 
@@ -539,6 +580,7 @@ setMethod(f="calcSimpleMutationBurden",
 #' @noRd
 #' @importFrom data.table setDT
 #' @importFrom data.table data.table
+#' @importFrom data.table as.data.table
 setMethod(f="calcComplexMutationBurden",
           signature="data.table",
           definition=function(object, coverage, verbose, ...){
@@ -546,42 +588,81 @@ setMethod(f="calcComplexMutationBurden",
               # set primaryData as the object
               primaryData <- object
               
-              # quality checks
-              if(length(coverage) > 1 && !is.null(coverage)){
-                  memo <- paste("coverage has a length > 1, using only the",
-                                "first element.")
-                  warning(memo)
-                  coverage <- coverage[1]
+              # status message
+              if(verbose){
+                  memo <- paste("Calculating complex mutation burden.")
+                  message(memo)
               }
-              if(!is.numeric(coverage) && !is.null(coverage)){
+              
+              # quality checks
+              if(!all(is.numeric(coverage)) && !is.null(coverage)){
                   memo <- paste("coverage is not numeric, attempting to coerce.")
                   warning(memo)
                   coverage <- as.numeric(coverage)
               }
               
-              # status message
-              if(verbose){
-                  memo <- paste("Calculating a complex mutation burden.")
-                  message(memo)
+              # if coverage is a vector check that each sample has a corresponding coverage value
+              if(length(coverage) > 1 && !is.null(coverage)){
+                  
+                  # check that there are no duplicate samples in coverage
+                  if(any(duplicated(names(coverage)))){
+                      memo <- paste("Found duplicate names in coverage, removing duplicates!")
+                      warning(memo)
+                      coverage <- coverage[!duplicated(names(coverage))]
+                  }
+                  
+                  # check that there are no "extra" samples in coverage
+                  if(any(!names(coverage) %in% unique(primaryData$sample))){
+                      extraSamples <- names(coverage)[!names(coverage) %in% unique(primaryData$sample)]
+                      memo <- paste("The following names in coverage are were not found in the data:",
+                                    toString(extraSamples), "...removing these from coverage!")
+                      warning(memo)
+                      coverage <- coverage[!names(coverage) %in% extraSamples]
+                  }
+                  
+                  # check that each sample has a value for coverage
+                  if(any(!unique(primaryData$sample) %in% names(coverage))){
+                      missingSamples <- unique(primaryData$sample)
+                      missingSamples <- missingSamples[!missingSamples %in% names(coverage)]
+                      memo <- paste("coverage has length > 1 however a coverage value could",
+                                    "not be found for all samples, samples missing a coverage",
+                                    "value are:", toString(missingSamples), "...setting coverage to NULL!")
+                      warning(memo)
+                      coverage <- NULL
+                  }
               }
               
               # obtain a data table of mutation counts on the sample level
               complexMutationCounts <- as.data.frame(table(primaryData[,c('sample', 'mutation')]))
               data.table::setDT(complexMutationCounts)
               
-              # if coverage is not specified return just frequencies
-              if(!is.numeric(coverage)){
+              # if coverage is not specified return just frequencies else use it in the calculations
+              if(is.null(coverage)){
                   if(verbose){
                       memo <- paste("coverage not specified, could not",
-                                    "calculate the mutation burden... skipping")
+                                    "calculate the mutation burden")
                       message(memo)
-                      complexMutationCounts$mutationBurden <- NA
-                      return(complexMutationCounts)
-                  }
-              } 
+                  }      
+
+                  complexMutationCounts$mutationBurden <- NA
+                  complexMutationCounts$coverage <- NA
+                  return(complexMutationCounts)
+                  
+              } else if(length(coverage) > 1){
+                  
+                  # need to match coverage to sample
+                  coverage <- data.table::as.data.table(coverage, keep.rownames=TRUE)
+                  colnames(coverage) <- c("sample", "coverage")
+                  complexMutationCounts <- merge(complexMutationCounts, coverage, by=c("sample"))
+                  
+              } else {
+                  
+                  # assign just the single coverage value
+                  complexMutationCounts$coverage <- coverage
+              }
               
               # mutation burden calculation
-              complexMutationCounts$mutationBurden <- complexMutationCounts$Freq/coverage * 1000000
+              complexMutationCounts$mutationBurden <- complexMutationCounts$Freq/complexMutationCounts$coverage * 1000000
               return(complexMutationCounts)
           })
 

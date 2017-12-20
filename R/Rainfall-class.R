@@ -130,7 +130,7 @@ setClass("RainfallPlots",
 #' @param object Object of class RainfallPrimaryData
 #' @noRd
 RainfallPlots <- function(object, palette=palette, pointSize=pointSize, plotALayers=plotALayers, verbose=verbose){
-    
+    browser()
     # build the rainfall plot
     PlotA <- buildRainfallPlot(object, palette=palette, pointSize=pointSize, plotALayers=plotALayers, verbose=verbose)
     

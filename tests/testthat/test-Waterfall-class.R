@@ -104,9 +104,25 @@ test_that("calcSimpleMutationBurden works in verbose mode", {
     expect_message(calcSimpleMutationBurden(toWaterfall.out, coverage=NULL, verbose=TRUE))
 })
 
-test_that("calcSimpleMutationBurden warns if coverage contains more than 1 element", {
+test_that("calcSimpleMutationBurden warns if coverage does not have values for all samples", {
     
-    expect_warning(calcSimpleMutationBurden(toWaterfall.out, coverage=c(10000, 40000), verbose=FALSE))
+    coverageValues <- c("TCGA-A1-A0SF-01A-11D-A142-09"=5, "TCGA-A1-A0SD-01A-11D-A10Y-09"=4,
+                        "TCGA-A1-A0SG-01A-11D-A142-09"=2, "TCGA-A1-A0SE-01A-11D-A099-09"=3)
+    expect_warning(calcSimpleMutationBurden(toWaterfall.out, coverage=coverageValues, verbose=FALSE))
+})
+
+test_that("calcSimpleMutationBurden warns if coverage contains duplicate names", {
+    coverageValues <- c("TCGA-A1-A0SF-01A-11D-A142-09"=5, "TCGA-A1-A0SD-01A-11D-A10Y-09"=4,
+                        "TCGA-A1-A0SG-01A-11D-A142-09"=2, "TCGA-A1-A0SE-01A-11D-A099-09"=3,
+                        "TCGA-A1-A0SB-01A-11D-A142-09"=1, "TCGA-A1-A0SB-01A-11D-A142-09"=2)
+    expect_warning(calcSimpleMutationBurden(toWaterfall.out, coverage=coverageValues, verbose=FALSE))
+})
+
+test_that("calcSimpleMutationBurden warns if coverage contains an unexpected name", {
+    coverageValues <- c("TCGA-A1-A0SF-01A-11D-A142-09"=5, "TCGA-A1-A0SD-01A-11D-A10Y-09"=4,
+                        "TCGA-A1-A0SG-01A-11D-A142-09"=2, "TCGA-A1-A0SE-01A-11D-A099-09"=3,
+                        "TCGA-A1-A0SB-01A-11D-A142-09"=1, "extra"=1)
+    expect_warning(calcSimpleMutationBurden(toWaterfall.out, coverage=coverageValues, verbose=FALSE))
 })
 
 test_that("calcSimpleMutationBurden warns if coverage is not numeric", {
@@ -161,9 +177,25 @@ test_that("calcComplexMutationBurden works in verbose mode", {
     expect_message(calcComplexMutationBurden(toWaterfall.out, coverage=NULL, verbose=TRUE))
 })
 
-test_that("calcComplexMutationBurden warns if coverage contains more than 1 element", {
+test_that("calcComplexMutationBurden warns if coverage does not have values for all samples", {
     
-    expect_warning(calcComplexMutationBurden(toWaterfall.out, coverage=c(10000, 40000), verbose=FALSE))
+    coverageValues <- c("TCGA-A1-A0SF-01A-11D-A142-09"=5, "TCGA-A1-A0SD-01A-11D-A10Y-09"=4,
+                        "TCGA-A1-A0SG-01A-11D-A142-09"=2, "TCGA-A1-A0SE-01A-11D-A099-09"=3)
+    expect_warning(calcComplexMutationBurden(toWaterfall.out, coverage=coverageValues, verbose=FALSE))
+})
+
+test_that("calcComplexMutationBurden warns if coverage contains duplicate names", {
+    coverageValues <- c("TCGA-A1-A0SF-01A-11D-A142-09"=5, "TCGA-A1-A0SD-01A-11D-A10Y-09"=4,
+                        "TCGA-A1-A0SG-01A-11D-A142-09"=2, "TCGA-A1-A0SE-01A-11D-A099-09"=3,
+                        "TCGA-A1-A0SB-01A-11D-A142-09"=1, "TCGA-A1-A0SB-01A-11D-A142-09"=2)
+    expect_warning(calcComplexMutationBurden(toWaterfall.out, coverage=coverageValues, verbose=FALSE))
+})
+
+test_that("calcComplexMutationBurden warns if coverage contains an unexpected name", {
+    coverageValues <- c("TCGA-A1-A0SF-01A-11D-A142-09"=5, "TCGA-A1-A0SD-01A-11D-A10Y-09"=4,
+                        "TCGA-A1-A0SG-01A-11D-A142-09"=2, "TCGA-A1-A0SE-01A-11D-A099-09"=3,
+                        "TCGA-A1-A0SB-01A-11D-A142-09"=1, "extra"=1)
+    expect_warning(calcComplexMutationBurden(toWaterfall.out, coverage=coverageValues, verbose=FALSE))
 })
 
 test_that("calcComplexMutationBurden warns if coverage is not numeric", {
