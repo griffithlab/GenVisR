@@ -400,12 +400,14 @@ setMethod(f="getGrob",
 #' @rdname drawPlot-methods
 #' @aliases drawPlot
 #' @importFrom grid grid.draw
+#' @importFrom grid grid.newpage
 #' @exportMethod drawPlot
 setMethod(
     f="drawPlot",
     signature="Waterfall",
     definition=function(object, ...){
         mainPlot <- object@Grob
+        grid::grid.newpage()
         grid::grid.draw(mainPlot)
     }
 )
@@ -1207,6 +1209,7 @@ setMethod(f="buildMutationPlot",
                                                   values=getData(object, name="mutationHierarchy")$color,
                                                   breaks=getData(object, name="mutationHierarchy")$mutation,
                                                   drop=FALSE)
+                  plotTheme <- plotTheme + theme(legend.position="none")
               }
               
               # titles
@@ -1220,7 +1223,7 @@ setMethod(f="buildMutationPlot",
               x_scale <- scale_x_discrete(drop=FALSE)
               
               #  geom definition
-              plotGeom <- geom_bar(stat='identity', alpha=.75, width=1)
+              plotGeom <- geom_bar(stat='identity', alpha=1, width=1)
               
               # plot
               if(toupper(plotA) == toupper("frequency")) {
@@ -1333,7 +1336,8 @@ setMethod(f="buildGenePlot",
               # theme
               plotTheme <- theme(axis.text.y=element_text(colour='black', face='italic'),
                                  axis.title.y=element_blank(),
-                                 legend.position=('none'))
+                                 legend.position=('none'), panel.grid.major.y=element_blank(),
+                                 panel.grid.minor.y=element_blank())
               # titles
               if(plotB == "frequency"){
                   plotYlabel <- ylab('# Mutant')
@@ -1355,7 +1359,7 @@ setMethod(f="buildGenePlot",
               }
               
               # geom definition
-              plotGeom <- geom_bar(position='stack', alpha=.75, width=1, stat='identity')
+              plotGeom <- geom_bar(position='stack', alpha=1, width=1, stat='identity')
               
               # plot
               if(plotB == "proportion"){
@@ -1592,17 +1596,17 @@ setMethod(f="arrangeWaterfallPlot",
                   sectionWidths <- c(0, 1)
               } else {
                   if(is.null(sectionWidths)){
-                      sectionWidths <- c(.25, .75)
+                      sectionWidths <- c(.20, .80)
                   } else if(length(sectionWidths) != 2){
                       memo <- paste("sectionWidths should be of length 2... Using",
                                     "default values!")
                       warning(memo)
-                      sectionWidths <- c(.25, .75)
+                      sectionWidths <- c(.20, .80)
                   } else if(!all(is.numeric(sectionWidths))) {
                       memo <- paste("sectionWidths must be numeric... Using",
                                     "default values!")
                       warning(memo)
-                      sectionWidths <- c(.25, .75)
+                      sectionWidths <- c(.20, .80)
                   }
               }
               

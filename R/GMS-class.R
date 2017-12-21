@@ -325,7 +325,7 @@ setMethod(f="setMutationHierarchy",
               
               # add in a pretty print mutation labels
               mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
-              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$mutation)
+              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$label)
               
               # check for duplicate mutations
               if(any(duplicated(mutationHierarchy$mutation))){
