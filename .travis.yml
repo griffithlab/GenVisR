@@ -17,6 +17,7 @@ bioc_packages:
 
 r_packages:
   - covr
+  - devtools
 
 after_success:
   - Rscript -e 'library(covr); codecov()'
