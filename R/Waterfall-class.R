@@ -92,8 +92,8 @@ setClass("Waterfall",
 #' @param plotBLayers list of ggplot2 layers to be passed to the plot.
 #' @param gridOverlay Boolean specifying if a grid should be overlayed on the
 #' waterfall plot.
-#' @param drop Boolean specifying if unused mutations should be dropped from the
-#' legend.
+#' @param drop Boolean specifying if mutations not in the main plot should be dropped from the
+#' legend. If FALSE the legend will be based on mutations in the data before any subsets occur.
 #' @param labelSize Integer specifying the size of label text
 #' @param labelAngle Numeric value specifying the angle of label text
 #' @param sampleNames Boolean specifying if samples should be labeled on the plot.
@@ -1448,6 +1448,18 @@ setMethod(f="buildWaterfallPlot",
               # extract the data we need
               primaryData <- getData(object, name="primaryData")
               paletteData <- getData(object, name="mutationHierarchy")
+              mutationData <- getData(object, name="complexMutationCounts")
+              
+              # subset all mutation data to just the mutations in mutationData
+              # this should contain everything in the primaryData and other plots
+              # and is the staring point for the legend, using the param drop will
+              # remove legend entries for those not in the primary data at all
+              mutationData <- as.character(unique(mutationData[mutationData$Freq > 0,]$mutation))
+              paletteData <- paletteData[paletteData$mutation %in% mutationData,]
+              
+              # this should keep the hierarchy but remove unused levels based on mutationData
+              primaryData$mutation <- factor(primaryData$mutation,
+                                             levels=levels(primaryData$mutation)[levels(primaryData$mutation) %in% paletteData$mutation])
               
               # there could be samples with no gene information assign these a gene but no
               # mutation so they are plotted correctly
