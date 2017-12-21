@@ -1,0 +1,17 @@
+---
+title: "Visualizing Small Variants"
+author: "Zachary L. Skidmore"
+date: "`r Sys.Date()`"
+output:
+    BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{Visualizing Small Variants}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+

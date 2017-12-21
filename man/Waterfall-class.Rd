@@ -76,8 +76,8 @@ simplified or complex tally of genes respectively.}
 \item{gridOverlay}{Boolean specifying if a grid should be overlayed on the
 waterfall plot.}
 
-\item{drop}{Boolean specifying if unused mutations should be dropped from the
-legend.}
+\item{drop}{Boolean specifying if mutations not in the main plot should be dropped from the
+legend. If FALSE the legend will be based on mutations in the data before any subsets occur.}
 
 \item{labelSize}{Integer specifying the size of label text}
 
