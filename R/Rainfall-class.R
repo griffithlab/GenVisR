@@ -53,9 +53,12 @@ Rainfall <- function(object, BSgenome=NULL, palette=NULL, sectionHeights=NULL, c
                                        highlightSample=highlightSample, verbose=verbose)
     
     # construct the Rainfallplots object
-    rainfallPlots <- buildRainfallPlot(primaryData, palette=palette, pointSize=pointSize, plotALayers=plotALayers, verbose=verbose)
-    browser()
+    rainfallPlots <- RainfallPlots(primaryData, palette=palette, pointSize=pointSize, plotALayers=plotALayers, plotBLayers=plotBLayers, verbose=verbose)
     
+    # align the plots
+    rainfallGrob <- arrangeRainfallPlot()
+    
+    new("Rainfall", PlotA=getGrob(), PlotB=getGrob(), Grob=rainfallGrob, primaryData=getData())
 }
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
@@ -129,12 +132,15 @@ setClass("RainfallPlots",
 #' @rdname RainfallPlots-class
 #' @param object Object of class RainfallPrimaryData
 #' @noRd
-RainfallPlots <- function(object, palette=palette, pointSize=pointSize, plotALayers=plotALayers, verbose=verbose){
-    browser()
+RainfallPlots <- function(object, palette=palette, pointSize=pointSize, plotALayers=plotALayers, plotBLayers=plotBLayers, verbose=verbose){
+    
     # build the rainfall plot
     PlotA <- buildRainfallPlot(object, palette=palette, pointSize=pointSize, plotALayers=plotALayers, verbose=verbose)
     
     # build the corresponding density plot
+    PlotB <- buildDensityPlot(object, palette=palette, plotBLayers=plotBLayers, verbose=verbose)
+    
+    new("RainfallPlots", PlotA=PlotA, PlotB=PlotB)
 }
 
 ################################################################################
@@ -261,8 +267,9 @@ setMethod(f="calcMutDist",
               # calculating inter mutation differences among these variables
               object <- split(object, by=c("sample", "chromosome"))
               
-              # caluclate log10 of distance between mutations
+              # caluclate log10 of distance between mutations, data.tables must be sorted for this
               a <- function(x){
+                  x <- x[order(x$start),]
                   difference <- log10(diff(x$start))
                   difference <- c(NA, difference)
                   x$log10_difference <- difference
@@ -537,6 +544,7 @@ setMethod(f="buildRainfallPlot",
               }
               
               # remove na values from plot where distance could not be calculated
+              coordData <- primaryData[primaryData$origin != "mutation",]
               primaryData <- primaryData[!is.na(primaryData$log10_difference),]
               
               # add the palette for encoding transitions/transversions
@@ -572,17 +580,108 @@ setMethod(f="buildRainfallPlot",
               plotGeom <- geom_point(mapping=aes_string(color='trans_tranv'), size=pointSize)
               
               # define the faceting
-              plotFacet <- facet_grid(. ~ chromosome)
+              plotFacet <- facet_grid(. ~ chromosome, scales="free_x")
               
               # define the plot
               rainfallPlot <- ggplot(data=primaryData, mapping=aes_string(x='start', y='log10_difference'))
               
               # combine plot elements
               rainfallPlot <- rainfallPlot + plotGeom + plotFacet + baseTheme +
-                  plotTheme + plotLabels + plotPalette + plotALayers
+                  plotTheme + plotLabels + plotPalette + plotALayers + geom_blank(data=coordData, aes_string(x='start'))
               
               # convert to grob
               rainfallGrob <- ggplotGrob(rainfallPlot)
               return(rainfallGrob)
               
           })
+
+#' @rdname buildDensityPlot-methods
+#' @aliases Rainfall
+#' @param object Object of class RainfallPrimaryData
+#' @return gtable object containg a density plot based on a rainfall
+#' @noRd
+#' @import ggplot2
+setMethod(f="buildDensityPlot",
+          signature="RainfallPrimaryData",
+          definition=function(object, palette, plotBLayers, verbose=verbose){
+              
+              # extract the data we need
+              primaryData <- getData(object, name="primaryData")
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Building the Density plot")
+                  message(memo)
+              }
+
+              # perform quality checks
+              if(!is.null(plotBLayers)){
+                  if(!is.list(plotBLayers)){
+                      memo <- paste("plotBLayers is not a list")
+                      stop(memo)
+                  }
+                  
+                  if(any(!unlist(lapply(plotBLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
+                      memo <- paste("plotBLayers is not a list of ggproto or ",
+                                    "theme objects... setting plotBLayers to NULL")
+                      warning(memo)
+                      plotBLayers <- NULL
+                  }
+              }
+              
+              # split up primary data into data to plot and data defining coord boundaries
+              # in the same way as buildRainfallPlot
+              coordData <- primaryData[primaryData$origin != "mutation",]
+              primaryData <- primaryData[!is.na(primaryData$log10_difference),]
+              
+              # add the palette for encoding transitions/transversions
+              if(is.null(palette)){
+                  palette <- c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753", "#ff9999")
+              } else if(length(palette) != 7){
+                  memo <- paste("The input to the parameter \"palette\" is not of length",
+                                "7, a color should be specified for each transition/transversion in:",
+                                toString(unique(primaryData$TransTranv)), "! using the default palette.")
+                  warning(memo)
+                  palette <- c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753", "#ff9999")
+              }
+              
+              ############ start building the plot #############################
+              
+              # define a palette
+              plotPalette <- scale_color_manual("Transitions/Transversions", values=palette, na.value="grey70")
+              
+              # base theme
+              baseTheme <- theme_bw()
+              
+              # define the plot theme
+              plotTheme <- theme(axis.text.x=element_blank(),
+                                 axis.ticks.x=element_blank(),
+                                 axis.title.x=element_blank(),
+                                 panel.grid.major.x=element_blank(),
+                                 panel.grid.minor.x=element_blank(),
+                                 panel.grid.minor.y=element_blank(),
+                                 legend.position="none",
+                                 strip.background=element_rect(fill="black"),
+                                 strip.text=element_text(color="white", face="bold"))
+              
+              # define plot labels
+              plotLabels <- labs(y="Mutation Density")
+              
+              # define the geom
+              plotGeom <- geom_density(fill="lightcyan4")
+              
+              # define the faceting
+              #plotFacet <- facet_grid(. ~ chromosome, scales="free_x")
+              
+              # define the plot
+              densityPlot <- ggplot(data=primaryData, mapping=aes_string(x='start'))
+              
+              # combine plot elements
+              densityPlot <- densityPlot + plotGeom + plotFacet + baseTheme +
+                  plotTheme + plotLabels + plotPalette + plotBLayers + geom_blank(data=coordData, aes_string(x='start'))
+              
+              # convert to grob
+              densityGrob <- ggplotGrob(densityPlot)
+              return(densityGrob)
+          })
+

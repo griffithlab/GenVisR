@@ -583,3 +583,13 @@ setGeneric(
     def=function(object, ...){standardGeneric("buildRainfallPlot")}
 )
 
+#' Method buildDensityPlot
+#'
+#' @name buildDensityPlot
+#' @rdname buildDensityPlot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="buildDensityPlot",
+    def=function(object, ...){standardGeneric("buildDensityPlot")}
+)
