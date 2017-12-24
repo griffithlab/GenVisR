@@ -21,7 +21,7 @@ setClass("Rainfall",
          representation=representation(PlotA="gtable",
                                        PlotB="gtable",
                                        Grob="gtable",
-                                       primaryData="gtable"),
+                                       primaryData="data.table"),
          validity=function(object){
              
          }
@@ -56,9 +56,9 @@ Rainfall <- function(object, BSgenome=NULL, palette=NULL, sectionHeights=NULL, c
     rainfallPlots <- RainfallPlots(primaryData, palette=palette, pointSize=pointSize, plotALayers=plotALayers, plotBLayers=plotBLayers, verbose=verbose)
     
     # align the plots
-    rainfallGrob <- arrangeRainfallPlot()
+    rainfallGrob <- arrangeRainfallPlot(rainfallPlots, sectionHeights=sectionHeights, verbose=verbose)
     
-    new("Rainfall", PlotA=getGrob(), PlotB=getGrob(), Grob=rainfallGrob, primaryData=getData())
+    new("Rainfall", PlotA=getGrob(rainfallPlots, index=1), PlotB=getGrob(rainfallPlots, index=2), Grob=rainfallGrob, primaryData=getData(primaryData, name="primaryData"))
 }
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
@@ -194,6 +194,49 @@ setMethod(f="getData",
 setMethod(f="getData",
           signature="Rainfall",
           definition=.getData_Rainfall)
+
+#' Helper function to extract grobs from objects
+#'
+#' @rdname getGrob-methods
+#' @aliases getGrob
+#' @noRd
+.getGrob_Rainfall <- function(object, index=1, ...){
+    if(index == 1){
+        grob <- object@PlotA
+    } else if(index == 2) {
+        grob <- object@PlotB
+    } else {
+        stop("Subscript out of bounds")
+    }
+    return(grob)
+}
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+setMethod(f="getGrob",
+          signature="RainfallPlots",
+          definition=.getGrob_Rainfall)
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+setMethod(f="getGrob",
+          signature="Rainfall",
+          definition=.getGrob_Rainfall)
+
+#' @rdname drawPlot-methods
+#' @aliases drawPlot
+#' @importFrom grid grid.draw
+#' @importFrom grid grid.newpage
+#' @exportMethod drawPlot
+setMethod(
+    f="drawPlot",
+    signature="Rainfall",
+    definition=function(object, ...){
+        mainPlot <- object@Grob
+        grid::grid.newpage()
+        grid::grid.draw(mainPlot)
+    }
+)
 
 ################################################################################
 #################### Method function definitions ###############################
@@ -671,7 +714,7 @@ setMethod(f="buildDensityPlot",
               plotGeom <- geom_density(fill="lightcyan4")
               
               # define the faceting
-              #plotFacet <- facet_grid(. ~ chromosome, scales="free_x")
+              plotFacet <- facet_grid(. ~ chromosome, scales="free_x")
               
               # define the plot
               densityPlot <- ggplot(data=primaryData, mapping=aes_string(x='start'))
@@ -685,3 +728,49 @@ setMethod(f="buildDensityPlot",
               return(densityGrob)
           })
 
+#' @rdname arrangeRainfallPlot-methods
+#' @aliases arrangeRainfallPlot
+#' @param sectionHeights Relative heights of each plot section (should sum to one).
+#' @param verbose Boolean specifying if status messages should be printed
+#' @noRd
+#' @importFrom gridExtra arrangeGrob
+setMethod(f="arrangeRainfallPlot",
+          signature="RainfallPlots",
+          definition=function(object, sectionHeights, verbose, ...){
+              
+              # grab the data we need
+              plotA <- getGrob(object, 1)
+              plotB <- getGrob(object, 2)
+              
+              # Obtain the max width for relevant plots
+              plotList <- list(plotB, plotA)
+              plotList <- plotList[lapply(plotList, length) > 0]
+              plotWidths <- lapply(plotList, function(x) x$widths)
+              maxWidth <- do.call(grid::unit.pmax, plotWidths)
+              
+              # Set the widths for all plots
+              for(i in 1:length(plotList)){
+                  plotList[[i]]$widths <- maxWidth
+              }
+              
+              # set section heights based upon the number of sections
+              defaultPlotHeights <- c(.25, .75)
+              
+              if(length(sectionHeights) != length(plotList)){
+                  memo <- paste("There are", length(sectionHeights), "section heights provided",
+                                "but", length(plotList), "vertical sections...",
+                                "using default values!")
+                  warning(memo)
+                  sectionHeights <- defaultPlotHeights
+              } else if(!all(is.numeric(sectionHeights))) {
+                  memo <- paste("sectionHeights must be numeric... Using",
+                                "default values!")
+                  warning(memo)
+                  sectionHeights <- defaultPlotHeights
+              }
+              
+              # arrange the final plot
+              finalPlot <- do.call(gridExtra::arrangeGrob, c(plotList, list(ncol=1, heights=sectionHeights)))
+              
+              return(finalPlot)
+          })
