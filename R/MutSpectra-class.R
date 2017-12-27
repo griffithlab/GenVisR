@@ -276,6 +276,85 @@ setMethod(f="getGrob",
 ################################################################################
 ####################### Method function definitions ############################
 
+#' @rdname toMutSpectra-methods
+#' @aliases toMutSpectra
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom data.table rbindlist
+#' @noRd
+setMethod(f="toMutSpectra",
+          signature="data.table",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to expected MutSpectra format")
+                  message(memo)
+              }
+              
+              # check for appropriate columns
+              expectCol <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
+              if(!all(expectCol %in% colnames(object))){
+                  missingCol <- expectCol[!expectCol %in% colnames(object)]
+                  memo <- paste("Could not find the following required columns in the input:",
+                                toString(missingCol))
+                  stop(memo)
+              }
+              mutSectraFormat <- object
+              
+              # grab only the snvs
+              snvIndex <- which(nchar(mutSectraFormat$refAllele) == 1 & nchar(mutSectraFormat$variantAllele) == 1)
+              if(verbose){
+                  memo <- paste("Removing", nrow(mutSectraFormat)-length(snvIndex),
+                                "entries which are not snvs!")
+                  message(memo)
+              }
+              
+              # make sure snvs are of the expected base type
+              expectedBases <- c("C", "G", "T", "A")
+              if(!all(toupper(mutSectraFormat$refAllele) %in% expectedBases)){
+                  abnormalBasesIndex_ins <-  !mutSectraFormat$refAllele %in% expectedBases
+              }
+              if(!all(toupper(mutSectraFormat$variantAllele) %in% expectedBases)){
+                  abnormalBasesIndex_del <-  !mutSectraFormat$variantAllele %in% expectedBases
+              }
+              abnormalBasesIndex <- unique(c(abnormalBasesIndex_ins, abnormalBasesIndex_del))
+              if(length(abnormalBasesIndex > 1)){
+                  memo <- paste("Removing", length(abnormalBasesIndex), "entries with unexpected",
+                                "bases in either the refAllele or variantAllele columns!")
+                  mutSectraFormat <- mutSectraFormat[-abnormalBasesIndex,]
+              }
+              
+              # unique, to make sure no duplicate variants exist to throw off the counts
+              rowCountOrig <- nrow(mutSectraFormat)
+              mutSectraFormat <- unique(mutSectraFormat)
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Removed", rowCountOrig - nrow(mutSectraFormat),
+                                "rows from the data which harbored duplicate",
+                                "genomic locations")
+                  message(memo)
+              }
+              
+              # Remove cases where there is not change between reference and variant
+              mutSpectraFormat$refAllele <- as.character(mutSpectraFormat$refAllele)
+              mutSpectraFormat$variantAllele <- as.character(mutSpectraFormat$variantAllele)
+              alleleMatchIndex <- mutSpectraFormat$refAllele == mutSpectraFormat$variantAllele
+              mutSpectraFormat <- mutSpectraFormat[!alleleMatchIndex,]
+              if(verbose){
+                  memo <- paste("Removed", length(alleleMatchIndex), "entries",
+                                "where the reference allele matched the tumor allele")
+                  message(memo)
+              }
+              
+              # convert appropriate columns to factor
+              mutSpectraFormat$sample <- factor(mutSpectraFormat$sample)
+              
+              return(mutSpectraFormat)
+          })
+
 #' @rdname MutSpectra-methods
 #' @aliases MutSpectra
 #' @param object Object of class data.table

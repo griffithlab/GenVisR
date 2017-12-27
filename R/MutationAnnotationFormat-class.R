@@ -346,11 +346,6 @@ setMethod(f="toMutSpectra",
               colnames(mutSpectraFormat_Allele2) <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
               mutSpectraFormat <- data.table::rbindlist(list(mutSpectraFormat_Allele1, mutSpectraFormat_Allele2))
               
-              # Remove cases where there is not change between reference and variant
-              mutSpectraFormat$refAllele <- as.character(mutSpectraFormat$refAllele)
-              mutSpectraFormat$variantAllele <- as.character(mutSpectraFormat$variantAllele)
-              mutSpectraFormat <- mutSpectraFormat[mutSpectraFormat$refAllele != mutSpectraFormat$variantAllele,]
-              
               # unique, to make sure no duplicate variants exist to throw off the counts
               rowCountOrig <- nrow(mutSpectraFormat)
               mutSpectraFormat <- unique(mutSpectraFormat)
