@@ -415,6 +415,157 @@ setMethod(
 ################################################################################
 ####################### Method function definitions ############################
 
+#' @rdname setMutationHierarchy-methods
+#' @aliases setMutationHierarchy
+#' @noRd
+#' @importFrom data.table data.table
+#' @importFrom data.table setDT
+#' @importFrom grDevices colors
+setMethod(f="setMutationHierarchy",
+          signature="data.table",
+          definition=function(object, mutationHierarchy, verbose, ...){
+              
+              # if a mutation hierarchy is not specified attempt to create one
+              if(is.null(mutationHierarchy)){
+                  memo <- paste("mutationHierarchy is null, setting a mutation hierarchy randomly",
+                                "this is strongly discouraged!!!!!!!")
+                  warning(memo)
+                  
+                  if(!"mutation" %in% colnames(object)){
+                      memo <- paste("column \"mutation\" was not found in input!")
+                      stop(memo)
+                  } else {
+                      mutations <- unique(object$mutation)
+                  }
+                  
+                  newCol <- grDevices::colors(distinct=TRUE)[!grepl("^gray", grDevices::colors(distinct=TRUE))]
+                  mutationHierarchy <- data.table::data.table("mutation"=mutations, 
+                                                              "color"=sample(newCol, length(mutations)))
+                  
+              }
+                  
+              # perform some quality checks on mutationHierarchy
+              
+              # check that mutationHiearchy is a data table
+              if(!any(class(mutationHierarchy) %in% "data.table")){
+                  memo <- paste("mutationHiearchy is not an object of class",
+                                "data.table, attempting to coerce.")
+                  warning(memo)
+                  mutationHierarchy <- data.table::setDT(mutationHierarchy)
+              }
+              
+              # check for the correct columns
+              if(!all(colnames(mutationHierarchy) %in% c("mutation", "color"))){
+                  missingCol <- colnames(mutationHierarchy)[!c("mutation", "color") %in% colnames(mutationHierarchy)]
+                  memo <- paste("The correct columns were not found in",
+                                "mutationHierarchy, missing", toString(missingCol))
+                  stop(memo)
+              }
+              
+              # check that all mutations are specified
+              if(!all(object$mutation %in% mutationHierarchy$mutation)){
+                  missingMutations <- unique(object$mutation[!object$mutation %in% mutationHierarchy$mutation])
+                  memo <- paste("The following mutations were found in the",
+                                "input however were not specified in the",
+                                "mutationHierarchy!", toString(missingMutations),
+                                "adding these in as least important and",
+                                "assigning random colors!")
+                  warning(memo)
+                  newCol <- grDevices::colors(distinct=TRUE)[!grepl("^gray", grDevices::colors(distinct=TRUE))]
+                  tmp <- data.table::data.table("mutation"=missingMutations,
+                                                "color"=sample(newCol, length(missingMutations)))
+                  mutationHierarchy <- data.table::rbindlist(list(mutationHierarchy, tmp), use.names=TRUE, fill=TRUE)
+              }
+              
+              # add in a pretty print mutation labels
+              mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
+              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$label)
+              
+              # check for duplicate mutations
+              if(any(duplicated(mutationHierarchy$mutation))){
+                  duplicateMut <- mutationHierarchy[duplicated(mutationHierarchy$mutation),"mutation"]
+                  memo <- paste("The mutation type",toString(as.character(duplicateMut)),
+                                "was duplicated in the supplied mutationHierarchy!")
+                  warning(memo)
+                  mutationHierarchy <- mutationHierarchy[!duplicated(mutationHierarchy$mutation),]
+              }
+              
+              # ensure columns are of the proper type
+              mutationHierarchy$color <- as.character(mutationHierarchy$color)
+              mutationHierarchy$mutation <- as.character(mutationHierarchy$mutation)
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Setting the hierarchy of mutations from most",
+                                "to least deleterious and mapping to colors:",
+                                toString(mutationHierarchy$mutation))
+                  message(memo)
+              }
+              
+              return(mutationHierarchy)
+          })
+
+#' @rdname Waterfall-methods
+#' @aliases Waterfall
+#' @param object Object of class data.table
+#' @param verbose Boolean for status updates
+#' @noRd
+setMethod(f="toWaterfall",
+          signature="data.table",
+          definition=function(object, hierarchy, labelColumn, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to expected waterfall format")
+                  message(memo)
+              }
+              
+              # set up the label variables
+              label <- NA
+              labelFlag <- TRUE
+              
+              # if a label column exists and is proper overwrite the label variable
+              # if not change the flag
+              if(!is.null(labelColumn)){
+                  if(length(labelColumn) != 1) {
+                      memo <- paste("Parameter \"labelColumn\" must be of length 1!",
+                                    "Found length to be", length(labelColumn))
+                      warning(memo)
+                      labelFlag <- FALSE
+                  }
+                  
+                  if(!labelColumn %in% colnames(object)){
+                      memo <- paste("could not find column:", labelColumn,
+                                    " valid names are:", toString(colnames(object)))
+                      warning(memo)
+                      labelFlag <- FALSE
+                  }
+                  
+                  if(labelFlag){
+                      label <- object[,labelColumn, with=FALSE]
+                  }
+              }
+              
+              # check for correct columns
+              correctCol <- c("sample", "gene", "mutation")
+              if(!all(correctCol %in% colnames(object))){
+                  missingCol <- correctCol[!correctCol %in% colnames(object)]
+                  memo <- paste("Could not find correct column names, missing:",
+                                toString(missingCol))
+                  stop(memo)
+              }
+              
+              # combine all columns into a consistent format
+              waterfallFormat <- cbind(object, label)
+              colnames(waterfallFormat) <- c("sample", "gene", "mutation", "label")
+              
+              # convert appropriate columns to factor
+              waterfallFormat$sample <- factor(waterfallFormat$sample)
+              
+              return(waterfallFormat)
+          })
+
 #' @rdname Waterfall-methods
 #' @aliases Waterfall
 #' @param object Object of class data.table
