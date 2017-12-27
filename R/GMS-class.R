@@ -437,16 +437,16 @@ setMethod(f="toRainfall",
               sample <- getSample(object)
               chromosome <- getPosition(object)$chromosome_name
               start <- getPosition(object)$start
-              end <- getPosition(object)$stop
-              reference <- as.character(getMutation(object)$reference)
-              variant <- as.character(getMutation(object)$variant)
+              stop <- getPosition(object)$stop
+              refAllele <- as.character(getMutation(object)$reference)
+              varAllele <- as.character(getMutation(object)$variant)
               
               # combine all the relevant data into a single data table
-              rainfallFormat <- cbind(sample, chromosome, start, end, reference, variant)
+              rainfallFormat <- cbind(sample, chromosome, start, stop, refAllele, variantAllele)
               
               # remove cases where a mutation does not exist
               rowCountOrig <- nrow(rainfallFormat)
-              rainfallFormat <- rainfallFormat[rainfallFormat$reference != rainfallFormat$variant,]
+              rainfallFormat <- rainfallFormat[rainfallFormat$refAllele != rainfallFormat$variantAllele,]
               if(rowCountOrig != nrow(rainfallFormat)){
                   memo <- paste("Removed", rowCountOrig - nrow(rainfallFormat),
                                 "entries where the reference matches the variant")
@@ -456,7 +456,7 @@ setMethod(f="toRainfall",
               # remove mutations at duplicate genomic mutation as this could artifically increase
               # the density of mutations
               rowCountOrig <- nrow(rainfallFormat)
-              rainfallFormat <- rainfallFormat[!duplicated(rainfallFormat[,c("sample", "chromosome", "start", "end")]),]
+              rainfallFormat <- rainfallFormat[!duplicated(rainfallFormat[,c("sample", "chromosome", "start", "stop")]),]
               if(rowCountOrig != nrow(rainfallFormat)){
                   memo <- paste("Removed", rowCountOrig - nrow(rainfallFormat),
                                 "entries with duplicate genomic positions")
@@ -470,9 +470,9 @@ setMethod(f="toRainfall",
               rainfallFormat$sample <- factor(rainfallFormat$sample, levels=unique(rainfallFormat$sample))
               rainfallFormat$chromosome <- factor(rainfallFormat$chromosome, levels=unique(rainfallFormat$chromosome))
               rainfallFormat$start <- as.integer(rainfallFormat$start)
-              rainfallFormat$end <- as.integer(rainfallFormat$end)
-              rainfallFormat$reference <- factor(rainfallFormat$reference, levels=unique(rainfallFormat$reference))
-              rainfallFormat$variant <- factor(rainfallFormat$variant, levels=unique(rainfallFormat$variant))
+              rainfallFormat$stop <- as.integer(rainfallFormat$stop)
+              rainfallFormat$refAllele <- factor(rainfallFormat$refAllele, levels=unique(rainfallFormat$refAllele))
+              rainfallFormat$variantAllele <- factor(rainfallFormat$variantAllele, levels=unique(rainfallFormat$variantAllele))
               
               # return the standardized format
               return(rainfallFormat)

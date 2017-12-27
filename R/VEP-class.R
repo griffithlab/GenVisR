@@ -609,3 +609,179 @@ setMethod(f="toMutSpectra",
               
               return(mutSpectraFormat)
           })
+
+#' @rdname toRainfall-methods
+#' @aliases toRainfall
+#' @param object Object of class VEP
+#' @param BSgenome Object of class BSgenome, used to extract reference bases if
+#' not supplied by the file format.
+#' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom Rsamtools getSeq
+#' @importFrom IRanges IRanges
+#' @importFrom GenomicRanges GRanges
+#' @importFrom BSgenome available.genomes
+#' @importFrom BSgenome installed.genomes
+#' @importFrom data.table as.data.table
+#' @importFrom GenomeInfoDb seqlevels
+#' @importFrom GenomeInfoDb seqnames
+#' @noRd
+setMethod(f="toRainfall",
+          signature="VEP",
+          definition=function(object, BSgenome, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to expected Rainfall format")
+                  message(memo)
+              }
+              
+              # grab the BSgenome
+              if(is.null(BSgenome)){
+                  if(verbose){
+                      memo <- paste("Looking for correct genome for reference base annotation.")
+                      message(memo)
+                  }
+                  
+                  # look for assembly version in header
+                  header <- object@vepObject@header
+                  header <- header$Info[grepl("assembly", header$Info)]
+                  header <- regmatches(header,regexpr("\\w+(\\d)+", header))
+                  if(length(header) != 1){
+                      memo <- paste("Unable to infer assembly from VEP header,",
+                                    "please use the BSgenome parameter!")
+                      stop(memo) 
+                  }
+                  
+                  # determine if a genome is available
+                  availableGenomes <- BSgenome::available.genomes()
+                  availableGenomes <- availableGenomes[grepl(header, availableGenomes)]
+                  if(length(availableGenomes) == 0){
+                      memo <- paste("Could not find a compatible BSgenome for", toString(header),
+                                    "Please specify the bioconductor BSgenome to annotate references bases!")
+                      stop(memo)
+                  }
+                  
+                  # determine if the available genome in an installed package
+                  installedGenomes <- BSgenome::installed.genomes()
+                  installedGenomes <- installedGenomes[installedGenomes == availableGenomes]
+                  if(length(installedGenomes) == 0){
+                      memo <- paste("The BSgenome", toString(availableGenomes), "is available",
+                                    "but is not installed! Please install", toString(availableGenomes),
+                                    "via bioconductor!")
+                      stop(memo)
+                  }
+                  
+                  # grab the genome
+                  BSgenome <- installedGenomes[1]
+                  if(verbose){
+                      memo <- paste("attempting to use", toString(BSgenome), "to annotate reference bases!")
+                  }
+                  requireNamespace(BSgenome)
+                  BSgenome <- getExportedValue(BSgenome, BSgenome)
+              }
+              
+              # grab the sample, mutation, position columns
+              sample <- object@vepObject@sample[snvIndex]
+              variantAllele <- object@vepObject@mutation[snvIndex,"Allele"]
+              position <- object@vepObject@position[snvIndex,"Location"]
+              
+              # split the position into chr, start , stop
+              positionSplit <- lapply(as.character(position$Location), strsplit, ":", fixed=TRUE)
+              chr <- unlist(lapply(positionSplit, function(x) x[[1]][1]))
+              coord <- unlist(lapply(positionSplit, function(x) x[[1]][2]))
+              coord <- lapply(coord, strsplit, "-", fixed=TRUE)
+              start <- as.numeric(unlist(lapply(coord, function(x) x[[1]][1])))
+              stop <- as.numeric(unlist(lapply(coord, function(x) x[[1]][2])))
+              stop[is.na(stop)] <- start[is.na(stop)]
+              
+              # combine everything into one GRanges object
+              variantGR <- GenomicRanges::GRanges(seqnames=chr, IRanges::IRanges(start=start, end=stop))
+              variantGR$sample <- sample$sample
+              variantGR$variantAllele <- toupper(variantAllele$Allele)
+              
+              # check that the reference chromosomes match the input and BSgenome
+              seqMismatch <- unique(chr[!chr %in% seqnames(BSgenome)])
+              if(length(seqMismatch >= 1)){
+                  memo <- paste("The following chromosomes do not match the BSgenome specified:", toString(seqMismatch))
+                  warning(memo)
+                  if(length(unique(chr[!paste0("chr", chr) %in% seqnames(BSgenome)])) == 0){
+                      memo <- paste("appending \"chr\" to chromosomes to fix mismatch with the BSgenome")
+                      warning(memo)
+                      chr <- paste0("chr", chr)
+                      GenomeInfoDb::seqlevels(variantGR) <- unique(chr)
+                      GenomeInfoDb::seqnames(variantGR)[seq_along(variantGR)] <- chr
+                  } else {
+                      memo <- paste("removing entries with chromosomes not matching the BSgenome")
+                      warning(memo)
+                      variantGR_origSize <- length(variantGR) 
+                      variantGR <- variantGR[as.character(seqnames(variantGR)) %in% as.character(seqnames(BSgenome)),]
+                      if(verbose){
+                          memo <- paste("removed", variantGR_origSize - length(variantGR), "entries where chromosomes did",
+                                        "not match the BSgenome")
+                      }
+                  }
+              }
+              if(length(variantGR) == 0){
+                  memo <- paste("There are no variants left after subsets.")
+                  stop(memo)
+              }
+              
+              # get the reference sequences
+              if(verbose){
+                  memo <- paste("Annotating reference bases")
+                  message(memo)
+              }
+              refAllele <- toupper(Rsamtools::getSeq(BSgenome, variantGR, as.character=TRUE))
+              
+              # combine all columns into a consistent format and remove duplicate variants
+              variantGR$refAllele <- refAllele
+              rainfallFormat <- data.table::as.data.table(variantGR)
+              keep <- c("sample", "seqnames", "start", "end", "refAllele", "variantAllele")
+              rainfallFormat <- rainfallFormat[,keep, with=FALSE]
+              colnames(rainfallFormat) <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
+              
+              # remove cases where a mutation does not exist
+              rowCountOrig <- nrow(rainfallFormat)
+              rainfallFormat <- rainfallFormat[rainfallFormat$refAllele != rainfallFormat$variantAllele,]
+              if(rowCountOrig != nrow(rainfallFormat)){
+                  memo <- paste("Removed", rowCountOrig - nrow(rainfallFormat),
+                                "entries where the reference matches the variant")
+                  warning(memo)
+              }
+              
+              # unique, to make sure no duplicate variants exist to throw off the counts
+              rowCountOrig <- nrow(rainfallFormat)
+              rainfallFormat <- unique(rainfallFormat)
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Removed", rowCountOrig - nrow(rainfallFormat),
+                                "rows from the data which harbored duplicate",
+                                "genomic variants")
+                  message(memo)
+              }
+              
+              # make sure no duplicate genomic locations exist to throw off the mutation distance calculation
+              dupCoordIndex <- duplicated(rainfallFormat[,c("sample", "chromosome", "start")])
+              if(sum(dupCoordIndex) > 0){
+                  rowCountOrig <- nrow(rainfallFormat)
+                  rainfallFormat <- rainfallFormat[!dupCoordIndex,]
+                  memo <- paste("Removed", rowCountOrig-nrow(rainfallFormat), "entries with identical",
+                                "start coordinates")
+                  warning(memo)
+              }
+              
+              # create a flag column for where these entries came from
+              rainfallFormat$origin <- 'mutation'
+              
+              # make sure everything is of the proper type
+              rainfallFormat$sample <- factor(rainfallFormat$sample, levels=unique(rainfallFormat$sample))
+              rainfallFormat$chromosome <- factor(rainfallFormat$chromosome, levels=unique(rainfallFormat$chromosome))
+              rainfallFormat$start <- as.integer(rainfallFormat$start)
+              rainfallFormat$stop <- as.integer(rainfallFormat$stop)
+              rainfallFormat$refAllele <- factor(rainfallFormat$refAllele, levels=unique(rainfallFormat$refAllele))
+              rainfallFormat$variantAllele <- factor(rainfallFormat$variantAllele, levels=unique(rainfallFormat$variantAllele))
+              
+              return(rainfallFormat)
+          })

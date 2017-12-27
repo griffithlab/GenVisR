@@ -241,6 +241,66 @@ setMethod(
 ################################################################################
 #################### Method function definitions ###############################
 
+#' @rdname toRainfall-methods
+#' @aliases toRainfall
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+setMethod(f="toRainfall",
+          signature="data.table",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("converting", class(object), "to expected Rainfall format")
+                  message(memo)
+              }
+              
+              # check for appropriate columns
+              expectCol <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
+              if(!all(expectCol %in% colnames(object))){
+                  missingCol <- expectCol[!expectCol %in% colnames(object)]
+                  memo <- paste("Could not find the following required columns in the input:",
+                                toString(missingCol))
+                  stop(memo)
+              }
+              rainfallFormat <- object
+              
+              # remove cases where a mutation does not exist
+              rowCountOrig <- nrow(rainfallFormat)
+              rainfallFormat <- rainfallFormat[rainfallFormat$refAllele != rainfallFormat$variantAllele,]
+              if(rowCountOrig != nrow(rainfallFormat)){
+                  memo <- paste("Removed", rowCountOrig - nrow(rainfallFormat),
+                                "entries where the reference matches the variant")
+                  warning(memo)
+              }
+              
+              # remove mutations at duplicate genomic mutation as this could artifically increase
+              # the density of mutations
+              rowCountOrig <- nrow(rainfallFormat)
+              rainfallFormat <- rainfallFormat[!duplicated(rainfallFormat[,c("sample", "chromosome", "start", "stop")]),]
+              if(rowCountOrig != nrow(rainfallFormat)){
+                  memo <- paste("Removed", rowCountOrig - nrow(rainfallFormat),
+                                "entries with duplicate genomic positions")
+                  warning(memo)
+              }
+              
+              # create a flag column for where these entries came from
+              rainfallFormat$origin <- 'mutation'
+              
+              # make sure everything is of the proper type
+              rainfallFormat$sample <- factor(rainfallFormat$sample, levels=unique(rainfallFormat$sample))
+              rainfallFormat$chromosome <- factor(rainfallFormat$chromosome, levels=unique(rainfallFormat$chromosome))
+              rainfallFormat$start <- as.integer(rainfallFormat$start)
+              rainfallFormat$stop <- as.integer(rainfallFormat$stop)
+              rainfallFormat$refAllele <- factor(rainfallFormat$refAllele, levels=unique(rainfallFormat$refAllele))
+              rainfallFormat$variantAllele <- factor(rainfallFormat$variantAllele, levels=unique(rainfallFormat$variantAllele))
+              
+              # return the standardized format
+              return(rainfallFormat)
+              
+          })
+
 #' @rdname RainfallPrimaryData-methods
 #' @aliases RainfallPrimaryData
 #' @param object Object of class data.table
@@ -258,7 +318,7 @@ setMethod(f="annoRainfall",
               }
               
               # add an extra temporary column acting as a key for transition/transversion type
-              object$base_change <- paste0(object$reference, "2", object$variant)
+              object$base_change <- paste0(object$refAllele, "2", object$variantAllele)
               
               # annotate the variant transition/transversion type
               # annotate the grouping of the base change
@@ -421,17 +481,17 @@ setMethod(f="annoGenomeCoord",
               genomeCoord_a <- data.table::as.data.table(seqlengths(BSgenome))
               colnames(genomeCoord_a) <- c("start")
               genomeCoord_a$chromosome <- names(seqlengths(BSgenome))
-              genomeCoord_a$end <- genomeCoord_a$start
+              genomeCoord_a$stop <- genomeCoord_a$start
               genomeCoord_a$origin <- "chrStop"
               
               # create a data table of genomic coordinate start positions
-              genomeCoord_b <- data.table::data.table("start"=1, "end"=1,
+              genomeCoord_b <- data.table::data.table("start"=1, "stop"=1,
                                                       "chromosome"=genomeCoord_a$chromosome,
                                                       "origin"="chrStart")
               
               # bind the master genome coord data table together
               genomeCoord_a <- data.table::rbindlist(list(genomeCoord_a, genomeCoord_b), use.names=TRUE, fill=TRUE)
-              genomeCoord_a <- genomeCoord_a[,c("chromosome", "start", "end", "origin")]
+              genomeCoord_a <- genomeCoord_a[,c("chromosome", "start", "stop", "origin")]
               
               # check that chromosomes between BSgenome and original input match
               chrMismatch <- as.character(unique(object[!object$chromosome %in% genomeCoord_a$chromosome,]$chromosome))
