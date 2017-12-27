@@ -575,14 +575,6 @@ setMethod(f="formatSample",
                   highlightSample <- as.character(highlightSample)
               }
               
-              # check that input is of length 1
-              if(length(highlightSample) != 1){
-                  memo <- paste("input to highlightSample is not of length 1,",
-                                "using only the first element")
-                  warning(memo)
-                  highlightSample <- highlightSample[1]
-              }
-              
               # check that the sample to highlight is in the data
               if(!highlightSample %in% unique(object$sample)){
                   memo <- paste("Could not find the sample", toString(highlightSample),
@@ -591,7 +583,7 @@ setMethod(f="formatSample",
               }
               
               # perform the neccessary alterations to the data for sample highlighting
-              object[!object$sample %in% highlightSample,"trans_tranv"] <- NA
+              object <- object[object$sample %in% highlightSample,]
               
               # return the formated object
               return(object)
@@ -737,6 +729,12 @@ setMethod(f="buildDensityPlot",
               coordData <- primaryData[primaryData$origin != "mutation",]
               primaryData <- primaryData[!is.na(primaryData$log10_difference),]
               
+              # remove data by chromosome based on a # of entries threshold
+              # this should prevent wierd issues with two few points when doing densit plots
+              primaryData_by_chr <- split(primaryData, by="chromosome")
+              primaryData_by_chr <- primaryData_by_chr[lapply(primaryData_by_chr, nrow) > 4]
+              primaryData_filtered <- data.table::rbindlist(primaryData_by_chr)
+              
               # add the palette for encoding transitions/transversions
               if(is.null(palette)){
                   palette <- c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753", "#ff9999")
@@ -770,14 +768,21 @@ setMethod(f="buildDensityPlot",
               # define plot labels
               plotLabels <- labs(y="Mutation Density")
               
+              # define the geom, when doing this we need to filter the data
+              # where there are two few entries to calculate an nice density
+              # this should prevent wierd issues with two few points when doing densit plots
+              primaryData_by_chr <- split(primaryData, by="chromosome")
+              primaryData_by_chr <- primaryData_by_chr[lapply(primaryData_by_chr, nrow) > 4]
+              primaryData_filtered <- data.table::rbindlist(primaryData_by_chr)
+                  
               # define the geom
-              plotGeom <- geom_density(fill="lightcyan4")
+              plotGeom <- geom_density(data=primaryData_filtered, mapping=aes_string(x='start'), fill="lightcyan4", color="lightcyan4")
               
               # define the faceting
               plotFacet <- facet_grid(. ~ chromosome, scales="free_x")
               
               # define the plot
-              densityPlot <- ggplot(data=primaryData, mapping=aes_string(x='start'))
+              densityPlot <- ggplot(data=primaryData)
               
               # combine plot elements
               densityPlot <- densityPlot + plotGeom + plotFacet + baseTheme +

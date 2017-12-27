@@ -393,13 +393,13 @@ setMethod(f="toRainfall",
               }
               
               # grab the sample, mutation, position columns
-              sample <- object@mafObject@sample[snvIndex]
-              variantAllele1 <- object@mafObject@mutation[snvIndex,"Tumor_Seq_Allele1"]
-              variantAllele2 <- object@mafObject@mutation[snvIndex,"Tumor_Seq_Allele2"]
-              refAllele <- object@mafObject@mutation[snvIndex,"Reference_Allele"]
-              chr <- object@mafObject@position[snvIndex,"Chromosome"]
-              start <- object@mafObject@position[snvIndex,"Start_Position"]
-              stop <- object@mafObject@position[snvIndex,"End_Position"]
+              sample <- object@mafObject@sample
+              variantAllele1 <- object@mafObject@mutation[,"Tumor_Seq_Allele1"]
+              variantAllele2 <- object@mafObject@mutation[,"Tumor_Seq_Allele2"]
+              refAllele <- object@mafObject@mutation[,"Reference_Allele"]
+              chr <- object@mafObject@position[,"Chromosome"]
+              start <- object@mafObject@position[,"Start_Position"]
+              stop <- object@mafObject@position[,"End_Position"]
               
               # combine all columns into a consistent format and remove duplicate variants
               rainfallFormat_Allele1 <- cbind(sample, chr, start, stop, refAllele, variantAllele1)
