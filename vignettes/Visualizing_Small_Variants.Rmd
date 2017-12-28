@@ -1,9 +1,15 @@
 ---
 title: "Visualizing Small Variants"
-author: "Zachary L. Skidmore"
+author:
+- name: Zachary L. Skidmore
+  affiliation: McDonnell Genome Institute - Washington University
 date: "`r Sys.Date()`"
 output:
-    BiocStyle::html_document
+    BiocStyle::html_document:
+        toc_float: true
+package: GenVisR
+abstract:
+    Instructions for visualizing small variants using the GenVisR package
 vignette: >
   %\VignetteIndexEntry{Visualizing Small Variants}
   %\VignetteEngine{knitr::rmarkdown}
@@ -13,5 +19,76 @@ vignette: >
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# GenVisR a brief introduction
+
+Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. Often creating a publication ready graphic not only requires extensive manipulation of data but also an in-depth knowledge of graphics libraries. As such creating such visualizations has traditionally taken a significant amount of time in regards to both data pre-processing and aesthetic manipulations. GenVisR (Genomic Visulizations in R) attempts to alleviate this burden by providing highly customizable publication-quality graphics in an easy to use interface. Many of the plotting functions in this library have a focus in the realm of human cancer genomics however we support a large number of species and many of the plotting methods incorprated within are of use for visualizing any type of genomic abnormality.
+
+## getting started
+
+For the majority of users we recommend installing GenVisR from the release branch of Bioconductor, Installation instructions using this method can be found on the [GenVisR](https://bioconductor.org/packages/GenVisR) landing page on Bioconductor.
+
+Please note that GenVisR imports a few packages that have “system requirements”, in most cases these requirements will already be installed. If they are not please follow the instructions to install these packages given in the R terminal. Briefly these packages are: “libcurl4-openssl-dev” and “libxml2-dev”
+
+Once GenVisR is successfully installed it will need to be loaded. For the purposes of this vignette we do this here and set a seed to ensure reproducibility.
+
+```{r, message=FALSE, tidy=TRUE}
+# set a seed
+set.seed(426)
+
+# load GenVisR into R
+library(GenVisR)
+```
+
+# Visualization of small variants
+
+Genomic changes come in many forms, one such form are single nucleotide variants (SNVS) and small insertions and deletions (INDELS). These variations while small can have a devestating impact on the health of cells and are the basis for many genomic diseases. We provide 5 functions for visualizing the impact these changes can have and to aid in recognizing patterns that could be associated with genomic diseases.
+
+## Supported files
+
+In order to be as flexible as possible GenVisR is designed to work with 3 file formats which encode information regarding small variants. The first of these are vep formated files from the [Variant Effect Predictor (VEP)](https://ensembl.org/info/docs/tools/vep/index.html), a tool developed by ensembl to annotate the effect a variant has on a genome. [Mutation Annotation Format (MAF)](https://wiki.nci.nih.gov/display/TCGA/Mutation+Annotation+Format+(MAF)+Specification) files are also widely used in the bioinformatics community particularly within The Cancer Genome Atlas (TCGA) project and are supported by GenVisR. Annotation files from the [Genome Modeling System (GMS)](https://github.com/genome/gms) are also supported. In the interest of flexibility a fourth option exists as well, users can supply a `data.table` object to any function designed to work with small variants. Users should note however that specific columns are required for functions when using this method.
+
+## Plot Objects
+
+# Basic Pipeline
+
+## Reading in data
+
+When constructing a plot with GenVisR there are three basic steps. First one must load the data into R, as mentioned previously GenVisR supports three filetypes which can be read in this manner. An example for each is supplied below using test data installed with the package.
+
+```{r, message=FALSE, tidy=TRUE}
+# get the disk location for maf test file
+testFileDir <- system.file("extdata", package="GenVisR")
+testFile <- Sys.glob(paste0(testFileDir, "/brca.maf"))
+
+# define the objects for testing
+mafObject <- MutationAnnotationFormat(testFile)
+```
+
+## Constructing a Plot Object
+
+## Drawing a Plot Object
+
+# Functions for visualizing small variants
+
+## Waterfall
+
+## MutSpectra
+
+## Rainfall
+
+## Lolliplot
+
+TODO: rework the existing lolliplot to be quicker and look better
+
+## SmallVariantSummary
+
+TODO: create a class to output various summary plots regarding the number of mutations etc.
+
+# Session Info
+
+```{r, message=FALSE, tidy=TRUE}
+sessionInfo()
+```
+
 
 
