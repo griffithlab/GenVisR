@@ -312,7 +312,7 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
 #'
 #' @rdname getData-methods
 #' @aliases getData
-.getData <- function(object, name=NULL, index=NULL, ...){
+.getData_waterfall <- function(object, name=NULL, index=NULL, ...){
     
     if(is.null(name) & is.null(index)){
         memo <- paste("Both name and index are NULL, one must be specified!")
@@ -357,13 +357,13 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
 #' @aliases getData
 setMethod(f="getData",
           signature="WaterfallData",
-          definition=.getData)
+          definition=.getData_waterfall)
 
 #' @rdname getData-methods
 #' @aliases getData
 setMethod(f="getData",
           signature="Waterfall",
-          definition=.getData)
+          definition=.getData_waterfall)
 
 #' Helper function to extract grobs from objects
 #'
@@ -379,6 +379,8 @@ setMethod(f="getData",
         grob <- object@PlotC
     } else if(index == 4) {
         grob <- object@PlotD
+    } else if(index == 5 {
+        grob <- object@Grob
     } else {
         stop("Subscript out of bounds")
     }
@@ -406,7 +408,7 @@ setMethod(
     f="drawPlot",
     signature="Waterfall",
     definition=function(object, ...){
-        mainPlot <- object@Grob
+        mainPlot <- getGrob(object, index=5)
         grid::grid.newpage()
         grid::grid.draw(mainPlot)
     }

@@ -204,8 +204,10 @@ setMethod(f="getData",
         grob <- object@PlotA
     } else if(index == 2) {
         grob <- object@PlotB
+    } else if(index == 3) {
+        grob <- object@Grob
     } else {
-        stop("Subscript out of bounds")
+        stop("Subscript out of bounds") 
     }
     return(grob)
 }
@@ -231,7 +233,7 @@ setMethod(
     f="drawPlot",
     signature="Rainfall",
     definition=function(object, ...){
-        mainPlot <- object@Grob
+        mainPlot <- getGrob(object, index=3)
         grid::grid.newpage()
         grid::grid.draw(mainPlot)
     }

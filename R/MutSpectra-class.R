@@ -233,11 +233,13 @@ setMethod(f="getData",
 #' @rdname drawPlot-methods
 #' @aliases drawPlot
 #' @importFrom grid grid.draw
+#' @importFrom grid grid.newpage
 #' @exportMethod drawPlot
 setMethod(f="drawPlot",
           signature="MutSpectra",
           definition=function(object, ...){
               grob <- getGrob(object, index=4)
+              grid::grid.newpage()
               grid::grid.draw(grob)
           })
 
