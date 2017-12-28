@@ -38,19 +38,18 @@ setClass("Rainfall",
 #' @param sectionHeights Numeric vector specifying relative heights of each plot section,
 #' should sum to one. Expects a value for each section.
 #' @param chromosomes Character vector specifying chromosomes for which to plot
-#' @param highlightSample Character vector specifying the sample for which to highlight, if
-#' NULL (the default) no differentiation will be made between samples.
+#' @param sample Character vector specifying the samples for which to plot.
 #' @param pointSize numeric value giving the size of points to plot (defaults to 2)
 #' @param verbose Boolean specifying if status messages should be reported.
 #' @param plotALayers list of ggplot2 layers to be passed to the rainfall plot.
 #' @param plotBLayers list of ggplot2 layers to be passed to the density plot.
 #' @export
 Rainfall <- function(object, BSgenome=NULL, palette=NULL, sectionHeights=NULL, chromosomes=NULL,
-                     highlightSample=NULL, pointSize=NULL, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL){
+                     sample=NULL, pointSize=NULL, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL){
     
     # construct the RainfallPrimaryData object
     primaryData <- RainfallPrimaryData(object, BSgenome=BSgenome, chromosomes=chromosomes,
-                                       highlightSample=highlightSample, verbose=verbose)
+                                       sample=sample, verbose=verbose)
     
     # construct the Rainfallplots object
     rainfallPlots <- RainfallPlots(primaryData, palette=palette, pointSize=pointSize, plotALayers=plotALayers, plotBLayers=plotBLayers, verbose=verbose)
@@ -85,7 +84,7 @@ setClass("RainfallPrimaryData",
 #' @rdname RainfallPrimaryData-class
 #' @param object Object of class MutationAnnotationFormat, GMS, VEP
 #' @noRd
-RainfallPrimaryData <- function(object, BSgenome, chromosomes, highlightSample, verbose){
+RainfallPrimaryData <- function(object, BSgenome, chromosomes, sample, verbose){
     
     # convert object to Rainfall format
     primaryData <- toRainfall(object, verbose=verbose)
@@ -103,7 +102,7 @@ RainfallPrimaryData <- function(object, BSgenome, chromosomes, highlightSample, 
     primaryData <- annoGenomeCoord(primaryData, BSgenome=BSgenome, verbose=verbose)
     
     # alter the data to highlight the sample
-    primaryData <- formatSample(primaryData, highlightSample=highlightSample, verbose=verbose)
+    primaryData <- formatSample(primaryData, sample=sample, verbose=verbose)
     
     new("RainfallPrimaryData", primaryData=primaryData)
 }
@@ -542,20 +541,20 @@ setMethod(f="annoGenomeCoord",
 #' @rdname RainfallPrimaryData-methods
 #' @aliases RainfallPrimaryData
 #' @param object Object of class data.table
-#' @param highlightSample Character string of sample to emphasize
+#' @param sample Character string of sample to emphasize
 #' @param verbose Boolean for status updates
 #' @return data.table object with calculated mutation distances
 #' @importFrom gtools mixedsort
 #' @noRd
 setMethod(f="formatSample",
           signature="data.table",
-          definition=function(object, highlightSample, verbose, ...){
+          definition=function(object, sample, verbose, ...){
               
               # sort samples in a smart sort
               object$sample <- factor(object$sample, levels=gtools::mixedsort(unique(object$sample)))
               
-              # if highlightSample is null do nothing further
-              if(is.null(highlightSample)){
+              # if sample is null do nothing further
+              if(is.null(sample)){
                   return(object)
               }
               
@@ -568,22 +567,22 @@ setMethod(f="formatSample",
               # perform some quality checks
               
               # check that input is a character vector
-              if(!is.character(highlightSample)){
-                  memo <- paste("input to highlightSample is not a character vector",
+              if(!is.character(sample)){
+                  memo <- paste("input to sample is not a character vector",
                                 "attempting to coerce.")
                   warning(memo)
-                  highlightSample <- as.character(highlightSample)
+                  sample <- as.character(sample)
               }
               
               # check that the sample to highlight is in the data
-              if(!highlightSample %in% unique(object$sample)){
-                  memo <- paste("Could not find the sample", toString(highlightSample),
+              if(!sample %in% unique(object$sample)){
+                  memo <- paste("Could not find the sample", toString(sample),
                                 "in the data, valid entries are:", toString(unique(object$sample)))
                   stop(memo)
               }
               
               # perform the neccessary alterations to the data for sample highlighting
-              object <- object[object$sample %in% highlightSample,]
+              object <- object[object$sample %in% sample,]
               
               # return the formated object
               return(object)
