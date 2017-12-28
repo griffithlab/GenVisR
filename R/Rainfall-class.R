@@ -821,7 +821,9 @@ setMethod(f="arrangeRainfallPlot",
               # set section heights based upon the number of sections
               defaultPlotHeights <- c(.25, .75)
               
-              if(length(sectionHeights) != length(plotList)){
+              if(is.null(sectionHeights) & length(plotList) == length(defaultPlotHeights)){
+                  sectionHeights <- defaultPlotHeights
+              } else if(length(sectionHeights) != length(plotList)){
                   memo <- paste("There are", length(sectionHeights), "section heights provided",
                                 "but", length(plotList), "vertical sections...",
                                 "using default values!")
