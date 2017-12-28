@@ -12,7 +12,7 @@
 \alias{.getData_Rainfall}
 \alias{getData,RainfallPrimaryData-method}
 \alias{getData,Rainfall-method}
-\alias{.getData}
+\alias{.getData_waterfall}
 \alias{getData,WaterfallData-method}
 \alias{getData,Waterfall-method}
 \title{Method getData}
@@ -37,7 +37,7 @@ getData(object, ...)
 
 \S4method{getData}{Rainfall}(object, name = NULL, index = NULL, ...)
 
-.getData(object, name = NULL, index = NULL, ...)
+.getData_waterfall(object, name = NULL, index = NULL, ...)
 
 \S4method{getData}{WaterfallData}(object, name = NULL, index = NULL, ...)
 

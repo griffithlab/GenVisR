@@ -6,8 +6,8 @@
 \title{Class Rainfall}
 \usage{
 Rainfall(object, BSgenome = NULL, palette = NULL, sectionHeights = NULL,
-  chromosomes = NULL, highlightSample = NULL, pointSize = NULL,
-  verbose = FALSE, plotALayers = NULL, plotBLayers = NULL)
+  chromosomes = NULL, sample = NULL, pointSize = NULL, verbose = FALSE,
+  plotALayers = NULL, plotBLayers = NULL)
 }
 \arguments{
 \item{object}{Object of class MutationAnnotationFormat, GMS, VEP.}
@@ -22,8 +22,7 @@ should sum to one. Expects a value for each section.}
 
 \item{chromosomes}{Character vector specifying chromosomes for which to plot}
 
-\item{highlightSample}{Character vector specifying the sample for which to highlight, if
-NULL (the default) no differentiation will be made between samples.}
+\item{sample}{Character vector specifying the samples for which to plot.}
 
 \item{pointSize}{numeric value giving the size of points to plot (defaults to 2)}
 

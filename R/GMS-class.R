@@ -119,6 +119,14 @@ GMS <- function(path, data=NULL, version=4, verbose=FALSE){
 ################################################################################
 ###################### Accessor function definitions ###########################
 
+#' @rdname writeData-methods
+#' @aliases writeData
+setMethod(f="writeData",
+          signature="GMS",
+          definition=function(object, file, ...){
+              writeData(object@gmsObject, file, sep="\t")
+          })
+
 #' @rdname getVersion-methods
 #' @aliases getVersion
 setMethod(f="getVersion",

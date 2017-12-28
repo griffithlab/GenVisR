@@ -76,6 +76,14 @@ MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
 ################################################################################
 ###################### Accessor function definitions ###########################
 
+#' @rdname writeData-methods
+#' @aliases writeData
+setMethod(f="writeData",
+          signature="MutationAnnotationFormat",
+          definition=function(object, file, ...){
+              writeData(object@mafObject, file, sep="\t")
+          })
+
 #' @rdname getVersion-methods
 #' @aliases getVersion
 setMethod(f="getVersion",
