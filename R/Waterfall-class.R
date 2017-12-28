@@ -379,7 +379,7 @@ setMethod(f="getData",
         grob <- object@PlotC
     } else if(index == 4) {
         grob <- object@PlotD
-    } else if(index == 5 {
+    } else if(index == 5) {
         grob <- object@Grob
     } else {
         stop("Subscript out of bounds")
