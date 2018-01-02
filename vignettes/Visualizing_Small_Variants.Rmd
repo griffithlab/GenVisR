@@ -19,9 +19,10 @@ vignette: >
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 # GenVisR a brief introduction
 
-Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. Often creating a publication ready graphic not only requires extensive manipulation of data but also an in-depth knowledge of graphics libraries. As such creating such visualizations has traditionally taken a significant amount of time in regards to both data pre-processing and aesthetic manipulations. GenVisR (Genomic Visulizations in R) attempts to alleviate this burden by providing highly customizable publication-quality graphics in an easy to use interface. Many of the plotting functions in this library have a focus in the realm of human cancer genomics however we support a large number of species and many of the plotting methods incorprated within are of use for visualizing any type of genomic abnormality.
+Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. Often creating a publication ready graphic not only requires extensive manipulation of data but also an in-depth knowledge of graphics libraries. As such creating such visualizations has traditionally taken a significant amount of time in regards to both data pre-processing and aesthetic manipulations. GenVisR (Genomic Visulizations in R) attempts to alleviate this burden by providing highly customizable publication-quality graphics in an easy to use structure. Many of the plotting functions in this library have a focus in the realm of human cancer genomics however we support a large number of species and many of the plotting methods incorprated within are of use for visualizing any type of genomic abnormality.
 
 ## getting started
 
@@ -45,9 +46,11 @@ Genomic changes come in many forms, one such form are single nucleotide variants
 
 ## Supported files
 
-In order to be as flexible as possible GenVisR is designed to work with 3 file formats which encode information regarding small variants. The first of these are vep formated files from the [Variant Effect Predictor (VEP)](https://ensembl.org/info/docs/tools/vep/index.html), a tool developed by ensembl to annotate the effect a variant has on a genome. [Mutation Annotation Format (MAF)](https://wiki.nci.nih.gov/display/TCGA/Mutation+Annotation+Format+(MAF)+Specification) files are also widely used in the bioinformatics community particularly within The Cancer Genome Atlas (TCGA) project and are supported by GenVisR. Annotation files from the [Genome Modeling System (GMS)](https://github.com/genome/gms) are also supported. In the interest of flexibility a fourth option exists as well, users can supply a `data.table` object to any function designed to work with small variants. Users should note however that specific columns are required for functions when using this method.
+In order to be as flexible as possible GenVisR is designed to work with 3 file formats which encode information regarding small variants. The first of these are vep formated files from the [Variant Effect Predictor (VEP)](https://ensembl.org/info/docs/tools/vep/index.html), a tool developed by ensembl to annotate the effect a variant has on a genome. [Mutation Annotation Format (MAF)](https://wiki.nci.nih.gov/display/TCGA/Mutation+Annotation+Format+(MAF)+Specification) files are also widely used in the bioinformatics community particularly within The Cancer Genome Atlas (TCGA) project and are supported by GenVisR. Annotation files from the [Genome Modeling System (GMS)](https://github.com/genome/gms) are also supported. In the interest of flexibility a fourth option exists as well, users can supply a `data.table` object to any function designed to work with small variants. Users should note however that specific columns are required for functions when using this method (see specific functions for details).
 
 ## Plot Objects
+
+The output from `Waterfall()`, `Lolliplot()`, `Rainfall()`, `SmallVariantSummary()`, and `MutSpectra()` are objects which store the data which was plotted as well as the individual subplots, and the final arranged plot. The reason for storing the data and plots in such a manner is two-fold. First allowing access to the data which was plotted provides transparency as to how the plot was produced. Secondly as all this items can be accessed by the user it allows for greater flexibility for customizing plots. These data and plots can be accessed with the `getData()` and `getGrob()` functions respectively. The final plot can be printed with the `drawPlot()` function which takes one of the afore mentioned objects. 
 
 # Basic Pipeline
 
@@ -55,6 +58,9 @@ In order to be as flexible as possible GenVisR is designed to work with 3 file f
 
 When constructing a plot with GenVisR there are three basic steps. First one must load the data into R, as mentioned previously GenVisR supports three filetypes which can be read in this manner. An example for each is supplied below using test data installed with the package.
 
+### Basic Syntax
+
+1. Reading in a MAF file
 ```{r, message=FALSE, tidy=TRUE}
 # get the disk location for maf test file
 testFileDir <- system.file("extdata", package="GenVisR")
@@ -64,13 +70,120 @@ testFile <- Sys.glob(paste0(testFileDir, "/brca.maf"))
 mafObject <- MutationAnnotationFormat(testFile)
 ```
 
-## Constructing a Plot Object
+2. Reading in a VEP file
+```{r, message=FALSE, tidy=TRUE}
+# get the disk location for test files
+testFileDir <- system.file("extdata", package="GenVisR")
+testFile <- Sys.glob(paste0(testFileDir, "/*.vep"))
 
-## Drawing a Plot Object
+# define the object for testing
+vepObject <- VEP(testFile)
+```
+
+3. Reading in a GMS file
+```{r, tidy=TRUE}
+# get the disk location for test files
+testFileDir <- system.file("extdata", package="GenVisR")
+testFile <- Sys.glob(paste0(testFileDir, "/FL.gms"))
+
+# define the objects for testing
+gmsObject <- GMS(testFile)
+```
+
+### Additional Notes
+
+All of these functions expect a path to a file of the appropriate type. Optionally a wildcard can be supplied with * as was done with `VEP()` causing the function to read in multiple files at once. With the exception of MAF files these functions **expect the files being read in to have a column called "sample"** (MAF files already have a sample designation within the file). If a sample column is not found one will be created based on the filenames. Each of these functions will attempt to infer a file specification version from the file header. If a version is not found one will need to be specified via the `version` parameter.
+
+## Constructing a Plot Object and viewing plotted data
+
+Once the data is read in and stored in one of the previously mentioned objects the data can be plotted with one of the plotting functions. We will go over each plotting function in more detail in section 4 however to continue with our example pipeline let's create a simple waterfall plot for the VEP annotated data.
+
+```{r, tidy=TRUE, warning=FALSE}
+waterfallPlot <- Waterfall(vepObject, recurrence=.40)
+```
+
+With the plot object created we can view the actual data making up the plot with the `getData()` function. This is an accessor function to pull out specific data making up the plot (Refer to the R documentation for `Waterfall()` to see available slots in the object which hold data). Let's use it here to extract the data making up the main plot panel, we can specify the slot either by name or it's index.
+
+```{r eval=FALSE}
+# extract data by the slot name
+getData(waterfallPlot, name="primaryData")
+
+# extract data by the slot index (same as above)
+getData(waterfallPlot, index=1)
+```
+
+## Drawing and saving a plot object
+
+With the plot object defined we can now visualize the plot, this is achieved by calling the `drawPlot()` function on the plot object. The plot can be saved simply by opening a graphics device using the base R functions such as `pdf()`, `svg()` etc. It should be noted that space within the graphics device will need to be adequate in order to draw a plot. If plots appear to be overlapping try giving the plot more space to draw via the `height` and `width` parameters.
+
+```{r eval=FALSE}
+# draw the plot
+drawPlot(waterfallPlot)
+
+# draw the plot and save it to a pdf
+pdf(file="waterfall.pdf", height=10, width=15)
+drawPlot(waterfallPlot)
+dev.off()
+```
 
 # Functions for visualizing small variants
 
 ## Waterfall
+
+The Waterfall plot is designed to make recognizing patterns related to co-occurring or mutually exclusive events easier to visualize across a cohort. It plots mutations for a gene/sample in a hierarchical order beginning with the most recurrently mutated gene for a cohort and working it's way down. By default two sub-plots are also displayed which show the mutation burden for a sample and the number of genes effected by a mutation in a cohort. Let's start by making a simple waterfall plot with default parameters from the MAF file we read in earlier.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, tidy=TRUE, warning=FALSE}
+# draw a waterfall plot for the maf object
+drawPlot(Waterfall(vepObject, recurrence=.20))
+```
+
+### Using filtering parameters with Waterfall
+
+Relevant Parameters: `samples`, `recurrence`, `genes`, `geneMax`, `mutation`
+
+Often it is the case that the input data supplied to the `Waterfall()` function will contain thousands of genes and hundreds of samples. While `Waterfall()` can handle such scenarios the graphics device `Waterfall()` would neeed to output to would have to be enlarged to such a degree that the visualization may become unwieldy. To alleviate such issues and show the most relevant data `Waterfall()` provides a suite of filtering parameters. Let's filter our plot using a few of these, suppose we only wanted to visualize those genes which occur in 50% of the cohort and we further didn't care about sample "FLX0010Naive". We could tell `Waterfall()` this by giving the samples we only wanted plotted via the `samples` parameter and setting the `recurrence` parameter to .50.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, tidy=TRUE, warning=FALSE}
+# show those genes which recur in 50% of the cohort for these 4 samples
+drawPlot(Waterfall(vepObject, recurrence=.50, samples=c("FLX0040Naive", "FLX0070Naive", "FLX0050Naive", "FLX0030Naive")))
+```
+
+### Mutation sub-plot
+
+Relevant Parameters: `coverage`, `plotA`, `plotATally`, `plotALayers`
+
+You might have noticed that when filtering the waterfall plot the top sub-plot didn't change i.e. for sample "FLX0040Naive" the Frequency of mutations remained around 50. You may also have noticed a warning when constructing a waterfall plot for the VEP data saying that duplicate genomic locations were detected. This is important to note and understand, regardless of any filtering that occurs the top sub-plot will always be based on the original input with one caveat. It will check for duplicate variants *(i.e. same sample, allele, genomic position)* and remove variants which are deemed to be duplicated. This occurs in the case of VEP as different transcripts can be annotated with different mutation types but still be the same variant which is why we see the warning. By default `Waterfall()` will simply output the frequencies observed in the cohort. However a mutation burden can be displayed as well by changing the value for parameter `plotA` from "frequency" to "burden". In doing so you will also **need to supply a value to `coverage`** giving the aproximate space in base pairs for which a mutation could have been called. Doing so will plot a mutation burden instead of a mutation frequency calculated via the folowing formula:
+
+`Mutation Burden = (# of observed mutations per sample)/(# of bases for which a mutation could be called) * 1000000`
+
+For a more accurate mutation burden calculation we can also supply coverage values individual per sample via a named vector, let's do that and tell `Waterfall()` to calculate a mutation burden by mutation type + sample rather than sample alone via the parameter `plotATally`. Lastly we will set the `drop` parameter to FALSE to avoid dropping mutations from the legend that are not in the main plot but are in the top sub-plot.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, tidy=TRUE, warning=FALSE}
+# define a coverage for each sample
+sampCov <- c("FLX0040Naive"=1.45e7, "FLX0070Naive"=1.39e7, "FLX0050Naive"=1.21e7, "FLX0030Naive"=1.3e7, "FLX0010Naive"=1.1e7)
+
+drawPlot(Waterfall(vepObject, recurrence=.50, coverage=sampCov, plotA="burden", plotATally="complex", drop=FALSE))
+```
+
+### Altering the mutation colors and hierarchy
+
+Relevant Parameters: `mutationHierarchy`
+
+You may ask yourself what happens when there are two different mutations for the same gene/sample, which one is plotted? For each file type a pre-defined hierarchy of mutations has been established which follows the order of the "Mutation Type" legend from top to bottom. By default mutations are based on a hierarchy of being most deleterious however both the priority and color of mutations can be changed by supplying a data.table to the `mutationHierarchy` parameter. Let's assume that we are particularly interested in splice variants, by default these might not show up because a "missense_variant" is deemed to be more deleterious but let's change that by supplying a custom hierarchy along with colors to go along with it. To do that we will need to give the parameter a data.table object with column names "mutation" and "color".
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, tidy=TRUE, warning=FALSE}
+# find which mutations are in the input data
+mutations <- getMutation(vepObject)$Conse
+
+# define a new color and hierarchy for mutations
+library(data.table)
+newHierarchy <- data.table("mutation"=c("splice_region_variant", "splice_acceptor_variant",  "splice_donor_variant", "missense_variant", "stop_gained"), "color"=c("tomato1", "tomato2", "tomato3", "purple", "cyan"))
+
+# draw the plot
+drawPlot(Waterfall(vepObject, recurrence=.50, mutationHierarchy = newHierarchy, plotATally="complex", drop=FALSE))
+```
+
+Here we can see that for sample "FLX0040Naive" on gene *BIRC6* there is actually a splice_region_variant as well as a missense_variant.
 
 ## MutSpectra
 
