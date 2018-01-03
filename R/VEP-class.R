@@ -682,9 +682,9 @@ setMethod(f="toRainfall",
               }
               
               # grab the sample, mutation, position columns
-              sample <- object@vepObject@sample[snvIndex]
-              variantAllele <- object@vepObject@mutation[snvIndex,"Allele"]
-              position <- object@vepObject@position[snvIndex,"Location"]
+              sample <- object@vepObject@sample
+              variantAllele <- object@vepObject@mutation[,"Allele"]
+              position <- object@vepObject@position[,"Location"]
               
               # split the position into chr, start , stop
               positionSplit <- lapply(as.character(position$Location), strsplit, ":", fixed=TRUE)

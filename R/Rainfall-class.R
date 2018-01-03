@@ -87,7 +87,7 @@ setClass("RainfallPrimaryData",
 RainfallPrimaryData <- function(object, BSgenome, chromosomes, sample, verbose){
     
     # convert object to Rainfall format
-    primaryData <- toRainfall(object, verbose=verbose)
+    primaryData <- toRainfall(object, BSgenome=BSgenome, verbose=verbose)
     
     # annotate each variant with the transition/transversion type
     primaryData <- annoRainfall(primaryData, verbose=verbose)
