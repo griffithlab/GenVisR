@@ -1,0 +1,512 @@
+#'
+#' An S4 class for the lohSpec plot object
+#' @name lohSpec-class
+#' @rdname lohSpec-class
+#' @slot lohFreq_plot gtable object for the lohFreq plot
+#' @slot lohSpec_plot gtable object for the lohSpec plot
+#' @slot lohData data.table object soring loh data with column names: sample,
+#' chromosome, position, t_vaf, n_vaf.
+#' @exportClass lohSpec
+#' @importFrom data.table data.table
+#' @importFrom gtable gtable
+methods::setOldClass("gtable")
+setClass(
+Class="lohSpec",
+representation=representation(lohFreq_plot="gtable",
+lohSpec_plot="gtable",
+lohData="data.table"),
+validity = function(object) {
+}
+)
+#' Constructor for the lohSpec class
+#'
+#' @name lohSpec
+#' @rdname lohSpec-class
+#' @param input Object of class VarScan.
+#' @param Character vector specifying the chromosomes of interest.
+#' @param samples Character vector specifying samples to plot. If not NULL
+#' all samples in "input" not specified with this parameter are removed.
+#' @param BSgenome Object of class BSgenome to extract genome wide chromosome
+#' coordinates
+#' @param step Integer value specifying the step size (i.e. the number of base
+#' pairs to move the window). required when method is set to slide
+#' (see details).
+#' @param windowSize Integer value specifying the size of the window in base
+#' pairs in which to calculate the mean Loss of Heterozygosity (see details).
+#' @param normal Boolean specifiying what value to use for normal VAF when
+#' calcualting average LOH difference. Defaults to .50\% if FALSE.
+#' If TRUE, will use average normal VAF in each individual sample as value
+#' to calculate LOH.
+lohSpec <- function(input, chromosomes="autosomes", samples=NULL,
+BSgenome=BSgenome, step=1000000, windowSize=2500000,
+normal=FALSE, gradient_midpoint=.2, gradient_low="#ffffff",
+gradient_mid="#b2b2ff", gradient_high="#000000",
+theme_layer=NULL, verbose){
+## Calculate all data for plots
+## Input parameters
+input <- VarScanFormat(path = "~/Google Drive/HCC1395.varscan.tsv")
+BSgenome <- getBSgenome(genome = "BSgenome.Hsapiens.UCSC.hg19")
+chromosomes <- as.character(c(1:22))
+samples <- as.character(unique(object@sample))
+loh_data <- lohData(object=input, chromosomes=chromosomes, samples=samples,
+BSgenome=BSgenome, step=step,
+windowSize=windowSize, verbose)
+## Use the lohData to generate lohSpec plots
+lohSpec_plot <- lohSpec_buildMainPlot(object=loh_data, plotLayer=NULL)
+}
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+#' Private Class lohData
+#'
+#' An S4 class for the Data of the loh plot object
+#' @name lohData-class
+#' @name lohData-class
+setClass("lohData",
+representation=representation(primaryData="data.table",
+windowData="data.table",
+windowCalcData="data.table",
+chrData="data.table"),
+validity = function(object){
+}
+)
+#' Constructor for the lohData class.
+#'
+#' @name lohData
+#' @rdname lohData-class
+#' @param object Object of class VarScan
+lohData <- function(object, chromosomes, samples, BSegenome, step, windowSize,
+normal, verbose) {
+## Obtain LOH data for desired chromosomes and samples
+primaryData <- getLohData(object=object, chromosomes=chromosomes,
+samples=samples, verbose=verbose)
+## Subset data to only the desired chromosomes to be plotted
+primaryData <- chrSubset(object=primaryData, chromosomes=chromosomes,
+verbose=verbose)
+## Subset data to only the desired samples to be plotted
+primaryData <- sampleSubset(object=primaryData, samples=samples,
+verbose=verbose)
+## Obtain chromosome boundaries from BSgenome object
+chrData <- annoGenomeCoord(object=primaryData, BSgenome=BSgenome,
+verbose=verbose)
+## Produce data.table with window position data
+windowData <- getLohSlidingWindow(object = primaryData, step = step,
+windowSize = windowSize, verbose=verbose)
+## Perform loh calculations on each chromosome and sample within each window
+lohAbsDiff <- getLohCalculation(object=primaryData,
+windowData=windowData, normal=normal,
+verbose=verbose)
+## Calculate avg loh for overlapping regions
+lohAbsDiffOverlap <- rbindlist(getLohStepCalculation(object=lohAbsDiff,
+step=step))
+## Initialize the object
+new("lohData", primaryData=primaryData, windowData=rbindlist(windowData),
+windowCalcData=lohAbsDiffOverlap, chrData=chrData)
+}
+################################################################################
+###################### Accessor function definitions ###########################
+######################################################
+##### Function to obtain chromosomes of interest #####
+#' @rdname getLohData-methods
+#' @aliases getLohData
+#' @param object Object of class data.table
+#' @param chromosomes character vector of chromosomes to retain
+#' @param verbose Boolean for status updates
+#' @return data.table object with calculated mutation distances
+#' @noRd
+setMethod(f="chrSubset",
+signature="data.table",
+definition=function(object, chromosomes, verbose, ...){
+# print status message
+if(verbose){
+memo <- paste("Performing chromosome subsets")
+message(memo)
+}
+# if chromosomes is null we dont want to do anything just return the object back
+if(is.null(chromosomes)){
+return(object)
+}
+# perform quality checks on the chromosome parameter arguments
+# check for character vector
+if(!is.character(chromosomes)){
+memo <- paste("Input to chromosomes should be a character vector, attempting to coerce...")
+warning(memo)
+}
+# check for specified chromosomes not in the original input
+missingChr <- chromosomes[!chromosomes %in% unique(object$chromosome)]
+if(length(missingChr) != 0){
+memo <- paste("The following chromosomes were designated to be kept but were not found:",
+toString(missingChr), "\nValid chromosomes are", toString(unique(object$chromosome)))
+warning(memo)
+}
+# perform the subset
+object <- object[object$chromosome %in% chromosomes,]
+object$chromosome <- factor(object$chromosome)
+# check that the object has a size after subsets
+if(nrow(object) < 1){
+memo <- paste("no entries left to plot after chromosome subsets")
+stop(memo)
+}
+return(object)
+})
+##################################################
+##### Function to obtain samples of interest #####
+#' @rdname getLohData-methods
+#' @aliases getLohData
+#' @param object Object of class data.table
+#' @param samples character vector of samples to retain
+#' @param verbose Boolean for status updates
+#' @return data.table object with calculated mutation distances
+#' @noRd
+setMethod(f="sampleSubset",
+signature="data.table",
+definition=function(object, samples, verbose, ...){
+# print status message
+if(verbose){
+memo <- paste("Performing sample subsets")
+message(memo)
+}
+## If samples is null, we don't want to do anything and just
+## return the object
+if (is.null(samples)) {
+return(object)
+}
+## Perform quality checkes on the sample parameter arguments
+if (!is.character(samples)) {
+memo <- paste("Input to samples should be a character vector,
+attempting to coerce...")
+warning(memo)
+}
+## Check for specified samples not in the original input
+missingSamp <- samples[!samples %in% unique(object$sample)]
+if (length(missingSamp) != 0) {
+memo <- paste("The following samples were designated to be
+keptbut were not found:", toString(missingSamp),
+"\nValid csamples are",
+toString(unique(object$sample)))
+warning(memo)
+}
+## Perform the subset
+object <- object[object$sample %in% samples]
+object$sample <- factor(object$sample)
+## Check that the object has a size after subsets
+if(nrow(object) < 1){
+memo <- paste("no entries left to plot after chromosome subsets")
+stop(memo)
+}
+return(object)
+})
+#####################################################
+##### Function to get the chromosome boundaries #####
+#' @param object Object of class data.table
+#' @param BSgenome Object of class BSgenome, used for extracting chromosome boundaries
+#' @param verbose Boolean for status updates
+#' @return Data.table with chr and start/stop positions
+#' @importFrom GenomeInfoDb seqlengths
+#' @importFrom data.table as.data.table
+#' @importFrom data.table rbindlist
+#' @importFrom gtools mixedsort
+#' @noRd
+setMethod(f="annoGenomeCoord",
+signature="data.table",
+definition=function(object, BSgenome, verbose, ...){
+## Print status message
+if (verbose) {
+memo <- paste("Acquiring chromosome boundaries from BSgenome object")
+}
+## Perform quality check on BSgenome object
+if (is.null(BSgenome)) {
+memo <- paste("BSgenome object is not specified, whole chromosomes",
+"will not be plotted, this is not recommended!")
+warning(memo)
+object$chromosome <- factor(object$chromosome, levels=gtools::mixedsort(unique(as.character(object$chromosome))))
+return(object)
+} else if (is(BSgenome, "BSgenome")) {
+if(verbose){
+memo <- paste("BSgenome passed object validity checks")
+}
+} else {
+memo <- paste("class of the BSgenome object is", class(BSgenome),
+"should either be of class BSgenome or NULL",
+"setting this to param to NULL")
+warning(memo)
+BSgenome <- NULL
+}
+## Create a data table of genomic coordinates end positions
+genomeCoord <- data.table::as.data.table(seqlengths(BSgenome))
+colnames(genomeCoord) <- c("end")
+genomeCoord$chromosome <- names(seqlengths(BSgenome))
+genomeCoord$start <- 1
+## Check that chromosomes between BSgenome and original input match
+chrMismatch <- as.character(unique(object[!object$chromosome %in% genomeCoord$chromosome,]$chromosome))
+if (length(chrMismatch) >= 1) {
+memo <- paste("The following chromosomes do not match the supplied BSgenome object",
+toString(chrMismatch))
+warning(memo)
+## Test if the chr mismatch is fixed by appending chr to chromosomes
+chrMismatch_appendChr <- length(as.character(unique(object[!paste0("chr", object$chromosome) %in% genomeCoord$chromosome,]$chromosome)))
+if(chrMismatch_appendChr < length(chrMismatch)){
+memo <- paste("appending \"chr\" to chromosomes in attempt to fix mismatch with the BSgenome")
+warning(memo)
+object$chromosome <- paste0("chr", object$chromosome)
+}
+}
+## Check to see if any chromosomes in the original input dataset lack genomic coordiantes
+if (any(!unique(object$chromosome) %in% unique(genomeCoord$chromosome))) {
+missingGenomeCoord <- unique(object$chromosome)
+missingGenomeCoord <- missingGenomeCoord[!missingGenomeCoord %in% unique(genomeCoord_a$chromosome)]
+memo <- paste("The following chromosomes are missing genomic coordinates", toString(missingGenomeCoord),
+"Full genomic coordinates will not be plotted for these chromosomes")
+warning(memo)
+}
+## Filter the genomeCoord objext to only inlcude chromosomes in the input data
+genomeCoord <- genomeCoord[genomeCoord$chromosome %in% unique(object$chromosome),]
+return(genomeCoord)
+})
+##########################################################################
+##### Function to generate window position data for loh calculations #####
+#' @rdname getLohSlidingWindow-methods
+#' @param object of class lohData
+#' @param step integer specifying the step size between the start position of
+#' each window
+#' @param windowSize integer specifying the window size for loh calcuations
+#' @return Data.table with window start/stop positions
+#' @aliases getLohSlidingWindow
+setMethod(f="getLohSlidingWindow",
+signature="data.table",
+definition=function(object, step, windowSize, ...){
+if (verbose) {
+message("calcuating window sizes for loh calcluations on all chromosomes in each individual sample")
+}
+## Obtain lists for each sample and chromosome
+out <- split(object, list(as.character(object$chromosome),
+as.character(object$sample)))
+## Obtain the window position values
+window <- lapply(out, function(x, step, windowSize) {
+## Get the min and max position on the chromosome
+min <- integer()
+max <- integer()
+window_stop_1 <- integer()
+window_num <- integer()
+min <- as.integer(min(as.numeric(as.character(x$position))))
+max <- as.integer(max(as.numeric(as.character(x$position))))
+## Get the end of the first window position
+window_stop_1 <- min+windowSize
+## Calculate the number of windows necessary
+num <- as.integer((max-min)/step)
+num <- as.vector(1:num)
+window_data_start <- vector()
+window_data_stop <- vector()
+## Calculate exact window positions
+window_data <- lapply(num, function(x){
+window_data_start[x] <- as.integer(min+(step*(x-1)))
+window_data_stop[x] <- as.integer(window_stop_1+(step*(x-1)))
+window_data <- data.table(cbind(window_data_start[x], window_data_stop[x]))
+return(window_data)
+})
+window_data <- rbindlist(window_data)
+# Get window positions whose values are below max & set max as the
+# final window position (end of the chromosome)
+colnames(window_data) <- c("window_start", "window_stop")
+window_final <- window_data[window_data$window_stop <= max,]
+window_final[nrow(window_final), 2] <- max
+## Put in the chromosome
+window_final$chromosome <- as.character(x$chromosome[1])
+return(window_final)
+},
+step = step, windowSize = windowSize)
+return(window)
+})
+###############################################################
+##### Function to perform loh calcluations in each window #####
+#' @rdname getLohCalculation-methods
+#' @param object of class lohData
+#' @param window_data of class data.table
+#' @param normal integer specifying normal vaf
+#' @aliases getLohCalculation
+setMethod(f="getLohCalculation",
+signature="data.table",
+definition=function(object, windowData, normal, verbose, ...) {
+## Print status message
+if (verbose) {
+message("Calculating absolute mean difference between t/n VAF at each coordinate provided.")
+}
+## Split object for each unqiuq sample-chr combination
+object <- split(object, list(as.character(object$chromosome),
+as.character(object$sample)))
+## Separate out sample and window data by chromosome name
+df <- lapply(object, function(sampleData, window,
+normal) {
+chromosome <- as.character(sampleData[1,chromosome])
+sample <- as.character(sampleData[1,sample])
+chromosome.sample <- paste("\\b", paste(chromosome, sample, sep = "."), "\\b", sep = "")
+window <- windowData[[grep(chromosome.sample, names(windowData))]]
+## For each window position, get the vaf data that falls
+## within that window
+dataset <- rbindlist(apply(window, 1, function(x, sampleData, normal){
+## Determine which value to use for normal
+if (normal==FALSE) {
+normal <- 0.5
+}
+if (normal == TRUE) {
+normal <- round(sampleData[,mean(normal_var_freq)],
+digits=3)
+}
+w_start <- as.numeric(as.character(x[1]))
+w_stop <- as.numeric(as.character(x[2]))
+## Filter out vaf data outside the window
+filtered_data <- sampleData[position >= w_start &
+position <= w_stop]
+## Peroform loh calclulation to obtain avg loh in the
+## window's frame
+loh_calc_avg <- mean(abs(as.numeric(as.character(
+filtered_data$tumor_var_freq)) - normal))
+## If no coordinates are found within the window,
+## make as NA
+if (is.na(loh_calc_avg)) {
+loh_calc_avg <- NA
+w_start <- NA
+w_stop <- NA
+}
+filtered_data$loh_diff_avg <- loh_calc_avg
+filtered_data$window_start <- w_start
+filtered_data$window_stop <- w_stop
+return(filtered_data)
+},
+sampleData=sampleData, normal=normal))
+dataset <- na.omit(dataset, cols = c("loh_diff_avg",
+"window_start",
+"window_stop"))
+return(dataset)
+}, window=windowData, normal=normal)
+return(df)
+})
+#######################################################################
+##### Function to perform loh calcluations in overlapping windows #####
+#' @rdname getLohStepCalculation-methods
+#' @param object of class lohData
+#' @param step integer
+#' @aliases getLohStepCalculation
+setMethod(f = "getLohStepCalculation",
+signature="list",
+definition=function(object, step, ...) {
+step_loh_calc <- lapply(object, function(x, step) {
+## Get the sample and chromosome information
+sample <- unique(x$sample)
+chromosome <- unique(x$chromosome)
+## Obtain boundaries for each step-sized window
+start <- unique(x$window_start)
+stop <- c(start[-1], max(x$window_stop))
+step_boundaries <- data.table(chromosome=chromosome, start=start, stop=stop)
+step_boundaries$sample <- sample
+## Get the average loh within each step-sized window
+loh_df <- x
+loh_step_avg <- apply(step_boundaries, 1, function(x, loh_df_data) {
+start <- as.numeric(as.character(x[2]))
+stop <- as.numeric(as.character(x[3]))
+step_df <- loh_df_data[position >= start &
+position < stop]
+if (nrow(step_df) == 0) {
+loh_step_avg <- 0
+}
+if (nrow(step_df) > 0) {
+loh_step_avg <- mean(step_df$loh_diff_avg)
+}
+return(loh_step_avg)
+}, loh_df_data=loh_df)
+step_boundaries$loh_step_avg <- loh_step_avg
+return(step_boundaries)
+}, step=step)
+return(step_loh_calc)
+})
+#######################################################################
+##### Function to perform loh calcluations in overlapping windows #####
+#' @rdname lohSpec_buildMainPlot-methods
+#' @param object of class lohData
+#' @param step integer
+#' @aliases lohSpec_buildMainPlot
+setMethod(f = "lohSpec_buildMainPlot",
+signature="lohData",
+definition=function(object, ...) {
+x <- object@windowCalcData
+x <- x[loh_step_avg > 0]
+## Set the order of the chromosomes
+chr <- gtools::mixedsort((unique(x$chromosome)))
+sample <- gtools::mixedsort((unique(x$sample)))
+x$chromosome_f <- factor(x$chromosome, levels=chr)
+x$sample <- factor(x$sample, levels=sample, labels=sample)
+dummyData <- object@chrData
+# define dummy data which will be chromosome boundaries, these are plotted
+# but are transparent and will not appear in the plot
+dummy_data <- geom_rect(data=dummyData, aes_string(xmin='start', xmax='end',
+ymin=-1, ymax=1),alpha=0)
+# Define the main plot
+data <- geom_rect(data=x, aes_string(xmin='start',
+xmax='stop',
+ymin=-1,
+ymax=1, fill='loh_step_avg'))
+# Define additional plot parameters
+facet <- facet_grid(sample ~ chromosome_f, scales="free", space="free")
+x_scale <- scale_x_continuous(expand = c(0, 0))
+y_scale <- scale_y_continuous(expand = c(0,0))
+lab_x <- xlab("Chromosome")
+lab_y <- ylab("Sample")
+# Define plot aesthetics
+BWscheme <- theme_bw()
+plotTheme <- theme(axis.ticks.x=element_blank(),
+axis.text.x=element_blank(),
+axis.ticks.y=element_blank(),
+axis.text.y=element_blank(),
+panel.grid.major=element_blank(),
+panel.grid.minor=element_blank())
+# plot an additional layer if specified
+if(!is.null(plotLayer))
+{
+plotLayer <- plotLayer
+} else {
+plotLayer <- geom_blank()
+}
+LOHgradient <- scale_fill_gradient2(midpoint = gradient_midpoint,
+guide="colourbar",
+high=gradient_high,
+mid=gradient_mid,
+low=gradient_low,
+space='Lab')
+# Build the plot
+tmp <- data.frame(x=0, y=0)
+p1 <- ggplot(data=tmp, aes(y=0)) + dummy_data + data + facet + x_scale + y_scale +
+lab_x + lab_y + BWscheme + LOHgradient + plotTheme + plotLayer
+print(p1)
+return(p1)
+})
+lohData(object=input, chromosomes=chromosomes, samples=samples,
+BSgenome=BSgenome, step=step,
+windowSize=windowSize, verbose)
+input <- VarScanFormat(path = "~/Google Drive/HCC1395.varscan.tsv")
+BSgenome <- getBSgenome(genome = "BSgenome.Hsapiens.UCSC.hg19")
+chromosomes <- as.character(c(1:22))
+samples <- as.character(unique(object@sample))
+lohData(object=input, chromosomes=chromosomes, samples=samples,
+BSgenome=BSgenome, step=step,
+windowSize=windowSize, verbose)
+lohData
+lohData(object=input, chromosomes=chromosomes, samples=samples,
+BSegenome = BSgenome, step=step,
+windowSize=windowSize, verbose)
+lohData(object=input, chromosomes=chromosomes, samples=samples,
+BSegenome=BSgenome, step=step,
+windowSize=windowSize, verbose)
+verbose <- FALSE
+lohData(object=input, chromosomes=chromosomes, samples=samples,
+BSegenome=BSgenome, step=step,
+windowSize=windowSize, verbose)
+verbose <- FALSE
+loh_data <- lohData(object=input, chromosomes=chromosomes, samples=samples,
+BSegenome=BSgenome, step=step,
+windowSize=windowSize, verbose)
+loh_data <- lohData(object=input, chromosomes=chromosomes, samples=samples,
+BSegenome=BSgenome, step=step,
+windowSize=windowSize, verbose=verbose)
+normal
+loh_data <- lohData(object=input, chromosomes=chromosomes, samples=samples,
+BSegenome=BSgenome, step=step,
+windowSize=windowSize, normal=normal, verbose=verbose)
+loh_data

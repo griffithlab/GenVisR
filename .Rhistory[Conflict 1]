@@ -1,0 +1,512 @@
+)
+#' Method getLayers
+#'
+#' @name getLayers
+#' @rdname getLayers-methods
+#' @param object Object of class Clinical
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="getLayers",
+def=function(object, ...){standardGeneric("getLayers")}
+)
+#' Method arrangeWaterfallPlot
+#'
+#' @name arrangeWaterfallPlot
+#' @rdname arrangeWaterfallPlot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="arrangeWaterfallPlot",
+def=function(object, ...){standardGeneric("arrangeWaterfallPlot")}
+)
+#' Method drawPlot
+#'
+#' @name drawPlot
+#' @rdname drawPlot-methods
+#' @param object Object of class Waterfall, MutSpectra, or Clinical
+#' @param ... additional arguments to passed
+#' @details The drawPlot method is used to draw plots created by GenVisR plot
+#' constructor functions.
+#' @exportMethod drawPlot
+setGeneric(
+name="drawPlot",
+def=function(object, ...){standardGeneric("drawPlot")}
+)
+#' Method parseDescription
+#'
+#' @name parseDescription
+#' @rdname parseDescription-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="parseDescription",
+def=function(object, ...){standardGeneric("parseDescription")}
+)
+#' Method parseHeader
+#'
+#' @name parseHeader
+#' @rdname parseHeader-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="parseHeader",
+def=function(object, ...){standardGeneric("parseHeader")}
+)
+#' Method parseExtra
+#'
+#' @name parseExtra
+#' @rdname parseExtra-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="parseExtra",
+def=function(object, ...){standardGeneric("parseExtra")}
+)
+#' Method writeData
+#'
+#' @name writeData
+#' @rdname writeData-methods
+#' @param object Object of class VEP
+#' @param file Character string specifying a file to send output to.
+#' @param sep Delimiter used when writing output, defaults to tab.
+#' @param ... additional arguments to passed
+#' @details The writeData method is used to output data held in GenVisR objects
+#' to a file.
+#' @exportMethod writeData
+setGeneric(
+name="writeData",
+def=function(object, ...){standardGeneric("writeData")}
+)
+#' Method geneFilter
+#'
+#' @name geneFilter
+#' @rdname geneFilter-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="geneFilter",
+def=function(object, ...){standardGeneric("geneFilter")}
+)
+#' Method toMutSpectra
+#'
+#' @name toMutSpectra
+#' @rdname toMutSpectra
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="toMutSpectra",
+def=function(object, ...){standardGeneric("toMutSpectra")}
+)
+#' Method annoMutSpectra
+#'
+#' @name annoMutSpectra
+#' @rdname annoMutSpectra
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="annoMutSpectra",
+def=function(object, ...){standardGeneric("annoMutSpectra")}
+)
+#' Method calcMutSpectra
+#'
+#' @name calcMutSpectra
+#' @rdname calcMutSpectra
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="calcMutSpectra",
+def=function(object, ...){standardGeneric("calcMutSpectra")}
+)
+#' Method sortSamples
+#'
+#' @name sortSamples
+#' @rdname sortSamples
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="sortSamples",
+def=function(object, ...){standardGeneric("sortSamples")}
+)
+#' Method buildFrequencyPlot
+#'
+#' @name buildFrequencyPlot
+#' @rdname buildFrequencyPlot
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="buildFrequencyPlot",
+def=function(object, ...){standardGeneric("buildFrequencyPlot")}
+)
+#' Method buildProportionPlot
+#'
+#' @name buildProportionPlot
+#' @rdname buildProportionPlot
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="buildProportionPlot",
+def=function(object, ...){standardGeneric("buildProportionPlot")}
+)
+#' Method arrangeMutSpectraPlot
+#'
+#' @name arrangeMutSpectraPlot
+#' @rdname arrangeMutSpectraPlot
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="arrangeMutSpectraPlot",
+def=function(object, ...){standardGeneric("arrangeMutSpectraPlot")}
+)
+#' Method getGrob
+#'
+#' @name getGrob
+#' @rdname getGrob-methods
+#' @param object Object of clas MutSpectra
+#' @param ... additional arguments to passed
+#' @exportMethod getGrob
+setGeneric(
+name="getGrob",
+def=function(object, ...){standardGeneric("getGrob")}
+)
+#' Method getDescription
+#'
+#' @name getDescription
+#' @rdname getDescription-methods
+#' @param object Object of class VEP
+#' @param ... additional arguments to passed
+#' @exportMethod getDescription
+setGeneric(
+name="getDescription",
+def=function(object, ...){standardGeneric("getDescription")}
+)
+#' Method getHeader
+#'
+#' @name getHeader
+#' @rdname getHeader-methods
+#' @param object Object of class VEP
+#' @param ... additional arguments to passed
+#' @exportMethod getHeader
+setGeneric(
+name="getHeader",
+def=function(object, ...){standardGeneric("getHeader")}
+)
+################################################################################
+##### Functions used for lohSpec ###############################################
+################################################################################
+#' Method getVarScan
+#'
+#' @name getVarScan
+#' @rdname getVarScan-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+#' @exportMethod getVarScan
+setGeneric(
+name="getVarScan",
+def=function(object, ...){standardGeneric("getVarScan")}
+)
+#' Method getLohData
+#'
+#' @name getLohData
+#' @rdname getLohData-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+#' @exportMethod getLohData
+setGeneric(
+name="getLohData",
+def=function(object, ...){standardGeneric("getLohData")}
+)
+#' Method lohSpec_qual
+#'
+#' @name lohSpec_qual
+#' @rdname lohSpec_qual-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+name="lohSpec_qual",
+def=function(object, ...){standardGeneric("lohSpec_qual")}
+)
+#' Method annoGenomeCoord
+#'
+#' @name annoGenomeCoord
+#' @rdname annoGenomeCoord-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+name="annoGenomeCoord",
+def=function(object, ...){standardGeneric("annoGenomeCoord")}
+)
+#' Method getLohSlidingWindow
+#'
+#' @name getLohSlidingWindow
+#' @rdname getLohSlidingWindow-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+name="getLohSlidingWindow",
+def=function(object, ...){standardGeneric("getLohSlidingWindow")}
+)
+#' Method getLohCalculation
+#'
+#' @name getLohCalculation
+#' @rdname getLohCalculation-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+name="getLohCalculation",
+def=function(object, ...){standardGeneric("getLohCalculation")}
+)
+#' Method getLohStepCalculation
+#'
+#' @name getLohStepCalculation
+#' @rdname getLohStepCalculation-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+name="getLohStepCalculation",
+def=function(object, ...){standardGeneric("getLohStepCalculation")}
+)
+#' Method addBlankRegion
+#'
+#' @name addBlankRegion
+#' @rdname addBlankRegion-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+name="addBlankRegion",
+def=function(object, ...){standardGeneric("addBlankRegion")}
+)
+#' Method getLohSegmentation
+#'
+#' @name getLohSegmentation
+#' @rdname getLohSegmentation-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+name="getLohSegmentation",
+def=function(object, ...){standardGeneric("getLohSegmentation")}
+)
+#' Method buildLohFreq
+#'
+#' @name buildLohFreq
+#' @rdname buildLohFreq-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+name="buildLohFreq",
+def=function(object, ...){standardGeneric("buildLohFreq")}
+)
+#' Method lohSpec_buildMainPlot
+#'
+#' @name lohSpec_buildMainPlot
+#' @rdname lohSpec_buildMainPlot-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+name="lohSpec_buildMainPlot",
+def=function(object, ...){standardGeneric("lohSpec_buildMainPlot")}
+)
+#' Method chrSubset
+#'
+#' @name chrSubset
+#' @rdname chrSubset-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="chrSubset",
+def=function(object, ...){standardGeneric("chrSubset")}
+)
+#' Method sampleSubset
+#'
+#' @name sampleSubset
+#' @rdname sampleSubset-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+name="sampleSubset",
+def=function(object, ...){standardGeneric("sampleSubset")}
+)
+lohFreqPlot <- buildLohFreq(object=lohDataset, highCutoff, plotType ="proportion", CN_high_color)
+##### Function to create loh frequency plot #####
+#' @rdname buildLohFreq-methods
+#' @param object of class lohData
+#' @param step integer
+#' @aliases buildLohFreq
+setMethod(f = "buildLohFreq",
+signature="list",
+definition=function(object, highCutoff, plotType, CN_high_color, verbose, ...) {
+x <- object@lohSegmentationData[,c("chrom", "loc.start",
+"loc.end", "seg.mean", "ID")]
+colnames(x) <- c("chromosome", "start", "end", "segmean", "sample")
+## Set the order of the chromosomes
+chr <- gtools::mixedsort(as.character((unique(x$chromosome))))
+sample <- gtools::mixedsort(as.character((unique(x$sample))))
+x$chromosome_f <- factor(x$chromosome, levels=chr)
+x$sample <- factor(x$sample, levels=sample, labels=sample)
+## Calculate columns of observed LOH and observed samples in the
+## cohort for each segment
+gainFreq <- function(x){length(x[x>=highCutoff])}
+gainFrequency <- aggregate(segmean~chromosome + start + end,
+data=x, gainFreq)$segmean
+x <- aggregate(segmean~chromosome + start + end, data=x, length)
+colnames(x)[which(colnames(x) %in% "segmean")] <- "sampleFrequency"
+x$gainFrequency <- gainFrequency
+## Calculate the proportion
+x$gainProportion <- as.numeric(x$gainFrequency)/length(samples)
+## Put in dummy data for chromosome boundaries
+tempDf <- split(x, list(x$chromosome))
+chrData <- object@chrData
+finalDf <- rbindlist(lapply(tempDf, function(df, chrData) {
+## Get the chromosome, start, and end information loh dataset
+chromosome <- paste("\\bchr", df$chromosome, "\\b", sep = "")[1]
+chromosomeTemp <- as.character(df$chromosome[1])
+start <- df$start[1]
+end <- df$end[nrow(y)]
+sample <- as.character(df$sample[1])
+## Get the end information from the chrDataset
+chrDataEnd <- chrData$end[grep(chromosome, chrData$chromosome)]
+## Make top and bottom row
+top <- data.table(cbind(chromosomeTemp, 1, start-1, 0, 0, 0))
+colnames(top) <- c("chromosome", "start", "end", "sampleFrequency", "gainFrequency",
+"gainProportion")
+bottom <- data.table(cbind(chromosomeTemp, end+1, chrDataEnd, 0, 0, 0))
+colnames(bottom) <- c("chromosome", "start", "end", "sampleFrequency", "gainFrequency",
+"gainProportion")
+final <- rbind(top, df, bottom)
+return(final)
+}, chrData=chrData))
+## Build the frequency/proportion plot
+## Define parameters of the plot
+plotTheme <- theme(axis.ticks.x=element_blank(),
+axis.text.x=element_blank(),
+axis.ticks.y=element_blank(),
+axis.text.y=element_blank(),
+panel.grid.major=element_blank(),
+panel.grid.minor=element_blank())
+## Define the facet
+facet <- facet_grid(. ~ chromosome, scales = "free_x", space = "fixed")
+## Assign the x axis label
+xlabel <- xlab("Chromosome")
+## Choose whether to plot aesthetics for proportion or frequency
+if(grepl("^PROP", plotType, ignore.case=TRUE)){
+ylabel <- ylab("Proportion of Loss of Heterozygosity")
+ymax <- 1
+finalDf$gain <- finalDf$gainProportion
+} else if(grepl("^FREQ", plotType, ignore.case=TRUE)){
+ylabel <- ylab("Frequency of Loss of Heterozygosity")
+ymax <- max(as.numeric(as.character(x$sampleFrequency)), na.rm=TRUE)
+finalDf$gain <- finalDf$gainFrequency
+} else {
+memo <- paste0("did not recognize plotType ", plotType,
+", please specify one of \"proportion\" or \"frequency\"")
+stop(memo)
+}
+## Initiate the plot
+finalDf$gain <- as.numeric(sample(1:nrow(finalDf))/nrow(finalDf))
+finalDf$start <- as.numeric(finalDf$start)
+finalDf$end <- as.numeric(finalDf$end)
+p1 <- ggplot(data=finalDf, mapping=aes_string(xmin='start',
+xmax='end',
+ymin=0,
+ymax='gain'),
+fill=CN_high_color) +
+geom_rect() + scale_x_continuous(expand=c(0,0)) +
+scale_y_continuous(expand=c(0,0))
+p1 <- p1 + geom_hline(aes(yintercept=0), linetype="dotted")
+# build the plot
+p1 <- p1 + ylabel + xlabel + facet + plotTheme + theme_bw() + plotTheme + plotlayer
+print(p1)
+return(p1)
+})
+#####################
+#' @rdname buildLohFreq-methods
+#' @param object of class lohData
+#' @param step integer
+#' @aliases buildLohFreq
+setMethod(f = "buildLohFreq",
+signature="lohData",
+definition=function(object, highCutoff, plotType, CN_high_color, verbose, ...) {
+x <- object@lohSegmentationData[,c("chrom", "loc.start",
+"loc.end", "seg.mean", "ID")]
+colnames(x) <- c("chromosome", "start", "end", "segmean", "sample")
+## Set the order of the chromosomes
+chr <- gtools::mixedsort(as.character((unique(x$chromosome))))
+sample <- gtools::mixedsort(as.character((unique(x$sample))))
+x$chromosome_f <- factor(x$chromosome, levels=chr)
+x$sample <- factor(x$sample, levels=sample, labels=sample)
+## Calculate columns of observed LOH and observed samples in the
+## cohort for each segment
+gainFreq <- function(x){length(x[x>=highCutoff])}
+gainFrequency <- aggregate(segmean~chromosome + start + end,
+data=x, gainFreq)$segmean
+x <- aggregate(segmean~chromosome + start + end, data=x, length)
+colnames(x)[which(colnames(x) %in% "segmean")] <- "sampleFrequency"
+x$gainFrequency <- gainFrequency
+## Calculate the proportion
+x$gainProportion <- as.numeric(x$gainFrequency)/length(samples)
+## Put in dummy data for chromosome boundaries
+tempDf <- split(x, list(x$chromosome))
+chrData <- object@chrData
+finalDf <- rbindlist(lapply(tempDf, function(df, chrData) {
+## Get the chromosome, start, and end information loh dataset
+chromosome <- paste("\\bchr", df$chromosome, "\\b", sep = "")[1]
+chromosomeTemp <- as.character(df$chromosome[1])
+start <- df$start[1]
+end <- df$end[nrow(y)]
+sample <- as.character(df$sample[1])
+## Get the end information from the chrDataset
+chrDataEnd <- chrData$end[grep(chromosome, chrData$chromosome)]
+## Make top and bottom row
+top <- data.table(cbind(chromosomeTemp, 1, start-1, 0, 0, 0))
+colnames(top) <- c("chromosome", "start", "end", "sampleFrequency", "gainFrequency",
+"gainProportion")
+bottom <- data.table(cbind(chromosomeTemp, end+1, chrDataEnd, 0, 0, 0))
+colnames(bottom) <- c("chromosome", "start", "end", "sampleFrequency", "gainFrequency",
+"gainProportion")
+final <- rbind(top, df, bottom)
+return(final)
+}, chrData=chrData))
+## Build the frequency/proportion plot
+## Define parameters of the plot
+plotTheme <- theme(axis.ticks.x=element_blank(),
+axis.text.x=element_blank(),
+axis.ticks.y=element_blank(),
+axis.text.y=element_blank(),
+panel.grid.major=element_blank(),
+panel.grid.minor=element_blank())
+## Define the facet
+facet <- facet_grid(. ~ chromosome, scales = "free_x", space = "fixed")
+## Assign the x axis label
+xlabel <- xlab("Chromosome")
+## Choose whether to plot aesthetics for proportion or frequency
+if(grepl("^PROP", plotType, ignore.case=TRUE)){
+ylabel <- ylab("Proportion of Loss of Heterozygosity")
+ymax <- 1
+finalDf$gain <- finalDf$gainProportion
+} else if(grepl("^FREQ", plotType, ignore.case=TRUE)){
+ylabel <- ylab("Frequency of Loss of Heterozygosity")
+ymax <- max(as.numeric(as.character(x$sampleFrequency)), na.rm=TRUE)
+finalDf$gain <- finalDf$gainFrequency
+} else {
+memo <- paste0("did not recognize plotType ", plotType,
+", please specify one of \"proportion\" or \"frequency\"")
+stop(memo)
+}
+## Initiate the plot
+finalDf$gain <- as.numeric(sample(1:nrow(finalDf))/nrow(finalDf))
+finalDf$start <- as.numeric(finalDf$start)
+finalDf$end <- as.numeric(finalDf$end)
+p1 <- ggplot(data=finalDf, mapping=aes_string(xmin='start',
+xmax='end',
+ymin=0,
+ymax='gain'),
+fill=CN_high_color) +
+geom_rect() + scale_x_continuous(expand=c(0,0)) +
+scale_y_continuous(expand=c(0,0))
+p1 <- p1 + geom_hline(aes(yintercept=0), linetype="dotted")
+# build the plot
+p1 <- p1 + ylabel + xlabel + facet + plotTheme + theme_bw() + plotTheme + plotlayer
+print(p1)
+return(p1)
+})
+lohFreqPlot <- buildLohFreq(object=lohDataset, highCutoff, plotType ="proportion", CN_high_color)

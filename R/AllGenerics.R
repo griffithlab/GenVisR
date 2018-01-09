@@ -540,16 +540,15 @@ setGeneric(
     def=function(object, ...){standardGeneric("lohSpec_qual")}
 )
 
-#' Method getChrBoundaries
+#' Method annoGenomeCoord
 #' 
-#' @name getChrBoundaries
-#' @rdname getChrBoundaries-methods
+#' @name annoGenomeCoord
+#' @rdname annoGenomeCoord-methods
 #' @param object Object of class VarScanFormat
 #' @param ... additional arguments to passed
-#' @exportMethod getChrBoundaries
 setGeneric(
-    name="getChrBoundaries",
-    def=function(object, ...){standardGeneric("getChrBoundaries")}
+    name="annoGenomeCoord",
+    def=function(object, ...){standardGeneric("annoGenomeCoord")}
 )
 
 #' Method getLohSlidingWindow
@@ -558,7 +557,6 @@ setGeneric(
 #' @rdname getLohSlidingWindow-methods
 #' @param object Object of class VarScanFormat
 #' @param ... additional arguments to passed
-#' @exportMethod getLohSlidingWindow
 setGeneric(
     name="getLohSlidingWindow",
     def=function(object, ...){standardGeneric("getLohSlidingWindow")}
@@ -570,7 +568,6 @@ setGeneric(
 #' @rdname getLohCalculation-methods
 #' @param object Object of class VarScanFormat
 #' @param ... additional arguments to passed
-#' @exportMethod getLohSlidingWindow
 setGeneric(
     name="getLohCalculation",
     def=function(object, ...){standardGeneric("getLohCalculation")}
@@ -582,10 +579,42 @@ setGeneric(
 #' @rdname getLohStepCalculation-methods
 #' @param object Object of class VarScanFormat
 #' @param ... additional arguments to passed
-#' @exportMethod getLohSlidingWindow
 setGeneric(
     name="getLohStepCalculation",
     def=function(object, ...){standardGeneric("getLohStepCalculation")}
+)
+
+#' Method getLohSegmentation
+#' 
+#' @name getLohSegmentation
+#' @rdname getLohSegmentation-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+    name="getLohSegmentation",
+    def=function(object, ...){standardGeneric("getLohSegmentation")}
+)
+
+#' Method getLohFreq
+#' 
+#' @name getLohFreq
+#' @rdname getLohFreq-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+    name="getLohFreq",
+    def=function(object, ...){standardGeneric("getLohFreq")}
+)
+
+#' Method buildLohFreq
+#' 
+#' @name buildLohFreq
+#' @rdname buildLohFreq-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+    name="buildLohFreq",
+    def=function(object, ...){standardGeneric("buildLohFreq")}
 )
 
 #' Method lohSpec_buildMainPlot
@@ -594,12 +623,40 @@ setGeneric(
 #' @rdname lohSpec_buildMainPlot-methods
 #' @param object Object of class VarScanFormat
 #' @param ... additional arguments to passed
-#' @exportMethod getLohSlidingWindow
 setGeneric(
     name="lohSpec_buildMainPlot",
     def=function(object, ...){standardGeneric("lohSpec_buildMainPlot")}
 )
 
+#' Method arrangeLohPlots
+#' 
+#' @name arrangeLohPlots
+#' @rdname arrangeLohPlots-methods
+#' @param object Object of class VarScanFormat
+#' @param ... additional arguments to passed
+setGeneric(
+    name="arrangeLohPlots",
+    def=function(object, ...){standardGeneric("arrangeLohPlots")}
+)
 
+#' Method chrSubset
+#'
+#' @name chrSubset
+#' @rdname chrSubset-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="chrSubset",
+    def=function(object, ...){standardGeneric("chrSubset")}
+)
 
-
+#' Method sampleSubset
+#'
+#' @name sampleSubset
+#' @rdname sampleSubset-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="sampleSubset",
+    def=function(object, ...){standardGeneric("sampleSubset")}
+)

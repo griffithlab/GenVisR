@@ -9,7 +9,7 @@
 \usage{
 getLohSlidingWindow(object, ...)
 
-\S4method{getLohSlidingWindow}{data.table}(object, step, window_size, ...)
+\S4method{getLohSlidingWindow}{data.table}(object, step, windowSize, ...)
 }
 \arguments{
 \item{object}{Object of class VarScanFormat}
@@ -19,7 +19,7 @@ getLohSlidingWindow(object, ...)
 \item{step}{integer specifying the step size between the start position of
 each window}
 
-\item{window_size}{integer specifying the window size for loh calcuations}
+\item{windowSize}{integer specifying the window size for loh calcuations}
 
 \item{object}{of class lohData}
 }

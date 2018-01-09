@@ -113,8 +113,7 @@ Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
                       gridOverlay=FALSE, drop=TRUE, labelSize=5, labelAngle=0,
                       sampleNames=TRUE, clinical=NULL, sectionHeights=NULL,
                       sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL){
-    browser()
-    
+
     # calculate all data for plots
     data <- WaterfallData(input, labelColumn=labelColumn, mutationHierarchy=mutationHierarchy,
                           samples=samples, coverage=coverage, mutation=mutation, genes=genes,

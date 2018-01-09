@@ -98,7 +98,6 @@ Collate:
     'ideoView_formatCytobands.R'
     'ideoView_qual.R'
     'lohSpec-class.R'
-    'lohSpec-methods.R'
     'lohSpec.R'
     'lohSpec_buildMain.R'
     'lohSpec_fileGlob.R'

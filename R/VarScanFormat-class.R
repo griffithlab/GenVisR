@@ -27,6 +27,11 @@ setClass("VarScanFormat",
                          "normal_reads1_plus", "normal_reads1_minus",
                          "normal_reads2_plus", "normal_reads2_minus", "sample")
              
+             ## Check to see if there is any data after the filtering steps for varscan
+             if (nrow(object@varscan) == 0) {
+                 stop("No varscan data can be found after filtering based on normal VAF and Germline/LOH somatic_status")
+             }
+             
              ## Check the column names to see if there is the appropriate input
              varscan_column_names <- colnames(object@varscan)
              num <- which(!varscan_column_names%in%cnames)
@@ -43,15 +48,27 @@ setClass("VarScanFormat",
                       for appropriate columns and column names.")
              }
              
-             ## Check to see if the VAF columns are percentages as opposed to proportions
-             tumor_false <- any(grepl("%", object@varscan$tumor_var_freq) == FALSE)
-             normal_false <- any(grepl("%", object@varscan$normal_var_freq) == FALSE)
-             if (tumor_false == TRUE | normal_false == TRUE) {
-                 stop("Make sure the tumor/normal VAF column is in percentages and not proportion. 
-                      (i.e. 75.00% as opposed to 0.75)")
+             ## Check to see if the VAF columns are proportion as opposed to percentage
+             ## Function requires input in percentages and will convert percentage to proportion
+             tumor_per <- any(grepl("%", object@varscan$tumor_var_freq) == TRUE)
+             normal_per <- any(grepl("%", object@varscan$normal_var_freq) == TRUE)
+             if (tumor_per == TRUE | normal_per == TRUE) {
+                 stop("Make sure the tumor/normal VAF column is in percentage and not proportion. 
+                      (i.e. 75.00% as opposed to 0.75).")
              }
              
              ## Check to see if the VAF provided are somatic or not
+             if (any(object@varscan$tumor_var_freq>1 | object@varscan$normal_var_freq >1)) {
+                 stop("Detected values in either the normal or tumor variant ",
+                      "allele fraction columns above 1. Values supplied should ",
+                      "be a proportion between 0-1!")
+             }
+             if (any(object@varscan$normal_var_freq<0.4 | object@varscan$normal_var_freq>0.6)) {
+                 stop("Detected values with a variant allele fraction either ",
+                         "above .6 or below .4 in the normal. Please ensure ",
+                         "variants supplied are heterozygous in the normal!. 
+                         Make sure to remove coordinates with normal VAF > 0.6 or < 0.4")
+             }
              
              return(TRUE)
          }
@@ -71,11 +88,22 @@ VarScanFormat <- function(path, verbose=FALSE) {
     ## Read in VarScan data
     varscanData <- suppressWarnings(fread(input=path, stringsAsFactors=FALSE,
                                                       verbose=verbose))
-    ## Put in sample name for now
-    varscanData$sample <- "HCC1395"
+    
     ## Get the sample names
     sample <- varscanData[,which(colnames(varscanData)=="sample"), with=FALSE]
-    length(colnames(varscanData))
+
+    ## Convert VAF percentages to VAF proportions
+    varscanData$normal_var_freq <- round(as.numeric(as.character(gsub(pattern = "%", 
+                                                                           replacement = "", varscanData$normal_var_freq)))/100, digits = 3)
+    varscanData$tumor_var_freq <- round(as.numeric(as.character(gsub(pattern = "%", 
+                                                                      replacement = "", varscanData$tumor_var_freq)))/100, digits = 3)
+    
+    ## Obtain coordinates that were called as germline or LOH by varscan
+    varscanData <- varscanData[somatic_status == "Germline" | somatic_status == "LOH"]
+    
+    ## Remove coordinates with normal VAF > 0.6 or < 0.4
+    varscanData <- varscanData[normal_var_freq<=0.6 &
+                                         normal_var_freq>=0.4]
     
     ## Create the varscan object
     varscanObject <- new(Class="VarScanFormat", path=path, varscan=varscanData, sample=sample)
@@ -92,36 +120,20 @@ VarScanFormat <- function(path, verbose=FALSE) {
 #' @importFrom data.table data.table
 setMethod(f="getLohData",
           signature="VarScanFormat",
-          definition=function(object, chr, verbose, ...) {
-              ## Get the necessary columns from varscan output
-              primaryData <- object@varscan[,c("chrom", "position", "tumor_var_freq", 
-                                        "normal_var_freq", "sample"), 
-                                     with=FALSE]
-              
-              ## Convert percentages to proportion
-              primaryData$tumor_var_freq <- gsub("%", "", 
-                                                 primaryData$tumor_var_freq)
-              primaryData$normal_var_freq <- gsub("%", "", 
-                                                  primaryData$normal_var_freq)
-              primaryData$tumor_var_freq <- round(as.numeric(as.character(
-                  primaryData$tumor_var_freq))/100, 
-                                           digits = 3)
-              primaryData$normal_var_freq <- round(as.numeric(as.character(
-                  primaryData$normal_var_freq))/100, 
-                                           digits = 3)
-              
-              ## Remove contigs, MT, and other unnecessary chromosomes
-              if (is.null(chr)) {
-                  chr <- c(as.character(seq(1:22)))
-              }
-              if (is.null(chr) == FALSE) {
-                  primaryData <- primaryData[chrom %in% chr]
-              }
-              
+          definition=function(object, verbose, ...) {
+
               ## Print status message
               if (verbose) {
                   message("Generating LOH dataset.")
               }
+              
+              ## Get the necessary columns from varscan output
+              primaryData <- object@varscan[,c("chrom", "position", "tumor_var_freq", 
+                                        "normal_var_freq", "sample"), 
+                                     with=FALSE]
+              colnames(primaryData) <- c("chromosome", "position", "tumor_var_freq", 
+                                         "normal_var_freq", "sample")
+
               return(primaryData)
               
           })

@@ -9,18 +9,19 @@
 \usage{
 getLohCalculation(object, ...)
 
-\S4method{getLohCalculation}{data.table}(object, window_data, normal, ...)
+\S4method{getLohCalculation}{data.table}(object, windowData, normal, verbose,
+  ...)
 }
 \arguments{
 \item{object}{Object of class VarScanFormat}
 
 \item{...}{additional arguments to passed}
 
-\item{window_data}{of class data.table}
-
 \item{normal}{integer specifying normal vaf}
 
 \item{object}{of class lohData}
+
+\item{window_data}{of class data.table}
 }
 \description{
 Method getLohCalculation

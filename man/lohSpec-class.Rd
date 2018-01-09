@@ -11,35 +11,27 @@ lohSpec(x = NULL, path = NULL, fileExt = NULL, y = NULL,
   method = "slide", out = "plot")
 }
 \arguments{
-\item{genome}{Character string specifying a valid UCSC genome (see details).}
-
-\item{gender}{Character vector of length equal to the number of samples,
-consisting of elements from the set {"M", "F"}. Used to suppress the plotting
-of allosomes where appropriate.}
-
 \item{step}{Integer value specifying the step size (i.e. the number of base
 pairs to move the window). required when method is set to slide
 (see details).}
 
-\item{window_size}{Integer value specifying the size of the window in base
-pairs in which to calculate the mean Loss of Heterozygosity (see details).}
-
-\item{normal}{Numeric value within the range 0-1 specifying the expected
-normal variant allele frequency to be used in Loss of Heterozygosity 
-calculations. defaults to .50\%}
+\item{normal}{Boolean specifiying what value to use for normal VAF when 
+calcualting average LOH difference. Defaults to .50\% if FALSE. 
+If TRUE, will use average normal VAF in each individual sample as value 
+to calculate LOH.}
 
 \item{input}{Object of class VarScan.}
 
-\item{Character}{vector specifying the chromosomes of interest. If NULL,
-will use autosomes for human (chr1-22).}
+\item{Character}{vector specifying the chromosomes of interest.}
 
 \item{samples}{Character vector specifying samples to plot. If not NULL
 all samples in "input" not specified with this parameter are removed.}
 
-\item{boundaries}{Object of class data frame with rows representing chromosome
-boundaries for a genome assembly. The data frame must contain columns with
-the following names "chromosome", "start", "end". If let null, will determine
-chr boundaries using preloaded/specified genome.}
+\item{BSgenome}{Object of class BSgenome to extract genome wide chromosome 
+coordinates}
+
+\item{windowSize}{Integer value specifying the size of the window in base
+pairs in which to calculate the mean Loss of Heterozygosity (see details).}
 }
 \description{
 An S4 class for the lohSpec plot object
