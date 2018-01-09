@@ -447,7 +447,7 @@ setMethod(f="toRainfall",
               start <- getPosition(object)$start
               stop <- getPosition(object)$stop
               refAllele <- as.character(getMutation(object)$reference)
-              varAllele <- as.character(getMutation(object)$variant)
+              variantAllele <- as.character(getMutation(object)$variant)
               
               # combine all the relevant data into a single data table
               rainfallFormat <- cbind(sample, chromosome, start, stop, refAllele, variantAllele)
