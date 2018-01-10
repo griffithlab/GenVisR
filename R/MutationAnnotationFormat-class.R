@@ -462,3 +462,35 @@ setMethod(f="toRainfall",
               
               return(rainfallFormat)
           })
+
+#' @rdname toLolliplot-methods
+#' @aliases toLolliplot
+#' @param object Object of class MutationAnnotationFormat
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+setMethod(f="toLolliplot",
+          signature="MutationAnnotationFormat",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to expected Lolliplot format")
+                  message(memo)
+              }
+              
+              # grab the sample, mutation, position columns
+              sample <- object@mafObject@sample
+              chromosome <- object@mafObject@position[,"Chromosome"]
+              start <- object@mafObject@position[,"Start_Position"]
+              stop <- object@mafObject@position[,"End_Position"]
+              gene <- object@mafObject@meta[,"Hugo_Symbol"]
+              variant_class <- object@mafObject@mutation[,"Variant_Classification"]
+              
+              # combine all the relevant data into a single data table
+              lolliplotFormat <- cbind(sample, chromosome, start, stop, gene, variant_class)
+              colnames(lolliplotFormat) <- c("sample", "chromosome", "start", "stop", "gene", "consequence")
+              
+              return(lolliplotFormat)
+              
+          })

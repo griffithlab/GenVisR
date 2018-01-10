@@ -28,13 +28,14 @@ NeedsCompilation: no
 Author: Zachary Skidmore [aut, cre], Alex Wagner [aut], Robert Lesurf [aut],
     Katie Campbell [aut], Jason Kunisaki [aut], Obi Griffith [aut], Malachi Griffith
     [aut]
-Collate:
+Collate: 
     'AllGenerics.R'
     'Clinical-class.R'
     'GMS_Virtual-class.R'
     'GMS-class.R'
     'GMS_v4-class.R'
     'GenVisR.R'
+    'Lolliplot-class.R'
     'MutSpectra-class.R'
     'MutationAnnotationFormat_Virtual-class.R'
     'MutationAnnotationFormat-class.R'

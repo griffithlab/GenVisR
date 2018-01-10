@@ -486,4 +486,35 @@ setMethod(f="toRainfall",
               return(rainfallFormat)
           })
 
-
+#' @rdname toLolliplot-methods
+#' @aliases toLolliplot
+#' @param object Object of class GMS
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+setMethod(f="toLolliplot",
+          signature="GMS",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("converting", class(object), "to expected Lolliplot format")
+                  message(memo)
+              }
+              
+              # grab the sample, position, and mutation columns
+              sample <- getSample(object)
+              chromosome <- getPosition(object)$chromosome_name
+              start <- getPosition(object)$start
+              stop <- getPosition(object)$stop
+              transcript <- getMeta(object)$transcript_name
+              gene <- getMeta(object)$gene_name
+              type <- getMutation(object)$trv_type
+              aminoAcidChange <- getMeta(object)$amino_acid_change
+              cPosition <- getMeta(object)$c_position
+              
+              # combine all the relevant data into a single data table
+              lolliplotFormat <- cbind(sample, chromosome, start, stop, transcript, gene, type, aminoAcidChange, cPosition)
+              
+              return(lolliplotFormat)
+              
+              })

@@ -604,3 +604,36 @@ setGeneric(
     name="arrangeRainfallPlot",
     def=function(object, ...){standardGeneric("arrangeRainfallPlot")}
 )
+
+#' Method toLolliplot
+#'
+#' @name toLolliplot
+#' @rdname toLolliplot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="toLolliplot",
+    def=function(object, ...){standardGeneric("toLolliplot")}
+)
+
+#' Method filterByGene
+#'
+#' @name filterByGene
+#' @rdname filterByGene-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="filterByGene",
+    def=function(object, ...){standardGeneric("filterByGene")}
+)
+
+#' Method annotateTranscript
+#'
+#' @name annotateTranscript
+#' @rdname annotateTranscript-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="annotateTranscript",
+    def=function(object, ...){standardGeneric("annotateTranscript")}
+)
