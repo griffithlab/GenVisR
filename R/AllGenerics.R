@@ -637,3 +637,14 @@ setGeneric(
     name="annotateTranscript",
     def=function(object, ...){standardGeneric("annotateTranscript")}
 )
+
+#' Method annotateGene
+#'
+#' @name annotateGene
+#' @rdname annotateGene-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="annotateGene",
+    def=function(object, ...){standardGeneric("annotateGene")}
+)
