@@ -479,18 +479,24 @@ setMethod(f="toLolliplot",
                   message(memo)
               }
               
-              # grab the sample, mutation, position columns
+              # grab the necessary columbs
               sample <- object@mafObject@sample
               chromosome <- object@mafObject@position[,"Chromosome"]
               start <- object@mafObject@position[,"Start_Position"]
               stop <- object@mafObject@position[,"End_Position"]
               gene <- object@mafObject@meta[,"Hugo_Symbol"]
               variant_class <- object@mafObject@mutation[,"Variant_Classification"]
+              variantAllele1 <- object@mafObject@mutation[,"Tumor_Seq_Allele1"]
+              variantAllele2 <- object@mafObject@mutation[,"Tumor_Seq_Allele2"]
+              refAllele <- object@mafObject@mutation[,"Reference_Allele"]
               
-              # combine all the relevant data into a single data table
-              lolliplotFormat <- cbind(sample, chromosome, start, stop, gene, variant_class)
-              colnames(lolliplotFormat) <- c("sample", "chromosome", "start", "stop", "gene", "consequence")
+              # combine everything into one data set
+              lolliplotFormat_Allele1 <- cbind(sample, chromosome, start, stop, refAllele, variantAllele1, gene, variant_class)
+              lolliplotFormat_Allele2 <- cbind(sample, chromosome, start, stop, refAllele, variantAllele2, gene, variant_class)
+              colnames(lolliplotFormat_Allele1) <- c("sample", "chromosome", "start", "stop", "refAllele", "varAllele", "gene", "consequence")
+              colnames(lolliplotFormat_Allele2) <- c("sample", "chromosome", "start", "stop", "refAllele", "varAllele", "gene", "consequence")
+              lolliplotFormat <- data.table::rbindlist(list(lolliplotFormat_Allele1, lolliplotFormat_Allele2))   
+              colnames(lolliplotFormat) <- c("sample", "chromosome", "start", "stop", "refAllele", "varAllele", "gene", "consequence")
               
               return(lolliplotFormat)
-              
           })

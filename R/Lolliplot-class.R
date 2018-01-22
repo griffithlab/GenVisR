@@ -38,12 +38,13 @@ setClass("Lolliplot",
 #' to the gene parameter.
 #' @param species Character string specifying a species when using biomaRt queries
 #' @param host Character string specifying a host to connect to when using biomaRt queries
+#' @param txdb A bioconoductor txdb object to annotate amino acid positions, required only if amino acid changes are missing (see details).
+#' @param BSgenome A bioconductor BSgenome object to annotate amino acid positions, required only if amino acid changes are missing (see details).
 #' @export
-Lolliplot <- function(input, gene, transcript, species="hsapiens", host="www.ensembl.org", verbose=FALSE){
+Lolliplot <- function(input, gene, transcript, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, verbose=FALSE){
     
     # Obtain and format the data
-    data <- LolliplotData(input, gene=gene, transcript=transcript, species=species, host=host, verbose=verbose)
-    
+    data <- LolliplotData(input, gene=gene, transcript=transcript, species=species, host=host, txdb=txdb, BSgenome=BSgenome, verbose=verbose)
     
 }
 
@@ -72,7 +73,7 @@ setClass("LolliplotData",
 #' @rdname LolliplotData-class
 #' @param object Object of class MutationAnnotationFormat, GMS, VEP, or a data.table with appropriate fields
 #' @noRd
-LolliplotData <- function(object, gene, transcript, species, host, verbose){
+LolliplotData <- function(object, gene, transcript, species, host, txdb, BSgenome, verbose){
     
     # convert object to Lolliplot format
     lolliplotData <- toLolliplot(object, verbose=verbose)
@@ -86,15 +87,17 @@ LolliplotData <- function(object, gene, transcript, species, host, verbose){
     
     # annotate data with ensembl transcripts if necessary
     lolliplotData <- annotateTranscript(lolliplotData, species=species, host=host, verbose=verbose)
-    browser()
-    # filter data to only one transcript
-    #lolliplotData <- filterByTranscript(lolliplotData, transcript, verbose)
     
-    # grab the transcript coordinates
+    # grab the protien coordinates
+    lolliplotData <- annotateProteinCoord(lolliplotData, species=species, host=host, txdb=txdb, BSgenome=BSgenome, verbose=verbose)
+    
+    # filter data to only one transcript
+    lolliplotData <- filterByTranscript(lolliplotData, transcript, verbose)
     
     # set the initial mutation heights (tier 1)
     
     # set the mutations for the second tier
+    browser()
 }
 
 #' PrivateClass LolliplotPlots
@@ -239,14 +242,21 @@ setMethod(f="annotateTranscript",
               
               # Select attributes to retrieve (protein domain, start, stop)
               # biomaRt::listAttributes(ensembl_mart)
-              attributes <- c("ensembl_transcript_id")
-             
+              attributes <- c("ensembl_gene_id", "ensembl_transcript_id")
+              
               # Retrieve data
               result <- biomaRt::getBM(attributes=attributes, filters=filters,
                                        values=values, mart=ensembl_mart)
               
-              # add in the data and return the structure
-              object$ensembl_transcript_id <- result
+              # add in the data and print a status message for what happened
+              nrowOrig <- nrow(object)
+              object <- merge(object, result, by=c("ensembl_gene_id"), allow.cartesian=TRUE)
+              
+              if(verbose){
+                  memo <- paste("biomaRt found", toString(length(result$ensembl_transcript_id)),
+                                "ensembl transcripts for gene id", toString(unique(result$ensembl_gene_id)),
+                                ", expanding", nrowOrig, "entries to", nrow(object))
+              }
               
               return(object)
           })
@@ -322,3 +332,170 @@ setMethod(f="annotateGene",
               
               return(object)
           })
+
+#' @rdname annotateProteinCoord-methods
+#' @aliases annotateProteinCoord
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom VariantAnnotation predictCoding
+#' @importFrom Biostrings DNAStringSet
+#' @importFrom biomaRt useMart
+#' @importFrom biomaRt listDatasets
+#' @importFrom biomaRt useDataset
+#' @importFrom biomaRt getBM
+#' @noRd
+setMethod(f="annotateProteinCoord",
+          signature="data.table",
+          definition=function(object, species, host, txdb, BSgenome, verbose, ...){
+              
+              ##################################################################
+              ############ if AA_change column is present ######################
+              
+              # first look for an amino acid column, if it's present get the
+              # protein coordinates from there and do quality checks
+              if(any(colnames(object) %in% "AA_change")){
+                  if(all(is.numeric(object$AA_change))){
+                      
+                      object$AA_coord <- object$AA_change
+                      return(object)
+                      
+                  } else if(all(grepl("^p\\.", object$AA_change))){
+                      
+                      if(verbose){
+                          memo <- paste("p. notation detected in AA_change column,",
+                                        "converting to numeric values")
+                          message(memo)
+                      }
+                      
+                      object$AA_coord <- as.numeric(gsub("p\\.[*a-zA-z]*(\\d+).*?$",
+                                                         "\\1", object$AA_change,
+                                                         perl=TRUE))
+                      return(object)
+                  } else {
+                      if(verbose){
+                          memo <- paste("Failed to extract protein coordinates",
+                                        "attempting to annotate these using txdb object!")
+                          message(memo)
+                      }
+                  }
+
+              }
+              
+              ##################################################################
+              ############ if AA_change column is not present ##################
+              
+              # check that required objects are present
+              if(is.null(txdb) || is.null(BSgenome)){
+                  memo <- paste("A valid txdb and BSgenome object are required when GenVisR must annotate",
+                                "protein coordinates, but found null for these parameters.")
+                  stop(memo)
+              }
+              
+              # annotate the mutation coordinates given on the transcript level
+              if(verbose){
+                  memo <- paste("Attempting to annotate protein coordinates.")
+              }
+              
+              # convert data to a GRanges object
+              #TODO need to add logic for chr1 vs 1
+              object$chromosome <- paste0("chr", object$chromosome)
+              gr1 <- GRanges(seqnames=object$chromosome, ranges=IRanges(start=object$start, end=object$stop), strand="*", mcols=object[,c("ensembl_gene_id", "sample", "refAllele", "varAllele", "gene", "consequence", "ensembl_transcript_id")])
+              
+              # get the protein coordinates
+              gr1 <- VariantAnnotation::predictCoding(gr1, txdb, BSgenome, Biostrings::DNAStringSet(object$varAllele))
+              gr1 <- data.table::as.data.table(gr1)
+              
+              # add in the TXNAME for the TXID from gr1
+              txnameDT <- unique(data.table::as.data.table(select(txdb, gr1$TXID, "TXNAME", keytype="TXID")))
+              txnameDT$TXID <- as.character(txnameDT$TXID)
+              gr1$TXID <- as.character(gr1$TXID)
+              object <- merge(gr1, txnameDT, by=c("TXID"))
+              
+              # load the appropriate mart
+              ensembl_mart <- biomaRt::useMart("ENSEMBL_MART_ENSEMBL",
+                                               host=host)
+              
+              # select proper data set given regexp print warnings if unexpected out occur
+              dataset <- biomaRt::listDatasets(ensembl_mart)$dataset
+              index <- which(grepl(species, dataset))
+              if(length(index)>1)
+              {
+                  memo <- paste(toString(species), " Matches more than one dataset for the",
+                                " ensembl mart, please specify a species in the, ",
+                                "following format: hsapiens")
+                  stop(memo)
+              } else if(length(index)==0) {
+                  memo <- paste(toString(species), " does not appear to be supported by biomaRt",
+                                "if you beleive this to be in error please modify", 
+                                "you're input to to conform to this format: hsapiens")
+                  stop(memo)
+              }
+              
+              ensembl_mart <- biomaRt::useDataset(as.character(dataset[index]),
+                                                  mart=ensembl_mart)
+              
+              # Apply various filters using vector of values
+              # biomaRt::listFilters(ensembl_mart)
+              filters <- c("ucsc")
+              values <- c(object$TXNAME)
+              
+              # Select attributes to retrieve (protein domain, start, stop)
+              # biomaRt::listAttributes(ensembl_mart)
+              attributes <- c("ensembl_transcript_id", "ucsc")
+              
+              # Retrieve data
+              result <- biomaRt::getBM(attributes=attributes, filters=filters,
+                                       values=values, mart=ensembl_mart)
+              
+              if(length(unique(result$ensembl_transcript_id)) != length(unique(result$ucsc))){
+                  memo <- paste("Retrieved protein coordinates are for the transcript", toString(unique(result$ucsc)),
+                  "However GenVisR uses ensemble transcript id's", "there is not a 1 to 1 mapping between the two,",
+                  "annotated coordinates may be inaccurate!")
+                  warning(memo)
+              }
+              
+              # use the biomaRt results to subset to only valid ensembl transcripts
+              object <- object[object$mcols.ensembl_transcript_id %in% result$ensembl_transcript_id,]
+              
+              return(object)
+          })
+
+#' @rdname filterByTranscript-methods
+#' @aliases filterByTranscript
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+setMethod(f="filterByTranscript",
+          signature="data.table",
+          definition=function(object, transcript, verbose, ...){
+              
+              # status message
+              if(verbose){
+                  memo <- paste("Filtering data by transcript")
+                  message(memo)
+              }
+              
+              # pick a transcript to filter on if none is given
+              if(is.null(transcript)){
+                  transcript <- unique(object$ensembl_transcript_id)[1]
+                  if(verbose){
+                      memo <- paste("parameter transcript is null, using transcript",
+                                    toString(transcript), "available transcripts were:",
+                                    toString(unique(object$ensembl_transcript_id)))
+                      message(memo)
+                  }
+              }
+              
+              # perform quality checks
+              if(!is.character(transcript)){
+                  memo <- paste("input to transcript is not a character vector, attempting to coerce")
+                  warning(memo)
+              }
+              if(length(transcript) > 1){
+                  memo <- paste("input to transcript is not of length 1, using only the first element:", toString(transcript[1]))
+                  warning(memo)
+              }
+              
+              
+          })
+

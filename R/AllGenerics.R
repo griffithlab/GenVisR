@@ -648,3 +648,25 @@ setGeneric(
     name="annotateGene",
     def=function(object, ...){standardGeneric("annotateGene")}
 )
+
+#' Method annotateProteinCoord
+#'
+#' @name annotateProteinCoord
+#' @rdname annotateProteinCoord-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="annotateProteinCoord",
+    def=function(object, ...){standardGeneric("annotateProteinCoord")}
+)
+
+#' Method filterByTranscript
+#'
+#' @name filterByTranscript
+#' @rdname filterByTranscript-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="filterByTranscript",
+    def=function(object, ...){standardGeneric("filterByTranscript")}
+)

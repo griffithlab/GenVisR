@@ -1221,12 +1221,12 @@ setMethod(f="orderSamples",
                   NA_index <- which(grepl("^NA.$", colnames(wideBoolean)))
                   
                   # Append NA column to end of data frame
-                  NA_gene <- wideBoolean[,NA_index]
-                  wideBoolean <- wideBoolean[,-NA_index]
+                  NA_gene <- wideBoolean[,NA_index, with=FALSE]
+                  wideBoolean <- wideBoolean[,-NA_index, with=FALSE]
                   
                   # Save copy and remove samples with no mutations,
                   # these will be added to the end
-                  samp_no_mut <- wideBoolean[rowSums(wideBoolean[2:ncol(wideBoolean)]) == 0,]$sample
+                  samp_no_mut <- wideBoolean[rowSums(wideBoolean[, 2:ncol(wideBoolean)]) == 0,]$sample
                   samp_no_mut <- as.character(samp_no_mut)
                   wideBoolean <- wideBoolean[!wideBoolean$sample %in% samp_no_mut,]
               } else {
