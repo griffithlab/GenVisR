@@ -41,7 +41,7 @@ setClass("Lolliplot",
 #' @param txdb A bioconoductor txdb object to annotate amino acid positions, required only if amino acid changes are missing (see details).
 #' @param BSgenome A bioconductor BSgenome object to annotate amino acid positions, required only if amino acid changes are missing (see details).
 #' @export
-Lolliplot <- function(input, gene, transcript, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, verbose=FALSE){
+Lolliplot <- function(input, gene, transcript=NULL, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, verbose=FALSE){
     
     # Obtain and format the data
     data <- LolliplotData(input, gene=gene, transcript=transcript, species=species, host=host, txdb=txdb, BSgenome=BSgenome, verbose=verbose)
@@ -94,9 +94,17 @@ LolliplotData <- function(object, gene, transcript, species, host, txdb, BSgenom
     # filter data to only one transcript
     lolliplotData <- filterByTranscript(lolliplotData, transcript, verbose)
     
+    # tabulate the frequency of observed mutations
+    lolliplotData <- calcMutFreq(lolliplotData, verbose)
+    
+    # get the transcript size and domains
+    proteinData <- constructTranscriptData(lolliplotData, species=species, host=host, verbose)
+        
     # set the initial mutation heights (tier 1)
+    lolliplotData <- setTierOne(lolliplotData, verbose)
     
     # set the mutations for the second tier
+    
     browser()
 }
 
@@ -258,6 +266,12 @@ setMethod(f="annotateTranscript",
                                 ", expanding", nrowOrig, "entries to", nrow(object))
               }
               
+              # reorder columns for consistency
+              keep <- c("sample", "chromosome", "start", "stop", "refAllele",
+                        "varAllele", "gene", "consequence", "ensembl_gene_id",
+                        "ensembl_transcript_id")
+              object <- object[,keep, with=FALSE]
+              
               return(object)
           })
 
@@ -395,10 +409,40 @@ setMethod(f="annotateProteinCoord",
               if(verbose){
                   memo <- paste("Attempting to annotate protein coordinates.")
               }
+
+              # make sure BSgenome object matches txdb object
+              seqBSgenome <- VariantAnnotation::seqlevels(BSgenome)
+              seqtxdb <- VariantAnnotation::seqlevels(txdb)
+              
+              if(!all(seqBSgenome %in% seqtxdb) || !all(seqtxdb %in% seqBSgenome)){
+                  mismatchSeqBSgenome <- seqBSgenome[!seqBSgenome %in% seqtxdb]
+                  mismatchSeqtxdb <- seqtxdb[!seqtxdb %in% seqBSgenome]
+                  mismatchSeq <- unique(c(mismatchSeqBSgenome, mismatchSeqtxdb))
+                  
+                  memo <- paste("The following entires are not in both the txdb and BSgenome objects supplied:",
+                                toString(mismatchSeq), "This may affect protien annotations if mutations are in these regions!")
+                  warning(memo)
+              }
+              
+              # make sure lolliplotData matches the BSgenome and txdb object
+              chrMismatch <- as.character(unique(object[!object$chromosome %in% seqtxdb,]$chromosome))
+              
+              if(length(chrMismatch) >= 1){
+                  
+                  memo <- paste("The following chromosomes do not match the supplied BSgenome object",
+                                toString(chrMismatch))
+                  warning(memo)
+                  
+                  # test if the chr mismatch is fixed by appending chr to chromosomes
+                  chrMismatch_appendChr <- sum(as.character(unique(paste0("chr", object$chromosome))) %in% seqBSgenome)
+                  if(chrMismatch_appendChr <= length(chrMismatch)){
+                      memo <- paste("appending \"chr\" to chromosomes in attempt to fix mismatch with the BSgenome")
+                      warning(memo)
+                      object$chromosome <- paste0("chr", object$chromosome)
+                  }
+              }
               
               # convert data to a GRanges object
-              #TODO need to add logic for chr1 vs 1
-              object$chromosome <- paste0("chr", object$chromosome)
               gr1 <- GRanges(seqnames=object$chromosome, ranges=IRanges(start=object$start, end=object$stop), strand="*", mcols=object[,c("ensembl_gene_id", "sample", "refAllele", "varAllele", "gene", "consequence", "ensembl_transcript_id")])
               
               # get the protein coordinates
@@ -410,6 +454,16 @@ setMethod(f="annotateProteinCoord",
               txnameDT$TXID <- as.character(txnameDT$TXID)
               gr1$TXID <- as.character(gr1$TXID)
               object <- merge(gr1, txnameDT, by=c("TXID"))
+              
+              # choose columns to keep
+              keep <- c("mcols.sample", "seqnames", "start", "end", "mcols.refAllele", "mcols.varAllele",
+                        "mcols.gene", "mcols.consequence", "mcols.ensembl_gene_id", "mcols.ensembl_transcript_id",
+                        "PROTEINLOC", "TXNAME", "REFCODON", "VARCODON", "REFAA", "VARAA")
+              object <- object[,keep,with=FALSE]
+              colnames(object) <- c("sample", "chromosome", "start", "stop", "refAllele", "varAllele", "gene",
+                                    "consequence", "ensembl_gene_id", "ensembl_transcript_id", "txdb.proteinCoord",
+                                    "txdb.transcript", "txdb.refCodon", "txdb.varCodon", "txdb.refAA", "txdb.varAA")
+              object$proteinCoord <- object$txdb.proteinCoord
               
               # load the appropriate mart
               ensembl_mart <- biomaRt::useMart("ENSEMBL_MART_ENSEMBL",
@@ -437,7 +491,7 @@ setMethod(f="annotateProteinCoord",
               # Apply various filters using vector of values
               # biomaRt::listFilters(ensembl_mart)
               filters <- c("ucsc")
-              values <- c(object$TXNAME)
+              values <- c(object$txdb.transcript)
               
               # Select attributes to retrieve (protein domain, start, stop)
               # biomaRt::listAttributes(ensembl_mart)
@@ -455,7 +509,7 @@ setMethod(f="annotateProteinCoord",
               }
               
               # use the biomaRt results to subset to only valid ensembl transcripts
-              object <- object[object$mcols.ensembl_transcript_id %in% result$ensembl_transcript_id,]
+              object <- object[object$ensembl_transcript_id %in% result$ensembl_transcript_id,]
               
               return(object)
           })
@@ -496,6 +550,191 @@ setMethod(f="filterByTranscript",
                   warning(memo)
               }
               
+              # check that the transcript is in the data
+              if(!transcript %in% object$ensembl_transcript_id){
+                  transcriptTmp <- unique(object$ensembl_transcript_id)[1]
+                  memo <- paste("Did not find the specified transcript:", toString(transcript),
+                                "in the data. Using:", toString(transcriptTmp), "instead!")
+                  warning(memo)
+                  transcript <- transcriptTmp
+              }
               
+              # subset the data.table
+              object <- object[object$ensembl_transcript_id == transcript,]
+              
+              return(object)
           })
 
+#' @rdname calcMutFreq-methods
+#' @aliases calcMutFreq
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom plyr count
+#' @noRd
+setMethod(f="calcMutFreq",
+          signature="data.table",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Calculating the frequency of mutations")
+                  message(memo)
+              }
+              
+              # make a temporary key making each mutation type unique, at this 
+              # stage there should only be one transcript making genomic locations unique
+              object$key <- paste(object$chromosome, object$start, object$stop, object$refAllele, object$varAllele, sep=":")
+              
+              # tabulate the frequencies
+              mutationFreq <- plyr::count(object$key)
+              colnames(mutationFreq) <- c("key", "mutationFreq")
+              object <- merge(object, mutationFreq, by="key", all.x=TRUE)
+              
+              # remove the key column and return the object
+              object$key <- NULL
+              
+              return(object)
+          })
+
+#' @rdname constructTranscriptData-methods
+#' @aliases constructTranscriptData
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom plyr count
+#' @noRd
+setMethod(f="constructTranscriptData",
+          signature="data.table",
+          definition=function(object, species, host, verbose, ...){
+              
+              # make sure there's only one transcript
+              if(length(unique(object$ensembl_transcript_id)) != 1){
+                  memo <- paste("Number of transcripts does not equal one",
+                                "unable to retrieve domains")
+                  stop(memo)
+              }
+              
+              # set the transcript
+              transcript <- unique(object$ensembl_transcript_id)
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Retrieving protein domains for:", toString(transcript))
+                  message(memo)
+              }
+              
+              # Load in mart
+              ensembl_mart <- biomaRt::useMart("ENSEMBL_MART_ENSEMBL",
+                                               host=host)
+              
+              # select proper data set given regexp print warnings if unexpected out occur
+              dataset <- biomaRt::listDatasets(ensembl_mart)$dataset
+              index <- which(grepl(species, dataset))
+              if(length(index)>1)
+              {
+                  memo <- paste0(species, " Matches more than one dataset for the",
+                                 " ensembl mart, please specify a species in the, ",
+                                 "following format: hsapiens")
+                  stop(memo)
+              } else if(length(index)==0) {
+                  memo <- paste0(species, " does not appear to be supported by biomaRt",
+                                 "if you beleive this to be in error please modify", 
+                                 "you're input to to conform to this format: hsapiens")
+                  stop(memo)
+              }
+              ensembl_mart <- biomaRt::useDataset(as.character(dataset[index]),
+                                                  mart=ensembl_mart)
+              
+              ############ Retrieve Domains ####################################
+              
+              # Apply various filters using vector of values
+              #biomaRt::listFilters()
+              filters <- c("ensembl_transcript_id")
+              values <- as.list(c(transcript))
+              
+              # Select attributes to retrieve (protein domain, start, stop)
+              #biomaRt::listAttributes()
+              attributes <- c("interpro_description",
+                              "interpro_short_description",
+                              "interpro_start",
+                              "interpro_end")
+              
+              # Retrieve data
+              domain <- biomaRt::getBM(attributes=attributes, filters=filters,
+                                       values=values, mart=ensembl_mart)
+              domain <- as.data.table(domain)
+              colnames(domain) <- c("interproDesc", "interproShortDesc", "proteinStart", "proteinStop")
+              
+              # check that domains were actually retrieved
+              if(nrow(domain) < 1){
+                  
+                  if(verbose){
+                      memo <- paste("biomaRt did not return protein domains")
+                      message(memo)
+                  }
+                  
+              } else {
+                  domain$source <- "domain" 
+              }
+              
+              
+              ################ Retrieve transcript size ########################
+              
+              
+              # Apply various filters using vector of values
+              # biomaRt::listFilters()
+              filters <- c("ensembl_transcript_id")
+              values <- as.list(c(transcript))
+              
+              # Select attributes to retrieve (protein domain, start, stop)
+              # biomaRt::listAttributes()
+              attributes <- c("cds_length")
+              
+              # Retrieve data
+              protein <- biomaRt::getBM(attributes=attributes, filters=filters,
+                                        values=values, mart=ensembl_mart)
+              protein <- as.data.table(protein)
+              colnames(protein) <- "proteinStop"
+              
+              # make sure we have a protein length otherwise theres no gene to plot
+              if(nrow(protein) < 1){
+                  memo <- paste("biomaRt failed to return a CDS length for transcript:", toString(transcript))
+                  warning(memo)
+              } else {
+                  protein$proteinStart <- 1
+                  protein$source <- "protein"
+                  protein$proteinStop <- protein$proteinStop/3
+              }
+
+              proteinData <- data.table::rbindlist(list(protein, domain), use.names=TRUE, fill=TRUE)
+              
+              return(proteinData)
+
+          })
+
+#' @rdname setTierOne-methods
+#' @aliases setTierOne
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+setMethod(f="setTierOne",
+          signature="data.table",
+          definition=function(object, verbose, ...){
+              
+              # status message
+              if(verbose){
+                  memo <- paste("setting coordinates for first tier of mutations")
+                  message(memo)
+              }
+              
+              # set a base height
+              object$height <- 1.2
+              
+              if(min(object$mutationFreq) != max(object$mutationFreq)){
+                  # adjust the height of points based on their frequency as a scaling factor
+                  a <- function(x){(x-min(x))/(max(x)-min(x))}
+                  object$height <- object$height + a(object$mutationFreq)
+              }
+              
+              # return the object with adjusted heights
+              return(object)
+          })

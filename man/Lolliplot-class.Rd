@@ -5,7 +5,7 @@
 \alias{Lolliplot}
 \title{Class Lolliplot}
 \usage{
-Lolliplot(input, gene, transcript, species = "hsapiens",
+Lolliplot(input, gene, transcript = NULL, species = "hsapiens",
   host = "www.ensembl.org", txdb = NULL, BSgenome = NULL,
   verbose = FALSE)
 }

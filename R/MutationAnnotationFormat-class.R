@@ -498,5 +498,16 @@ setMethod(f="toLolliplot",
               lolliplotFormat <- data.table::rbindlist(list(lolliplotFormat_Allele1, lolliplotFormat_Allele2))   
               colnames(lolliplotFormat) <- c("sample", "chromosome", "start", "stop", "refAllele", "varAllele", "gene", "consequence")
               
+              # Remove cases where there is not change between reference and variant
+              lolliplotFormat$refAllele <- as.character(lolliplotFormat$refAllele)
+              lolliplotFormat$varAllele <- as.character(lolliplotFormat$varAllele)
+              alleleMatchIndex <- lolliplotFormat$refAllele == lolliplotFormat$varAllele
+              lolliplotFormat <- lolliplotFormat[!alleleMatchIndex,]
+              if(verbose){
+                  memo <- paste("Removed", length(alleleMatchIndex), "entries",
+                                "where the reference allele matched the tumor allele")
+                  message(memo)
+              }
+              
               return(lolliplotFormat)
           })
