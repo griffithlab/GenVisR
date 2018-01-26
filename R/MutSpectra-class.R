@@ -47,8 +47,6 @@ setClass("MutSpectra",
 #' @param clinical Object of class Clinical, used for adding a clinical data subplot.
 #' @param sectionHeights Numeric vector specifying relative heights of each plot section,
 #' should sum to one. Expects a value for each section.
-#' @param sectionWidths Numeric vector specifying relative heights of each plot section,
-#' should sum to one. Expects a value for each section.
 #' @param sampleNames Boolean specifying if samples should be labeled on the plot.
 #' @param verbose Boolean specifying if status messages should be reported
 #' @param plotALayers list of ggplot2 layers to be passed to the frequency plot.
@@ -56,8 +54,7 @@ setClass("MutSpectra",
 #' @param plotCLayers list of ggplot2 layers to be passed to the clinical plot.
 #' @export
 MutSpectra <- function(object, BSgenome=NULL, sorting=NULL, palette=NULL, clinical=NULL, sectionHeights=NULL,
-                      sectionWidths=NULL, sampleNames=TRUE, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL,
-                      plotCLayers=NULL){
+                       sampleNames=TRUE, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL, plotCLayers=NULL){
     
     # initalize the MutSpectraPrimaryData object
     primaryData <- MutSpectraPrimaryData(object, BSgenome=BSgenome, sorting=sorting, verbose=verbose)
@@ -79,7 +76,7 @@ MutSpectra <- function(object, BSgenome=NULL, sorting=NULL, palette=NULL, clinic
     Grob <- arrangeMutSpectraPlot(plots, sectionHeights, verbose)
     
     new("MutSpectra", PlotA=getGrob(plots, 1), PlotB=getGrob(plots, 2), PlotC=getGrob(plots, 3),
-        Grob=Grob, primaryData=getData(primaryData), ClinicalData=ClinicalData)
+        Grob=Grob, primaryData=getData(primaryData, name="primaryData"), ClinicalData=ClinicalData)
 }
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
@@ -104,7 +101,7 @@ setClass("MutSpectraPrimaryData",
 #' 
 #' @name MutSpectraPrimaryData
 #' @rdname MutSpectraPrimaryData-class
-#' @param object Object of class MutationAnnotationFormat
+#' @param object Object of class MutationAnnotationFormat, GMS, VEP
 #' @noRd
 MutSpectraPrimaryData <- function(object, BSgenome, sorting, verbose){
     # convert object to mutSpectra format
@@ -182,55 +179,183 @@ MutSpectraPlots <- function(primaryData, clinical, plotALayers, plotBLayers, plo
 ################################################################################
 ###################### Accessor function definitions ###########################
 
+#' Helper function to getData from classes
+#'
+#' @rdname getData-methods
+#' @aliases getData
+.getData_MutSpectra <- function(object, name=NULL, index=NULL, ...){
+    
+    if(is.null(name) & is.null(index)){
+        memo <- paste("Both name and index are NULL, one must be specified!")
+        stop(memo)
+    }
+    
+    if(is.null(index)){
+        index <- 0
+    } else {
+        if(index > 2){
+            memo <- paste("index out of bounds")
+            stop(memo)
+        }
+    }
+    
+    if(is.null(name)){
+        name <- "noMatch"
+    } else {
+        slotAvailableName <- c("primaryData", "ClinicalData")
+        if(!(name %in% slotAvailableName)){
+            memo <- paste("slot name not found, specify one of:", toString(slotAvailableName))
+            stop(memo)
+        }
+    }
+    
+    if(name == "primaryData" | index == 1){
+        data <- object@primaryData
+    } else if(name == "ClinicalData" | index == 2){
+        data <- object@ClinicalData
+    }
+    
+    return(data)
+}
+
 #' @rdname getData-methods
 #' @aliases getData
 setMethod(f="getData",
           signature="MutSpectraPrimaryData",
-          definition=function(object, ...){
-              primaryData <- object@primaryData
-              return(primaryData)
-          })
+          definition=.getData_MutSpectra)
 
-#' @rdname getGrob-methods
-#' @aliases getGrob
-setMethod(f="getGrob",
+#' @rdname getData-methods
+#' @aliases getData
+setMethod(f="getData",
           signature="MutSpectra",
-          definition=function(object, ...){
-              grob <- object@Grob
-              return(grob)
-          })
+          definition=.getData_MutSpectra)
 
 #' @rdname drawPlot-methods
 #' @aliases drawPlot
 #' @importFrom grid grid.draw
+#' @importFrom grid grid.newpage
 #' @exportMethod drawPlot
 setMethod(f="drawPlot",
           signature="MutSpectra",
           definition=function(object, ...){
-              grob <- getGrob(object)
+              grob <- getGrob(object, index=4)
+              grid::grid.newpage()
               grid::grid.draw(grob)
           })
 
+#' Helper function to extract grobs from objects
+#'
 #' @rdname getGrob-methods
 #' @aliases getGrob
-#' @param index integer specifying the plot index to extract
+#' @noRd
+.getGrob_MutSpectra <- function(object, index=1, ...){
+    if(index == 1){
+        grob <- object@PlotA
+    } else if(index == 2) {
+        grob <- object@PlotB
+    } else if(index == 3) {
+        grob <- object@PlotC
+    } else if(index == 4) {
+        grob <- object@Grob
+    } else {
+        stop("Subscript out of bounds")
+    }
+    return(grob)
+}
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
 setMethod(f="getGrob",
           signature="MutSpectraPlots",
-          definition=function(object, index=1, ...){
-              if(index == 1){
-                  grob <- object@PlotA
-              } else if(index == 2) {
-                  grob <- object@PlotB
-              } else if(index == 3) {
-                  grob <- object@PlotC
-              } else {
-                  stop("Subscript out of bounds")
-              }
-              return(grob)
-          })
+          definition=.getGrob_MutSpectra)
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+setMethod(f="getGrob",
+          signature="MutSpectra",
+          definition=.getGrob_MutSpectra)
 
 ################################################################################
 ####################### Method function definitions ############################
+
+#' @rdname toMutSpectra-methods
+#' @aliases toMutSpectra
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom data.table rbindlist
+#' @noRd
+setMethod(f="toMutSpectra",
+          signature="data.table",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to expected MutSpectra format")
+                  message(memo)
+              }
+              
+              # check for appropriate columns
+              expectCol <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
+              if(!all(expectCol %in% colnames(object))){
+                  missingCol <- expectCol[!expectCol %in% colnames(object)]
+                  memo <- paste("Could not find the following required columns in the input:",
+                                toString(missingCol))
+                  stop(memo)
+              }
+              mutSectraFormat <- object
+              
+              # grab only the snvs
+              snvIndex <- which(nchar(mutSectraFormat$refAllele) == 1 & nchar(mutSectraFormat$variantAllele) == 1)
+              if(verbose){
+                  memo <- paste("Removing", nrow(mutSectraFormat)-length(snvIndex),
+                                "entries which are not snvs!")
+                  message(memo)
+              }
+              
+              # make sure snvs are of the expected base type
+              expectedBases <- c("C", "G", "T", "A")
+              if(!all(toupper(mutSectraFormat$refAllele) %in% expectedBases)){
+                  abnormalBasesIndex_ins <-  !mutSectraFormat$refAllele %in% expectedBases
+              }
+              if(!all(toupper(mutSectraFormat$variantAllele) %in% expectedBases)){
+                  abnormalBasesIndex_del <-  !mutSectraFormat$variantAllele %in% expectedBases
+              }
+              abnormalBasesIndex <- unique(c(abnormalBasesIndex_ins, abnormalBasesIndex_del))
+              if(length(abnormalBasesIndex > 1)){
+                  memo <- paste("Removing", length(abnormalBasesIndex), "entries with unexpected",
+                                "bases in either the refAllele or variantAllele columns!")
+                  mutSectraFormat <- mutSectraFormat[-abnormalBasesIndex,]
+              }
+              
+              # unique, to make sure no duplicate variants exist to throw off the counts
+              rowCountOrig <- nrow(mutSectraFormat)
+              mutSectraFormat <- unique(mutSectraFormat)
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Removed", rowCountOrig - nrow(mutSectraFormat),
+                                "rows from the data which harbored duplicate",
+                                "genomic locations")
+                  message(memo)
+              }
+              
+              # Remove cases where there is not change between reference and variant
+              mutSpectraFormat$refAllele <- as.character(mutSpectraFormat$refAllele)
+              mutSpectraFormat$variantAllele <- as.character(mutSpectraFormat$variantAllele)
+              alleleMatchIndex <- mutSpectraFormat$refAllele == mutSpectraFormat$variantAllele
+              mutSpectraFormat <- mutSpectraFormat[!alleleMatchIndex,]
+              if(verbose){
+                  memo <- paste("Removed", length(alleleMatchIndex), "entries",
+                                "where the reference allele matched the tumor allele")
+                  message(memo)
+              }
+              
+              # convert appropriate columns to factor
+              mutSpectraFormat$sample <- factor(mutSpectraFormat$sample)
+              
+              return(mutSpectraFormat)
+          })
 
 #' @rdname MutSpectra-methods
 #' @aliases MutSpectra
@@ -343,50 +468,55 @@ setMethod(f="sortSamples",
                   sorting <- as.character(sorting)
               }
               
-              # Perform sorting based on the input to sorting
-              if(toupper(sorting) == "SAMPLE" | toupper(sorting) == "SAMPLES"){
-                  if(verbose){
-                      memo <- paste("sorting samples by name")
-                      message(memo)
+              if(length(sorting) == 1){
+                  
+                  # Perform sorting based on the input to sorting
+                  if(toupper(sorting) == "SAMPLE" | toupper(sorting) == "SAMPLES"){
+                      if(verbose){
+                          memo <- paste("sorting samples by name")
+                          message(memo)
+                      }
+                      sampleOrder <- unique(gtools::mixedsort(primaryData$Sample))
+                  }else if(toupper(sorting) == "MUTATION" | toupper(sorting) == "MUTATIONS"){
+                      if(verbose){
+                          memo <- paste("sorting samples by transition/transversion proportions")
+                          message(memo)
+                      }
+                      sampleOrder <- primaryData[order(primaryData$TransTranv, -primaryData$Proportion)]
+                      sampleOrder <- sampleOrder[sampleOrder$Proportion != 0,]
+                      sampleOrder <- unique(sampleOrder$Sample)
                   }
-                  sampleOrder <- gtools::mixedsort(primaryData$Sample)
-                  primaryData$Sample <- factor(primaryData$Sample, levels=sampleOrder)
-              }else if(toupper(sorting) == "MUTATION" | toupper(sorting) == "MUTATIONS"){
-                  if(verbose){
-                      memo <- paste("sorting samples by transition/transversion proportions")
-                      message(memo)
-                  }
-                  sampleOrder <- primaryData[order(primaryData$TransTranv, -primaryData$Proportion)]
-                  sampleOrder <- sampleOrder[sampleOrder$Proportion != 0,]
-                  sampleOrder <- unique(sampleOrder$Sample)
-                  primaryData$Sample <- factor(primaryData$Sample, levels=sampleOrder)
-              }else if(length(sorting) > 1){
+              } else {
+                  
                   if(verbose){
                       memo <- paste("sorting samples by supplied samples in the parameter \"sorting\"")
                       message(memo)
                   }
+                  
                   # check if input to sorting is missing samples
-                  if(any(!primaryData$Sample %in% sorting)){
+                  sampleOrder <- sorting
+                  if(any(!primaryData$Sample %in% sampleOrder)){
                       expecSamples <- unique(primaryData$Sample)
-                      missingSamples <-  expecSamples[!expecSamples %in% sorting]
+                      missingSamples <-  as.character(expecSamples[!expecSamples %in% sampleOrder])
                       memo <- paste("The following samples were missing from the parameter", 
                                     "\"sorting\": ", toString(missingSamples),
                                     "adding these to the end of the sort order")
                       warning(memo)
-                      sorting <- c(sorting, missingSamples)
+                      sampleOrder <- c(sampleOrder, missingSamples)
                   }
                   
                   # check if input to sorting has extra samples
-                  if(any(!sorting %in% primaryData$Sample)){
+                  if(any(!sampleOrder %in% primaryData$Sample)){
                       extraSamples <- sorting[!sorting %in% primaryData$Sample]
                       memo <- paste("The following samples were specified in the parameter",
                                     "\"sorting\" but were not found in the primary data:",
                                     toString(extraSamples), "removing these samples!")
-                      sorting <- sorting[!sorting %in% extraSamples]
+                      sampleOrder <- sampleOrder[!sampleOrder %in% extraSamples]
                   }
-                  primaryData$Sample <- factor(primaryData$Sample, levels=sorting)
               }
-              
+             
+              primaryData$Sample <- factor(primaryData$Sample, levels=sampleOrder)
+                  
               return(primaryData)
           })
 
@@ -423,7 +553,7 @@ setMethod(f="buildFrequencyPlot",
               } else if(length(palette) != 6){
                   memo <- paste("The input to the parameter \"palette\" is not of length",
                                 "6, a color should be specified for each transition/transversion in:",
-                                toString(unique(primaryData$TransTranv), "! using the default palette."))
+                                toString(unique(primaryData$TransTranv)), "! using the default palette.")
                   warning(memo)
                   palette <- c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753")
               }
@@ -440,11 +570,13 @@ setMethod(f="buildFrequencyPlot",
               yLimits <- scale_y_continuous(expand=c(0,0))
               
               # perform quality checks
-              if(!is.null(plotALayers) && !is.list(plotALayers)){
-                  memo <- paste("plotALayers is not a list... attempting to coerce.")
-                  warning(memo)
-                  plotALayers <- as.list(plotALayers)
-                  if(any(lapply(plotALayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x)))){
+              if(!is.null(plotALayers)){
+                  if(!is.list(plotALayers)){
+                      memo <- paste("plotALayers is not a list")
+                      stop(memo)
+                  }
+                  
+                  if(any(!unlist(lapply(plotALayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
                       memo <- paste("plotALayers is not a list of ggproto or ",
                                     "theme objects... setting plotALayers to NULL")
                       warning(memo)
@@ -495,7 +627,7 @@ setMethod(f="buildProportionPlot",
               } else if(length(palette) != 6){
                   memo <- paste("The input to the parameter \"palette\" is not of length",
                                 "6, a color should be specified for each transition/transversion in:",
-                                toString(unique(primaryData$TransTranv), "! using the default palette."))
+                                toString(unique(primaryData$TransTranv)), "! using the default palette.")
                   warning(memo)
                   palette <- c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753")
               }
@@ -515,12 +647,14 @@ setMethod(f="buildProportionPlot",
               # adjust limits
               yLimits <- scale_y_continuous(expand=c(0,0))
               
-              # add additional plot layers
-              if(!is.null(plotBLayers) && !is.list(plotBLayers)){
-                  memo <- paste("plotBLayers is not a list... attempting to coerce.")
-                  warning(memo)
-                  plotBLayers <- as.list(plotBLayers)
-                  if(any(lapply(plotBLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x)))){
+              # perform quality checks
+              if(!is.null(plotBLayers)){
+                  if(!is.list(plotBLayers)){
+                      memo <- paste("plotBLayers is not a list")
+                      stop(memo)
+                  }
+                  
+                  if(any(!unlist(lapply(plotBLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
                       memo <- paste("plotBLayers is not a list of ggproto or ",
                                     "theme objects... setting plotBLayers to NULL")
                       warning(memo)
@@ -604,7 +738,7 @@ setMethod(f="formatClinicalData",
           definition=function(object, clinicalData, verbose, ...){
 
               # extract the data we need
-              primaryData <- getData(object)
+              primaryData <- getData(object, name="primaryData")
               clinicalData <- getData(clinicalData)
               
               # print status message

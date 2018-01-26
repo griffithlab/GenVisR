@@ -218,7 +218,6 @@ setMethod(f="buildClinicalPlot",
 
 #' @rdname getData-methods
 #' @aliases getData
-#' @exportMethod getData
 setMethod(f="getData",
           signature="Clinical",
           definition=function(object, ...){

@@ -76,6 +76,14 @@ MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
 ################################################################################
 ###################### Accessor function definitions ###########################
 
+#' @rdname writeData-methods
+#' @aliases writeData
+setMethod(f="writeData",
+          signature="MutationAnnotationFormat",
+          definition=function(object, file, ...){
+              writeData(object@mafObject, file, sep="\t")
+          })
+
 #' @rdname getVersion-methods
 #' @aliases getVersion
 setMethod(f="getVersion",
@@ -152,21 +160,27 @@ setMethod(f="toWaterfall",
               mutation <- getMutation(object)[,"Variant_Classification"]
               gene <- getMeta(object)[,"Hugo_Symbol"]
               label <- NA
+              labelFlag <- TRUE
               
               # if a label column exists and is proper overwrite the label variable
+              # if not change the flag
               if(!is.null(labelColumn)){
                   if(length(labelColumn) != 1) {
                       memo <- paste("Parameter \"labelColumn\" must be of length 1!",
                                     "Found length to be", length(labelColumn))
                       warning(memo)
-                      next
-                  } else if(!labelColumn %in% colnames(getMeta(object))){
-                      memo <- paste("Did not find column:", toString(labelColumn),
-                                    "in the meta slot of the mafObject! Valid",
+                      labelFlag <- FALSE
+                  }
+                  
+                  if(!labelColumn %in% colnames(getMeta(object))){
+                      memo <- paste("Did not find column:", labelColumn,
+                                    "in the meta slot of the vepObject! Valid",
                                     "names are:", toString(colnames(getMeta(object))))
                       warning(memo)
-                      next
-                  } else {
+                      labelFlag <- FALSE
+                  }
+                  
+                  if(labelFlag){
                       label <- getMeta(object)[,labelColumn, with=FALSE]
                   }
               }
@@ -271,7 +285,7 @@ setMethod(f="setMutationHierarchy",
               
               # add in a pretty print mutation labels
               mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
-              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$mutation)
+              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$label)
               
               # check for duplicate mutations
               if(any(duplicated(mutationHierarchy$mutation))){
@@ -281,6 +295,10 @@ setMethod(f="setMutationHierarchy",
                   warning(memo)
                   mutationHierarchy <- mutationHierarchy[!duplicated(mutationHierarchy$mutation),]
               }
+              
+              # ensure columns are of the proper type
+              mutationHierarchy$color <- as.character(mutationHierarchy$color)
+              mutationHierarchy$mutation <- as.character(mutationHierarchy$mutation)
               
               # print status message
               if(verbose){
@@ -336,11 +354,6 @@ setMethod(f="toMutSpectra",
               colnames(mutSpectraFormat_Allele2) <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
               mutSpectraFormat <- data.table::rbindlist(list(mutSpectraFormat_Allele1, mutSpectraFormat_Allele2))
               
-              # Remove cases where there is not change between reference and variant
-              mutSpectraFormat$refAllele <- as.character(mutSpectraFormat$refAllele)
-              mutSpectraFormat$variantAllele <- as.character(mutSpectraFormat$variantAllele)
-              mutSpectraFormat <- mutSpectraFormat[mutSpectraFormat$refAllele != mutSpectraFormat$variantAllele,]
-              
               # unique, to make sure no duplicate variants exist to throw off the counts
               rowCountOrig <- nrow(mutSpectraFormat)
               mutSpectraFormat <- unique(mutSpectraFormat)
@@ -368,4 +381,84 @@ setMethod(f="toMutSpectra",
               mutSpectraFormat$sample <- factor(mutSpectraFormat$sample)
               
               return(mutSpectraFormat)
+          })
+
+#' @rdname toRainfall-methods
+#' @aliases toRainfall
+#' @param object Object of class MutationAnnotationFormat
+#' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom data.table rbindlist
+#' @noRd
+setMethod(f="toRainfall",
+          signature="MutationAnnotationFormat",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to expected Rainfall format")
+                  message(memo)
+              }
+              
+              # grab the sample, mutation, position columns
+              sample <- object@mafObject@sample
+              variantAllele1 <- object@mafObject@mutation[,"Tumor_Seq_Allele1"]
+              variantAllele2 <- object@mafObject@mutation[,"Tumor_Seq_Allele2"]
+              refAllele <- object@mafObject@mutation[,"Reference_Allele"]
+              chr <- object@mafObject@position[,"Chromosome"]
+              start <- object@mafObject@position[,"Start_Position"]
+              stop <- object@mafObject@position[,"End_Position"]
+              
+              # combine all columns into a consistent format and remove duplicate variants
+              rainfallFormat_Allele1 <- cbind(sample, chr, start, stop, refAllele, variantAllele1)
+              rainfallFormat_Allele2 <- cbind(sample, chr, start, stop, refAllele, variantAllele2)
+              colnames(rainfallFormat_Allele1) <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
+              colnames(rainfallFormat_Allele2) <- c("sample", "chromosome", "start", "stop", "refAllele", "variantAllele")
+              rainfallFormat <- data.table::rbindlist(list(rainfallFormat_Allele1, rainfallFormat_Allele2))
+              
+              # Remove cases where there is not change between reference and variant
+              rainfallFormat$refAllele <- as.character(rainfallFormat$refAllele)
+              rainfallFormat$variantAllele <- as.character(rainfallFormat$variantAllele)
+              alleleMatchIndex <- rainfallFormat$refAllele == rainfallFormat$variantAllele
+              rainfallFormat <- rainfallFormat[!alleleMatchIndex,]
+              if(verbose){
+                  memo <- paste("Removed", length(alleleMatchIndex), "entries",
+                                "where the reference allele matched the tumor allele")
+                  message(memo)
+              }
+              
+              # unique, to make sure no duplicate variants exist to throw off the counts
+              rowCountOrig <- nrow(rainfallFormat)
+              rainfallFormat <- unique(rainfallFormat)
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Removed", rowCountOrig - nrow(rainfallFormat),
+                                "rows from the data which harbored duplicate",
+                                "genomic locations")
+                  message(memo)
+              }
+              
+              # make sure no duplicate genomic locations exist to throw off the mutation distance calculation
+              dupCoordIndex <- duplicated(rainfallFormat[,c("sample", "chromosome", "start")])
+              if(sum(dupCoordIndex) > 0){
+                  rowCountOrig <- nrow(rainfallFormat)
+                  rainfallFormat <- rainfallFormat[!dupCoordIndex,]
+                  memo <- paste("Removed", rowCountOrig-nrow(rainfallFormat), "entries with identical",
+                                "start coordinates")
+                  warning(memo)
+              }
+              
+              # create a flag column for where these entries came from
+              rainfallFormat$origin <- 'mutation'
+              
+              # make sure everything is of the proper type
+              rainfallFormat$sample <- factor(rainfallFormat$sample, levels=unique(rainfallFormat$sample))
+              rainfallFormat$chromosome <- factor(rainfallFormat$chromosome, levels=unique(rainfallFormat$chromosome))
+              rainfallFormat$start <- as.integer(rainfallFormat$start)
+              rainfallFormat$stop <- as.integer(rainfallFormat$stop)
+              rainfallFormat$refAllele <- factor(rainfallFormat$refAllele, levels=unique(rainfallFormat$refAllele))
+              rainfallFormat$variantAllele <- factor(rainfallFormat$variantAllele, levels=unique(rainfallFormat$variantAllele))
+              
+              return(rainfallFormat)
           })

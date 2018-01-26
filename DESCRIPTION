@@ -1,6 +1,6 @@
 Package: GenVisR
 Title: Genomic Visualizations in R
-Version: 1.4.9
+Version: 1.10.0
 Authors@R: c(person(given="Zachary", family="Skidmore", email="zlskidmore@gmail.com",
           role=c("aut", "cre")), person(given="Alex", family="Wagner", role="aut"),
           person(given="Robert", family="Lesurf", role="aut"), person(given="Katie",
@@ -13,7 +13,7 @@ Description: Produce highly customizable publication quality graphics for
     genomic data primarily at the cohort level.
 Depends: R (>= 3.3.0), methods
 Imports: AnnotationDbi, biomaRt, BiocGenerics, Biostrings, DBI, FField, GenomicFeatures,
-         GenomicRanges (>= 1.25.4), ggplot2 (>= 2.1.0), grid, gridExtra, gtable, gtools,
+         GenomicRanges (>= 1.25.4), ggplot2 (>= 2.1.0), grid, gridExtra (>= 2.0.0), gtable, gtools,
          IRanges (>= 2.7.5), plyr (>= 1.8.3), reshape2, Rsamtools, scales, stats,
          utils, viridis, data.table, BSgenome, grDevices, GenomeInfoDb
 License: GPL-3 + file LICENSE
@@ -21,14 +21,14 @@ BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification, DNASeq
 LazyData: true
 Suggests: BiocStyle, BSgenome.Hsapiens.UCSC.hg19, knitr, RMySQL, roxygen2,
-            testthat, TxDb.Hsapiens.UCSC.hg19.knownGene, rmarkdown
+            testthat, TxDb.Hsapiens.UCSC.hg19.knownGene, rmarkdown, vdiffr, formatR
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1.9000
 NeedsCompilation: no
 Author: Zachary Skidmore [aut, cre], Alex Wagner [aut], Robert Lesurf [aut],
     Katie Campbell [aut], Jason Kunisaki [aut], Obi Griffith [aut], Malachi Griffith
     [aut]
-Collate: 
+Collate:
     'AllGenerics.R'
     'Clinical-class.R'
     'GMS_Virtual-class.R'
@@ -44,6 +44,7 @@ Collate:
     'MutationAnnotationFormat_v2.2-class.R'
     'MutationAnnotationFormat_v2.3-class.R'
     'MutationAnnotationFormat_v2.4-class.R'
+    'Rainfall-class.R'
     'VEP_Virtual-class.R'
     'VEP-class.R'
     'VEP_v88-class.R'

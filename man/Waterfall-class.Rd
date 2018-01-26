@@ -27,7 +27,9 @@ all samples in "input" not specified with this parameter are removed.}
 
 \item{coverage}{Integer specifying the size in base pairs of the genome
 covered by sequence data from which mutations could be called. Required for
-the mutation burden sub-plot (see details and vignette).}
+the mutation burden sub-plot (see details and vignette). Optionally a named 
+vector of integers corresponding to each sample can be supplied for more accurate
+calculations.}
 
 \item{mutation}{Character vector specifying mutations to keep, if defined
 mutations not supplied are removed from the main plot.}
@@ -74,8 +76,8 @@ simplified or complex tally of genes respectively.}
 \item{gridOverlay}{Boolean specifying if a grid should be overlayed on the
 waterfall plot.}
 
-\item{drop}{Boolean specifying if unused mutations should be dropped from the
-legend.}
+\item{drop}{Boolean specifying if mutations not in the main plot should be dropped from the
+legend. If FALSE the legend will be based on mutations in the data before any subsets occur.}
 
 \item{labelSize}{Integer specifying the size of label text}
 
@@ -97,8 +99,6 @@ should sum to one. Expects a value for each section.}
 }
 \description{
 An S4 class for the waterfall plot object
-
-Constructor for the Waterfall class.
 }
 \section{Slots}{
 
@@ -128,7 +128,7 @@ names gene, mutation, count.}
 \item{\code{ClinicalData}}{data.table object stroring the data used to plot the
 clinical sub-plot.}
 
-\item{\code{MutationHierarchy}}{data.table object storing the hierarchy of mutation
+\item{\code{mutationHierarchy}}{data.table object storing the hierarchy of mutation
 type in order of most to least important and the mapping of mutation type to
 color. Should have column names mutation, color, and label.}
 }}

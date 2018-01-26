@@ -5,9 +5,7 @@
 \name{getHeader}
 \alias{getHeader}
 \alias{getHeader,VEP_Virtual-method}
-\alias{getHeader}
 \alias{getHeader,VEP-method}
-\alias{getHeader}
 \title{Method getHeader}
 \usage{
 getHeader(object, ...)

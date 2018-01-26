@@ -127,7 +127,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
     {
         sample_sorted <- levels(x$sample)
     } else {
-        sample_sorted <- as.vector(unique(CN_data$sample))
+        sample_sorted <- as.vector(unique(as.character(CN_data$sample)))
         sample_sorted <- gtools::mixedsort(sample_sorted)
     }
     CN_data$sample <- factor(CN_data$sample, levels=sample_sorted)

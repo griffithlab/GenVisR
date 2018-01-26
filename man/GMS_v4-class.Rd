@@ -15,8 +15,6 @@ to the version 4 specifications.}
 \description{
 An S4 class to represent data in gms annotation version 4,
 inherits from the GMS_Virtual class.
-
-Constructor for the GMS_v4 sub-class
 }
 \section{Slots}{
 

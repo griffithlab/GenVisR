@@ -2,10 +2,10 @@
 ##################### Public/Private Class Definitions #########################
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Public Class !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
-#' Class LOH
+#' Class lohSpec
 #' 
 #' An S4 class for the lohSpec plot object
-#' @name lohSpec-class
+#' @name lohSpec
 #' @rdname lohSpec-class
 #' @slot lohFreq_plot gtable object for the lohFreq plot
 #' @slot lohSpec_plot gtable object for the lohSpec plot
@@ -20,7 +20,7 @@ setClass(
     representation=representation(lohFreq_plot="gtable",
                                   lohSpec_plot="gtable",
                                   Grob="gtable",
-                                  lohData="lohData"),
+                                  lohData="data.table"),
     validity = function(object) {
         
     }
@@ -31,9 +31,10 @@ setClass(
 #' @name lohSpec
 #' @rdname lohSpec-class
 #' @param input Object of class VarScan.
-#' @param Character vector specifying the chromosomes of interest.
 #' @param samples Character vector specifying samples to plot. If not NULL
 #' all samples in "input" not specified with this parameter are removed.
+#' @param chromosomes Character vector specifying chromosomes to plot. If not NULL
+#' all chromosomes in "input" not specified with this parameter are removed.
 #' @param BSgenome Object of class BSgenome to extract genome wide chromosome 
 #' coordinates
 #' @param step Integer value specifying the step size (i.e. the number of base
@@ -45,43 +46,15 @@ setClass(
 #' calcualting average LOH difference. Defaults to .50\% if FALSE. 
 #' If TRUE, will use average normal VAF in each individual sample as value 
 #' to calculate LOH.
-## Input parameters
 
-library(data.table)
-library(BSgenome)
-library(DNAcopy)
-library(ggplot2)
-
-lohSpec <- function(input, chromosomes="autosomes", samples=NULL, 
+lohSpec <- function(input, lohSpec=TRUE, chromosomes="autosomes", samples=NULL, 
                     BSgenome=BSgenome, step=1000000, windowSize=2500000, 
                     normal=FALSE, gradientMidpoint=.2, gradientColors=c("#ffffff", "#b2b2ff", "#000000"),
                     plotAType="proportion", plotALohCutoff=0.2, plotAColor="#98F5FF",
-                    plotALayers=NULL, plotBLayers=NULL, sectionHeights=c(0.25, 0.75), verbose){
-    input <- VarScanFormat(path = "~/Desktop/hcc_loh_all_samples.txt")
-    chromosomes <- "autosomes"
-    samples <- as.character(unique(input@sample$sample))
-    BSgenome <- getBSgenome(genome = "BSgenome.Hsapiens.UCSC.hg19")
-    step=1000000
-    windowSize=2500000
-    normal=FALSE
-    gradientMidpoint=.2
-    gradientColors <- c("#ffffff", "#b2b2ff", "#000000")
-    plotALayers=list(theme(axis.title.x=element_blank()), 
-                     theme(axis.title.y=element_text(size = 15)),
-                     theme(axis.text.y=element_text(size=12)),
-                     theme(strip.text.x=element_text(size=15)), 
-                     ylab("Proportion"))
-    plotAType ="proportion"
-    plotALohCutoff=0.1
-    plotAColor="#98F5FF"
-    plotBLayers=list(theme(strip.text.x=element_blank()), 
-                     theme(legend.title=element_blank()), theme(legend.text=element_text(size=12)),
-                     theme(axis.title.x=element_text(size=15)), 
-                     theme(strip.text.y=element_text(angle=0, size=15)), theme(axis.title.y=element_text(size=15)))
-    sectionHeights <- c(0.25, 0.75)
-    verbose <- TRUE
+                    plotALayers=NULL, plotBLayers=NULL, sectionHeights=c(0.25, 0.75), verbose=FALSE){
+   
     ## Calculate all data for plots
-    lohDataset <- lohData(object=input, chromosomes=chromosomes, samples=samples, 
+    lohDataset <- lohData(object=input, lohSpec=lohSpec, chromosomes=chromosomes, samples=samples, 
                         BSgenome=BSgenome, step=step, plotALohCutoff=plotALohCutoff,
                         windowSize=windowSize, normal=normal, verbose=verbose)
     
@@ -97,8 +70,8 @@ lohSpec <- function(input, chromosomes="autosomes", samples=NULL,
                             verbose=verbose)
 
     ## Initialize the object
-    new("lohSpec", lohFreq_plot=lohFreqPlot, lohSpec_plot=lohSpecPlot, 
-        lohData=lohDataset, Grob=Grob)
+    new("lohSpec", lohFreq_plot=getGrob(plots, index=1), lohSpec_plot=getGrob(plots, index=2), 
+        lohData=getData(lohDataset, name="primaryData"), Grob=Grob)
 }
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
 
@@ -123,11 +96,12 @@ setClass("lohData",
 #' @name lohData
 #' @rdname lohData-class
 #' @param object Object of class VarScan 
-lohData <- function(object, chromosomes, samples, BSgenome, step, windowSize, 
+lohData <- function(object, lohSpec, chromosomes, samples, BSgenome, step, windowSize, 
                     normal,  plotALohCutoff, verbose) {
 
     ## Obtain LOH data for desired chromosomes and samples
-    primaryData <- getLohData(object=object, verbose=verbose)
+    primaryData <- getLohData(object=object, verbose=verbose, lohSpec=TRUE, 
+                              germline=FALSE)
     
     ## Subset data to only the desired chromosomes to be plotted
     primaryData <- chrSubset(object=primaryData, chromosomes=chromosomes, 
@@ -209,6 +183,104 @@ lohSpecPlots <- function(object, plotALohCutoff, plotAType, plotAColor,
 ################################################################################
 ###################### Accessor function definitions ###########################
 
+#' Helper function to get data from classes
+#' 
+#' @rdname getData-methods
+#' @aliases getData
+.getData_lohSpec <- function(object, name=NULL, index=NULL, ...) {
+    if(is.null(name) & is.null(index)){
+        memo <- paste("Both name and index are NULL, one must be specified!")
+        stop(memo)
+    }
+    
+    if(is.null(index)){
+        index <- 0
+    } else {
+        if(index > 1){
+            memo <- paste("index out of bounds")
+            stop(memo)
+        }
+    }
+    
+    if(is.null(name)){
+        name <- "noMatch"
+    } else {
+        slotAvailableName <- c("primaryData")
+        if(!(name %in% slotAvailableName)){
+            memo <- paste("slot name not found, specify one of:", toString(slotAvailableName))
+            stop(memo)
+        }
+    }
+    
+    if(name == "primaryData" | index == 1){
+        data <- object@lohData
+    }
+    
+    return(data)
+}
+
+#' @rdname getData-methods
+#' @aliases getData
+setMethod(f="getData",
+          signature="lohData",
+          definition=.getData_lohSpec)
+
+#' @rdname getData-methods
+#' @aliases getData
+setMethod(f="getData",
+          signature="lohSpec",
+          definition=.getData_lohSpec)
+
+#' Helper function to extract grobs from objects
+#'
+#' @rdname getGrob-methods
+#' @aliases getGrob
+#' @noRd
+.getGrob_lohSpec <- function(object, index=1, ...){
+    browser()
+    if(index == 1){
+        grob <- object@lohFreq_plot
+    } else if(index == 2) {
+        grob <- object@lohSpec_plot
+    } else if (index == 3) {
+        grob <- object@Grob
+    } else {
+        stop("Subscript out of bounds") 
+    }
+    return(grob)
+}
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+setMethod(f="getGrob",
+          signature="lohSpecPlots",
+          definition=.getGrob_lohSpec)
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+setMethod(f="getGrob",
+          signature="lohSpec",
+          definition=.getGrob_lohSpec)
+
+
+#' @rdname drawPlot-methods
+#' @aliases drawPlot
+#' @importFrom grid grid.draw
+#' @importFrom grid grid.newpage
+#' @exportMethod drawPlot
+setMethod(
+    f="drawPlot",
+    signature="lohSpec",
+    definition=function(object, ...){
+        mainPlot <- getGrob(object, index=3)
+        grid::grid.newpage()
+        grid::grid.draw(mainPlot)
+    }
+)
+
+################################################################################
+###################### Method function definitions #############################
+
 ######################################################
 ##### Function to obtain chromosomes of interest #####
 #' @rdname getLohData-methods
@@ -241,6 +313,23 @@ setMethod(f="chrSubset",
                                 specifying which chromosomes to plot, 
                                 attempting to coerce...")
                   warning(memo)
+                  chromosomes <- as.character(chromosomes)
+              }
+              
+              ## Check format of the chromosome column
+              if (!all(grepl("^chr", object$chromosome))) {
+                  memo <- paste0("Did not detect the prefix chr in the chromosome column",
+                                 "of x... adding prefix")
+                  message (memo)
+                  object$chromosome <- paste("chr", object$chromosome, sep="")
+              } else if (all(grepl("^chr", object$chromosome))) {
+                  memo <- paste0("Detected chr in the chromosome column of x...",
+                                 "proceeding")
+                  message(memo)
+              } else {
+                  memo <- paste0("Detected unknown or mixed prefixes in the chromosome",
+                                 " colum of object... should either be chr or non (i.e.) chr1 or 1")
+                  message(memo)
               }
               
               ## Determine which chromosomes to plot
@@ -627,12 +716,12 @@ setMethod(f = "getLohStepCalculation",
 #############################################################
 ##### Function to generate segmentation dataset for loh #####
 #' @rdname getLohSegmentation-methods
-#' @param object of class lohData
+#' @param object of class data.table
 #' @param chrData of class data.table 
 #' @aliases getLohSegmentation
 setMethod(f = "getLohSegmentation", 
           signature="data.table",
-          definition=function(object, chrData, ...){
+          definition=function(object, ...){
               
               ## Print status message
               if (verbose) {
@@ -669,6 +758,48 @@ setMethod(f="getLohFreq",
               x <- object[,c("chrom", "loc.start", 
                                                  "loc.end", "seg.mean", "ID")]
               colnames(x) <- c("chromosome", "start", "end", "segmean", "sample")
+              
+              ## Remove any NA values in the data
+              if (any(is.na(x))) {
+                  na_rows_removed <- nrow(x) - nrow(na.omit(x))
+                  memo <- paste0("Removing", na_rows_removed, " rows containing NA values")
+                  message(memo)
+                  x <- na.omit(x)
+              }
+              
+              ## Make sure windows are consistent, if not disjoin them
+              tmp <- split(x, x$sample)
+              tmp_vec <- tmp[[1]]$end
+              if (any(!unlist(sapply(tmp, function(x) x[,"end"] %in% tmp_vec), use.names=F))) {
+                  memo <- paste0("Did not detect identical genomic segments for all samples",
+                                 " ...Performing disjoin operation")
+                  message(memo) 
+                  # here we split the DF up in an attempt to avoid complaints that lists are to large 
+                  split_df <- split(x, f=x$chromosome)
+                  x <- rbindlist(lapply(split_df, function(x) {
+                      # Create the Granges object for the data
+                      granges <- GenomicRanges::GRanges(seqnames=x$chromosome,
+                                                  ranges=IRanges::IRanges(start=x$start, end=x$end),
+                                                  "sample"=x$sample, "segmean"=x$segmean)
+                      
+                      # disjoin with grange, get a mapping of meta columns and expand it
+                      disJoint <- GenomicRanges::disjoin(granges, with.revmap=TRUE)
+                      revmap <- GenomicRanges::mcols(disJoint)$revmap
+                      disJoint <- rep(disJoint, lengths(revmap))
+                      
+                      # exract the meta columns and map them back to the disJoint GRanges object
+                      sample <- unlist(IRanges::extractList(GenomicRanges::mcols(granges)$sample, revmap))
+                      segmean <- unlist(IRanges::extractList(GenomicRanges::mcols(granges)$segmean, revmap))
+                      GenomicRanges::mcols(disJoint)$sample <- sample
+                      GenomicRanges::mcols(disJoint)$segmean <- segmean
+                      
+                      # convert the GRanges Object back to a data table
+                      disJoint <- as.data.table(disJoint)[,c("seqnames", "start", "end", "width",
+                                                         "sample", "segmean")]
+                      colnames(disJoint) <- c("chromosome", "start", "end", "width", "sample", "segmean")
+                      return(disJoint)
+                  }))
+              }
               
               ## Calculate columns of observed LOH and observed samples in the 
               ## cohort for each segment
@@ -769,7 +900,7 @@ setMethod(f = "buildLohFreq",
                                                             ymin=0,
                                                             ymax='gain')) +
                   geom_rect(fill=plotAColor) + scale_x_continuous(expand=c(0,0)) + 
-                  scale_y_continuous(expand=c(0,0))
+                  scale_y_continuous(expand=c(0,0), limits=c(0,1))
               
               p1 <- p1 + geom_hline(aes(yintercept=0), linetype="dotted")
               

@@ -39,7 +39,7 @@ cnFreq_buildMain <- function(x, plotType, dummy_data, plot_title=NULL,
                    axis.title.y=element_text(size=y_lab_size, face='bold'),
                    panel.grid.major.x=element_blank(),
                    panel.grid.minor.x=element_blank())
-    facet <- facet_grid(. ~ chromosome, scales='free', space='free')
+    facet <- facet_grid(. ~ chromosome, scales = "free_x", space = "fixed")
     xlabel <- xlab('Chromosomes')
     
     # Choose whether to plot aesthetics for proportion or frequency
@@ -80,6 +80,7 @@ cnFreq_buildMain <- function(x, plotType, dummy_data, plot_title=NULL,
     p1 <- p1 + geom_hline(aes(yintercept=0), linetype="dotted")
 
     # build the plot
+    ylabel <- ylab("Proportion")
     p1 <- p1 + ylabel + xlabel + facet + theme_bw() + theme
 
     # if there are other layers, add them

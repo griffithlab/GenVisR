@@ -133,8 +133,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       section_heights)
 {
     
-    message("This function has been deprecated in order to implement an object oriented programming style! Please use Waterfall() with a capital W instead!")    
-    
+    message("This function has been deprecated in order to implement an object oriented programming style! Please use Waterfall() with a capital W instead!")
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
                                label_col=mainLabelCol)

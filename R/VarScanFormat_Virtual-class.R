@@ -3,7 +3,7 @@
 
 #' Class VarScanFormat_Virtual
 #' 
-#' An S4 class to act as a virtual class for MutationAnnotationFormat version sub-classes.
+#' An S4 class to act as a virtual class for VarScanFormat version sub-classes.
 #' @name VarScanFormat_Virtual-class
 #' @rdname VarScanFormat_Virtual-class
 #' @slot varscan data.table object holding varscan data.
@@ -24,6 +24,15 @@ setClass(
 #' @rdname getVarScan-methods
 #' @aliases getVarScan
 setMethod(f="getVarScan",
+          signature="VarScanFormat_Virtual",
+          definition=function(object, ...){
+              varscan <- object@varscan
+              return(varscan)
+          })
+
+#' @rdname getCnvData-methods
+#' @aliases getCnvData
+setMethod(f="getCnvData",
           signature="VarScanFormat_Virtual",
           definition=function(object, ...){
               varscan <- object@varscan

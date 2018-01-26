@@ -45,7 +45,7 @@ of interest.}
 of the track labels.}
 
 \item{label_txtFill}{Character string specifying the desired text colour of
-the rack labels.}
+the track labels.}
 
 \item{label_borderFill}{Character string specifying the desired border colour
 of the track labels.}

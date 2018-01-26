@@ -119,6 +119,14 @@ GMS <- function(path, data=NULL, version=4, verbose=FALSE){
 ################################################################################
 ###################### Accessor function definitions ###########################
 
+#' @rdname writeData-methods
+#' @aliases writeData
+setMethod(f="writeData",
+          signature="GMS",
+          definition=function(object, file, ...){
+              writeData(object@gmsObject, file, sep="\t")
+          })
+
 #' @rdname getVersion-methods
 #' @aliases getVersion
 setMethod(f="getVersion",
@@ -184,7 +192,6 @@ setMethod(
 setMethod(f="toWaterfall",
           signature="GMS",
           definition=function(object, hierarchy, labelColumn, verbose, ...){
-              
               # print status message
               if(verbose){
                   memo <- paste("Converting", class(object),
@@ -192,30 +199,33 @@ setMethod(f="toWaterfall",
                   message(memo)
               }
               
-              # grab the mutation hierarchy
-              hierarchy <- hierarchy@MutationHierarchy
-              
               # grab the sample, mutation, gene columns and set a label
-              sample <- object@gmsObject@sample
-              mutation <- object@gmsObject@mutation[,"trv_type"]
-              gene <- object@gmsObject@meta[,"gene_name"]
+              sample <- getSample(object)
+              mutation <- getMutation(object)[,"trv_type"]
+              gene <- getMeta(object)[,"gene_name"]
               label <- NA
+              labelFlag <- TRUE
               
               # if a label column exists and is proper overwrite the label variable
+              # if not change the flag
               if(!is.null(labelColumn)){
                   if(length(labelColumn) != 1) {
                       memo <- paste("Parameter \"labelColumn\" must be of length 1!",
                                     "Found length to be", length(labelColumn))
                       warning(memo)
-                      next
-                  } else if(labelColumn %in% colnames(object@gmsObject@meta)){
+                      labelFlag <- FALSE
+                  }
+                  
+                  if(!labelColumn %in% colnames(getMeta(object))){
                       memo <- paste("Did not find column:", labelColumn,
-                                    "in the meta slot of the gmsObject! Valid",
-                                    "names are:", colnames(getMeta(object)))
+                                    "in the meta slot of the vepObject! Valid",
+                                    "names are:", toString(colnames(getMeta(object))))
                       warning(memo)
-                      next
-                  } else {
-                      label <- object@gmsObject@meta[,labelColumn]
+                      labelFlag <- FALSE
+                  }
+                  
+                  if(labelFlag){
+                      label <- getMeta(object)[,labelColumn, with=FALSE]
                   }
               }
               
@@ -225,18 +235,20 @@ setMethod(f="toWaterfall",
               
               # make a temporary ID column for genomic features to collapse on
               # this will ensure the mutation burden/frequency plot will be accurate
-              waterfallFormat$key <- paste0(object@gmsObject@position$chromosome_name, ":",
-                                            object@gmsObject@position$start, ":",
-                                            object@gmsObject@position$stop, ":",
-                                            object@gmsObject@mutation$reference, ":",
-                                            object@gmsObject@mutation$variant, ":",
-                                            object@gmsObject@sample$sample)
+              waterfallFormat$key <- paste0(getPosition(object)$chromosome_name, ":",
+                                            getPosition(object)$start, ":",
+                                            getPosition(object)$stop, ":",
+                                            getPosition(object)$reference, ":",
+                                            getPosition(object)$variant, ":",
+                                            getSample(object)$sample,
+                                            getMeta(object)$gene_name)
               rowCountOrig <- nrow(waterfallFormat)
 
               # order the data based on the mutation hierarchy,
               # remove all duplicates based on key, and remove the key column
               waterfallFormat$mutation <- factor(waterfallFormat$mutation, levels=hierarchy$mutation)
               waterfallFormat <- waterfallFormat[order(waterfallFormat$mutation),]
+              ## STOP HERE
               waterfallFormat <- waterfallFormat[!duplicated(waterfallFormat$key),]
               waterfallFormat[,key:=NULL]
 
@@ -297,16 +309,13 @@ setMethod(f="setMutationHierarchy",
                   mutationHierarchy <- data.table::setDT(mutationHierarchy)
               }
               
-              # check for the correct columns and make sure they are character vectors
-              correctCol <- c("mutation", "color")
-              if(!all(correctCol %in% colnames(mutationHierarchy))){
-                  missingCol <- correctCol[!correctCol %in% colnames(mutationHierarchy)]
+              # check for the correct columns
+              if(!all(colnames(mutationHierarchy) %in% c("mutation", "color"))){
+                  missingCol <- colnames(mutationHierarchy)[!c("mutation", "color") %in% colnames(mutationHierarchy)]
                   memo <- paste("The correct columns were not found in",
                                 "mutationHierarchy, missing", toString(missingCol))
                   stop(memo)
               }
-              mutationHierarchy$color <- as.character(mutationHierarchy$color)
-              mutationHierarchy$mutation <- as.character(mutationHierarchy$mutation)
               
               # check that all mutations are specified
               if(!all(object@gmsObject@mutation$trv_type %in% mutationHierarchy$mutation)){
@@ -325,6 +334,7 @@ setMethod(f="setMutationHierarchy",
               
               # add in a pretty print mutation labels
               mutationHierarchy$label <- gsub("_", " ", mutationHierarchy$mutation)
+              mutationHierarchy$label <-  gsub("'", "' ", mutationHierarchy$label)
               
               # check for duplicate mutations
               if(any(duplicated(mutationHierarchy$mutation))){
@@ -333,6 +343,10 @@ setMethod(f="setMutationHierarchy",
                                 "was duplicated in the supplied mutationHierarchy!")
                   mutationHierarchy <- mutationHierarchy[!duplicated(mutationHierarchy$mutation),]
               }
+              
+              # ensure columns are of the proper type
+              mutationHierarchy$color <- as.character(mutationHierarchy$color)
+              mutationHierarchy$mutation <- as.character(mutationHierarchy$mutation)
               
               # print status message
               if(verbose){
@@ -349,6 +363,7 @@ setMethod(f="setMutationHierarchy",
 #' @aliases toMutSpectra
 #' @param object Object of class GMS
 #' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom data.table rbindlist
 #' @noRd
 setMethod(f="toMutSpectra",
           signature="GMS",
@@ -395,8 +410,81 @@ setMethod(f="toMutSpectra",
                   message(memo)
               }
               
+              # Remove cases where there is not change between reference and variant
+              mutSpectraFormat$refAllele <- as.character(mutSpectraFormat$refAllele)
+              mutSpectraFormat$variantAllele <- as.character(mutSpectraFormat$variantAllele)
+              alleleMatchIndex <- mutSpectraFormat$refAllele == mutSpectraFormat$variantAllele
+              mutSpectraFormat <- mutSpectraFormat[!alleleMatchIndex,]
+              if(verbose){
+                  memo <- paste("Removed", length(alleleMatchIndex), "entries",
+                                "where the reference allele matched the tumor allele")
+                  message(memo)
+              }
+              
               # convert appropriate columns to factor
               mutSpectraFormat$sample <- factor(mutSpectraFormat$sample)
               
               return(mutSpectraFormat)
           })
+
+#' @rdname toRainfall-methods
+#' @aliases toRainfall
+#' @param object Object of class GMS
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+setMethod(f="toRainfall",
+          signature="GMS",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("converting", class(object), "to expected Rainfall format")
+                  message(memo)
+              }
+              
+              # grab the sample, position, and mutation columns
+              sample <- getSample(object)
+              chromosome <- getPosition(object)$chromosome_name
+              start <- getPosition(object)$start
+              stop <- getPosition(object)$stop
+              refAllele <- as.character(getMutation(object)$reference)
+              varAllele <- as.character(getMutation(object)$variant)
+              
+              # combine all the relevant data into a single data table
+              rainfallFormat <- cbind(sample, chromosome, start, stop, refAllele, variantAllele)
+              
+              # remove cases where a mutation does not exist
+              rowCountOrig <- nrow(rainfallFormat)
+              rainfallFormat <- rainfallFormat[rainfallFormat$refAllele != rainfallFormat$variantAllele,]
+              if(rowCountOrig != nrow(rainfallFormat)){
+                  memo <- paste("Removed", rowCountOrig - nrow(rainfallFormat),
+                                "entries where the reference matches the variant")
+                  warning(memo)
+              }
+              
+              # remove mutations at duplicate genomic mutation as this could artifically increase
+              # the density of mutations
+              rowCountOrig <- nrow(rainfallFormat)
+              rainfallFormat <- rainfallFormat[!duplicated(rainfallFormat[,c("sample", "chromosome", "start", "stop")]),]
+              if(rowCountOrig != nrow(rainfallFormat)){
+                  memo <- paste("Removed", rowCountOrig - nrow(rainfallFormat),
+                                "entries with duplicate genomic positions")
+                  warning(memo)
+              }
+              
+              # create a flag column for where these entries came from
+              rainfallFormat$origin <- 'mutation'
+              
+              # make sure everything is of the proper type
+              rainfallFormat$sample <- factor(rainfallFormat$sample, levels=unique(rainfallFormat$sample))
+              rainfallFormat$chromosome <- factor(rainfallFormat$chromosome, levels=unique(rainfallFormat$chromosome))
+              rainfallFormat$start <- as.integer(rainfallFormat$start)
+              rainfallFormat$stop <- as.integer(rainfallFormat$stop)
+              rainfallFormat$refAllele <- factor(rainfallFormat$refAllele, levels=unique(rainfallFormat$refAllele))
+              rainfallFormat$variantAllele <- factor(rainfallFormat$variantAllele, levels=unique(rainfallFormat$variantAllele))
+              
+              # return the standardized format
+              return(rainfallFormat)
+          })
+
+

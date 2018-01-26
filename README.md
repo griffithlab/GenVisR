@@ -21,6 +21,17 @@ Development for GenVisR occurs on the griffith lab github repository available [
 
 We also encourage users to report bugs and suggest enhancements to GenVisR on the github issue page available [here](https://github.com/griffithlab/GenVisR/issues):
 
+To install the latest development version of GenVisR (not recommended for most users):
+
+```R
+# install and load devtools package
+install.packages("devtools")
+library(devtools)
+
+# install GenVisR from github
+install_github("griffithlab/GenVisR")
+```
+
 ### Vignettes
 
 Documentation for GenVisR can be found on the bioconductor landing page in the form of vignettes available here [GenVisR](http://bioconductor.org/packages/GenVisR/). Tutorials can also be found on biostars.org. Vignettes can also be viewed from within R.

@@ -23,8 +23,6 @@ reading in the VEP files.}
 }
 \description{
 An S4 class for Variant Effect Predictor input.
-
-Constructor for the VEP container class.
 }
 \details{
 When specifying a path to a VEP annotation file the option exist to

@@ -58,3 +58,16 @@ setMethod(f="getMeta",
               meta <- object@meta
               return(meta)
           })
+
+################################################################################
+####################### Method function definitions ############################
+
+#' @rdname writeData-methods
+#' @aliases writeData,MutationAnnotationFormat_Virtual
+#' @importFrom data.table fwrite
+setMethod(f="writeData",
+          signature="MutationAnnotationFormat_Virtual",
+          definition=function(object, file, sep, ...){
+              data.table::fwrite(cbind(object@position, object@mutation, object@sample,
+                                       object@meta), file=file, sep=sep, na=NA)
+          })

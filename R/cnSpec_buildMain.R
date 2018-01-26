@@ -30,6 +30,8 @@ cnSpec_buildMain <- function(data_frame, dummy_data, plot_title=NULL,
                              layers=NULL, CNscale="absolute")
 {
     CN_data <- data_frame
+    order <- gtools::mixedsort(as.character(unique(CN_data$sample)))
+    CN_data$sample <- factor(as.character(CN_data$sample), levels=order)
     dummy_data <- dummy_data
 
     # Define Theme of plot
@@ -42,7 +44,7 @@ cnSpec_buildMain <- function(data_frame, dummy_data, plot_title=NULL,
                    axis.title.y=element_text(size=y_lab_size, face='bold'))
 
     # Define parameters of plot
-    facet <- facet_grid(sample ~ chromosome, scales='free', space='free')
+    facet <- facet_grid(sample ~ chromosome, scales = "free_x", space = "fixed")
     if(CNscale == "absolute")
     {
         fill_gradient <- scale_fill_gradientn("Copy Number",
@@ -99,6 +101,7 @@ cnSpec_buildMain <- function(data_frame, dummy_data, plot_title=NULL,
     {
         p1 <- p1 + title
     }
+    print(p1)
 
     return(p1)
 }

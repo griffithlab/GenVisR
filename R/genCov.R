@@ -26,7 +26,7 @@
 #' @param label_bgFill Character string specifying the desired background colour
 #' of the track labels.
 #' @param label_txtFill Character string specifying the desired text colour of
-#' the rack labels.
+#' the track labels.
 #' @param label_borderFill Character string specifying the desired border colour
 #' of the track labels.
 #' @param label_txtSize Integer specifying the size of the text within the track

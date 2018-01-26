@@ -260,9 +260,12 @@ setGeneric(
 #' @name getData
 #' @rdname getData-methods
 #' @param object Object of class Clinical, 
+#' @param name String corresponding to the slot for which to extract data from.
+#' @param index Integer specifying the slot for which to extract data from.
 #' @param ... additional arguments to passed
 #' @details The getData method is an accessor function used to access data held
 #' in GenVisR objects.
+#' @exportMethod getData
 setGeneric(
     name="getData",
     def=function(object, ...){standardGeneric("getData")}
@@ -471,6 +474,7 @@ setGeneric(
 #' @name getGrob
 #' @rdname getGrob-methods
 #' @param object Object of clas MutSpectra
+#' @param index integer specifying the plot index to extract
 #' @param ... additional arguments to passed
 #' @exportMethod getGrob
 setGeneric(
@@ -546,6 +550,46 @@ setGeneric(
 #' @rdname annoGenomeCoord-methods
 #' @param object Object of class VarScanFormat
 #' @param ... additional arguments to passed
+
+#' Method toRainfall
+#'
+#' @name toRainfall
+#' @rdname toRainfall-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="toRainfall",
+    def=function(object, ...){standardGeneric("toRainfall")}
+)
+
+#' Method annoRainfall
+#'
+#' @name annoRainfall
+#' @rdname annoRainfall-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="annoRainfall",
+    def=function(object, ...){standardGeneric("annoRainfall")}
+)
+
+#' Method calcMutDist
+#'
+#' @name calcMutDist
+#' @rdname calcMutDist-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="calcMutDist",
+    def=function(object, ...){standardGeneric("calcMutDist")}
+)
+
+#' Method annoGenomeCoord
+#'
+#' @name annoGenomeCoord
+#' @rdname annoGenomeCoord-methods
+#' @param ... additional arguments to passed
+#' @noRd
 setGeneric(
     name="annoGenomeCoord",
     def=function(object, ...){standardGeneric("annoGenomeCoord")}
@@ -659,4 +703,124 @@ setGeneric(
 setGeneric(
     name="sampleSubset",
     def=function(object, ...){standardGeneric("sampleSubset")}
+)
+#' Method chrSubset
+#'
+#' @name chrSubset
+#' @rdname chrSubset-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="chrSubset",
+    def=function(object, ...){standardGeneric("chrSubset")}
+)
+
+#' Method highlightSampleData
+#'
+#' @name formatSample
+#' @rdname formatSample-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="formatSample",
+    def=function(object, ...){standardGeneric("formatSample")}
+)
+
+#' Method buildRainfallPlot
+#'
+#' @name buildRainfallPlot
+#' @rdname buildRainfallPlot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="buildRainfallPlot",
+    def=function(object, ...){standardGeneric("buildRainfallPlot")}
+)
+
+#' Method buildDensityPlot
+#'
+#' @name buildDensityPlot
+#' @rdname buildDensityPlot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="buildDensityPlot",
+    def=function(object, ...){standardGeneric("buildDensityPlot")}
+)
+
+#' Method arrangeRainfallPlot
+#'
+#' @name arrangeRainfallPlot
+#' @rdname arrangeRainfallPlot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="arrangeRainfallPlot",
+    def=function(object, ...){standardGeneric("arrangeRainfallPlot")}
+)
+
+#' Method getCnvData
+#' 
+#' @name getCnvData
+#' @rdname getCnvData-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="getCnvData",
+    def=function(object, ...){standardGeneric("getCnvData")}
+)
+
+#' Method getCnSegmentation
+#' 
+#' @name getCnSegmentation
+#' @rdname getCnSegmentation-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="getCnSegmentation",
+    def=function(object, ...){standardGeneric("getCnSegmentation")}
+)
+
+#' Method buildCnPlot
+#' 
+#' @name buildCnPlot
+#' @rdname buildCnPlot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="buildCnPlot",
+    def=function(object, ...){standardGeneric("buildCnPlot")}
+)
+
+#' Method buildSomaticLohPlot
+#' 
+#' @name buildSomaticLohPlot
+#' @rdname buildSomaticLohPlot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="buildSomaticLohPlot",
+    def=function(object, ...){standardGeneric("buildSomaticLohPlot")}
+)
+
+#' Method buildGermlineLohPlot
+#' 
+#' @name buildGermlineLohPlot
+#' @rdname buildGermlineLohPlot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="buildGermlineLohPlot",
+    def=function(object, ...){standardGeneric("buildGermlineLohPlot")}
+)
+
+#' Method arrangeCnLohPlots
+#' 
+#' @name arrangeCnLohPlots
+#' @rdname arrangeCnLohPlots-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="arrangeCnLohPlots",
+    def=function(object, ...){standardGeneric("arrangeCnLohPlots")}
 )

@@ -6,17 +6,11 @@
 \name{getMeta}
 \alias{getMeta}
 \alias{getMeta,GMS_Virtual-method}
-\alias{getMeta}
 \alias{getMeta,GMS-method}
-\alias{getMeta}
 \alias{getMeta,MutationAnnotationFormat_Virtual-method}
-\alias{getMeta}
 \alias{getMeta,MutationAnnotationFormat-method}
-\alias{getMeta}
 \alias{getMeta,VEP_Virtual-method}
-\alias{getMeta}
 \alias{getMeta,VEP-method}
-\alias{getMeta}
 \title{Method getMeta}
 \usage{
 getMeta(object, ...)

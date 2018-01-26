@@ -57,8 +57,10 @@ cnFreq <- function(x, CN_low_cutoff=1.5, CN_high_cutoff=2.5, plot_title=NULL,
                    plotChr=NULL, out="plot")
 {
     # Perform quality check on input data
+    print("quality check")
     x <- cnFreq_qual(x)
     samples <- unique(x$sample)
+    print("done")
 
     # Calculate a columns of Observed CN gains/losses/and obs samples in the
     # cohort for each segment
@@ -78,6 +80,7 @@ cnFreq <- function(x, CN_low_cutoff=1.5, CN_high_cutoff=2.5, plot_title=NULL,
     x$lossProportion <- x$lossFrequency/length(samples)
     
     # get the dummy data for plot boundaries
+    print("chr boundaries")
     preloaded <- c("hg38", "hg19", "mm10", "mm9", "rn5")
     if(any(genome == preloaded)){
         message("genome specified is preloaded, retrieving data...")
@@ -126,6 +129,7 @@ cnFreq <- function(x, CN_low_cutoff=1.5, CN_high_cutoff=2.5, plot_title=NULL,
     }
     
     # build the plot
+    print("build")
     p1 <- cnFreq_buildMain(x, plotType, dummy_data = dummy_data, plot_title=plot_title,
                            CN_low_colour=CN_Loss_colour,
                            CN_high_colour=CN_Gain_colour,
