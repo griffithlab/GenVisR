@@ -99,6 +99,8 @@ should sum to one. Expects a value for each section.}
 }
 \description{
 An S4 class for the waterfall plot object
+
+Constructor for the Waterfall class.
 }
 \section{Slots}{
 

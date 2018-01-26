@@ -19,6 +19,8 @@ in the MAF file.}
 }
 \description{
 An S4 class acting as a container for MutationAnnotationFormat version sub-classes.
+
+Constructor for the MutationAnnotationFormat container class.
 }
 \section{Slots}{
 

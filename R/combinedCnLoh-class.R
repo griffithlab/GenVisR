@@ -110,7 +110,7 @@ cnLohData <- function(cnInput, lohInput, samples, chromosomes, BSgenome,
     cnData <- sampleSubset(object=cnData, samples=samples, verbose=verbose)
     
     ## Obtain copy number segmentation data
-    cnSegmentation <- getCnSegmentation(object=cnData, verbose=verbose)  
+    cnSegmentation <- entation(object=cnData, verbose=verbose)  
     
     ## Obtain chromosome boundaries from BSgenome object
     chrData <- annoGenomeCoord(object=cnData, BSgenome=BSgenome, verbose=verbose)
@@ -319,8 +319,9 @@ setMethod(
 
 ######################################################
 ##### Function to obtain chromosomes of interest #####
-#' @rdname cnLohData-methods
-#' @aliases cnLohData
+#' @rdname chrSubset-methods
+#' @name chrSubset
+#' @aliases chrSubset
 #' @param object Object of class data.table
 #' @param chromosomes character vector of chromosomes to retain
 #' @param verbose Boolean for status updates
@@ -403,8 +404,9 @@ setMethod(f="chrSubset",
 
 ##################################################
 ##### Function to obtain samples of interest #####
-#' @rdname cnLohData-methods
-#' @aliases cnLohData
+#' @rdname sampleSubset-methods
+#' @name sampleSubset
+#' @aliases sampleSubset
 #' @param object Object of class data.table
 #' @param samples character vector of samples to retain
 #' @param verbose Boolean for status updates
@@ -458,8 +460,10 @@ setMethod(f="sampleSubset",
 #############################################################
 ##### Function to generate segmentation dataset for cnv #####
 #' @rdname getCnSegmentation-methods
+#' @name getCnSegmentation
 #' @aliases getCnSegmentation
 #' @param object of class data.table
+#' @noRd
 setMethod(f="getCnSegmentation",
           signature="data.table",
           definition=function(object, ...) {
@@ -485,6 +489,7 @@ setMethod(f="getCnSegmentation",
 #####################################################
 ##### Function to get the chromosome boundaries #####
 #' @rdname annoGenomeCoord-methods
+#' @name annoGenomeCoord
 #' @aliases annoGenomeCoord
 #' @param object Object of class data.table
 #' @param BSgenome Object of class BSgenome, used for extracting chromosome boundaries
@@ -565,6 +570,7 @@ setMethod(f="annoGenomeCoord",
 ##########################################################################
 ##### Function to generate window position data for loh calculations #####
 #' @rdname getLohSlidingWindow-methods
+#' @name getLohSlidingWindow
 #' @param object of class data.table 
 #' @param step integer specifying the step size between the start position of
 #' each window
@@ -652,6 +658,7 @@ setMethod(f="getLohSlidingWindow",
 ###############################################################
 ##### Function to perform loh calcluations in each window #####
 #' @rdname getLohCalculation-methods
+#' @name getLohCalculation
 #' @param object of class data.table 
 #' @param window_data of class data.table 
 #' @param normal integer specifying normal vaf
@@ -730,6 +737,7 @@ setMethod(f="getLohCalculation",
 #######################################################################
 ##### Function to perform loh calcluations in overlapping windows #####
 #' @rdname getLohStepCalculation-methods
+#' @name getLohStepCalculation
 #' @param object of class data.table
 #' @param step integer 
 #' @aliases getLohStepCalculation
@@ -776,6 +784,7 @@ setMethod(f = "getLohStepCalculation",
 #############################################################
 ##### Function to generate segmentation dataset for loh #####
 #' @rdname getLohSegmentation-methods
+#' @name getLohSegmentation
 #' @param object of class data.table
 #' @param chrData of class data.table 
 #' @aliases getLohSegmentation
@@ -803,8 +812,10 @@ setMethod(f = "getLohSegmentation",
 ########################################
 ##### Function to generate cn plot #####
 #' @rdname buildCnPlot-methods
+#' @name buildCnPlot
 #' @aliases buildCnPlot
 #' @param object of class data.table
+#' @noRd
 setMethod(f="buildCnPlot",
           signature="cnLohData",
           definition=function(object, plotAColor, plotALayers, ...){
@@ -873,8 +884,10 @@ setMethod(f="buildCnPlot",
 #################################################
 ##### Function to generate somatic loh plot #####
 #' @rdname buildSomaticLohPlot-methods
+#' @name buildSomaticLohPlot
 #' @aliases buildSomaticLohPlot
 #' @param object of class data.table
+#' @noRd
 setMethod(f="buildSomaticLohPlot",
           signature="cnLohData",
           definition=function(object, somaticLohCutoff, plotBAlpha, plotBTumorColor, plotBNormalColor,
@@ -958,8 +971,10 @@ setMethod(f="buildSomaticLohPlot",
 ##################################################
 ##### Function to generate germline loh plot #####
 #' @rdname buildGermlineLohPlot-methods
+#' @name buildGermlineLohPlot
 #' @aliases buildGermlineLohPlot
 #' @param object of class data.table
+#' @noRd
 setMethod(f="buildGermlineLohPlot",
           signature="cnLohData",
           definition=function(object, plotCLimits, plotCLowColor,
@@ -1020,8 +1035,10 @@ setMethod(f="buildGermlineLohPlot",
 #########################################################
 ##### Function to arrange lohSpec and lohFreq plots #####
 #' @rdname arrangeCnLohPlots-methods
+#' @name arrangeCnLohPlots
 #' @param object of class cnLohData
 #' @aliases arrangeCnLohPlots
+#' @noRd
 setMethod(f="arrangeCnLohPlots",
           signature="cnLohPlots",
           definition=function(object, sectionHeights, verbose, ...) {

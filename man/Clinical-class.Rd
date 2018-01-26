@@ -29,6 +29,8 @@ of wide or long format (see details).}
 }
 \description{
 An S4 class to store clinical information and plots
+
+Constructor for the Clinical class.
 }
 \details{
 The Clinical() function is a constructor to create a GenVisR object

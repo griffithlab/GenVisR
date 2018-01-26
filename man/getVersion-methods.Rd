@@ -5,8 +5,11 @@
 \name{getVersion}
 \alias{getVersion}
 \alias{getVersion,GMS-method}
+\alias{getVersion}
 \alias{getVersion,MutationAnnotationFormat-method}
+\alias{getVersion}
 \alias{getVersion,VEP-method}
+\alias{getVersion}
 \title{Method getVersion}
 \usage{
 getVersion(object, ...)

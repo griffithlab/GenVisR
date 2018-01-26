@@ -6,11 +6,17 @@
 \name{getPosition}
 \alias{getPosition}
 \alias{getPosition,GMS_Virtual-method}
+\alias{getPosition}
 \alias{getPosition,GMS-method}
+\alias{getPosition}
 \alias{getPosition,MutationAnnotationFormat_Virtual-method}
+\alias{getPosition}
 \alias{getPosition,MutationAnnotationFormat-method}
+\alias{getPosition}
 \alias{getPosition,VEP_Virtual-method}
+\alias{getPosition}
 \alias{getPosition,VEP-method}
+\alias{getPosition}
 \title{Method getPosition}
 \usage{
 getPosition(object, ...)

@@ -6,11 +6,17 @@
 \name{getMutation}
 \alias{getMutation}
 \alias{getMutation,GMS_Virtual-method}
+\alias{getMutation}
 \alias{getMutation,GMS-method}
+\alias{getMutation}
 \alias{getMutation,MutationAnnotationFormat_Virtual-method}
+\alias{getMutation}
 \alias{getMutation,MutationAnnotationFormat-method}
+\alias{getMutation}
 \alias{getMutation,VEP_Virtual-method}
+\alias{getMutation}
 \alias{getMutation,VEP-method}
+\alias{getMutation}
 \title{Method getMutation}
 \usage{
 getMutation(object, ...)

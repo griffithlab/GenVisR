@@ -5,7 +5,7 @@
 \alias{VarScanFormat_Virtual-class}
 \title{Class VarScanFormat_Virtual}
 \description{
-An S4 class to act as a virtual class for MutationAnnotationFormat version sub-classes.
+An S4 class to act as a virtual class for VarScanFormat version sub-classes.
 }
 \section{Slots}{
 

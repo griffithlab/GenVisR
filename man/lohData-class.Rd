@@ -6,8 +6,8 @@
 \alias{lohData}
 \title{Private Class lohData}
 \usage{
-lohData(object, chromosomes, samples, BSgenome, step, windowSize, normal,
-  verbose)
+lohData(object, lohSpec, chromosomes, samples, BSgenome, step, windowSize,
+  normal, plotALohCutoff, verbose)
 }
 \arguments{
 \item{object}{Object of class VarScan}

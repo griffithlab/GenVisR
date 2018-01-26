@@ -9,7 +9,8 @@
 \usage{
 lohSpec_buildMainPlot(object, ...)
 
-\S4method{lohSpec_buildMainPlot}{lohData}(object, ...)
+\S4method{lohSpec_buildMainPlot}{lohData}(object, gradientMidpoint,
+  gradientColors, plotBLayers, verbose, ...)
 }
 \arguments{
 \item{object}{Object of class VarScanFormat}
@@ -17,8 +18,6 @@ lohSpec_buildMainPlot(object, ...)
 \item{...}{additional arguments to passed}
 
 \item{object}{of class lohData}
-
-\item{step}{integer}
 }
 \description{
 Method lohSpec_buildMainPlot

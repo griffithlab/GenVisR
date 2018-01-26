@@ -6,7 +6,7 @@
 \alias{VarScanFormat}
 \title{Class VarScanFormat}
 \usage{
-VarScanFormat(path, verbose = FALSE)
+VarScanFormat(path, varscanType, verbose = FALSE)
 }
 \arguments{
 \item{path}{String specifying the path to a VarScan file.}
@@ -15,7 +15,7 @@ VarScanFormat(path, verbose = FALSE)
 in the VarScan. file.}
 }
 \description{
-An S4 class acting as a container for VarScanFormat.
+Class VarScanFormat
 
 Constructor for the VarScanFormat container class.
 }

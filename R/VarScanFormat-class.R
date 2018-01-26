@@ -182,6 +182,7 @@ setMethod(f="getPath",
 ####################### Method function definitions ############################
 
 #' @rdname getLohData-methods
+#' @name getLohData
 #' @aliases getLohData
 #' @noRd
 #' @importFrom data.table data.table
@@ -229,9 +230,10 @@ setMethod(f="getLohData",
           })
 
 #' @rdname getCnvData-methods
+#' @name getCnvData
 #' @aliases getCnvData
-#' @noRd
 #' @importFrom data.table data.table
+#' @noRd
 setMethod(f="getCnvData",
           signature="VarScanFormat",
           definition=function(object, verbose, ...) {

@@ -23,6 +23,8 @@ reading in the GMS files.}
 }
 \description{
 An S4 class for Genome Modeling System annotation files.
+
+Constructor for the GMS container class.
 }
 \details{
 When specifying a path to a GMS annotation file the option exist to
