@@ -807,7 +807,7 @@ setMethod(f = "getLohSegmentation",
 #' @param object of class data.table
 setMethod(f="buildCnPlot",
           signature="cnLohData",
-          definition=function(object, plotAColor, plotALayers, ...) {
+          definition=function(object, plotAColor, plotALayers, ...){
               
               ## Print status message
               if (verbose) {
@@ -878,7 +878,7 @@ setMethod(f="buildCnPlot",
 setMethod(f="buildSomaticLohPlot",
           signature="cnLohData",
           definition=function(object, somaticLohCutoff, plotBAlpha, plotBTumorColor, plotBNormalColor,
-                              plotBLayers, ...) {
+                              plotBLayers, ...){
               
               ## Print status message
               if (verbose) {
