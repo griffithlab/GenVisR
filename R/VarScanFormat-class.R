@@ -232,8 +232,8 @@ setMethod(f="getLohData",
 #' @rdname getCnvData-methods
 #' @name getCnvData
 #' @aliases getCnvData
-#' @importFrom data.table data.table
 #' @noRd
+#' @importFrom data.table data.table
 setMethod(f="getCnvData",
           signature="VarScanFormat",
           definition=function(object, verbose, ...) {

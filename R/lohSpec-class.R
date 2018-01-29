@@ -46,7 +46,7 @@ setClass(
 #' calcualting average LOH difference. Defaults to .50\% if FALSE. 
 #' If TRUE, will use average normal VAF in each individual sample as value 
 #' to calculate LOH.
-
+#' @export
 lohSpec <- function(input, lohSpec=TRUE, chromosomes="autosomes", samples=NULL, 
                     BSgenome=BSgenome, step=1000000, windowSize=2500000, 
                     normal=FALSE, gradientMidpoint=.2, gradientColors=c("#ffffff", "#b2b2ff", "#000000"),

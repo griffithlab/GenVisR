@@ -41,9 +41,9 @@ getGrob(object, ...)
 
 \S4method{getGrob}{Waterfall}(object, index = 1, ...)
 
-\S4method{getGrob}{cnLohPlots}(object, index = 1, ...)
+\S4method{getGrob}{cnLohPlots}(object, index, ...)
 
-\S4method{getGrob}{cnLoh}(object, index = 1, ...)
+\S4method{getGrob}{cnLoh}(object, index, ...)
 
 \S4method{getGrob}{lohSpecPlots}(object, index = 1, ...)
 

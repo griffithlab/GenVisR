@@ -5,7 +5,7 @@
 #' Class cnLoh
 #' 
 #' An S4 class for the cn, somatic loh, and germline loh plots
-#' @name cnLoh
+#' @name cnLoh-class
 #' @rdname cnLoh-class
 #' @slot cnData data.table object for cn plot
 #' @slot cnPlot gtable object for the cn plot
@@ -14,6 +14,7 @@
 #' @slot germlineLohData data.table object for the germline loh plot
 #' @slot germlineLohData gtable object for the germline loh plot
 #' @exportClass cnLoh
+#' @import methods
 #' @importFrom data.table data.table
 #' @importFrom gtable gtable
 methods::setOldClass("gtable")
@@ -42,7 +43,7 @@ setClass(
 #' all chromosomes in "input" not specified with this parameter are removed.
 #' @param BSgenome Object of class BSgenome to extract genome wide chromosome 
 #' coordinates
-
+#' @export
 cnLoh <- function(cnInput, lohInput, samples, chromosomes, BSgenome, windowSize,
                   step, normal, plotAColor, plotALayers, plotBAlpha,
                   somaticLohCutoff, plotBTumorColor, plotBNormalColor, plotBLayers,
@@ -109,11 +110,14 @@ cnLohData <- function(cnInput, lohInput, samples, chromosomes, BSgenome,
     ## Subset copy number data by sample
     cnData <- sampleSubset(object=cnData, samples=samples, verbose=verbose)
     
-    ## Obtain copy number segmentation data
-    cnSegmentation <- entation(object=cnData, verbose=verbose)  
-    
     ## Obtain chromosome boundaries from BSgenome object
     chrData <- annoGenomeCoord(object=cnData, BSgenome=BSgenome, verbose=verbose)
+    
+    ## Obtain copy number segmentation data
+    cnSegmentation <- getCnSegmentation(object=cnData, verbose=verbose)
+    
+    ## Remove gaps
+    cnSegmentation <- removeGapsSegmentation(object=cnSegmentation, chrData=chrData, verbose=verbose)
     
     ############################################################################
     ##################### Prepare somatic loh dataset ##########################
@@ -140,6 +144,10 @@ cnLohData <- function(cnInput, lohInput, samples, chromosomes, BSgenome,
     
     ## Obtain loh segmentation dataset
     lohSegmentation <- getLohSegmentation(object=lohAbsDiffOverlap, verbose=verbose)
+    
+    ## Remove gaps 
+    lohSegmentation <- removeGapsSegmentation(object=lohSegmentation, chrData=chrData,
+                                              verbose=verbose)
     
     ############################################################################
     ##################### Prepare germline loh dataset #########################
@@ -183,6 +191,7 @@ setClass("cnLohPlots",
 #' @name cnLohPlots
 #' @param object Object of class data.table
 #' @importFrom gtable gtable
+#' @import ggplot2
 #' @noRd 
 cnLohPlots <- function(object, plotAColor, plotALayers, 
                        somaticLohCutoff, plotBAlpha, plotBTumorColor, plotBNormalColor, plotBLayers, 
@@ -271,7 +280,7 @@ setMethod(f="getData",
 #' @rdname getGrob-methods
 #' @aliases getGrob
 #' @noRd
-.getGrob_combinedCnLoh <- function(object, index=1, ...){
+.getGrob_combinedCnLoh <- function(object, index, ...){
     if(index == 1){
         grob <- object@cnPlot
     } else if(index == 2) {
@@ -319,9 +328,8 @@ setMethod(
 
 ######################################################
 ##### Function to obtain chromosomes of interest #####
-#' @rdname chrSubset-methods
-#' @name chrSubset
-#' @aliases chrSubset
+#' @rdname cnLoh-methods
+#' @aliases cnLoh
 #' @param object Object of class data.table
 #' @param chromosomes character vector of chromosomes to retain
 #' @param verbose Boolean for status updates
@@ -355,7 +363,7 @@ setMethod(f="chrSubset",
               
               ## Check format of the chromosome column
               if (!all(grepl("^chr", object$chromosome))) {
-                  memo <- paste0("Did not detect the prefix chr in the chromosome column",
+                  memo <- paste0("Did not detect the prefix chr in the chromosome column ",
                                  "of x... adding prefix")
                   message (memo)
                  object$chromosome <- paste("chr", object$chromosome, sep="")
@@ -466,7 +474,12 @@ setMethod(f="sampleSubset",
 #' @noRd
 setMethod(f="getCnSegmentation",
           signature="data.table",
-          definition=function(object, ...) {
+          definition=function(object, verbose, ...) {
+              
+              ## Print status message
+              if (verbose) {
+                  message("Segmenting copy number data")
+              }
               
               ## Split object by sample
               segDfTemp <- split(object, list(as.character(object$sample)))
@@ -484,6 +497,39 @@ setMethod(f="getCnSegmentation",
               }))
               
               return(segmentationDF)
+          })
+
+#############################################################
+##### Function to generate segmentation dataset for cnv #####
+#' @rdname removeGapsSegmentation-methods
+#' @name removeGapsSegmentation
+#' @aliases removeGapsSegmentation
+#' @param object of class data.table
+#' @noRd
+setMethod(f="removeGapsSegmentation",
+          signature="data.table",
+          definition=function(object, chrData, verbose, ...) {
+              
+              ## Print status message
+              if (verbose) {
+                  message("Removing gaps from segmentation file")
+              }
+              
+              ## Get the list of the chromosomes
+              chrList <- as.list(as.character(unique(object$chrom)))
+              segs <- rbindlist(lapply(chrList, function(x, object, chrData) {
+                  df <- object[chrom==x]
+                  for (i in 1:(nrow(df) - 1)) {
+                      ## Don't merge segments if they are far apart
+                      if ((df$loc.start[i+1]-df$loc.end[i]) < 5000000) {
+                          half <- floor((df$loc.end[i] + df$loc.start[i+1])/2)
+                          df$loc.end[i] <- half
+                          df$loc.start[i+1] <- half + 1
+                      }
+                  }
+                  return(df)
+              }, object=object))
+              return(segs)
           })
 
 #####################################################

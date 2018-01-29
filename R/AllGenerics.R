@@ -824,3 +824,14 @@ setGeneric(
     name="arrangeCnLohPlots",
     def=function(object, ...){standardGeneric("arrangeCnLohPlots")}
 )
+
+#' Method removeGapsSegmentation
+#' 
+#' @name removeGapsSegmentation
+#' @rdname removeGapsSegmentation-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="removeGapsSegmentation",
+    def=function(object, ...){standardGeneric("removeGapsSegmentation")}
+)

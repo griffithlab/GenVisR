@@ -30,15 +30,6 @@ setMethod(f="getVarScan",
               return(varscan)
           })
 
-#' @rdname getCnvData-methods
-#' @aliases getCnvData
-setMethod(f="getCnvData",
-          signature="VarScanFormat_Virtual",
-          definition=function(object, ...){
-              varscan <- object@varscan
-              return(varscan)
-          })
-
 #' @rdname getSample-methods
 #' @aliases getSample
 setMethod(f="getSample",
