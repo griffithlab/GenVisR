@@ -192,13 +192,13 @@ WaterfallData <- function(object, labelColumn, samples, mutationHierarchy,
     
     # assign the mapping of mutations and colors
     mutationHierarchy <- setMutationHierarchy(object, mutationHierarchy, verbose)
-    
+    browser()
     # convert to initial data to waterfall format
     primaryData <- toWaterfall(object, mutationHierarchy, labelColumn, verbose)
     
     # subset samples if specified
     primaryData <- sampSubset(primaryData, samples, verbose)
-    
+    browser()
     # calculate the frequency and mutation burden
     simpleMutationCounts <- calcSimpleMutationBurden(primaryData, coverage, verbose)
     complexMutationCounts <- calcComplexMutationBurden(primaryData, coverage, verbose)
@@ -1249,7 +1249,7 @@ setMethod(f="orderSamples",
               }
               
               # set the new sample order
-              primaryData$sample <- factor(primaryData$sample, levels=sampleOrder)
+              primaryData$sample <- factor(primaryData$sample, levels=unique(sampleOrder))
               return(primaryData)
           })
 
@@ -1616,7 +1616,7 @@ setMethod(f="buildWaterfallPlot",
               
               # there could be samples with no gene information assign these a gene but no
               # mutation so they are plotted correctly
-              primaryData[is.na(primaryData$gene),"gene"] <- levels(primaryData$gene)[1]
+              primaryData[is.na(primaryData$gene),"gene"] <- tail(levels(primaryData$gene))[1]
               
               # print status message
               if(verbose){
