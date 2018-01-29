@@ -192,13 +192,13 @@ WaterfallData <- function(object, labelColumn, samples, mutationHierarchy,
     
     # assign the mapping of mutations and colors
     mutationHierarchy <- setMutationHierarchy(object, mutationHierarchy, verbose)
-    browser()
+    
     # convert to initial data to waterfall format
     primaryData <- toWaterfall(object, mutationHierarchy, labelColumn, verbose)
     
     # subset samples if specified
     primaryData <- sampSubset(primaryData, samples, verbose)
-    browser()
+    
     # calculate the frequency and mutation burden
     simpleMutationCounts <- calcSimpleMutationBurden(primaryData, coverage, verbose)
     complexMutationCounts <- calcComplexMutationBurden(primaryData, coverage, verbose)
