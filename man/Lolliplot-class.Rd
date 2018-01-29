@@ -5,8 +5,9 @@
 \alias{Lolliplot}
 \title{Class Lolliplot}
 \usage{
-Lolliplot(input, gene, transcript, species = "hsapiens",
-  host = "www.ensembl.org", verbose = FALSE)
+Lolliplot(input, gene, transcript = NULL, species = "hsapiens",
+  host = "www.ensembl.org", txdb = NULL, BSgenome = NULL,
+  verbose = FALSE)
 }
 \arguments{
 \item{input}{Object of class MutationAnnotationFormat, GMS, VEP, or a data.table with appropriate columns}
@@ -19,6 +20,10 @@ to the gene parameter.}
 \item{species}{Character string specifying a species when using biomaRt queries}
 
 \item{host}{Character string specifying a host to connect to when using biomaRt queries}
+
+\item{txdb}{A bioconoductor txdb object to annotate amino acid positions, required only if amino acid changes are missing (see details).}
+
+\item{BSgenome}{A bioconductor BSgenome object to annotate amino acid positions, required only if amino acid changes are missing (see details).}
 }
 \description{
 An S4 class for the lolliplot object

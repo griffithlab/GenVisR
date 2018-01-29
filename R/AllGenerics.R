@@ -648,3 +648,58 @@ setGeneric(
     name="annotateGene",
     def=function(object, ...){standardGeneric("annotateGene")}
 )
+
+#' Method annotateProteinCoord
+#'
+#' @name annotateProteinCoord
+#' @rdname annotateProteinCoord-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="annotateProteinCoord",
+    def=function(object, ...){standardGeneric("annotateProteinCoord")}
+)
+
+#' Method filterByTranscript
+#'
+#' @name filterByTranscript
+#' @rdname filterByTranscript-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="filterByTranscript",
+    def=function(object, ...){standardGeneric("filterByTranscript")}
+)
+
+#' Method calcMutFreq
+#'
+#' @name calcMutFreq
+#' @rdname calcMutFreq-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="calcMutFreq",
+    def=function(object, ...){standardGeneric("calcMutFreq")}
+)
+
+#' Method constructTranscriptData
+#'
+#' @name constructTranscriptData
+#' @rdname constructTranscriptData-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="constructTranscriptData",
+    def=function(object, ...){standardGeneric("constructTranscriptData")}
+)
+
+#' Method setTierOne
+#'
+#' @name setTierOne
+#' @rdname setTierOne-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="setTierOne",
+    def=function(object, ...){standardGeneric("setTierOne")}
+)
