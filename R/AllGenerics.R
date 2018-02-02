@@ -703,3 +703,25 @@ setGeneric(
     name="setTierOne",
     def=function(object, ...){standardGeneric("setTierOne")}
 )
+
+#' Method setTierTwo
+#'
+#' @name setTierTwo
+#' @rdname setTierTwo-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="setTierTwo",
+    def=function(object, ...){standardGeneric("setTierTwo")}
+)
+
+#' Method retrieveMart
+#'
+#' @name retrieveMart
+#' @rdname retrieveMart-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="retrieveMart",
+    def=function(object, ...){standardGeneric("retrieveMart")}
+)

@@ -445,6 +445,16 @@ setMethod(f="toWaterfall",
                   warning(memo)
               }
               
+              # if there are any genes which are NA, remove them
+              rowCountOrig <- nrow(waterfallFormat)
+              waterfallFormat <- waterfallFormat[!is.na(waterfallFormat$gene),]
+              if(rowCountOrig != nrow(waterfallFormat) & verbose){
+                  memo <- paste("Removed", rowCountOrig - nrow(waterfallFormat),
+                                "which had NA for gene the gene label")
+                  message(memo)
+              }
+              
+              
               # convert appropriate columns to factor
               waterfallFormat$sample <- factor(waterfallFormat$sample)
               

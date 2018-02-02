@@ -234,16 +234,6 @@ setMethod(f="toWaterfall",
               waterfallFormat <- cbind(sample, gene, mutation, label)
               colnames(waterfallFormat) <- c("sample", "gene", "mutation", "label")
               
-              # remove any rows with NA values in gene or sample, this could mess up downstream functions
-              rowCountOrig <- nrow(waterfallFormat)
-              waterfallFormat <- waterfallFormat[!is.na(waterfallFormat$gene_name),]
-              waterfallFormat <- waterfallFormat[!is.na(waterfallFormat$sample),]
-              if(verbose & nrow(rowCountOrig) != nrow(waterfallFormat)){
-                  memo <- paste("Removed", rowCountOrig-nrow(waterfallFormat), "rows which harbored NA values",
-                                "in either the gene or sample column")
-                  message(memo)
-              }
-              
               # make a temporary ID column for genomic features to collapse on
               # this will ensure the mutation burden/frequency plot will be accurate
               waterfallFormat$key <- paste0(getPosition(object)$chromosome_name, ":",
@@ -266,6 +256,16 @@ setMethod(f="toWaterfall",
                   memo <- paste("Removed", rowCountOrig - nrow(waterfallFormat),
                                 "rows from the data which harbored duplicate",
                                 "genomic locations")
+                  message(memo)
+              }
+              
+              # remove any rows with NA values in gene or sample, this could mess up downstream functions
+              rowCountOrig <- nrow(waterfallFormat)
+              waterfallFormat <- waterfallFormat[!is.na(waterfallFormat$gene),]
+              waterfallFormat <- waterfallFormat[!is.na(waterfallFormat$sample),]
+              if(verbose & rowCountOrig != nrow(waterfallFormat)){
+                  memo <- paste("Removed", rowCountOrig-nrow(waterfallFormat), "rows which harbored NA values",
+                                "in either the gene or sample column")
                   message(memo)
               }
               

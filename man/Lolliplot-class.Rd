@@ -7,7 +7,7 @@
 \usage{
 Lolliplot(input, gene, transcript = NULL, species = "hsapiens",
   host = "www.ensembl.org", txdb = NULL, BSgenome = NULL,
-  verbose = FALSE)
+  emphasize = NULL, verbose = FALSE)
 }
 \arguments{
 \item{input}{Object of class MutationAnnotationFormat, GMS, VEP, or a data.table with appropriate columns}
@@ -24,6 +24,8 @@ to the gene parameter.}
 \item{txdb}{A bioconoductor txdb object to annotate amino acid positions, required only if amino acid changes are missing (see details).}
 
 \item{BSgenome}{A bioconductor BSgenome object to annotate amino acid positions, required only if amino acid changes are missing (see details).}
+
+\item{emphasize}{Character vector specifying a list of mutations to emphasize.}
 }
 \description{
 An S4 class for the lolliplot object
