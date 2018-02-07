@@ -725,3 +725,14 @@ setGeneric(
     name="retrieveMart",
     def=function(object, ...){standardGeneric("retrieveMart")}
 )
+
+#' Method buildLolliplot
+#'
+#' @name buildLolliplot
+#' @rdname buildLolliplot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="buildLolliplot",
+    def=function(object, ...){standardGeneric("buildLolliplot")}
+)
