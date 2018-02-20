@@ -26,9 +26,7 @@ geneViz_extrCDS <- function(txdb=NULL, gr=NULL, reduce=FALSE, gaps=FALSE)
 
     # get a list of transcript id's overlapping the Granges object
     transcripts <- GenomicFeatures::transcriptsByOverlaps(txdb, gr)
-    map <- IRanges::relist(BiocGenerics::unlist(transcripts, use.names=FALSE)$tx_id,
-                           transcripts)
-    txid <- BiocGenerics::unlist(map, use.names=FALSE)
+    txid <- transcripts$tx_id
 
     # extract CDS from transcript database given transcript ID
     cds <- geneViz_cdsFromTXID(txdb, txid)

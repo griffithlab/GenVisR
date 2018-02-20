@@ -152,11 +152,10 @@ genCov <- function(x, txdb, gr, genome, reduce=FALSE, gene_colour=NULL,
         return(x)
     }
     
-    coverage_data <- lapply(x, test2, min(GenomicRanges::ranges(gr)),
-                            max(GenomicRanges::ranges(gr)))
+    coverage_data <- lapply(x, test2, start(gr), end(gr))
 
     # obtain xlimits for gene plot, this is overwritten if transforms
-    xlimits <- c(GenomicRanges::start(gr), GenomicRanges::end(gr))
+    xlimits <- c(start(gr), end(gr))
 
     # set flag to display x axis labels, overwritten if transforms
     display_x_axis <- TRUE
