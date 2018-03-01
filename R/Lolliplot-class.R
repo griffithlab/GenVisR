@@ -41,19 +41,24 @@ setClass("Lolliplot",
 #' @param txdb A bioconoductor txdb object to annotate amino acid positions, required only if amino acid changes are missing (see details).
 #' @param BSgenome A bioconductor BSgenome object to annotate amino acid positions, required only if amino acid changes are missing (see details).
 #' @param emphasize Character vector specifying a list of mutations to emphasize.
+#' @param palette Character vector specifying the colors used for encoding protein domains
 #' @param plotALayers list of ggplot2 layers to be passed to the density plot.
 #' @param plotBLayers list of ggplot2 layers to be passed to the lolliplot.
+#' @param sectionHeights Numeric vector specifying relative heights of each plot section,
+#' should sum to one. Expects a value for each section.
 #' @export
-Lolliplot <- function(input, gene, transcript=NULL, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, emphasize=NULL, plotALayers=NULL, plotBLayers=NULL, verbose=FALSE){
+Lolliplot <- function(input, gene, transcript=NULL, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, emphasize=NULL, palette=NULL, labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL, sectionHeights=NULL, verbose=FALSE){
     
     # Obtain and format the data
     data <- LolliplotData(input, gene=gene, transcript=transcript, species=species, host=host, txdb=txdb, BSgenome=BSgenome, emphasize=emphasize, verbose=verbose)
     
     # construct the plots
-    lolliplotPlots <- LolliplotPlots(data, plotALayers=plotALayers, plotBLayers, verbose=verbose)
+    lolliplotPlots <- LolliplotPlots(data, labelAA=labelAA, palette=palette, plotALayers=plotALayers, plotBLayers, verbose=verbose)
     
     # align the plots
+    lolliplotGrob <- arrangeLolliplotPlot(lolliplotPlots, sectionHeights=sectionHeights, verbose=verbose)
     
+    new("Lolliplot", PlotA=getGrob(lolliplotPlots, index=1), PlotB=getGrob(lolliplotPlots, index=2), Grob=lolliplotGrob, primaryData=getData(data, name="primaryData"), geneData=getData(data, name="geneData"))
 }
 
 #!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
@@ -109,14 +114,19 @@ LolliplotData <- function(object, gene, transcript, species, host, txdb, BSgenom
     
     # get the transcript size and domains
     proteinData <- constructTranscriptData(lolliplotData, ensembl_mart=mart, verbose=verbose)
-        
-    # set the initial mutation heights (tier 1)
-    lolliplotData <- setTierOne(lolliplotData, verbose=verbose)
-    
+      
     # set the mutations for the second tier
     lolliplotData <- setTierTwo(lolliplotData, proteinData=proteinData, emphasize=emphasize, verbose=verbose)
     
-    # TODO: set up function to nest protein domains
+    # set the initial mutation heights (tier 1)
+    lolliplotData <- setTierOne(lolliplotData, verbose=verbose)
+    
+    # set a label column
+    lolliplotData <- addLabel(lolliplotData, verbose=verbose)
+    
+    # nest the protein domains
+    proteinData <- setDomainHeights(proteinData, verbose=verbose)
+    
     new("LolliplotData", primaryData=lolliplotData, geneData=proteinData)
 }
 
@@ -143,13 +153,13 @@ setClass("LolliplotPlots",
 #' @rdname LolliplotPlots-class
 #' @param object Object of class LolliplotData
 #' @noRd
-LolliplotPlots <- function(object, plotALayers, plotBLayers, verbose){
+LolliplotPlots <- function(object, labelAA, palette, plotALayers, plotBLayers, verbose){
     
     # set up a density plot for the mutations
     PlotA <- buildDensityPlot(object, plotALayers=plotALayers, verbose=verbose)
     
     # set up the lolliplot
-    PlotB <- buildLolliplot(object, plotBLayers=plotBLayers, verbose=verbose)
+    PlotB <- buildLolliplot(object, labelAA=labelAA, palette=palette, plotBLayers=plotBLayers, verbose=verbose)
     
     new("LolliplotPlots", PlotA=PlotA, PlotB=PlotB)
 }
@@ -207,6 +217,51 @@ setMethod(f="getData",
 setMethod(f="getData",
           signature="Lolliplot",
           definition=.getData_Lolliplot)
+
+#' Helper function to extract grobs from objects
+#'
+#' @rdname getGrob-methods
+#' @aliases getGrob
+#' @noRd
+.getGrob_Lolliplot <- function(object, index=1, ...){
+    if(index == 1){
+        grob <- object@PlotA
+    } else if(index == 2) {
+        grob <- object@PlotB
+    } else if(index == 3) {
+        grob <- object@Grob
+    } else {
+        stop("Subscript out of bounds") 
+    }
+    return(grob)
+}
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+setMethod(f="getGrob",
+          signature="LolliplotPlots",
+          definition=.getGrob_Lolliplot)
+
+#' @rdname getGrob-methods
+#' @aliases getGrob
+setMethod(f="getGrob",
+          signature="Lolliplot",
+          definition=.getGrob_Lolliplot)
+
+#' @rdname drawPlot-methods
+#' @aliases drawPlot
+#' @importFrom grid grid.draw
+#' @importFrom grid grid.newpage
+#' @exportMethod drawPlot
+setMethod(
+    f="drawPlot",
+    signature="Lolliplot",
+    definition=function(object, ...){
+        mainPlot <- getGrob(object, index=3)
+        grid::grid.newpage()
+        grid::grid.draw(mainPlot)
+    }
+)
 
 ################################################################################
 ########################### Method function definitions ########################
@@ -715,10 +770,6 @@ setMethod(f="constructTranscriptData",
 
               proteinData <- data.table::rbindlist(list(protein, domain), use.names=TRUE, fill=TRUE)
               
-              # add in min and max height columns TODO this should be moved to the other transcript function
-              proteinData$minHeight <- -1
-              proteinData$maxHeight <- 1
-              
               return(proteinData)
 
           })
@@ -738,14 +789,23 @@ setMethod(f="setTierOne",
                   message(memo)
               }
               
-              # set a base height
-              object$height <- 1.2
+              # split up by tier
+              object <- split(object, by="tier")
               
-              if(min(object$mutationFreq) != max(object$mutationFreq)){
+              # set a base height for first tier
+              object[["first"]]$height <- 1.2
+              
+              # make the height adjustment for first tier
+              if(min(object[["first"]]$mutationFreq) != max(object[["first"]]$mutationFreq)){
                   # adjust the height of points based on their frequency as a scaling factor
-                  a <- function(x){(x-min(x))/(max(x)-min(x))}
-                  object$height <- object$height + a(object$mutationFreq)
+                  a2 <- function(x, y, z){
+                      ((1.4-1.2)*(x-y))/(z-y) + 1.2
+                  }
+                  object[["first"]]$height <- sapply(object[["first"]]$mutationFreq, a2, min(object[["first"]]$mutationFreq), max(object[["first"]]$mutationFreq))
               }
+              
+              # bind the object back together
+              object <- rbindlist(object)
               
               # return the object with adjusted heights
               return(object)
@@ -939,7 +999,7 @@ setMethod(f="retrieveMart",
 #' @import ggplot2
 setMethod(f="buildDensityPlot",
           signature="LolliplotData",
-          definition=function(object, palette, plotALayers, verbose=verbose){
+          definition=function(object, plotALayers, verbose=verbose){
               
               # extract the data we need
               primaryData <- getData(object, name="primaryData")
@@ -978,7 +1038,9 @@ setMethod(f="buildDensityPlot",
               baseTheme <- theme_bw()
               
               # plot theme
-              plotTheme <- theme(axis.text.x=element_blank())
+              plotTheme <- theme(axis.text.x=element_blank(), axis.ticks.x=element_blank(),
+                                 panel.grid.major.y=element_blank(), panel.grid.minor.y=element_blank(),
+                                 axis.title.x=element_blank())
               
               # define coord
               boundaries <- geom_blank(data=coordData, aes_string(x='start'))
@@ -1007,7 +1069,7 @@ setMethod(f="buildDensityPlot",
 #' @import ggplot2
 setMethod(f="buildLolliplot",
           signature="LolliplotData",
-          definition=function(object, plotBLayers, verbose=verbose){
+          definition=function(object, labelAA, plotBLayers, palette, verbose=verbose){
               
               # extract the data we need
               primaryData <- getData(object, name="primaryData")
@@ -1040,9 +1102,31 @@ setMethod(f="buildLolliplot",
                   }
               }
               
-              ############# start building the plot ############################
+              # set plot palette and assign random colors if there are not enough for each domain
+              if(is.null(palette)){
+                  plotPalette <- c("#94C873", "#73C8AC", "#73C3C8", "#73A0C8", "#7379C8",
+                                   "#A573C8", "#C8737F", "#D8D444", "#94AEA1", "#547C81",
+                                   "#515587", "#875151", "#C3923D")
+              } else {
+                  plotPalette <- palette
+              }
               
-              browser()
+              if(length(plotPalette) < length(unique(domainData$interproDesc))){
+                  
+                  # if user supplied palette with not enough colors give warning
+                  if(!is.null(palette)){
+                      memo <- paste("Found", length(plotPalette), "values in palette but there are", length(domainData$interproDesc),
+                                    "protein domains... adding random colors to complete palette!")
+                      warning(memo)
+                  }
+
+                  newCol <- grDevices::colors(distinct=TRUE)[!grepl("^gray", grDevices::colors(distinct=TRUE))]
+                  num2Choose <- length(unique(domainData$interproDesc) )- length(plotPalette)
+                  newCol <- sample(newCol, num2Choose)
+                  plotPalette <- c(plotPalette, newCol)
+              }
+              
+              ############# start building the plot ############################
               
               # set up the protein plot
               protein <- geom_rect(data=proteinData, mapping=aes_string(xmin="proteinStart", xmax="proteinStop", ymin="minHeight", ymax="maxHeight"))
@@ -1057,24 +1141,217 @@ setMethod(f="buildLolliplot",
               segment4 <- geom_segment(data=firstTier, mapping=aes_string(x="proteinCoord", y="height", xend="proteinCoord", yend=1))
               
               # set up the text
-              #plotText <- geom_text(data=secondTier, mapping=aes_string(x="proteinCoordAdj", y="height", label=""))
+              if(labelAA){
+                  nudgeFactor <- .01 * proteinData$proteinStop[1]
+                  plotText <- geom_text(data=secondTier, mapping=aes_string(x="proteinCoordAdj", y="height", label="label"), position=position_nudge(x=nudgeFactor), hjust=0)
+              } else {
+                  plotText <- geom_blank()
+              }
               
               # set up the points
-              points <- geom_point(data=primaryData, aes_string(x="proteinCoordAdj", y="height", size="mutationFreq"), fill="dodgerblue", color="black", shape=21)
+              points <- geom_point(data=primaryData, aes_string(x="proteinCoordAdj", y="height", size="mutationFreq", color="consequence"), shape=19)
               
               # set base theme
               baseTheme <- theme_bw()
               
               # set plot theme
-              plotTheme <- theme(legend.position="bottom")
+              plotTheme <- theme(legend.position="bottom", axis.text.y=element_blank(), axis.ticks.y=element_blank(),
+                                 axis.title.y=element_blank(), panel.grid.major.y=element_blank(),
+                                 panel.grid.minor.y=element_blank())
+              
+              # set colors for plot
+              plotDomainPalette <- scale_fill_manual(values=plotPalette)
+              
+              # set plot labels
+              plotLabel <- labs(x="Amino Acid Position", fill="Interpro\nProtein Domain", size="Mutation\nFrequency")
+              
+              # define legend guide
+              legGuide <- guides(fill=guide_legend(label.position="right", title.position="top"),
+                                 color=guide_legend(label.position="right", title.position="top", ncol=3),
+                                 size=guide_legend(label.position="right", title.position="top", ncol=1))
               
               # define the plot
               lolliplotPlot <- ggplot()
               
               # combine everything
-              lolliplotPlot + protein + domain + segment1 + segment2 + segment3 + segment4 + points + baseTheme + plotTheme
+              lolliplotPlot <- lolliplotPlot + protein + domain + segment1 + segment2 + segment3 + segment4 + points + baseTheme + plotTheme + plotLabel + plotDomainPalette + plotText + legGuide
 
               # convert to grob
               lolliplotGrob <- ggplotGrob(lolliplotPlot)
+              
               return(lolliplotGrob)
           })
+
+#' @rdname arrangeLolliplotPlot-methods
+#' @aliases arrangeLolliplotPlot
+#' @param object Object of class LolliplotData
+#' @return gtable object containg a lolliplot
+#' @noRd
+#' @importFrom gridExtra arrangeGrob
+setMethod(f="arrangeLolliplotPlot",
+          signature="LolliplotPlots",
+          definition=function(object, sectionHeights, verbose=verbose){
+              
+              # grab the data we need
+              plotA <- getGrob(object, 1)
+              plotB <- getGrob(object, 2)
+              
+              # Obtain the max width for relevant plots
+              plotList <- list(plotA, plotB)
+              plotList <- plotList[lapply(plotList, length) > 0]
+              plotWidths <- lapply(plotList, function(x) x$widths)
+              maxWidth <- do.call(grid::unit.pmax, plotWidths)
+              
+              # Set the widths for all plots
+              for(i in 1:length(plotList)){
+                  plotList[[i]]$widths <- maxWidth
+              }
+              
+              # set section heights based upon the number of sections
+              defaultPlotHeights <- c(.25, .75)
+              
+              if(is.null(sectionHeights) & length(plotList) == length(defaultPlotHeights)){
+                  sectionHeights <- defaultPlotHeights
+              } else if(length(sectionHeights) != length(plotList)){
+                  memo <- paste("There are", length(sectionHeights), "section heights provided",
+                                "but", length(plotList), "vertical sections...",
+                                "using default values!")
+                  warning(memo)
+                  sectionHeights <- defaultPlotHeights
+              } else if(!all(is.numeric(sectionHeights))) {
+                  memo <- paste("sectionHeights must be numeric... Using",
+                                "default values!")
+                  warning(memo)
+                  sectionHeights <- defaultPlotHeights
+              }
+              
+              # arrange the final plot
+              finalPlot <- do.call(gridExtra::arrangeGrob, c(plotList, list(ncol=1, heights=sectionHeights)))
+              
+              return(finalPlot)
+          })
+
+#' @rdname setDomainHeights-methods
+#' @aliases setDomainHeights
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+setMethod(f="setDomainHeights",
+          signature="data.table",
+          definition=function(object, verbose, ...){
+              
+              # status message
+              if(verbose){
+                  memo <- paste("Nesting", toString(nrow(object) - 1), "protein domains")
+                  message(memo)
+              }
+              
+              # add in min and max height columns for the protein and it's domains
+              object$minHeight <- -1
+              object$maxHeight <- 1
+              
+              # separate out the protein and the domains
+              protein <- object[object$source == "protein",]
+              domain <- object[object$source == "domain",]
+              
+              # attempt to simplify domain coordinates if any are overlapping
+              domain <- split(domain, by="interproShortDesc")
+              a <- function(x){
+                  
+                  # we can convert to granges ad use reduce to do this for us
+                  gr1 <- GRanges(seqnames=1, ranges=IRanges(start=x$proteinStart, end=x$proteinStop), strand="*")
+                  gr1 <- reduce(gr1)
+                  gr1 <- as.data.table(gr1)
+                  keep <- c("start", "end")
+                  gr1 <- gr1[, keep, with=FALSE]
+                  colnames(gr1) <- c("proteinStart", "proteinStop")
+                  
+                  # reconstruct the data frame
+                  x <- unique(x[,-c("proteinStop", "proteinStart")])
+                  x <- cbind(gr1, x)
+                  
+                  return(x)
+              }
+              domain <- lapply(domain, a)
+              domain <- rbindlist(domain)
+              
+              # determine which regions are overlapping and annotate which nest domain is
+              # sort on start
+              domain$proteinStart <- as.numeric(domain$proteinStart)
+              domain$proteinStop <- as.numeric(domain$proteinStop)
+              domain <- domain[order(domain$proteinStart),]
+              
+              # annotate nests
+              nest <- rep(1, nrow(domain))
+              for(i in 2:nrow(domain)) {
+                  if(domain$proteinStart[i] < domain$proteinStop[i-1]) {
+                      # if start occurs before last stop
+                      nest[i] <- nest[i-1]+1
+                  } else {
+                      # if start occurs after last stop
+                      # get number of domains underneath
+                      layer <- domain$proteinStart[i] < domain$proteinStop[seq(1,i-1)]
+                      nest[i] <- max(nest[which(layer==TRUE)])+1
+                  }
+              }
+              
+              # add this nest information to the data frame
+              domain$nest <- nest
+              
+              # combine gene and domain information
+              protein$nest <- 1
+              protein <- rbind(protein, domain)
+              
+              # annotate display heights based on nesting and make sure coord are numeric
+              protein$minHeight <- 1/(as.numeric(protein$nest))
+              protein$maxHeight <- -1/(as.numeric(protein$nest))
+              
+              return(protein)
+          })
+
+#' @rdname addLabel-methods
+#' @aliases addLabel
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+setMethod(f="addLabel",
+          signature="data.table",
+          definition=function(object, verbose, ...){
+              
+              # status message
+              if(verbose){
+                  memo <- paste("Setting labels for mutations")
+                  message(memo)
+              }
+              
+              # make a label column if there isn't one already
+              if(!"label" %in% colnames(object)){
+                  
+                  # split into insertions, deletion, snvs and add a label
+                  insIndex <- which(grepl("[-0]", object$refAllele))
+                  ins <- object[insIndex,]
+                  ins$label <- paste0("p.", ins$proteinCoord, "Ins")
+                  
+                  delIndex <- which(grepl("[-0]", object$varAllele))
+                  del <- object[delIndex,]
+                  del$label <- paste0("p.", del$proteinCoord, "Del")
+                  
+                  snvsIndex <- which(grepl("[ACGTacgt]", object$refAllele) & grepl("[ACGTacgt]", object$varAllele))
+                  snvs <- object[snvsIndex,]
+                  snvs$label <- paste0("p.", snvs$txdb.refAA, snvs$proteinCoord, snvs$txdb.varAA)
+                  
+                  other <- object[!rownames(object) %in% c(snvsIndex, delIndex, insIndex),]
+                  other$label <- NA
+                  
+                  object <- data.table::rbindlist(list(snvs, ins, del, other))
+                  
+              }
+              
+              # reformat the label column so there is only one label per x,y coordinate
+              dupLabIndex <- which(duplicated(object[,c("height", "proteinCoordAdj", "label")]))
+              object[dupLabIndex, c("label")] <- NA
+              
+              return(object)
+              
+          })
+

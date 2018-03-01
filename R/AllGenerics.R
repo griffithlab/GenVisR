@@ -736,3 +736,36 @@ setGeneric(
     name="buildLolliplot",
     def=function(object, ...){standardGeneric("buildLolliplot")}
 )
+
+#' Method arrangeLolliplotPlot
+#'
+#' @name arrangeLolliplotPlot
+#' @rdname arrangeLolliplotPlot-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="arrangeLolliplotPlot",
+    def=function(object, ...){standardGeneric("arrangeLolliplotPlot")}
+)
+
+#' Method setDomainHeights
+#'
+#' @name setDomainHeights
+#' @rdname setDomainHeights-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="setDomainHeights",
+    def=function(object, ...){standardGeneric("setDomainHeights")}
+)
+
+#' Method addLabel
+#'
+#' @name addLabel
+#' @rdname addLabel-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="addLabel",
+    def=function(object, ...){standardGeneric("addLabel")}
+)
