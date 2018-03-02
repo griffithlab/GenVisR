@@ -41,19 +41,20 @@ setClass("Lolliplot",
 #' @param txdb A bioconoductor txdb object to annotate amino acid positions, required only if amino acid changes are missing (see details).
 #' @param BSgenome A bioconductor BSgenome object to annotate amino acid positions, required only if amino acid changes are missing (see details).
 #' @param emphasize Character vector specifying a list of mutations to emphasize.
-#' @param palette Character vector specifying the colors used for encoding protein domains
+#' @param DomainPalette Character vector specifying the colors used for encoding protein domains
+#' @param MutationPalette Character vector specifying the colors used for encoding mutations
 #' @param plotALayers list of ggplot2 layers to be passed to the density plot.
 #' @param plotBLayers list of ggplot2 layers to be passed to the lolliplot.
 #' @param sectionHeights Numeric vector specifying relative heights of each plot section,
 #' should sum to one. Expects a value for each section.
 #' @export
-Lolliplot <- function(input, gene, transcript=NULL, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, emphasize=NULL, palette=NULL, labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL, sectionHeights=NULL, verbose=FALSE){
+Lolliplot <- function(input, gene, transcript=NULL, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, emphasize=NULL, DomainPalette=NULL, MutationPalette=NULL, labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL, sectionHeights=NULL, verbose=FALSE){
     
     # Obtain and format the data
     data <- LolliplotData(input, gene=gene, transcript=transcript, species=species, host=host, txdb=txdb, BSgenome=BSgenome, emphasize=emphasize, verbose=verbose)
     
     # construct the plots
-    lolliplotPlots <- LolliplotPlots(data, labelAA=labelAA, palette=palette, plotALayers=plotALayers, plotBLayers, verbose=verbose)
+    lolliplotPlots <- LolliplotPlots(data, labelAA=labelAA, DomainPalette=DomainPalette, MutationPalette=MutationPalette, plotALayers=plotALayers, plotBLayers, verbose=verbose)
     
     # align the plots
     lolliplotGrob <- arrangeLolliplotPlot(lolliplotPlots, sectionHeights=sectionHeights, verbose=verbose)
@@ -153,13 +154,13 @@ setClass("LolliplotPlots",
 #' @rdname LolliplotPlots-class
 #' @param object Object of class LolliplotData
 #' @noRd
-LolliplotPlots <- function(object, labelAA, palette, plotALayers, plotBLayers, verbose){
+LolliplotPlots <- function(object, labelAA, DomainPalette, MutationPalette, plotALayers, plotBLayers, verbose){
     
     # set up a density plot for the mutations
     PlotA <- buildDensityPlot(object, plotALayers=plotALayers, verbose=verbose)
     
     # set up the lolliplot
-    PlotB <- buildLolliplot(object, labelAA=labelAA, palette=palette, plotBLayers=plotBLayers, verbose=verbose)
+    PlotB <- buildLolliplot(object, labelAA=labelAA, DomainPalette=DomainPalette, MutationPalette=MutationPalette, plotBLayers=plotBLayers, verbose=verbose)
     
     new("LolliplotPlots", PlotA=PlotA, PlotB=PlotB)
 }
@@ -1069,7 +1070,7 @@ setMethod(f="buildDensityPlot",
 #' @import ggplot2
 setMethod(f="buildLolliplot",
           signature="LolliplotData",
-          definition=function(object, labelAA, plotBLayers, palette, verbose=verbose){
+          definition=function(object, labelAA, plotBLayers, DomainPalette, MutationPalette, verbose=verbose){
               
               # extract the data we need
               primaryData <- getData(object, name="primaryData")
@@ -1102,28 +1103,51 @@ setMethod(f="buildLolliplot",
                   }
               }
               
-              # set plot palette and assign random colors if there are not enough for each domain
-              if(is.null(palette)){
-                  plotPalette <- c("#94C873", "#73C8AC", "#73C3C8", "#73A0C8", "#7379C8",
-                                   "#A573C8", "#C8737F", "#D8D444", "#94AEA1", "#547C81",
-                                   "#515587", "#875151", "#C3923D")
+              # set plot palette for domains and assign random colors if there are not enough for each domain
+              if(is.null(DomainPalette)){
+                  plotPaletteDomain <- c("#94C873", "#73C8AC", "#73C3C8", "#73A0C8", "#7379C8",
+                                         "#A573C8", "#C8737F", "#D8D444", "#94AEA1", "#547C81",
+                                         "#515587", "#875151", "#C3923D")
               } else {
-                  plotPalette <- palette
+                  plotPaletteDomain <- DomainPalette
               }
               
-              if(length(plotPalette) < length(unique(domainData$interproDesc))){
+              if(length(plotPaletteDomain) < length(unique(domainData$interproDesc))){
                   
                   # if user supplied palette with not enough colors give warning
-                  if(!is.null(palette)){
-                      memo <- paste("Found", length(plotPalette), "values in palette but there are", length(domainData$interproDesc),
-                                    "protein domains... adding random colors to complete palette!")
+                  if(!is.null(DomainPalette)){
+                      memo <- paste("Found", length(plotPaletteDomain), "values in palette but there are", length(unique(domainData$interproDesc)),
+                                    "protein domains... adding random colors to complete Domainpalette!")
                       warning(memo)
                   }
 
                   newCol <- grDevices::colors(distinct=TRUE)[!grepl("^gray", grDevices::colors(distinct=TRUE))]
-                  num2Choose <- length(unique(domainData$interproDesc) )- length(plotPalette)
+                  num2Choose <- length(unique(domainData$interproDesc) )- length(plotPaletteDomain)
                   newCol <- sample(newCol, num2Choose)
-                  plotPalette <- c(plotPalette, newCol)
+                  plotPaletteDomain <- c(plotPaletteDomain, newCol)
+              }
+              
+              # set plot palette for mutations and assign random colors if there are not enough for each mutationt type
+              MutationPalette
+              if(is.null(MutationPalette)){
+                  plotPaletteMutation <- c("#0c457d", "#87ceff", "#ffcc5c", "#e8702a", "#9a8262", "#725c91", "#7e9d97", "#9f4f4f", "#4f6333")
+              } else {
+                  plotPaletteMutation <- MutationPalette
+              }
+              
+              if(length(plotPaletteMutation) < length(unique(primaryData$consequence))){
+                  
+                  # if user supplied palette with not enough colors give warning
+                  if(!is.null(MutationPalette)){
+                      memo <- paste("Found", length(plotPaletteMutation), "values in palette but there are", length(unique(primaryData$consequence)),
+                                    "mutation types... adding random colors to complete Mutationpalette!")
+                      warning(memo)
+                  }
+                  
+                  newCol <- grDevices::colors(distinct=TRUE)[!grepl("^gray", grDevices::colors(distinct=TRUE))]
+                  num2Choose <- length(unique(primaryData$consequence) )- length(plotPaletteMutation)
+                  newCol <- sample(newCol, num2Choose)
+                  plotPaletteMutation <- c(plotPaletteMutation, newCol)
               }
               
               ############# start building the plot ############################
@@ -1160,21 +1184,24 @@ setMethod(f="buildLolliplot",
                                  panel.grid.minor.y=element_blank())
               
               # set colors for plot
-              plotDomainPalette <- scale_fill_manual(values=plotPalette)
+              plotDomainPalette <- scale_fill_manual(values=plotPaletteDomain)
+              plotMutationPalette <- scale_color_manual(values=plotPaletteMutation)
               
               # set plot labels
-              plotLabel <- labs(x="Amino Acid Position", fill="Interpro\nProtein Domain", size="Mutation\nFrequency")
+              plotLabel <- labs(x="Amino Acid Position", fill="Interpro\nProtein Domain", size="Mutation\nFrequency", color="Mutation\nConsequence")
               
               # define legend guide
               legGuide <- guides(fill=guide_legend(label.position="right", title.position="top"),
                                  color=guide_legend(label.position="right", title.position="top", ncol=3),
-                                 size=guide_legend(label.position="right", title.position="top", ncol=1))
+                                 size=guide_legend(label.position="right", title.position="top", ncol=2))
               
               # define the plot
               lolliplotPlot <- ggplot()
               
               # combine everything
-              lolliplotPlot <- lolliplotPlot + protein + domain + segment1 + segment2 + segment3 + segment4 + points + baseTheme + plotTheme + plotLabel + plotDomainPalette + plotText + legGuide
+              lolliplotPlot <- lolliplotPlot + protein + domain + segment1 + segment2 + segment3 + segment4 + points +
+                               baseTheme + plotTheme + plotLabel + plotDomainPalette + plotMutationPalette + plotText +
+                               legGuide + scale_size(range=c(5, 10))
 
               # convert to grob
               lolliplotGrob <- ggplotGrob(lolliplotPlot)

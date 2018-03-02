@@ -7,8 +7,9 @@
 \usage{
 Lolliplot(input, gene, transcript = NULL, species = "hsapiens",
   host = "www.ensembl.org", txdb = NULL, BSgenome = NULL,
-  emphasize = NULL, plotALayers = NULL, plotBLayers = NULL,
-  verbose = FALSE)
+  emphasize = NULL, DomainPalette = NULL, MutationPalette = NULL,
+  labelAA = TRUE, plotALayers = NULL, plotBLayers = NULL,
+  sectionHeights = NULL, verbose = FALSE)
 }
 \arguments{
 \item{input}{Object of class MutationAnnotationFormat, GMS, VEP, or a data.table with appropriate columns}
@@ -28,9 +29,16 @@ to the gene parameter.}
 
 \item{emphasize}{Character vector specifying a list of mutations to emphasize.}
 
+\item{DomainPalette}{Character vector specifying the colors used for encoding protein domains}
+
+\item{MutationPalette}{Character vector specifying the colors used for encoding mutations}
+
 \item{plotALayers}{list of ggplot2 layers to be passed to the density plot.}
 
 \item{plotBLayers}{list of ggplot2 layers to be passed to the lolliplot.}
+
+\item{sectionHeights}{Numeric vector specifying relative heights of each plot section,
+should sum to one. Expects a value for each section.}
 }
 \description{
 An S4 class for the lolliplot object

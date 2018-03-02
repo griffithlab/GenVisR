@@ -566,3 +566,278 @@ test_that("TvTi_rmIndel correctly warns if indels are detected", {
     expect_message(TvTi_rmIndel(x), "indels present")
 })
 
+test_that("lolliplot_AA2sidechain, converts amino acid codes to sidechain information", {
+    x <- c("f")
+    out <- lolliplot_AA2sidechain(x)
+    expect_equal(out, "Nonpolar")
+    
+    x <- c("F")
+    out <- lolliplot_AA2sidechain(x)
+    expect_equal(out, "Nonpolar")
+})
+
+test_that("lolliplot_Codon2AA Converts codons to amino acids", {
+    x <- c("TTG")
+    out <- lolliplot_Codon2AA(x)
+    expect_equal(out, "L")
+    
+    x <- c("ttg")
+    out <- lolliplot_Codon2AA(x)
+    expect_equal(out, "L")
+})
+
+test_that("lolliplot_Codon2AA outputs NA if a codon is not recognized", {
+    x <- c("ZZZ")
+    out <- lolliplot_Codon2AA(x)
+    expect_equal(out, NULL)
+})
+
+test_that("lolliplot_constructGene properly nest's overlappping genomic features", {
+    domain_data <- data.frame(desc=c("domainA", "domainB"), start=c(5, 10), end=c(20, 15))
+    gene <- "test"
+    length <- 50
+    out <- lolliplot_constructGene(gene, domain_data, length)  
+    
+    expect_equivalent(out[out$Domain == 'domainA',]$nest, 1)
+    expect_equivalent(out[out$Domain == 'domainB',]$nest, 2)
+    expect_equivalent(out[out$Domain == 'test',]$nest, 1)
+})
+
+test_that("lolliplot_constructGene properly identifies if a domain exceeds the length of the protein", {
+    domain_data <- data.frame(desc=c("domainA"), start=c(5), end=c(20))
+    gene <- "test"
+    length <- 15
+    expect_warning(lolliplot_constructGene(gene, domain_data, length), "is exceeding the length")
+})
+
+test_that("lolliplot_constructGene properly identifies if a domain is before the start of the protein", {
+    domain_data <- data.frame(desc=c("domainA"), start=c(0), end=c(10))
+    gene <- "test"
+    length <- 15
+    expect_warning(lolliplot_constructGene(gene, domain_data, length), "less than the start of the protein")
+})
+
+test_that("lolliplot_constructGene identifies if a start position is greater than an end position", {
+    domain_data <- data.frame(desc=c("domainA"), start=c(10), end=c(5))
+    gene <- "test"
+    length <- 20
+    expect_warning(lolliplot_constructGene(gene, domain_data, length), "Found a start position greater")
+})
+
+test_that("lolliplot_DNAconv identifies if an incomplete codon is given in the sequence", {
+    x <- c("AAATT")
+    expect_warning(lolliplot_DNAconv(x), "not a multiple of three")
+})
+
+test_that("lolliplot_DNAconv splits the input character string into codon lengths", {
+    x <- c("AAATTT")
+    expect_equal(length(lolliplot_DNAconv(x)), 2)
+})
+
+test_that("lolliplot_DNAconv converts condons into residues", {
+    x <- c("AAA")
+    expect_equal(lolliplot_DNAconv(x), "K")
+})
+
+test_that("lolliplot_DNAconv converts residues into sidechains", {
+    x <- c("AAA")
+    expect_equal(lolliplot_DNAconv(x, to="sidechain"), "Basic")
+})
+
+test_that("lolliplot_DNAconv throws an warning if input to the to parameter is unrecognized", {
+    x <- c("AAA")
+    expect_warning(lolliplot_DNAconv(x, to="incorrect"), "did not recognize")
+})
+
+test_that("lolliplot_dodgeCoordX succesfully dodges coordinates as expected", {
+    x <- data.frame(x=c(1, 2), y=c(1, 1))
+    out <- lolliplot_dodgeCoordX(x)
+    expect_true(out[1] < 1)
+    expect_true(out[2] > 2)
+    
+    x <- data.frame(x=c(1, 1), y=c(1, 1))
+    out <- lolliplot_dodgeCoordX(x)
+    expect_equal(out[1], 1)
+})
+
+test_that("lolliplot_dodgeCoordX does not apply a force field if length of vector is 1", {
+    x <- data.frame(x=c(1), y=c(1))
+    out <- lolliplot_dodgeCoordX(x)
+    expect_equal(out, 1)
+})
+
+test_that("lolliplot_dodgeCoordY succesfully dodges y coordinates as expected", {
+    x <- data.frame(coord_x_dodge=c(1, 2))
+    out <- lolliplot_dodgeCoordY(x, track="top")
+    expect_equal(out[1], out[2])
+    
+    x <- data.frame(coord_x_dodge=c(1, 1))
+    out <- lolliplot_dodgeCoordY(x, track="top")
+    expect_true(out[1] != out[2])
+    expect_true(out[1] > 0)
+    
+    out <- lolliplot_dodgeCoordY(x, track="bottom")
+    expect_true(out[1] != out[2])
+    expect_true(out[1] < 0)
+})
+
+test_that("lolliplot_mutationObs correctly removes input variants annotated as within an intron", {
+    x <- data.frame(gene=c("TP53", "TP53"), amino_acid_change=c('e0+2', 'p.K101N'), transcript_name=c("ENST00000269305", "ENST00000269305"))
+    expect_message(lolliplot_mutationObs(x,
+                                         track="top",
+                                         fill_value=NULL,
+                                         label_column=NULL,
+                                         rep.fact=5000,
+                                         rep.dist.lmt=500,
+                                         attr.fact=.1,
+                                         adj.max=.1,
+                                         adj.lmt=.5,
+                                         iter.max=10000), "not within a residue")
+})
+
+test_that("lolliiplot_mutationObs correctly identifies if there are no mutations to plot", {
+    x <- data.frame(gene=c("TP53"), amino_acid_change=c('e0+2'), transcript_name=c("ENST00000269305"))
+    expect_error(lolliplot_mutationObs(x,
+                                       track="top",
+                                       fill_value=NULL,
+                                       label_column=NULL,
+                                       rep.fact=5000,
+                                       rep.dist.lmt=500,
+                                       attr.fact=.1,
+                                       adj.max=.1,
+                                       adj.lmt=.5,
+                                       iter.max=10000), "Did not detect any residues")
+})
+
+test_that("lolliplot_mutationObs correctly extract coordinates from p. notation", {
+    x <- data.frame(gene=c("TP53"), amino_acid_change=c('p.F426A'), transcript_name=c("ENST00000269305"))
+    out <- lolliplot_mutationObs(x, track="top", fill_value=NULL, label_column=NULL,
+                                 rep.fact=5000, rep.dist.lmt=500, attr.fact=.1, 
+                                 adj.max=.1, adj.lmt=.5, iter.max=10000)
+    expect_equal(out$mutation_coord, 426)
+})
+
+test_that("lolliplot_mutationObs correctly identifies amino acid changes in c. notation", {
+    x <- data.frame(gene=c("TP53"), amino_acid_change=c('c.F4260A'), transcript_name=c("ENST00000269305"))
+    expect_error(lolliplot_mutationObs(x, track="top", fill_value=NULL, label_column=NULL,
+                                       rep.fact=5000, rep.dist.lmt=500, attr.fact=.1,
+                                       adj.max=.1, adj.lmt=.5, iter.max=10000), "c. notation is not currently supported")
+})
+
+test_that("lolliplot_mutationObs correctly notifies if amino_acid_change notation is not recognized", {
+    x <- data.frame(gene=c("TP53"), amino_acid_change=c('4260'), transcript_name=c("ENST00000269305"))
+    expect_error(lolliplot_mutationObs(x, track="top", fill_value=NULL, label_column=NULL,
+                                       rep.fact=5000, rep.dist.lmt=500, attr.fact=.1,
+                                       adj.max=.1, adj.lmt=.5, iter.max=10000), "Could not determine notation type")
+})
+
+test_that("lolliplot_mutationObs correctly sets mutations y coord based on the track", {
+    x <- data.frame(gene=c("TP53"), amino_acid_change=c('p.F426A'), transcript_name=c("ENST00000269305"))
+    out <- lolliplot_mutationObs(x, track="bottom", fill_value=NULL, label_column=NULL,
+                                 rep.fact=5000, rep.dist.lmt=500, attr.fact=.1, 
+                                 adj.max=.1, adj.lmt=.5, iter.max=10000)
+    expect_true(out$coord_y_dodge < 0)
+    out <- lolliplot_mutationObs(x, track="top", fill_value=NULL, label_column=NULL,
+                                 rep.fact=5000, rep.dist.lmt=500, attr.fact=.1, 
+                                 adj.max=.1, adj.lmt=.5, iter.max=10000)   
+    expect_true(out$coord_y_dodge > 0)
+})
+
+test_that("lolliplot_mutationObs correctly sets a specified label column", {
+    x <- data.frame(gene=c("TP53"), amino_acid_change=c('p.F426A'), transcript_name=c("ENST00000269305"), testA="blue", testB="red")
+    out <- lolliplot_mutationObs(x, track="bottom", fill_value=NULL, label_column="testA",
+                                 rep.fact=5000, rep.dist.lmt=500, attr.fact=.1, 
+                                 adj.max=.1, adj.lmt=.5, iter.max=10000)
+    expect_equal(out$labels, "blue")
+})
+
+test_that("lolliplot_mutationOBs correctly sets a specified fill column", {
+    x <- data.frame(gene=c("TP53"), amino_acid_change=c('p.F426A'), transcript_name=c("ENST00000269305"), testA="blue", testB="red")
+    out <- lolliplot_mutationObs(x, track="bottom", fill_value="testB", label_column=NULL,
+                                 rep.fact=5000, rep.dist.lmt=500, attr.fact=.1, 
+                                 adj.max=.1, adj.lmt=.5, iter.max=10000)
+    expect_equal(as.character(out$testB), "red")
+})
+
+test_that("lolliplot_qual checks that input to x is a data frame", {
+    x <- data.frame(transcript_name=c("ENST00000269305"), gene=c("TP53"), amino_acid_change=c("p.K440L"))
+    x <- as.matrix(x)
+    y <- NULL
+    z <- NULL
+    expect_message(lolliplot_qual(x, y, z), "not a data frame")
+})
+
+test_that("lolliplot_qual checks for correct column names in x", {
+    x <- data.frame(incorrect=c("ENST00000269305"), gene=c("TP53"), amino_acid_change=c("p.K440L"))
+    y <- NULL
+    z <- NULL 
+    expect_error(lolliplot_qual(x, y, z), "not detect correct columns")
+    
+    x <- data.frame(transcript_name=c("ENST00000269305"), incorrect=c("TP53"), amino_acid_change=c("p.K440L"))
+    expect_error(lolliplot_qual(x, y, z), "not detect correct columns")
+    
+    x <- data.frame(transcript_name=c("ENST00000269305"), gene=c("TP53"), incorrect=c("p.K440L"))
+    expect_error(lolliplot_qual(x, y, z), "not detect correct columns")
+})
+
+test_that("lolliplot_qual checks that only one transcript is present", {
+    x <- data.frame(transcript_name=c("ENST00000269305", "ENST00000222222"), gene=c("TP53", "TP53"), amino_acid_change=c("p.K440L", "p.T318G"))
+    y <- NULL
+    z <- NULL 
+    expect_error(lolliplot_qual(x, y, z), "more than 1 transcript")
+})
+
+test_that("lolliplot_qual checks that input to y is a data frame", {
+    x <- data.frame(transcript_name=c("ENST00000269305"), gene=c("TP53"), amino_acid_change=c("p.K440L"))
+    y <- data.frame(transcript_name=c("ENST00000269305"), amino_acid_change=c("p.K440L"))
+    y <- as.matrix(y)
+    z <- NULL  
+    expect_message(lolliplot_qual(x, y, z), "not a data frame")
+})
+
+test_that("lolliplot_qual checks for correct column names in input to y", {
+    x <- data.frame(transcript_name=c("ENST00000269305"), gene=c("TP53"), amino_acid_change=c("p.K440L"))
+    y <- data.frame(incorrect=c("ENST00000269305"), amino_acid_change=c("p.K440L"))
+    z <- NULL
+    expect_error(lolliplot_qual(x, y, z), "not detect correct")
+    
+    x <- data.frame(transcript_name=c("ENST00000269305"), gene=c("TP53"), amino_acid_change=c("p.K440L"))
+    y <- data.frame(transcript_name=c("ENST00000269305"), incorrect=c("p.K440L"))
+    z <- NULL
+    expect_error(lolliplot_qual(x, y, z), "not detect correct")
+})
+
+test_that("lolliplot_qual checks that input to z is a data frame", {
+    x <- data.frame(transcript_name=c("ENST00000269305"), gene=c("TP53"), amino_acid_change=c("p.K440L"))
+    y <- NULL
+    z <- data.frame(description=c("test"), start=c(5), stop=c(3))
+    z <- as.matrix(z)
+    expect_warning(lolliplot_qual(x, y, z), "not a data frame")
+})
+
+test_that("lolliplot_qual checks for correct column names in input to y", {
+    x <- data.frame(transcript_name=c("ENST00000269305"), gene=c("TP53"), amino_acid_change=c("p.K440L"))
+    y <- NULL
+    z <- data.frame(incorrect=c("test"), start=c(5), stop=c(3))
+    expect_error(lolliplot_qual(x, y, z), "not detect correct")
+    
+    z <- data.frame(description=c("test"), incorrect=c(5), stop=c(3))
+    expect_error(lolliplot_qual(x, y, z), "not detect correct")
+    
+    z <- data.frame(description=c("test"), start=c(5), incorrect=c(3))
+    expect_error(lolliplot_qual(x, y, z), "not detect correct")
+})
+
+test_that("lolliplot_reduceLolli successfully reduces the number of lollis to the max limit",{
+    x <- data.frame(mutation_coord=c(5, 5, 5, 2, 2), label=c("a", "b", "c", "d", "e"))
+    max <- 2
+    out <- lolliplot_reduceLolli(x, max=max)
+    expect_equal(nrow(out[out$mutation_coord == 5,]), 2)
+})
+
+test_that("lolliplot_reduceLolli reduces nothing if max is set to NULL", {
+    x <- data.frame(mutation_coord=c(5, 5, 5, 2, 2), label=c("a", "b", "c", "d", "e"))
+    max <- NULL
+    out <- lolliplot_reduceLolli(x, max=max)
+    expect_equal(nrow(out), 5)
+})
