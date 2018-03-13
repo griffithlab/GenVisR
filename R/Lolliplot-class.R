@@ -33,7 +33,6 @@ setClass("Lolliplot",
 #' @name Lolliplot
 #' @rdname Lolliplot-class
 #' @param input Object of class MutationAnnotationFormat, GMS, VEP, or a data.table with appropriate columns
-#' @param gene Character string specifying a gene to plot
 #' @param transcript Character string specifying the ensembl transcript for which to plot, should be a transcript which corresponds
 #' to the gene parameter.
 #' @param species Character string specifying a species when using biomaRt queries
@@ -48,10 +47,10 @@ setClass("Lolliplot",
 #' @param sectionHeights Numeric vector specifying relative heights of each plot section,
 #' should sum to one. Expects a value for each section.
 #' @export
-Lolliplot <- function(input, gene, transcript=NULL, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, emphasize=NULL, DomainPalette=NULL, MutationPalette=NULL, labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL, sectionHeights=NULL, verbose=FALSE){
+Lolliplot <- function(input, transcript=NULL, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, emphasize=NULL, DomainPalette=NULL, MutationPalette=NULL, labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL, sectionHeights=NULL, verbose=FALSE){
     
     # Obtain and format the data
-    data <- LolliplotData(input, gene=gene, transcript=transcript, species=species, host=host, txdb=txdb, BSgenome=BSgenome, emphasize=emphasize, verbose=verbose)
+    data <- LolliplotData(input, transcript=transcript, species=species, host=host, txdb=txdb, BSgenome=BSgenome, emphasize=emphasize, verbose=verbose)
     
     # construct the plots
     lolliplotPlots <- LolliplotPlots(data, labelAA=labelAA, DomainPalette=DomainPalette, MutationPalette=MutationPalette, plotALayers=plotALayers, plotBLayers, verbose=verbose)
@@ -87,7 +86,7 @@ setClass("LolliplotData",
 #' @rdname LolliplotData-class
 #' @param object Object of class MutationAnnotationFormat, GMS, VEP, or a data.table with appropriate fields
 #' @noRd
-LolliplotData <- function(object, gene, transcript, species, host, txdb, BSgenome, emphasize, verbose){
+LolliplotData <- function(object, transcript, species, host, txdb, BSgenome, emphasize, verbose){
     
     # convert object to Lolliplot format
     lolliplotData <- toLolliplot(object, verbose=verbose)
@@ -333,10 +332,12 @@ setMethod(f="annotateTranscript",
           signature="data.table",
           definition=function(object, ensembl_mart, verbose, ...){
               
-              # first check if both a transcript and AA change column exists
-              if(all(c("transcript", "AAcoord") %in% colnames(object))){
+              # first check if both a transcript and proteinCoord column exist
+              # we need both at this stage to ensure that the coordinates are accurate
+              # and that we pull the correct domain data later on
+              if(all(c("transcript", "proteinCoord") %in% colnames(object))){
                   
-                  # next check to see if they appear to be ensembl transcripts
+                  # next check to see if the ensembl transcript appears to be valid if so change the column name for downstream functions
                   if(any(grepl("^ENS\\D*T", object$transcript))){
                       
                       if(verbose){
@@ -344,6 +345,8 @@ setMethod(f="annotateTranscript",
                                         "and amino acid coordinates... skipping transcript annotation")
                           message(memo)
                       }
+                      object$ensembl_transcript_id <- object$transcript
+                      object$transcript <- NULL
                       return(object)
                   }
               }
@@ -395,8 +398,12 @@ setMethod(f="annotateTranscript",
 setMethod(f="annotateGene",
           signature="data.table",
           definition=function(object, transcript, ensembl_mart, verbose, ...){
-              
+             
               # perform quality checks on transcript
+              if(is.null(transcript)){
+                  memo <- paste("Parameter transcript is required, found NULL!")
+                  stop(memo)
+              }
               if(!is.character(transcript)){
                   memo <- paste("Parameter transcript is not of class character",
                                 "found class:", toString(class(transcript)),
@@ -469,23 +476,35 @@ setMethod(f="annotateProteinCoord",
               ############ if AA_change column is present ######################
               
               # first look for an amino acid coord column, if it's present get the
-              # protein coordinates from there and do quality checks
-              if(any(colnames(object) %in% "AAcoord")){
-                  if(all(is.numeric(object$AAcoord))){
-                      
+              # protein coordinates from there and do quality checks, we've already
+              # checked for a valid ensembl transcript so we can be confident as to
+              # the accuracy when pulling domains
+              if(any(colnames(object) %in% "proteinCoord")){
+                  if(all(is.numeric(object$proteinCoord))){
+                   
                       return(object)
-                      
-                  } else if(all(grepl("^p\\.", object$AAcoord))){
+                  } else if(any(grepl("^p\\.", object$proteinCoord))){
                       
                       if(verbose){
-                          memo <- paste("p. notation detected in AA_change column,",
-                                        "converting to numeric values")
+                          countPNotation <- length(object$proteinCoord[grepl("^p\\.", object$proteinCoord)])
+                          memo <- paste("Found", countPNotation,"entries with p. notation")
                           message(memo)
                       }
                       
-                      object$AAcoord <- as.numeric(gsub("p\\.[*a-zA-z]*(\\d+).*?$",
-                                                        "\\1", object$AAcoord,
-                                                        perl=TRUE))
+                      if(!all(grepl("^p\\.", object$proteinCoord))){
+                          
+                          indexToRemove <- which(!grepl("^p\\.", object$proteinCoord))
+                          
+                          if(verbose){
+                              memo <- paste("Removing", length(indexToRemove), "entries without p. notation, could these be intronic variants!")
+                              message(memo)
+                          }
+                          object <- object[-indexToRemove,]
+                  }
+                  
+                      object$proteinCoord <- as.numeric(gsub("p\\.[*a-zA-z]*(\\d+).*?$",
+                                                             "\\1", object$proteinCoord,
+                                                             perl=TRUE))
                       return(object)
                   } else {
                       if(verbose){
@@ -608,7 +627,7 @@ setMethod(f="annotateProteinCoord",
 setMethod(f="filterByTranscript",
           signature="data.table",
           definition=function(object, transcript, verbose, ...){
-              
+              browser()
               # pick a transcript to filter on if none is given
               if(is.null(transcript)){
                   transcript <- unique(object$ensembl_transcript_id)[1]
@@ -943,7 +962,7 @@ setMethod(f="toLolliplot",
                   stop(memo)
               }
               
-              # return the object with adjusted heights
+              # return the object
               return(object)
           })
 

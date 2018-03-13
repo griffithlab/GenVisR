@@ -511,20 +511,35 @@ setMethod(f="toLolliplot",
                   message(memo)
               }
               
-              # grab the sample, position, and mutation columns
-              sample <- getSample(object)
+              # grab the core required columns
               chromosome <- getPosition(object)$chromosome_name
               start <- getPosition(object)$start
               stop <- getPosition(object)$stop
-              transcript <- getMeta(object)$transcript_name
-              gene <- getMeta(object)$gene_name
-              type <- getMutation(object)$trv_type
-              aminoAcidChange <- getMeta(object)$amino_acid_change
-              cPosition <- getMeta(object)$c_position
+              reference <- getMutation(object)$reference
+              variant <- getMutation(object)$variant
+              sample <- getSample(object)
+              gene <- getMeta(object)$ensembl_gene_id
+              consequence <- getMutation(object)$trv_type
               
-              # combine all the relevant data into a single data table
-              lolliplotFormat <- cbind(sample, chromosome, start, stop, transcript, gene, type, aminoAcidChange, cPosition)
+              # grab amino acid position columns if available
+              transcript <- getMeta(object)$transcript_name
+              aminoAcidChange <- getMeta(object)$amino_acid_change
+              
+              # if amino acid position is not present try and use the biomaRt method to get relevent data, this should never
+              # happen with a GMS file though
+              valueCheck <- c(is.null(transcript), is.null(aminoAcidChange))
+              if(any(valueCheck)){
+                  missingIndex <- which(valueCheck == TRUE)
+                  memo <- paste("Could not find the follwing required fields:", toString(valueCheck[missingINdex]),
+                                "unable to use file supplied protein positions, please contact developer to report error!")
+                  warning(memo)
+                  lolliplotFormat <- cbind(chromosome, start, stop, reference, variant, sample, gene, consequence)
+                  colnames(lolliplotFormat) <- cbind("chromosome", "start", "stop", "reference", "variant", "sample", "gene", "consequence")
+              } else {
+                  # combine all the relevant data into a single data table
+                  lolliplotFormat <- cbind(chromosome, start, stop, reference, variant, sample, gene, consequence, transcript, aminoAcidChange)
+                  colnames(lolliplotFormat) <- c("chromosome", "start", "stop", "reference", "variant", "sample", "gene", "consequence", "transcript", "proteinCoord")
+              }
               
               return(lolliplotFormat)
-              
               })

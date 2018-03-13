@@ -795,3 +795,66 @@ setMethod(f="toRainfall",
               
               return(rainfallFormat)
           })
+
+#' @rdname toLolliplot-methods
+#' @aliases toLolliplot
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+setMethod(f="toLolliplot",
+          signature="VEP",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("converting", class(object), "to expected Lolliplot format")
+                  message(memo)
+              }
+              
+              # TODO ALL VEP files should have annotated HGVSp amino acid changes which means
+              # we don't need the genomic location/variant but it would be nice if it was an
+              # option to use that information
+              
+              # TODO Lolliplot can run in two modes:
+              # mode 1: requires genomic coordinates in order to obtain amino acid changes (not yet impemented)
+              # mode 2: if amino acid changes are already present those can be used instead but we need to keep a transcript
+              # column to make sure domains extracted are still valid in relation to proteins
+              # in both cases an ensembl gene ID is necessary to get domains
+              
+              # implementation of mode 1
+              position <- object@vepObject@position[,"Location"]
+              position <- strsplit(as.character(position$Location), ":")
+              chromosome <- sapply(position, function(x) x[1])
+              start <- sapply(position, function(x) x[2]) 
+              
+              # implementation of mode 2
+              
+              # extract the right columns and build the dataset
+              sample <- object@vepObject@sample
+              Consequence <- object@vepObject@mutation[,"Consequence"]
+              SYMBOL <- object@vepObject@meta[,"SYMBOL"]
+              Feature <- object@vepObject@meta[,"Feature"]
+              HGSVp <- object@vepObject@meta[,"HGVSp"]
+              
+              # bind the data together
+              object <- cbind(sample, Consequence, SYMBOL, Feature, HGSVp)
+              colnames(object) <- c("sample", "mutation", "gene", "transcript", "AAchange")
+              
+              object$AAchange <- gsub(".*p\\.", "", object$AAchange)
+              object$AAchange <- gsub("\\D", "", object$AAchange)
+              object$AAchange <- as.numeric(object$AAchange)
+              browser()
+              
+              
+              # check for the right columns
+              expecCol <- c("chromosome", "start", "stop", "reference", "variant", "sample", "gene")
+              if(!all(expecCol %in% colnames(object))){
+                  missingCol <- expecCol[!expecCol %in% colnames(object)]
+                  memo <- paste("The following required columns were missing from the input:",
+                                toString(missingCol))
+                  stop(memo)
+              }
+              
+              # return the object
+              return(object)
+          })

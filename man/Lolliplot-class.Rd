@@ -5,7 +5,7 @@
 \alias{Lolliplot}
 \title{Class Lolliplot}
 \usage{
-Lolliplot(input, gene, transcript = NULL, species = "hsapiens",
+Lolliplot(input, transcript = NULL, species = "hsapiens",
   host = "www.ensembl.org", txdb = NULL, BSgenome = NULL,
   emphasize = NULL, DomainPalette = NULL, MutationPalette = NULL,
   labelAA = TRUE, plotALayers = NULL, plotBLayers = NULL,
@@ -13,8 +13,6 @@ Lolliplot(input, gene, transcript = NULL, species = "hsapiens",
 }
 \arguments{
 \item{input}{Object of class MutationAnnotationFormat, GMS, VEP, or a data.table with appropriate columns}
-
-\item{gene}{Character string specifying a gene to plot}
 
 \item{transcript}{Character string specifying the ensembl transcript for which to plot, should be a transcript which corresponds
 to the gene parameter.}
