@@ -76,9 +76,7 @@ geneViz_extrUTR <- function(txdb=txdb, gr=gr, reduce=FALSE, gaps=FALSE)
 
     # get a list of transcript id's overlapping the Granges object
     transcripts <- GenomicFeatures::transcriptsByOverlaps(txdb, gr)
-    map <- IRanges::relist(BiocGenerics::unlist(transcripts, use.names=FALSE)$tx_id,
-                           transcripts)
-    txid <- BiocGenerics::unlist(map, use.names=FALSE)
+    txid <- transcripts$tx_id
 
     # extract UTR from transcript database given transcript ID
     r <- AnnotationDbi::select(txdb, as.character(txid),

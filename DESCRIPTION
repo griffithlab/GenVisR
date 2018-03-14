@@ -28,7 +28,7 @@ NeedsCompilation: no
 Author: Zachary Skidmore [aut, cre], Alex Wagner [aut], Robert Lesurf [aut],
     Katie Campbell [aut], Jason Kunisaki [aut], Obi Griffith [aut], Malachi Griffith
     [aut]
-Collate: 
+Collate:
     'AllGenerics.R'
     'Clinical-class.R'
     'GMS_Virtual-class.R'
