@@ -496,12 +496,12 @@ setMethod(f="toLolliplot",
               colnames(lolliplotFormat_Allele1) <- c("sample", "chromosome", "start", "stop", "refAllele", "varAllele", "gene", "consequence")
               colnames(lolliplotFormat_Allele2) <- c("sample", "chromosome", "start", "stop", "refAllele", "varAllele", "gene", "consequence")
               lolliplotFormat <- data.table::rbindlist(list(lolliplotFormat_Allele1, lolliplotFormat_Allele2))   
-              colnames(lolliplotFormat) <- c("sample", "chromosome", "start", "stop", "refAllele", "varAllele", "gene", "consequence")
+              colnames(lolliplotFormat) <- c("sample", "chromosome", "start", "stop", "reference", "variant", "gene", "consequence")
               
               # Remove cases where there is not change between reference and variant
-              lolliplotFormat$refAllele <- as.character(lolliplotFormat$refAllele)
-              lolliplotFormat$varAllele <- as.character(lolliplotFormat$varAllele)
-              alleleMatchIndex <- lolliplotFormat$refAllele == lolliplotFormat$varAllele
+              lolliplotFormat$reference <- as.character(lolliplotFormat$reference)
+              lolliplotFormat$variant <- as.character(lolliplotFormat$variant)
+              alleleMatchIndex <- lolliplotFormat$reference == lolliplotFormat$variant
               lolliplotFormat <- lolliplotFormat[!alleleMatchIndex,]
               if(verbose){
                   memo <- paste("Removed", length(alleleMatchIndex), "entries",

@@ -10,13 +10,6 @@ data(PIK3CA)
 }
 \value{
 Object of class data frame
-Truncated BRCA MAF file
-
-A data set containing 50 samples corresponding to "Breast invasive carcinoma"
-originating from the TCGA project in .maf format (version 2.4):
-https://wiki.nci.nih.gov/display/TCGA/TCGA+MAF+Files#TCGAMAFFiles-BRCA:Breastinvasivecarcinoma, /dccfiles_prod/tcgafiles/distro_ftpusers/anonymous/tumor/brca/gsc/genome.wustl.edu/illuminaga_dnaseq/mutations/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0/genome.wustl.edu_BRCA.IlluminaGA_DNASeq.Level_2.5.3.0.somatic.maf
-
-Object of class data drame
 }
 \description{
 A data set originating from the open access TCGA data (6c93f518-1956-4435-9806-37185266d248),

@@ -31,12 +31,16 @@ to the gene parameter.}
 
 \item{MutationPalette}{Character vector specifying the colors used for encoding mutations}
 
+\item{labelAA}{Boolean specifying if labels should be added to emphasized mutations}
+
 \item{plotALayers}{list of ggplot2 layers to be passed to the density plot.}
 
 \item{plotBLayers}{list of ggplot2 layers to be passed to the lolliplot.}
 
 \item{sectionHeights}{Numeric vector specifying relative heights of each plot section,
 should sum to one. Expects a value for each section.}
+
+\item{verbose}{Boolean specifying if status messages should be reported.}
 }
 \description{
 An S4 class for the lolliplot object

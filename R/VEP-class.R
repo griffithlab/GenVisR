@@ -803,7 +803,7 @@ setMethod(f="toRainfall",
 #' @noRd
 setMethod(f="toLolliplot",
           signature="VEP",
-          definition=function(object, verbose, ...){
+          definition=function(object, BSgenome, verbose, ...){
               
               # print status message
               if(verbose){
@@ -811,50 +811,138 @@ setMethod(f="toLolliplot",
                   message(memo)
               }
               
-              # TODO ALL VEP files should have annotated HGVSp amino acid changes which means
-              # we don't need the genomic location/variant but it would be nice if it was an
-              # option to use that information
+              # grab the BSgenome
+              if(is.null(BSgenome)){
+                  if(verbose){
+                      memo <- paste("Looking for correct genome for reference base annotation.")
+                      message(memo)
+                  }
+                  
+                  # look for assembly version in header
+                  header <- object@vepObject@header
+                  header <- header$Info[grepl("assembly", header$Info)]
+                  header <- regmatches(header,regexpr("\\w+(\\d)+", header))
+                  if(length(header) != 1){
+                      memo <- paste("Unable to infer assembly from VEP header,",
+                                    "please use the BSgenome parameter!")
+                      stop(memo) 
+                  }
+                  
+                  # determine if a genome is available
+                  availableGenomes <- BSgenome::available.genomes()
+                  availableGenomes <- availableGenomes[grepl(header, availableGenomes)]
+                  if(length(availableGenomes) == 0){
+                      memo <- paste("Could not find a compatible BSgenome for", toString(header),
+                                    "Please specify the bioconductor BSgenome to annotate references bases!")
+                      stop(memo)
+                  }
+                  
+                  # determine if the available genome in an installed package
+                  installedGenomes <- BSgenome::installed.genomes()
+                  installedGenomes <- installedGenomes[installedGenomes == availableGenomes]
+                  if(length(installedGenomes) == 0){
+                      memo <- paste("The BSgenome", toString(availableGenomes), "is available",
+                                    "but is not installed! Please install", toString(availableGenomes),
+                                    "via bioconductor!")
+                      stop(memo)
+                  }
+                  
+                  # grab the genome
+                  BSgenome <- installedGenomes[1]
+                  if(verbose){
+                      memo <- paste("attempting to use", toString(BSgenome), "to annotate reference bases!")
+                  }
+                  requireNamespace(BSgenome)
+                  BSgenome <- getExportedValue(BSgenome, BSgenome)
+              }
               
-              # TODO Lolliplot can run in two modes:
-              # mode 1: requires genomic coordinates in order to obtain amino acid changes (not yet impemented)
-              # mode 2: if amino acid changes are already present those can be used instead but we need to keep a transcript
-              # column to make sure domains extracted are still valid in relation to proteins
-              # in both cases an ensembl gene ID is necessary to get domains
-              
-              # implementation of mode 1
-              position <- object@vepObject@position[,"Location"]
-              position <- strsplit(as.character(position$Location), ":")
-              chromosome <- sapply(position, function(x) x[1])
-              start <- sapply(position, function(x) x[2]) 
-              
-              # implementation of mode 2
-              
-              # extract the right columns and build the dataset
+              # grab the sample, mutation, position columns
               sample <- object@vepObject@sample
-              Consequence <- object@vepObject@mutation[,"Consequence"]
-              SYMBOL <- object@vepObject@meta[,"SYMBOL"]
-              Feature <- object@vepObject@meta[,"Feature"]
-              HGSVp <- object@vepObject@meta[,"HGVSp"]
+              variantAllele <- object@vepObject@mutation[,"Allele"]
+              position <- object@vepObject@position[,"Location"]
               
-              # bind the data together
-              object <- cbind(sample, Consequence, SYMBOL, Feature, HGSVp)
-              colnames(object) <- c("sample", "mutation", "gene", "transcript", "AAchange")
+              # split the position into chr, start , stop
+              positionSplit <- lapply(as.character(position$Location), strsplit, ":", fixed=TRUE)
+              chr <- unlist(lapply(positionSplit, function(x) x[[1]][1]))
+              coord <- unlist(lapply(positionSplit, function(x) x[[1]][2]))
+              coord <- lapply(coord, strsplit, "-", fixed=TRUE)
+              start <- as.numeric(unlist(lapply(coord, function(x) x[[1]][1])))
+              stop <- as.numeric(unlist(lapply(coord, function(x) x[[1]][2])))
+              stop[is.na(stop)] <- start[is.na(stop)]
               
-              object$AAchange <- gsub(".*p\\.", "", object$AAchange)
-              object$AAchange <- gsub("\\D", "", object$AAchange)
-              object$AAchange <- as.numeric(object$AAchange)
-              browser()
+              # combine everything into one GRanges object
+              variantGR <- GenomicRanges::GRanges(seqnames=chr, IRanges::IRanges(start=start, end=stop))
+              variantGR$sample <- sample$sample
+              variantGR$variantAllele <- toupper(variantAllele$Allele)
               
-              
-              # check for the right columns
-              expecCol <- c("chromosome", "start", "stop", "reference", "variant", "sample", "gene")
-              if(!all(expecCol %in% colnames(object))){
-                  missingCol <- expecCol[!expecCol %in% colnames(object)]
-                  memo <- paste("The following required columns were missing from the input:",
-                                toString(missingCol))
+              # check that the reference chromosomes match the input and BSgenome
+              seqMismatch <- unique(chr[!chr %in% seqnames(BSgenome)])
+              if(length(seqMismatch >= 1)){
+                  memo <- paste("The following chromosomes do not match the BSgenome specified:", toString(seqMismatch))
+                  warning(memo)
+                  if(length(unique(chr[!paste0("chr", chr) %in% seqnames(BSgenome)])) == 0){
+                      memo <- paste("appending \"chr\" to chromosomes to fix mismatch with the BSgenome")
+                      warning(memo)
+                      chr <- paste0("chr", chr)
+                      GenomeInfoDb::seqlevels(variantGR) <- unique(chr)
+                      GenomeInfoDb::seqnames(variantGR)[seq_along(variantGR)] <- chr
+                  } else {
+                      memo <- paste("removing entries with chromosomes not matching the BSgenome")
+                      warning(memo)
+                      variantGR_origSize <- length(variantGR) 
+                      variantGR <- variantGR[as.character(seqnames(variantGR)) %in% as.character(seqnames(BSgenome)),]
+                      if(verbose){
+                          memo <- paste("removed", variantGR_origSize - length(variantGR), "entries where chromosomes did",
+                                        "not match the BSgenome")
+                      }
+                  }
+              }
+              if(length(variantGR) == 0){
+                  memo <- paste("There are no variants left after subsets.")
                   stop(memo)
               }
               
+              # get the reference sequences
+              if(verbose){
+                  memo <- paste("Annotating reference bases")
+                  message(memo)
+              }
+              refAllele <- toupper(Rsamtools::getSeq(BSgenome, variantGR, as.character=TRUE))
+              
+              # combine all columns into a consistent format
+              variantGR$refAllele <- refAllele
+              lolliplotFormat <- data.table::as.data.table(variantGR)
+              keep <- c("sample", "seqnames", "start", "end", "refAllele", "variantAllele")
+              lolliplotFormat <- lolliplotFormat[,keep, with=FALSE]
+              consequence <- object@vepObject@mutation[,"Consequence"]
+              gene <-  object@vepObject@meta[,"Gene"]
+              lolliplotFormat <- cbind(lolliplotFormat, gene, consequence)
+              colnames(lolliplotFormat) <- c("sample", "chromosome", "start", "stop", "reference", "variant", "gene", "consequence")
+              
+              # if amino acid position is available grab this as well so we don't rely on biomaRt to annotate
+              HGVSp <- object@vepObject@meta[,"HGVSp"]
+              label <- HGVSp
+              transcript <- object@vepObject@meta[,"Feature"]
+              valueCheck <- c(is.null(transcript), is.null(HGVSp))
+              if(any(valueCheck)){
+                  missingIndex <- which(valueCheck == TRUE)
+                  memo <- paste("Could not find the follwing required fields:", toString(valueCheck[missingINdex]),
+                                "unable to use file supplied protein positions, please contact developer to report error!")
+                  warning(memo)
+              } else {
+                  # combine everything
+                  lolliplotFormat <- cbind(lolliplotFormat, transcript, HGVSp, label)
+                  colnames(lolliplotFormat) <- c("sample", "chromosome", "start", "stop", "reference", "variant", "gene", "consequence", "transcript", "proteinCoord", "label")
+                  
+                  # remove the pre-pended ensembl transcript from the label
+                  lolliplotFormat$label <- gsub(".*(p\\..*)", "\\1", lolliplotFormat$label)
+                  lolliplotFormat$proteinCoord <- gsub(".*(p\\..*)", "\\1", lolliplotFormat$proteinCoord)
+                  
+                  # remove entries with NA in proteinCoord (these should be just intronic variants, non-transcript features, etc.)
+                  remove <- !is.na(lolliplotFormat$proteinCoord)
+                  lolliplotFormat <- lolliplotFormat[remove,]
+              }
+              
               # return the object
-              return(object)
+              return(lolliplotFormat)
           })

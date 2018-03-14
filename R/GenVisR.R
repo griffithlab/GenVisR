@@ -16,6 +16,7 @@ NULL
 #' @usage data(PIK3CA)
 #' @format a data frame with 361 observations and 19 variables
 #' @return  Object of class data frame
+NULL
 
 #' Truncated BRCA MAF file
 #'

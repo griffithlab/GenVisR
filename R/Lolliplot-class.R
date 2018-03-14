@@ -46,6 +46,8 @@ setClass("Lolliplot",
 #' @param plotBLayers list of ggplot2 layers to be passed to the lolliplot.
 #' @param sectionHeights Numeric vector specifying relative heights of each plot section,
 #' should sum to one. Expects a value for each section.
+#' @param labelAA Boolean specifying if labels should be added to emphasized mutations
+#' @param verbose Boolean specifying if status messages should be reported.
 #' @export
 Lolliplot <- function(input, transcript=NULL, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, emphasize=NULL, DomainPalette=NULL, MutationPalette=NULL, labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL, sectionHeights=NULL, verbose=FALSE){
     
@@ -89,7 +91,7 @@ setClass("LolliplotData",
 LolliplotData <- function(object, transcript, species, host, txdb, BSgenome, emphasize, verbose){
     
     # convert object to Lolliplot format
-    lolliplotData <- toLolliplot(object, verbose=verbose)
+    lolliplotData <- toLolliplot(object, BSgenome=BSgenome, verbose=verbose)
     
     # retrieve the datasets from biomaRt
     mart <- retrieveMart(object=species, host=host, verbose=verbose)
@@ -602,6 +604,13 @@ setMethod(f="annotateProteinCoord",
               # Retrieve data
               result <- biomaRt::getBM(attributes=attributes, filters=filters,
                                        values=values, mart=ensembl_mart)
+              
+              if(nrow(result) == 0){
+                  memo <- paste("An ensembl transcript id could not be found for the ucsc id:", toString(values),
+                                "unable to continue... This has probably occurred because of a discrepancy between the txdb object",
+                                "and the ensembl version queried.", "Please choose another transcript or alter the ensembl version queried (see the host parameter)!")
+                  stop(memo)
+              }
               
               if(length(unique(result$ensembl_transcript_id)) != length(unique(result$ucsc))){
                   memo <- paste("Retrieved protein coordinates are for the transcript", toString(unique(result$ucsc)),
