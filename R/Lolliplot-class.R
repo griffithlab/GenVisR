@@ -627,7 +627,7 @@ setMethod(f="annotateProteinCoord",
 setMethod(f="filterByTranscript",
           signature="data.table",
           definition=function(object, transcript, verbose, ...){
-              browser()
+              
               # pick a transcript to filter on if none is given
               if(is.null(transcript)){
                   transcript <- unique(object$ensembl_transcript_id)[1]
@@ -666,6 +666,7 @@ setMethod(f="filterByTranscript",
               
               # subset the data.table
               object <- object[object$ensembl_transcript_id == transcript,]
+              object$ensembl_transcript_id <- as.character(object$ensembl_transcript_id)
               
               return(object)
           })
@@ -1337,7 +1338,14 @@ setMethod(f="setDomainHeights",
                       # if start occurs after last stop
                       # get number of domains underneath
                       layer <- domain$proteinStart[i] < domain$proteinStop[seq(1,i-1)]
-                      nest[i] <- max(nest[which(layer==TRUE)])+1
+                      
+                      # take care of edge case where no layer is true
+                      if(all(!layer)){
+                          nest[i] <- 1
+                      } else {
+                          nest[i] <- max(nest[which(layer==TRUE)])+1
+                      }
+                      
                   }
               }
               

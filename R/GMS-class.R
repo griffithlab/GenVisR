@@ -524,6 +524,7 @@ setMethod(f="toLolliplot",
               # grab amino acid position columns if available
               transcript <- getMeta(object)$transcript_name
               aminoAcidChange <- getMeta(object)$amino_acid_change
+              label <- getMeta(object)$amino_acid_change
               
               # if amino acid position is not present try and use the biomaRt method to get relevent data, this should never
               # happen with a GMS file though
@@ -537,8 +538,8 @@ setMethod(f="toLolliplot",
                   colnames(lolliplotFormat) <- cbind("chromosome", "start", "stop", "reference", "variant", "sample", "gene", "consequence")
               } else {
                   # combine all the relevant data into a single data table
-                  lolliplotFormat <- cbind(chromosome, start, stop, reference, variant, sample, gene, consequence, transcript, aminoAcidChange)
-                  colnames(lolliplotFormat) <- c("chromosome", "start", "stop", "reference", "variant", "sample", "gene", "consequence", "transcript", "proteinCoord")
+                  lolliplotFormat <- cbind(chromosome, start, stop, reference, variant, sample, gene, consequence, transcript, aminoAcidChange, label)
+                  colnames(lolliplotFormat) <- c("chromosome", "start", "stop", "reference", "variant", "sample", "gene", "consequence", "transcript", "proteinCoord", "label")
               }
               
               return(lolliplotFormat)
