@@ -959,7 +959,7 @@ setMethod(f="toLolliplot",
               
               # print status message
               if(verbose){
-                  memo <- paste("converting", class(object), "to expected Lolliplot format")
+                  memo <- paste("converting", class(object)[1], "to expected Lolliplot format")
                   message(memo)
               }
               
