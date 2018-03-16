@@ -518,7 +518,7 @@ setMethod(f="toWaterfall",
               
               # print status message
               if(verbose){
-                  memo <- paste("Converting", class(object),
+                  memo <- paste("Converting", class(object)[1],
                                 "to expected waterfall format")
                   message(memo)
               }
@@ -566,6 +566,32 @@ setMethod(f="toWaterfall",
               waterfallFormat$sample <- factor(waterfallFormat$sample)
               
               return(waterfallFormat)
+          })
+
+#' @rdname Waterfall-methods
+#' @aliases Waterfall
+#' @param object Object of class data.table
+#' @param verbose Boolean for status updates
+#' @importFrom data.table as.data.table
+#' @noRd
+setMethod(f="toWaterfall",
+          signature="data.frame",
+          definition=function(object, hierarchy, labelColumn, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to data.table")
+                  message(memo)
+              }
+              
+              # convert to data.table
+              object <- as.data.table(object)
+              
+              # convert to waterfall format
+              object <- toWaterfall(object, hierarchy=hierarchy, labelColumn=labelColumn, verbose=verbose)
+              
+              return(object)
           })
 
 #' @rdname Waterfall-methods

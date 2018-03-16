@@ -253,7 +253,7 @@ setMethod(f="toRainfall",
               
               # print status message
               if(verbose){
-                  memo <- paste("converting", class(object), "to expected Rainfall format")
+                  memo <- paste("converting", class(object)[1], "to expected Rainfall format")
                   message(memo)
               }
               
@@ -299,6 +299,32 @@ setMethod(f="toRainfall",
               
               # return the standardized format
               return(rainfallFormat)
+              
+          })
+
+#' @rdname toRainfall-methods
+#' @aliases toRainfall
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom data.table as.data.table
+#' @noRd
+setMethod(f="toRainfall",
+          signature="data.frame",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("converting", class(object), "to data.table")
+                  message(memo)
+              }
+              
+              # first convert to data.table
+              object <- as.data.table(object)
+              
+              # then convert to rainfall format
+              object <- toRainfall(object, verbose=verbose)
+              
+              return(object)
               
           })
 

@@ -976,6 +976,31 @@ setMethod(f="toLolliplot",
               return(object)
           })
 
+#' @rdname toLolliplot-methods
+#' @aliases toLolliplot
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @noRd
+#' @importFrom data.table as.data.table
+setMethod(f="toLolliplot",
+          signature="data.frame",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("converting", class(object), "to data.table")
+                  message(memo)
+              }
+              
+              # first convert to data.table
+              object <- as.data.table(object)
+              
+              # then run toLolliplot on the new data.table
+              object <- toLolliplot(object, verbose=verbose)
+              
+              return(object)
+          })
+
 #' @rdname retrieveMart-methods
 #' @aliases retrieveMart
 #' @param object Object of class character giving a species

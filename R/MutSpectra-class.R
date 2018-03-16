@@ -290,7 +290,7 @@ setMethod(f="toMutSpectra",
               
               # print status message
               if(verbose){
-                  memo <- paste("Converting", class(object),
+                  memo <- paste("Converting", class(object)[1],
                                 "to expected MutSpectra format")
                   message(memo)
               }
@@ -355,6 +355,32 @@ setMethod(f="toMutSpectra",
               mutSpectraFormat$sample <- factor(mutSpectraFormat$sample)
               
               return(mutSpectraFormat)
+          })
+
+#' @rdname toMutSpectra-methods
+#' @aliases toMutSpectra
+#' @param object Object of class data.table
+#' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom data.table as.data.table
+#' @noRd
+setMethod(f="toMutSpectra",
+          signature="data.frame",
+          definition=function(object, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to data.table")
+                  message(memo)
+              }
+              
+              # convert object to data.table
+              object <- as.data.table(object)
+              
+              # then convert to MutSpectra format
+              object <- toMutSpectra(object, verbose=verbose)
+              
+              return(object)
           })
 
 #' @rdname MutSpectra-methods
