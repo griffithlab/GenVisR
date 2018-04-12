@@ -436,6 +436,7 @@ setMethod(f="annotateGene",
               # Find the gene identifiers based on the transcript
               if(verbose){
                   memo <- paste("Retrieving gene identifiers based on the ensembl transcript id:", toString(transcript))
+                  message(memo)
               }
               
               # Apply various filters using vector of values
@@ -1030,13 +1031,12 @@ setMethod(f="retrieveMart",
               if(length(index)>1)
               {
                   memo <- paste(toString(species), " Matches more than one dataset for the",
-                                " ensembl mart, please specify a species in the, ",
-                                "following format: hsapiens")
+                                " ensembl mart, please specify the full dataset from this list:",
+                                toString(dataset))
                   stop(memo)
               } else if(length(index)==0) {
                   memo <- paste(toString(species), " does not appear to be supported by biomaRt",
-                                "if you beleive this to be in error please modify", 
-                                "you're input to to conform to this format: hsapiens")
+                                "available datasets are:", toString(dataset))
                   stop(memo)
               }
               
