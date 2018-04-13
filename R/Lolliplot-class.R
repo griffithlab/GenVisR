@@ -508,6 +508,14 @@ setMethod(f="annotateProteinCoord",
                       object$proteinCoord <- as.numeric(gsub("p\\.[*a-zA-z]*(\\d+).*?$",
                                                              "\\1", object$proteinCoord,
                                                              perl=TRUE))
+                      if(any(is.na(object$proteinCoord))){
+                          invalidPos <- object[is.na(object$proteinCoord),c("chromosome", "start", "stop", "reference", "variant")]
+                          invalidPos <- unique(do.call("paste", c(invalidPos, sep=":")))
+                          memo <- paste("Failed to extract protein locations for the following coordinates:", toString(invalidPos),
+                                        "please check p. notation for these positions!... removing these positions")
+                          warning(memo)
+                          object <- object[!is.na(object$proteinCoord),]
+                      }
                       return(object)
                   } else {
                       if(verbose){
@@ -588,7 +596,7 @@ setMethod(f="annotateProteinCoord",
                         "mcols.gene", "mcols.consequence", "mcols.biomaRt_ensembl_gene_id", "mcols.biomaRt_ensembl_transcript_id",
                         "PROTEINLOC", "TXNAME", "REFCODON", "VARCODON", "REFAA", "VARAA")
               object <- object[,keep,with=FALSE]
-              colnames(object) <- c("sample", "chromosome", "start", "stop", "refAllele", "varAllele", "gene",
+              colnames(object) <- c("sample", "chromosome", "start", "stop", "reference", "variant", "gene",
                                     "consequence", "ensembl_gene_id", "ensembl_transcript_id", "txdb.proteinCoord",
                                     "txdb.transcript", "txdb.refCodon", "txdb.varCodon", "txdb.refAA", "txdb.varAA")
               object$proteinCoord <- object$txdb.proteinCoord
@@ -605,7 +613,7 @@ setMethod(f="annotateProteinCoord",
               # Retrieve data
               result <- biomaRt::getBM(attributes=attributes, filters=filters,
                                        values=values, mart=ensembl_mart)
-              
+             
               if(nrow(result) == 0){
                   memo <- paste("An ensembl transcript id could not be found for the ucsc id:", toString(values),
                                 "unable to continue... This has probably occurred because of a discrepancy between the txdb object",
@@ -640,7 +648,7 @@ setMethod(f="filterByTranscript",
               
               # pick a transcript to filter on if none is given
               if(is.null(transcript)){
-                  transcript <- unique(object$ensembl_transcript_id)[1]
+                  transcript <- as.character(unique(object$ensembl_transcript_id))[1]
                   if(verbose){
                       memo <- paste("parameter transcript is null, using transcript",
                                     toString(transcript), "available transcripts were:",
@@ -667,7 +675,7 @@ setMethod(f="filterByTranscript",
               
               # check that the transcript is in the data
               if(!transcript %in% object$ensembl_transcript_id){
-                  transcriptTmp <- unique(object$ensembl_transcript_id)[1]
+                  transcriptTmp <- as.character(unique(object$ensembl_transcript_id))[1]
                   memo <- paste("Did not find the specified transcript:", toString(transcript),
                                 "in the data. Using:", toString(transcriptTmp), "instead!")
                   warning(memo)
@@ -699,7 +707,7 @@ setMethod(f="calcMutFreq",
               
               # make a temporary key making each mutation type unique, at this 
               # stage there should only be one transcript making genomic locations unique
-              object$key <- paste(object$chromosome, object$start, object$stop, object$refAllele, object$varAllele, sep=":")
+              object$key <- paste(object$chromosome, object$start, object$stop, object$reference, object$variant, sep=":")
               
               # tabulate the frequencies
               mutationFreq <- plyr::count(object$key)
@@ -865,7 +873,7 @@ setMethod(f="setTierTwo",
               if(!is.null(emphasize)){
                   
                   # perform quality checks on emphasize
-                  if(!is.integer(emphasize)){
+                  if(!is.numeric(emphasize)){
                       memo <- paste("values in emphasize are not integers, attempting to coerce.")
                       warning(memo)
                       emphasize <- as.integer(emphasize)
@@ -912,7 +920,7 @@ setMethod(f="setTierTwo",
                   }
                   
                   # order by the frequency of mutation events for the coordinate
-                  x$key <- paste(x$chromosome, x$start, x$stop, x$refAllele, x$varAllele, sep=":")
+                  x$key <- paste(x$chromosome, x$start, x$stop, x$reference, x$variant, sep=":")
                   x <- x[order(-x$mutationFreq),]
                   
                   # consecutively number each unique key
@@ -1416,15 +1424,15 @@ setMethod(f="addLabel",
               if(!"label" %in% colnames(object)){
                   
                   # split into insertions, deletion, snvs and add a label
-                  insIndex <- which(grepl("[-0]", object$refAllele))
+                  insIndex <- which(grepl("[-0]", object$reference))
                   ins <- object[insIndex,]
                   ins$label <- paste0("p.", ins$proteinCoord, "Ins")
                   
-                  delIndex <- which(grepl("[-0]", object$varAllele))
+                  delIndex <- which(grepl("[-0]", object$variant))
                   del <- object[delIndex,]
                   del$label <- paste0("p.", del$proteinCoord, "Del")
                   
-                  snvsIndex <- which(grepl("[ACGTacgt]", object$refAllele) & grepl("[ACGTacgt]", object$varAllele))
+                  snvsIndex <- which(grepl("[ACGTacgt]", object$reference) & grepl("[ACGTacgt]", object$variant))
                   snvs <- object[snvsIndex,]
                   snvs$label <- paste0("p.", snvs$txdb.refAA, snvs$proteinCoord, snvs$txdb.varAA)
                   

@@ -1,5 +1,9 @@
 # packges needed
 library(ggplot2)
+library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+library(BSgenome.Hsapiens.UCSC.hg38)
+txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
+BSgenome <- BSgenome.Hsapiens.UCSC.hg38
 
 # define the objects for testing
 # note Lolliplot can run in two modes, we need to check both,
@@ -187,7 +191,6 @@ test_that("filterByGene prints status messages", {
 })
 
 ############### test annotateTranscript ########################################
-
 if(biomart_success){
     annotateTranscript.mode1.out <- annotateTranscript(filterByGene.mode1.out, ensembl=retrieveMart.out, verbose=FALSE) 
     annotateTranscript.mode2.out <- annotateTranscript(filterByGene.mode2.out, ensembl=retrieveMart.out, verbose=FALSE) 
@@ -195,17 +198,261 @@ if(biomart_success){
 
 test_that("annotateTranscript annotates an ensembl transcript if none is present", {
     
+    skip_if_not(biomart_success, "mart recieved try-error")
     expect_true("biomaRt_ensembl_transcript_id" %in% colnames(annotateTranscript.mode1.out))
 })
 
 test_that("annotateTranscript does not attempt to annotate a transcript if one is already present", {
     
+    skip_if_not(biomart_success, "mart recieved try-error")
     expect_true("ensembl_transcript_id" %in% colnames(annotateTranscript.mode2.out))
 })
 
 test_that("annotateTranscript works in verbose mode", {
     
+    skip_if_not(biomart_success, "mart recieved try-error")
     expect_message(annotateTranscript(filterByGene.mode1.out, ensembl=retrieveMart.out, verbose=TRUE))
     expect_message(annotateTranscript(filterByGene.mode2.out, ensembl=retrieveMart.out, verbose=TRUE))
 })
+
+######################### test annotateProteinCoord ############################
+
+if(biomart_success){
+    
+    annotateProteinCoord.mode1.out <- suppressWarnings(annotateProteinCoord(annotateTranscript.mode1.out,
+                                                           ensembl=retrieveMart.out,
+                                                           txdb=txdb,
+                                                           BSgenome=BSgenome,
+                                                           verbose=FALSE))
+    
+    annotateProteinCoord.mode2.out <- suppressWarnings(annotateProteinCoord(annotateTranscript.mode2.out,
+                                                           ensembl=retrieveMart.out,
+                                                           txdb=NULL,
+                                                           BSgenome=NULL,
+                                                           verbose=FALSE))
+}
+
+test_that("annotateProteinCoord adds protein coordinates if none are present", {
+    
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_true(class(annotateProteinCoord.mode1.out$proteinCoord) == "integer")
+    
+    # check 1 position of what the annotation file said to what genvisr said
+    expect <- unique(annotateProteinCoord.mode2.out[annotateProteinCoord.mode2.out$ensembl_transcript_id == "ENST00000263967" &
+                                                    annotateProteinCoord.mode2.out$chromosome == "chr3" &
+                                                    annotateProteinCoord.mode2.out$start == "179218294" &
+                                                    annotateProteinCoord.mode2.out$stop == "179218294",]$proteinCoord)
+    actual <- unique(annotateProteinCoord.mode1.out[annotateProteinCoord.mode1.out$ensembl_transcript_id == "ENST00000263967" &
+                                                    annotateProteinCoord.mode1.out$chromosome == "chr3" &
+                                                    annotateProteinCoord.mode1.out$start == "179218294" &
+                                                    annotateProteinCoord.mode1.out$stop == "179218294",]$proteinCoord)
+    expect_equivalent(expect, actual)
+})
+
+test_that("annotateProteinCoord removes p. notation from protein coords if they are present", {
+    
+    skip_if_not(biomart_success, "mart recieved try-error")
+    annotateTranscript.mode2.out <- annotateTranscript.mode2.out[1:5,]
+    annotateProteinCoord.mode2.out <- suppressWarnings(annotateProteinCoord(annotateTranscript.mode2.out,
+                                                           ensembl=retrieveMart.out,
+                                                           txdb=NULL,
+                                                           BSgenome=NULL,
+                                                           verbose=FALSE))
+    expect_true(is.numeric(annotateProteinCoord.mode1.out$proteinCoord))
+})
+
+test_that("annotateProteinCoord works in verbose mode", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_message(suppressWarnings(annotateProteinCoord(annotateTranscript.mode1.out,
+                                                         ensembl=retrieveMart.out,
+                                                         txdb=txdb,
+                                                         BSgenome=BSgenome,
+                                                         verbose=TRUE)))
+    expect_message(suppressWarnings(annotateProteinCoord(annotateTranscript.mode2.out,
+                                                         ensembl=retrieveMart.out,
+                                                         txdb=txdb,
+                                                         BSgenome=BSgenome,
+                                                         verbose=TRUE)))
+})
+
+##################### test filterByTranscript ##################################
+
+if(biomart_success){
+    filterByTranscript.mode1.out <- filterByTranscript(annotateProteinCoord.mode1.out,
+                                                       transcript="ENST00000263967",
+                                                       verbose=FALSE)
+    filterByTranscript.mode2.out <- filterByTranscript(annotateProteinCoord.mode2.out,
+                                                       transcript="ENST00000263967",
+                                                       verbose=FALSE)
+}
+
+test_that("filterByTranscript leaves only one transcript", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_equal(length(unique(filterByTranscript.mode1.out$ensembl_transcript_id)), 1)
+    expect_equal(length(unique(filterByTranscript.mode2.out$ensembl_transcript_id)), 1)
+})
+
+test_that("filterByTranscript will choose a transcript if none is provided", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    filterByTranscript.mode1.out <- filterByTranscript(annotateProteinCoord.mode1.out,
+                                                       transcript=NULL,
+                                                       verbose=FALSE)
+    filterByTranscript.mode2.out <- filterByTranscript(annotateProteinCoord.mode2.out,
+                                                       transcript=NULL,
+                                                       verbose=FALSE)
+    expect_equal(length(unique(filterByTranscript.mode1.out$ensembl_transcript_id)), 1)
+    expect_equal(length(unique(filterByTranscript.mode2.out$ensembl_transcript_id)), 1)
+})
+
+test_that("filterByTranscript warns of transcript input is not a character vector", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_warning(filterByTranscript(annotateProteinCoord.mode1.out,
+                                      transcript=factor("ENST00000263967"),
+                                      verbose=FALSE))
+})
+
+test_that("filterByTranscript warns if transcript input has multiple elements", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_warning(filterByTranscript(annotateProteinCoord.mode1.out,
+                                      transcript=rep("ENST00000263967", 2),
+                                      verbose=FALSE))    
+})
+
+test_that("filterByTranscript warns if a given transcript is not found", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_warning(filterByTranscript(annotateProteinCoord.mode1.out,
+                                      transcript="unicorn",
+                                      verbose=FALSE), "Did not find")
+})
+
+test_that("filterByTranscript works in verbose mode", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_message(filterByTranscript(annotateProteinCoord.mode1.out,
+                                      transcript="ENST00000263967",
+                                      verbose=TRUE))
+    expect_message(filterByTranscript(annotateProteinCoord.mode1.out,
+                                      transcript=NULL,
+                                      verbose=TRUE))
+})
+
+################ test calcMutFreq ##############################################
+
+
+if(biomart_success){
+    calcMutFreq.mode1.out <- calcMutFreq(filterByTranscript.mode1.out,
+                                         verbose=FALSE)
+    calcMutFreq.mode2.out <- calcMutFreq(filterByTranscript.mode2.out,
+                                         verbose=FALSE)
+}
+
+test_that("calcMutFreq correctly calculates the mutation frequency", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expected <- 13
+    actual <- unique(calcMutFreq.mode1.out[calcMutFreq.mode1.out$chromosome == "chr3" &
+                                           calcMutFreq.mode1.out$start == 179234297 &
+                                           calcMutFreq.mode1.out$stop == 179234297 &
+                                           calcMutFreq.mode1.out$reference == "A" &
+                                           calcMutFreq.mode1.out$variant == "T",]$mutationFreq)
+    expect_equal(expected, actual)
+    
+    expected <- 13
+    actual <- unique(calcMutFreq.mode2.out[calcMutFreq.mode2.out$chromosome == "chr3" &
+                                           calcMutFreq.mode2.out$start == 179234297 &
+                                           calcMutFreq.mode2.out$stop == 179234297 &
+                                           calcMutFreq.mode2.out$reference == "A" &
+                                           calcMutFreq.mode2.out$variant == "T",]$mutationFreq)
+    expect_equal(expected, actual)
+})
+
+test_that("calcMutFreq works in verbose mode", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_message(calcMutFreq(filterByTranscript.mode1.out,
+                               verbose=TRUE))
+})
+
+################# test constructTranscriptData fetches domains #################
+
+if(biomart_success){
+    constructTranscriptData.mode1.out <- constructTranscriptData(calcMutFreq.mode1.out,
+                                                                 ensembl_mart=retrieveMart.out,
+                                                                 verbose=FALSE)
+    constructTranscriptData.mode2.out <- constructTranscriptData(calcMutFreq.mode2.out,
+                                                                 ensembl_mart=retrieveMart.out,
+                                                                 verbose=FALSE)
+}
+
+test_that("constructTranscriptData is able to retrieve protein domains", {
+    
+    skip_if_not(biomart_success, "mart recieved try-error")
+    constructTranscriptData.mode1.out <- constructTranscriptData.mode1.out[constructTranscriptData.mode1.out$source == "domain",]
+    expect_true(length(constructTranscriptData.mode1.out) >= 1)
+    
+    constructTranscriptData.mode2.out <- constructTranscriptData.mode2.out[constructTranscriptData.mode2.out$source == "domain",]
+    expect_true(length(constructTranscriptData.mode2.out) >= 1)
+})
+
+test_that("constructTranscriptData is able to retrieve a protein length", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    constructTranscriptData.mode1.out <- constructTranscriptData.mode1.out[constructTranscriptData.mode1.out$source == "protein",]
+    expect_true(constructTranscriptData.mode1.out$proteinStop >= 1)
+    
+    constructTranscriptData.mode2.out <- constructTranscriptData.mode2.out[constructTranscriptData.mode2.out$source == "protein",]
+    expect_true(constructTranscriptData.mode2.out$proteinStop >= 1)
+})
+
+test_that("constructTranscriptData stops if more than one transcript is detected", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    calcMutFreq.mode1.out[1, "ensembl_transcript_id"] <- "ENST00000263968"
+    expect_error(constructTranscriptData(calcMutFreq.mode1.out,
+                                         ensembl_mart=retrieveMart.out,
+                                         verbose=FALSE))
+})
+
+test_that("contructTranscriptData works in verbose mode", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_message(constructTranscriptData(calcMutFreq.mode1.out,
+                                           ensembl_mart=retrieveMart.out,
+                                           verbose=TRUE))
+})
+
+############### test setTierTwo ################################################
+
+if(biomart_success){
+    setTierTwo.mode1.out <- setTierTwo(calcMutFreq.mode1.out, proteinData=constructTranscriptData.mode1.out,
+                                       emphasize=NULL, verbose=FALSE)
+    setTierTwo.mode2.out <- setTierTwo(calcMutFreq.mode2.out, proteinData=constructTranscriptData.mode2.out,
+                                       emphasize=NULL, verbose=FALSE)
+}
+
+test_that("setTierTwo does not extend coordinates outside the protein", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_true(max(setTierTwo.mode1.out$proteinCoordAdj) <= max(constructTranscriptData.mode1.out$proteinStop))
+    expect_true(min(setTierTwo.mode1.out$proteinCoordAdj) <= min(constructTranscriptData.mode1.out$proteinStop))
+})
+
+test_that("setTierTwo increases the height of each different mutation that resides on the same amino acid", {
+    
+    setTierTwo.mode1.out <- unique(setTierTwo.mode1.out[tmsetTierTwo.mode1.out$proteinCoord=="345",
+                                                        c("chromosome", "start", "stop", "reference",
+                                                          "variant", "height", "mutationFreq")])
+    setTierTwo.mode1.out <- setTierTwo.mode1.out[order(-setTierTwo.mode1.out$mutationFreq),]
+    expect_true(head(setTierTwo.mode1.out$height, 1) < tail(setTierTwo.mode1.out$height, 1))
+})
+
+# TODO bug below
+# test_that("setTierTwo emphasize parameter works", {
+#     skip_if_not(biomart_success, "mart recieved try-error")
+#     browser()
+#     setTierTwo.mode1.out <- setTierTwo(calcMutFreq.mode1.out, proteinData=constructTranscriptData.mode1.out,
+#                                        emphasize=c(70, 81), verbose=FALSE)
+#     setTierTwo.mode1.out <- setTierTwo.mode1.out[setTierTwo.mode1.out$tier == "second",]
+#     expect_true(nrow(setTierTwo.mode1.out) == 3)
+# })
+
+test_that("setTierTwo works in verbose model", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_message(setTierTwo(calcMutFreq.mode1.out, proteinData=constructTranscriptData.mode1.out,
+                              emphasize=NULL, verbose=TRUE))
+})
+
 
