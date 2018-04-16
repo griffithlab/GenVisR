@@ -494,6 +494,9 @@ setMethod(f="annotateProteinCoord",
                           message(memo)
                       }
                       
+                      # set the p. notation values as the label column before anything is altered
+                      object$label <- object$proteinCoord
+                      
                       if(!all(grepl("^p\\.", object$proteinCoord))){
                           
                           indexToRemove <- which(!grepl("^p\\.", object$proteinCoord))
@@ -874,16 +877,20 @@ setMethod(f="setTierTwo",
                   
                   # perform quality checks on emphasize
                   if(!is.numeric(emphasize)){
-                      memo <- paste("values in emphasize are not integers, attempting to coerce.")
+                      memo <- paste("values in emphasize are not numeric, attempting to coerce.")
                       warning(memo)
-                      emphasize <- as.integer(emphasize)
+                      emphasize <- as.numeric(emphasize)
                   }
                   notFound <- emphasize[!emphasize %in% object$proteinCoord]
                   if(length(notFound) > 0){
                       memo <- paste("The following coordinates given in emphasize:", toString(notFound),
                                     "were not found!")
                       warning(memo)
+                      emphasize <- emphasize[emphasize %in% object$proteinCoord]
                   }
+                  
+                  # set the top parameter (i.e. how many mutations there are)
+                  top <- length(emphasize)
                   
                   # set everything in emphasize to the second tier
                   object$tier <- ifelse(object$proteinCoord %in% emphasize, "second", "first")

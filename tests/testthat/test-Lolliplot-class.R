@@ -431,28 +431,137 @@ test_that("setTierTwo does not extend coordinates outside the protein", {
 })
 
 test_that("setTierTwo increases the height of each different mutation that resides on the same amino acid", {
-    
-    setTierTwo.mode1.out <- unique(setTierTwo.mode1.out[tmsetTierTwo.mode1.out$proteinCoord=="345",
+    skip_if_not(biomart_success, "mart recieved try-error")
+    setTierTwo.mode1.out <- unique(setTierTwo.mode1.out[setTierTwo.mode1.out$proteinCoord=="345",
                                                         c("chromosome", "start", "stop", "reference",
                                                           "variant", "height", "mutationFreq")])
     setTierTwo.mode1.out <- setTierTwo.mode1.out[order(-setTierTwo.mode1.out$mutationFreq),]
     expect_true(head(setTierTwo.mode1.out$height, 1) < tail(setTierTwo.mode1.out$height, 1))
 })
 
-# TODO bug below
-# test_that("setTierTwo emphasize parameter works", {
-#     skip_if_not(biomart_success, "mart recieved try-error")
-#     browser()
-#     setTierTwo.mode1.out <- setTierTwo(calcMutFreq.mode1.out, proteinData=constructTranscriptData.mode1.out,
-#                                        emphasize=c(70, 81), verbose=FALSE)
-#     setTierTwo.mode1.out <- setTierTwo.mode1.out[setTierTwo.mode1.out$tier == "second",]
-#     expect_true(nrow(setTierTwo.mode1.out) == 3)
-# })
+test_that("setTierTwo emphasize parameter works", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    setTierTwo.mode1.out <- setTierTwo(calcMutFreq.mode1.out, proteinData=constructTranscriptData.mode1.out,
+                                       emphasize=c(70, 81), verbose=FALSE)
+    setTierTwo.mode1.out <- setTierTwo.mode1.out[setTierTwo.mode1.out$tier == "second",]
+    expect_true(nrow(setTierTwo.mode1.out) == 3)
+})
 
-test_that("setTierTwo works in verbose model", {
+test_that("setTierTwo works in verbose mode", {
     skip_if_not(biomart_success, "mart recieved try-error")
     expect_message(setTierTwo(calcMutFreq.mode1.out, proteinData=constructTranscriptData.mode1.out,
                               emphasize=NULL, verbose=TRUE))
 })
+
+################## test setTierOne #############################################
+
+if(biomart_success){
+    setTierOne.mode1.out <- setTierOne(setTierTwo.mode1.out, verbose=FALSE)
+    setTierOne.mode2.out <- setTierOne(setTierTwo.mode2.out, verbose=FALSE)
+}
+
+test_that("first tier mutation heights increase as the mutation frequency increases", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    setTierOne.mode1.out <- setTierOne.mode1.out[setTierOne.mode1.out$tier == "first",]
+    setTierOne.mode1.out <- setTierOne.mode1.out[order(setTierOne.mode1.out$mutationFreq),]
+    expect_true(all(diff(setTierOne.mode1.out$height) >= 0))
+    
+    setTierOne.mode2.out <- setTierOne.mode2.out[setTierOne.mode2.out$tier == "first",]
+    setTierOne.mode2.out <- setTierOne.mode2.out[order(setTierOne.mode2.out$mutationFreq),]
+    expect_true(all(diff(setTierOne.mode2.out$height) >= 0))
+})
+
+test_that("setTierOne works in verbose mode", {
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    expect_message(setTierOne(setTierTwo.mode1.out, verbose=TRUE))
+})
+
+###################### test addLabel ###########################################
+
+if(biomart_success){
+    addLabel.mode1.out <- addLabel(setTierOne.mode1.out, verbose=FALSE)
+    addLabel.mode2.out <- addLabel(setTierOne.mode2.out, verbose=FALSE)
+}
+
+test_that("addLabel adds only 1 label for each x/y coordinate", {
+    
+    addLabel.mode1.out <- addLabel.mode1.out[addLabel.mode1.out$proteinCoordAdj == 118,]
+    actual <- sum(is.na(addLabel.mode1.out$label))
+    expected <- 4
+    expect_equivalent(expected, actual)
+})
+
+test_that("addLabel is able to correctly add labels in the expected format", {
+    
+    expected <- "p.Phe83Ser"
+    actual <- as.character(addLabel.mode2.out[addLabel.mode2.out$proteinCoordAdj == 83]$label)
+    expect_equivalent(expected, actual)
+    
+    expected <- "p.F83S"
+    actual <- as.character(addLabel.mode1.out[addLabel.mode1.out$proteinCoordAdj == 83]$label)
+    expect_equivalent(expected, actual)
+})
+
+test_that("addLabel works in verbose mode", {
+    
+    expect_message(addLabel(setTierOne.mode1.out, verbose=TRUE))
+})
+
+###################### test setDomainHeights ###################################
+
+if(biomart_success){
+    setDomainHeights.mode1.out <- setDomainHeights(constructTranscriptData.mode1.out, verbose=FALSE)
+    setDomainHeights.mode2.out <- setDomainHeights(constructTranscriptData.mode2.out, verbose=FALSE)
+}
+
+test_that("setDomainHeights domains are nested correctly", {
+    
+    expected <- 6
+    actual <- setDomainHeights.mode1.out[setDomainHeights.mode1.out$interproShortDesc == "PI3/4_kinase_cat_sf",]$nest
+    expect_equivalent(expected, actual)
+    
+    expected <- 3
+    actual <- setDomainHeights.mode1.out[setDomainHeights.mode1.out$interproShortDesc == "Ubiquitin-like_domsf",]$nest
+    expect_equivalent(expected, actual)
+})
+
+test_that("setDomainHeights adjusts heights correctly based on the nest value", {
+    
+    setDomainHeights.mode1.out <- setDomainHeights.mode1.out[order(setDomainHeights.mode1.out$nest),]
+    expect_true(all(diff(setDomainHeights.mode1.out$maxHeight) >= 0))
+    
+    setDomainHeights.mode1.out <- setDomainHeights.mode1.out[order(setDomainHeights.mode1.out$nest),]
+    expect_true(all(diff(setDomainHeights.mode1.out$minHeight) <= 0))
+})
+
+test_that("setDomainHeights works in verbose mode", {
+    
+    expect_message(setDomainHeights(constructTranscriptData.mode1.out, verbose=TRUE))
+})
+
+############ test Lolliplotdata constructor ####################################
+
+LolliplotData.mode1.out <- suppressWarnings(LolliplotData(dfObject.mode1, transcript="ENST00000263967",
+                                                          species="hsapiens", host="www.ensembl.org",
+                                                          txdb=txdb, BSgenome=BSgenome, emphasize=NULL,
+                                                          verbose=FALSE))
+LolliplotData.mode2.out <- supressWarnings(LolliplotData(dfObject.mode2, transcript="ENST00000263967",
+                                                         species="hsapiens", host="www.ensembl.org",
+                                                         txdb=NULL, BSgenome=NULL, emphasize=NULL,
+                                                         verbose=FALSE))
+
+test_that("LolliplotData outputs a S4 class object", {
+    
+    expect_s4_class(LolliplotData.mode1.out, "LolliplotData")
+    expect_s4_class(LolliplotData.mode2.out, "LolliplotData")
+})
+
+################################################################################
+###### test the LolliplotPlots class and associated constructor functions ######
+################################################################################
+
 
 
