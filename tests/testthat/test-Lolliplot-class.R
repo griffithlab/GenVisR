@@ -548,10 +548,10 @@ LolliplotData.mode1.out <- suppressWarnings(LolliplotData(dfObject.mode1, transc
                                                           species="hsapiens", host="www.ensembl.org",
                                                           txdb=txdb, BSgenome=BSgenome, emphasize=NULL,
                                                           verbose=FALSE))
-LolliplotData.mode2.out <- supressWarnings(LolliplotData(dfObject.mode2, transcript="ENST00000263967",
-                                                         species="hsapiens", host="www.ensembl.org",
-                                                         txdb=NULL, BSgenome=NULL, emphasize=NULL,
-                                                         verbose=FALSE))
+LolliplotData.mode2.out <- suppressWarnings(LolliplotData(dfObject.mode2, transcript="ENST00000263967",
+                                                          species="hsapiens", host="www.ensembl.org",
+                                                          txdb=NULL, BSgenome=NULL, emphasize=NULL,
+                                                          verbose=FALSE))
 
 test_that("LolliplotData outputs a S4 class object", {
     
