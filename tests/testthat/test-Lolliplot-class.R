@@ -487,7 +487,7 @@ if(biomart_success){
 }
 
 test_that("addLabel adds only 1 label for each x/y coordinate", {
-    
+    skip_if_not(biomart_success, "mart recieved try-error")
     addLabel.mode1.out <- addLabel.mode1.out[addLabel.mode1.out$proteinCoordAdj == 118,]
     actual <- sum(is.na(addLabel.mode1.out$label))
     expected <- 4
@@ -495,7 +495,7 @@ test_that("addLabel adds only 1 label for each x/y coordinate", {
 })
 
 test_that("addLabel is able to correctly add labels in the expected format", {
-    
+    skip_if_not(biomart_success, "mart recieved try-error")
     expected <- "p.Phe83Ser"
     actual <- as.character(addLabel.mode2.out[addLabel.mode2.out$proteinCoordAdj == 83]$label)
     expect_equivalent(expected, actual)
@@ -506,7 +506,7 @@ test_that("addLabel is able to correctly add labels in the expected format", {
 })
 
 test_that("addLabel works in verbose mode", {
-    
+    skip_if_not(biomart_success, "mart recieved try-error")
     expect_message(addLabel(setTierOne.mode1.out, verbose=TRUE))
 })
 
@@ -519,16 +519,19 @@ if(biomart_success){
 
 test_that("setDomainHeights domains are nested correctly", {
     
+    skip_if_not(biomart_success, "mart recieved try-error")
     expected <- 6
     actual <- setDomainHeights.mode1.out[setDomainHeights.mode1.out$interproShortDesc == "PI3/4_kinase_cat_sf",]$nest
     expect_equivalent(expected, actual)
-    
+
     expected <- 3
     actual <- setDomainHeights.mode1.out[setDomainHeights.mode1.out$interproShortDesc == "Ubiquitin-like_domsf",]$nest
     expect_equivalent(expected, actual)
 })
 
 test_that("setDomainHeights adjusts heights correctly based on the nest value", {
+    
+    skip_if_not(biomart_success, "mart recieved try-error")
     
     setDomainHeights.mode1.out <- setDomainHeights.mode1.out[order(setDomainHeights.mode1.out$nest),]
     expect_true(all(diff(setDomainHeights.mode1.out$maxHeight) >= 0))
@@ -539,21 +542,30 @@ test_that("setDomainHeights adjusts heights correctly based on the nest value", 
 
 test_that("setDomainHeights works in verbose mode", {
     
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
     expect_message(setDomainHeights(constructTranscriptData.mode1.out, verbose=TRUE))
 })
 
 ############ test Lolliplotdata constructor ####################################
 
-LolliplotData.mode1.out <- suppressWarnings(LolliplotData(dfObject.mode1, transcript="ENST00000263967",
-                                                          species="hsapiens", host="www.ensembl.org",
-                                                          txdb=txdb, BSgenome=BSgenome, emphasize=NULL,
-                                                          verbose=FALSE))
-LolliplotData.mode2.out <- suppressWarnings(LolliplotData(dfObject.mode2, transcript="ENST00000263967",
-                                                          species="hsapiens", host="www.ensembl.org",
-                                                          txdb=NULL, BSgenome=NULL, emphasize=NULL,
-                                                          verbose=FALSE))
+if(biomart_success){
+    
+    LolliplotData.mode1.out <- suppressWarnings(LolliplotData(dfObject.mode1, transcript="ENST00000263967",
+                                                              species="hsapiens", host="www.ensembl.org",
+                                                              txdb=txdb, BSgenome=BSgenome, emphasize=NULL,
+                                                              verbose=FALSE))
+    LolliplotData.mode2.out <- suppressWarnings(LolliplotData(dfObject.mode2, transcript="ENST00000263967",
+                                                              species="hsapiens", host="www.ensembl.org",
+                                                              txdb=NULL, BSgenome=NULL, emphasize=NULL,
+                                                              verbose=FALSE))
+}
+
+
 
 test_that("LolliplotData outputs a S4 class object", {
+    
+    skip_if_not(biomart_success, "mart recieved try-error")
     
     expect_s4_class(LolliplotData.mode1.out, "LolliplotData")
     expect_s4_class(LolliplotData.mode2.out, "LolliplotData")
@@ -563,5 +575,152 @@ test_that("LolliplotData outputs a S4 class object", {
 ###### test the LolliplotPlots class and associated constructor functions ######
 ################################################################################
 
+context("LolliplotPlots Constructor")
 
+##################### test buildDensityPlot ####################################
 
+test_that("buildDensityPlot constructs the expected plot", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    buildDensityPlot.out <- buildDensityPlot(LolliplotData.mode1.out, plotALayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("Lolliplot Density Plot", grid::grid.draw(buildDensityPlot.out))
+})
+
+test_that("buildDensityPlot is able to add layers to the plot", {
+     
+     skip_on_bioc()
+     skip_if_not(biomart_success, "mart recieved try-error")
+     
+     test_layer <- list(ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=.025), colour="red", size=10))
+     buildDensityPlot.out <- buildDensityPlot(LolliplotData.mode1.out, plotALayers=test_layer, verbose=FALSE)
+     vdiffr::expect_doppelganger("Lolliplot Density Plot Layer", grid::grid.draw(buildDensityPlot.out))
+})
+
+test_that("buildDensityPlot works in verbose mode", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    expect_message(buildDensityPlot(LolliplotData.mode1.out, plotALayers=NULL, verbose=TRUE))
+})
+
+test_that("buildDensityPlot errors if plotALayers is not a list", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    test_layer <- ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=.025), colour="red", size=10)
+    expect_error(buildDensityPlot(LolliplotData.mode1.out, plotALayers=test_layer, verbose=FALSE))
+})
+ 
+####################### test buildLolliplot ####################################
+
+test_that("buildLolliplot constructs a plot", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+                                         DomainPalette=NULL, MutationPalette=NULL,
+                                         plotBLayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("Lolliplot Plot Base", grid::grid.draw(buildLolliplot.out))
+})
+
+test_that("buildLolliplot successfullly adds layers", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    test_layer <- list(ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=1), colour="red", size=10))
+    
+    buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+                                         DomainPalette=NULL, MutationPalette=NULL,
+                                         plotBLayers=test_layer, verbose=FALSE)
+    vdiffr::expect_doppelganger("Lolliplot Plot Base add layer", grid::grid.draw(buildLolliplot.out))
+})
+
+test_that("buildLolliplot successfullly adds labels", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=TRUE,
+                                         DomainPalette=NULL, MutationPalette=NULL,
+                                         plotBLayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("Lolliplot Plot Base add labels", grid::grid.draw(buildLolliplot.out))
+})
+
+test_that("buildLolliplot successfullly changes colors for domains", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    domain_palette <- c("blue", "red", "green", "yellow", "orange", "purple",
+                        "indianred", "salmon", "plum", "thistle", "seagreen1",
+                        "slateblue1", "slategrey")
+    
+    buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+                                         DomainPalette=domain_palette, MutationPalette=NULL,
+                                         plotBLayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("Lolliplot Plot Base add domain palette", grid::grid.draw(buildLolliplot.out))
+})
+
+test_that("buildLolliplot successfullly changes colors for mutations", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    mutation_palette <- c("blue", "red", "green", "yellow")
+    
+    buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+                                         DomainPalette=NULL, MutationPalette=mutation_palette,
+                                         plotBLayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("Lolliplot Plot Base add mutation palette", grid::grid.draw(buildLolliplot.out))
+})
+
+test_that("buildLolliplot works in verbose mode", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    expect_message(buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+                                  DomainPalette=NULL, MutationPalette=NULL,
+                                  plotBLayers=NULL, verbose=TRUE))
+})
+
+test_that("buildLolliplot warns if not enough colors are supplied to DomainPalette", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    domain_palette <- c("blue", "red", "green")
+    
+    expect_warning(buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+                                  DomainPalette=domain_palette, MutationPalette=NULL,
+                                  plotBLayers=NULL, verbose=FALSE))
+    
+})
+
+test_that("buildLolliplot warns if not enough colors are supplied to MutationPalette", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    mutation_palette <- c("blue", "red")
+    
+    expect_warning(buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+                                  DomainPalette=NULL, MutationPalette=mutation_palette,
+                                  plotBLayers=NULL, verbose=FALSE))
+    
+})
+
+test_that("buildLolliplot errors if plotBLayers is not a list", {
+    
+    test_layer <- ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=1), colour="red", size=10)
+    
+    expect_error(buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+                                DomainPalette=NULL, MutationPalette=NULL,
+                                plotBLayers=test_layer, verbose=FALSE))
+})

@@ -1236,7 +1236,7 @@ setMethod(f="buildLolliplot",
               # set up the text
               if(labelAA){
                   nudgeFactor <- .01 * proteinData$proteinStop[1]
-                  plotText <- geom_text(data=secondTier, mapping=aes_string(x="proteinCoordAdj", y="height", label="label"), position=position_nudge(x=nudgeFactor), hjust=0)
+                  plotText <- geom_text(data=secondTier[!is.na(secondTier$label),], mapping=aes_string(x="proteinCoordAdj", y="height", label="label"), position=position_nudge(x=nudgeFactor), hjust=0)
               } else {
                   plotText <- geom_blank()
               }
@@ -1270,7 +1270,7 @@ setMethod(f="buildLolliplot",
               # combine everything
               lolliplotPlot <- lolliplotPlot + protein + domain + segment1 + segment2 + segment3 + segment4 + points +
                                baseTheme + plotTheme + plotLabel + plotDomainPalette + plotMutationPalette + plotText +
-                               legGuide + scale_size(range=c(5, 10))
+                               legGuide + scale_size(range=c(5, 10)) + plotBLayers
 
               # convert to grob
               lolliplotGrob <- ggplotGrob(lolliplotPlot)
