@@ -13,6 +13,7 @@
 #' @param layers additional ggplot2 layers to plot
 #' @return ggplot object
 #' @import ggplot2
+#' @noRd
 
 genCov_buildCov <- function(data_frame, x_limits=NULL, display_x_axis=TRUE,
                             colour="blue", plot_type="point", layers=NULL)

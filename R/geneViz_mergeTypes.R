@@ -4,6 +4,7 @@
 #' @name geneViz_mergeTypes
 #' @param master An unsorted dataframe of CDS and UTR elements before merging
 #' @return master A sorted dataframe of merged CDS and UTR elements
+#' @noRd
 
 geneViz_mergeTypes <- function(master)
 {

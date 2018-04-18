@@ -20,6 +20,7 @@
 #'  ggplot layer
 #' @return ggplot object
 #' @import ggplot2
+#' @noRd
 
 cnFreq_buildMain <- function(x, plotType, dummy_data, plot_title=NULL,
                              CN_low_colour='#002EB8', CN_high_colour='#A30000',

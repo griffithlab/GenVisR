@@ -10,6 +10,7 @@
 #' @param genome character string specifying the genome assembly from which
 #' input data is based
 #' @return list of inputs passing basic quality controls
+#' @noRd
 
 lohSpec_qual <- function(x, y, genome)
 {

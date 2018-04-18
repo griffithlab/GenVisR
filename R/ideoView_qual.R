@@ -7,6 +7,7 @@
 #' The data frame should have columns "chrom", "chromStart", "chromEnd", "name",
 #' "gieStain'.
 #' @return data frame
+#' @noRd
 
 ideoView_qual <- function(x)
 {

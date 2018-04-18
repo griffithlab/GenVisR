@@ -7,6 +7,7 @@
 #' @importFrom DBI dbConnect
 #' @importFrom DBI dbGetQuery
 #' @importFrom DBI dbDisconnect
+#' @noRd
 
 multi_cytobandRet <- function(genome)
 {

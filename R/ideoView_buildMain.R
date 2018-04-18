@@ -11,6 +11,7 @@
 #' @param layers additional ggplot2 layers to plot
 #' @return ggplot object
 #' @import ggplot2
+#' @noRd
 
 ideoView_buildMain <- function(data_frame, chromosome,
                                chr_txt_angle=chr_txt_angle,

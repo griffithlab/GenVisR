@@ -12,6 +12,7 @@
 #' plotted, a grob object, or a plot.
 #' @importFrom ggplot2 ggplotGrob
 #' @importFrom grid grid.draw
+#' @noRd
 
 multi_selectOut <- function(data, plot, out="plot", draw="FALSE")
 {

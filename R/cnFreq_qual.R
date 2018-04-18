@@ -4,6 +4,7 @@
 #' @name cnFreq_qual
 #' @param x a data frame with columns chromosome, start, end, segmean, and sample
 #' @return  data frame passing quality checks 
+#' @noRd
 
 cnFreq_qual <- function(x)
 {

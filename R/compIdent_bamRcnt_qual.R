@@ -5,6 +5,7 @@
 #' @param genome Object of class BSgenome corresponding to a genome of interest
 #' @param targetbed Object of class data frame containing target locations in .bed format
 #' @return list of data objects passing quality checks
+#' @noRd
 
 compIdent_bamRcnt_qual<-function(genome, targetbed)
 {

@@ -7,6 +7,7 @@
 #' 'loh_diff_avg'
 #' @param step integer with the length of divisions (bp) in chromosomes
 #' @return list containing avg loh calculations for each step interval 
+#' @noRd
 
 lohSpec_stepCalc <- function(final_dataset, step) {
     ## Remove irrelevant columns

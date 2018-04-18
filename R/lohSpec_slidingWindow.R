@@ -12,6 +12,7 @@
 #' @return object of class dataframe containing LOH data
 #' @importFrom plyr adply
 #' @importFrom plyr ldply
+#' @noRd
 
 lohSpec_slidingWindow <- function(loh_data, step, window_size, normal)
 {     

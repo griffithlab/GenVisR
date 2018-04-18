@@ -19,6 +19,7 @@
 #' @importFrom GenomicRanges intersect
 #' @importFrom GenomicRanges gaps
 #' @importFrom IRanges relist
+#' @noRd
 
 geneViz_extrUTR <- function(txdb=txdb, gr=gr, reduce=FALSE, gaps=FALSE)
 {

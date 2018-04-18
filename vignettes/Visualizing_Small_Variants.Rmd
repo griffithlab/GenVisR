@@ -258,7 +258,7 @@ TODO: rework the existing lolliplot to be quicker and look better
 
 ## SmallVariantSummary
 
-TODO: create a class to output various summary plots regarding the number of mutations etc.
+Coming Soon!
 
 # Session Info
 

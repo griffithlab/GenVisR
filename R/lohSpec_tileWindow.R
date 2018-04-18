@@ -11,6 +11,7 @@
 #' @return object of class dataframe containing LOH data
 #' @importFrom plyr adply
 #' @importFrom plyr ldply
+#' @noRd
 
 lohSpec_tileWindow <- function(loh_data, window_size, normal)
 {     

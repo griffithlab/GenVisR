@@ -5,6 +5,7 @@
 #' @param x ggplotGrob object
 #' @param max_height grob object specifying width to reassign ggplotGrob with
 #' @return ggplotGrob
+#' @noRd
 
 genCov_assign_ggplotGrob_height <- function(x, max_height)
 {

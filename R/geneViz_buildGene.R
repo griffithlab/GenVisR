@@ -16,6 +16,7 @@
 #' @return ggplot object
 #' @importFrom stats aggregate
 #' @import ggplot2
+#' @noRd
 
 geneViz_buildGene <- function(data_frame, display_x_axis=TRUE, x_limits=NULL,
                               gene_colour=NULL, transcript_name=FALSE,

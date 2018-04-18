@@ -14,6 +14,7 @@
 #' @return a grob object
 #' @import ggplot2
 #' @importFrom viridis viridis
+#' @noRd
 
 multi_buildClin <- function(x, clin.legend.col=1, clin.var.colour=NULL,
                                 clin.var.order=NULL, clin.layers=NULL)

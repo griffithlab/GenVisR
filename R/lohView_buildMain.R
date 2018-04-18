@@ -9,6 +9,7 @@
 #' @param layers additional ggplot2 layers to add
 #' @return ggplot2 object
 #' @import ggplot2
+#' @noRd
 
 lohView_buildMain <- function(x, y, chr, layers=NULL)
 {

@@ -14,6 +14,7 @@
 #' @return object of class ggplot2
 #' @import ggplot2
 #' @importFrom viridis scale_fill_viridis
+#' @noRd
 
 lohSpec_buildMain <- function(x, dummyData, colourScheme="inferno",
                               plotLayer=NULL)

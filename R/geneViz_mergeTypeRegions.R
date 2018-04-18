@@ -4,6 +4,7 @@
 #' @name geneViz_mergeTypeRegions
 #' @param type.master A dataframe of all elements of a certain type, such as CDS
 #' @return type.master A dataframe of merged elements of a certain type
+#' @noRd
 
 geneViz_mergeTypeRegions <- function(type.master)
 {

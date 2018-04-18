@@ -16,6 +16,7 @@
 #' @importFrom Rsamtools pileup
 #' @importFrom data.table melt
 #' @importFrom data.table dcast
+#' @noRd
 
 compIdent_bamRcnt <- function(bamfile, genome, target=NULL, debug=FALSE)
 {

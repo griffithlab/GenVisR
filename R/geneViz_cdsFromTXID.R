@@ -10,6 +10,7 @@
 #' @importFrom IRanges IRanges
 #' @importFrom AnnotationDbi select
 #' @importFrom GenomicRanges GRangesList
+#' @noRd
 
 geneViz_cdsFromTXID <- function(txdb, txid)
 {

@@ -10,6 +10,7 @@
 #' @importFrom Biostrings getSeq
 #' @importFrom GenomicRanges values
 #' @importFrom GenomicRanges mcols
+#' @noRd
 
 geneViz_calcGC <- function(gr, genome)
 {

@@ -8,6 +8,7 @@
 #' @return object of class dataframe containing mean LOH difference calculations
 #' and column names "window_start", "window_stop", "chromosome", "position", 
 #' "n_vaf", "t_vaf", "sample", "loh_diff"
+#' @noRd
 
 lohSpec_tileCalc <- function(window_data, normal)
 {

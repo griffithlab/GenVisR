@@ -6,6 +6,7 @@
 #' @param x data frame containg columns chromosome, start, end
 #' @return object of class data frame formatted to internal specifications
 #' @importFrom stats aggregate
+#' @noRd
 
 multi_chrBound <- function(x)
 {

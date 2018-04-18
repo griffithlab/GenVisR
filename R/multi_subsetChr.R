@@ -5,6 +5,7 @@
 #' @param x a data frame with columns chromosome
 #' @param chr character string specifying UCSC chromosome to subset on
 #' @return object of class data frame
+#' @noRd
 
 multi_subsetChr <- function(x, chr)
 {

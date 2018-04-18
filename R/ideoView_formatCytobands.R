@@ -7,6 +7,7 @@
 #' @param chromosome character string specifying chromosome of interest from
 #' UCSC data frame
 #' @return object of class data frame
+#' @noRd
 
 ideoView_formatCytobands <- function(data_frame, chromosome)
 {

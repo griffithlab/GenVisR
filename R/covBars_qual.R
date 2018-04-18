@@ -6,6 +6,7 @@
 #' @param x object of class matrix containing rows for the coverage and columns
 #' the sample names
 #' @return a list of data frame and color vector
+#' @noRd
 
 covBars_qual <- function(x)
 {

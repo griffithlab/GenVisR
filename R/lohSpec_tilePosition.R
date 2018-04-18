@@ -8,6 +8,7 @@
 #' applied
 #' @return list containing window start/stop positions for each chromosome 
 #' from each sample to perform LOH calculations
+#' @noRd
 
 
 lohSpec_tilePosition <- function(out, window_size)

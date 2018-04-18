@@ -11,6 +11,7 @@
 #' @param z a data frame with columns chromosome, start, end , segmean
 #' @param genome character string specifying UCSC genome to use
 #' @return a list of data frames passing quality checks
+#' @noRd
 
 cnView_qual <- function(x, y, z, genome, CNscale)
 {

@@ -13,6 +13,7 @@
 #' @importFrom gtable gtable_add_rows
 #' @importFrom gtable gtable_add_grob
 #' @importFrom scales log10_trans
+#' @noRd
 
 compIdent_buildMain <- function(x, mainLayer=NULL, covLayer=NULL)
 {

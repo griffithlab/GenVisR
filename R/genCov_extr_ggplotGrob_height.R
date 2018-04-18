@@ -4,6 +4,7 @@
 #' @name genCov_extr_ggplotGrob_height
 #' @param x ggplotGrob object
 #' @return ggplotGrob height parameters
+#' @noRd
 
 genCov_extr_ggplotGrob_height <- function(x)
 {

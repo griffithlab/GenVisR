@@ -7,6 +7,7 @@
 #' one of both, width, height
 #' @return ggplotGrob object
 #' @importFrom gridExtra arrangeGrob
+#' @noRd
 
 genCov_alignPlot <- function(plot_list, axis='both')
 {

@@ -14,6 +14,7 @@
 #' pairs in which to calculate the mean Loss of Heterozygosity.
 #' @return object of class data frame from data specified in path for lohSpec
 #' @importFrom utils read.delim
+#' @noRd
 
 lohSpec_fileGlob <- function(path, fileExt, step, window_size, gender)
 {

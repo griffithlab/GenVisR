@@ -23,6 +23,7 @@
 #' @import ggplot2
 #' @importFrom scales squish
 #' @importFrom scales rescale
+#' @noRd
 
 cnSpec_buildMain <- function(data_frame, dummy_data, plot_title=NULL,
                              CN_low_colour='#002EB8', CN_high_colour='#A30000',

@@ -2726,6 +2726,7 @@ lolliplot_buildMain <- function(gene_data, length, mutation_observed,
 #' @name lolliplot_Codon2AA
 #' @param x Character string of length 1 giving the DNA codon to convert
 #' @return Character corresponding to the residue for the given codon
+#' @noRd
 
 lolliplot_Codon2AA <- function(x)
 {
@@ -2758,6 +2759,7 @@ lolliplot_Codon2AA <- function(x)
 #' giving "description", "start", "end"
 #' @param length integer specifying length of transcript in amino acids
 #' @return object of class data frame giving gene and domain information
+#' @noRd
 
 lolliplot_constructGene <- function(gene, domain_data, length)
 {
@@ -2845,6 +2847,7 @@ lolliplot_constructGene <- function(gene, domain_data, length)
 #' @param to Character string specifying conversion to do, one of "codon", 
 #' "residue", "sidechain"
 #' @return Converted string of nucleotides as character vector
+#' @noRd
 
 lolliplot_DNAconv <- function(x, to="residue")
 {
@@ -2901,6 +2904,7 @@ lolliplot_DNAconv <- function(x, to="residue")
 #' observed track
 #' @return numeric vector of dodged position coordinates on x axis
 #' @importFrom FField FFieldPtRep
+#' @noRd
 
 lolliplot_dodgeCoordX <- function(x, rep.fact=5000, rep.dist.lmt=500,
                                   attr.fact=.1, adj.max=.1, adj.lmt=.5,
@@ -2932,6 +2936,7 @@ lolliplot_dodgeCoordX <- function(x, rep.fact=5000, rep.dist.lmt=500,
 #' @param track character vector, one of "top", "bottom" specifying whether to
 #' dodge in a positive or negative fashion
 #' @return numeric vector of dodged position coordinates on y axis
+#' @noRd
 
 lolliplot_dodgeCoordY <- function(x, track='top')
 {
@@ -2985,7 +2990,7 @@ lolliplot_dodgeCoordY <- function(x, track='top')
 #' @importFrom biomaRt listDatasets
 #' @importFrom biomaRt useDataset
 #' @importFrom biomaRt getBM
-#' 
+#' @noRd
 lolliplot_fetchDomain <- function(transcriptID,
                                   species="hsapiens",
                                   host="www.ensembl.org")
@@ -3053,6 +3058,7 @@ lolliplot_fetchDomain <- function(transcriptID,
 #' @param iter.max maximum iterations beyond which to stop the simulation
 #' observed track
 #' @return object of class data frame giving mutation observations
+#' @noRd
 
 lolliplot_mutationObs <- function(x, track, fill_value, label_column,
                                   rep.fact, rep.dist.lmt, attr.fact, adj.max,
@@ -3190,6 +3196,7 @@ lolliplot_mutationObs <- function(x, track, fill_value, label_column,
 #' @param z Object of class data frame containing columns "description", "start",
 #'  "stop" specifying gene regions to highlight
 #' @return objects passing basic quality checks
+#' @noRd
 
 lolliplot_qual <- function(x, y, z)
 {
@@ -3281,6 +3288,7 @@ lolliplot_qual <- function(x, y, z)
 #' @param max Integer specifying the maximum number of lollis to allow
 #' @return Object of class data frame taking the reduced form of x
 #' @importFrom plyr count
+#' @noRd
 
 lolliplot_reduceLolli <- function(x, max=NULL)
 {
@@ -3321,6 +3329,7 @@ lolliplot_reduceLolli <- function(x, max=NULL)
 #' @importFrom biomaRt listDatasets
 #' @importFrom biomaRt useDataset
 #' @importFrom biomaRt getBM
+#' @noRd
 
 lolliplot_transcriptID2codingSeq <- function(transcriptID,
                                              species="hsapiens",

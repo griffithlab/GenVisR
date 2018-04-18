@@ -19,6 +19,7 @@
 #' @importFrom GenomicRanges seqnames
 #' @importFrom GenomicRanges mcols
 #' @importFrom IRanges relist
+#' @noRd
 
 geneViz_extrCDS <- function(txdb=NULL, gr=NULL, reduce=FALSE, gaps=FALSE)
 {

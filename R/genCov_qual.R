@@ -7,6 +7,7 @@
 #' @param gr A Granges object specifying a region of interest
 #' @param genome Object of class BSgenome specifying the genome
 #' @return a list of objects passing basic quality control
+#' @noRd
 
 genCov_qual <- function(x=x, txdb=txdb, gr=gr, genome=genome)
 {

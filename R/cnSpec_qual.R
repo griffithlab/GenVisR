@@ -12,6 +12,7 @@
 #' "relative" or "absolute"
 #' @param genome character string specifying a user supplied genome
 #' @return character string specifying input passed quality check
+#' @noRd
 
 cnSpec_qual <- function(x, y, genome, CNscale)
 {

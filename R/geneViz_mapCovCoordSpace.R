@@ -12,6 +12,7 @@
 #' @return an object of class data frame identical to coord but with extra
 #' columns for transformed coord
 #' @importFrom plyr adply
+#' @noRd
 
 geneViz_mapCovCoordSpace <- function(cov.coords, master)
 { 

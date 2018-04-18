@@ -10,6 +10,7 @@
 #' transform
 #' @return Master region table data frame
 #' @importFrom IRanges ranges
+#' @noRd
 
 geneViz_mergeRegions <- function(gene_features, gr, base, transform)
 {

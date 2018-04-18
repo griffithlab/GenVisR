@@ -10,6 +10,7 @@
 #' to map to transformed space
 #' @return an object of class data frame identical to coord but with extra
 #' columns for transformed coord
+#' @noRd
 
 geneViz_mapCoordSpace <- function(master, coord)
 { 

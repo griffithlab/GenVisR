@@ -9,6 +9,7 @@
 #' "gieStain"
 #' @param genome character string specifying UCSC genome to use
 #' @return a list of data frames passing quality checks
+#' @noRd
 
 lohView_qual <- function(x, y, genome)
 {

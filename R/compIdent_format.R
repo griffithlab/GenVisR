@@ -5,6 +5,7 @@
 #' @param x Named list of data frames with rows of the data frame corresponding
 #' to target locations.
 #' @return Formated data frame
+#' @noRd
 
 compIdent_format <- function(x)
 {

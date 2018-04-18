@@ -7,6 +7,7 @@
 #' @return ggplot object
 #' @importFrom grid unit.pmax
 #' @importFrom gridExtra arrangeGrob
+#' @noRd
 
 multi_align <- function(p1, p2)
 {

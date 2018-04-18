@@ -7,6 +7,7 @@
 #' @return Object of class data frame
 #' @importFrom IRanges ranges
 #' @importFrom GenomicRanges mcols
+#' @noRd
 
 geneViz_Granges2dataframe <- function(gr)
 {

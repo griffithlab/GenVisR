@@ -10,6 +10,7 @@
 #' @param reduce Boolean specifying whether to collapse isoforms in the Granges
 #' object ROI
 #' @return Object of class data frame
+#' @noRd
 
 geneViz_formatUTR <- function(txdb=NULL, gr=NULL, genome=NULL, reduce=FALSE)
 {
