@@ -782,11 +782,11 @@ test_that("arrangeLolliplotPlot correctly warns if section heights is not numeri
 
 if(biomart_success){
     Lolliplot.out <- suppressWarnings(Lolliplot(dfObject.mode1, transcript="ENST00000263967",
-                                      species="hsapiens", host="www.ensembl.org",
-                                      txdb=txdb, BSgenome=BSgenome, emphasize=NULL,
-                                      DomainPalette=NULL, MutationPalette=NULL,
-                                      labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL,
-                                      sectionHeights=NULL, verbose=FALSE))
+                                                species="hsapiens", host="www.ensembl.org",
+                                                txdb=txdb, BSgenome=BSgenome, emphasize=NULL,
+                                                DomainPalette=NULL, MutationPalette=NULL,
+                                                labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL,
+                                                sectionHeights=NULL, verbose=FALSE))
 }
 
 test_that("Lolliplot constructor outputs a S4 class object", {

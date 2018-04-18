@@ -48,6 +48,39 @@ setClass("Lolliplot",
 #' should sum to one. Expects a value for each section.
 #' @param labelAA Boolean specifying if labels should be added to emphasized mutations
 #' @param verbose Boolean specifying if status messages should be reported.
+#' @examples
+#' # Load a pre-existing data set
+#' dataset <- PIK3CA
+#' 
+#' # mode 1, amino acid changes are not present
+#'
+#' library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+#' library(BSgenome.Hsapiens.UCSC.hg38)
+#' txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
+#' BSgenome <- BSgenome.Hsapiens.UCSC.hg38
+#' 
+#' keep <- c("Chromosome", "Start_Position", "End_Position", "Reference_Allele",
+#'           "Tumor_Seq_Allele2", "Tumor_Sample_Barcode", "Gene", "Variant_Classification")
+#' dataset.mode1 <- dataset[,keep]
+#' colnames(dataset.mode1) <- c("chromosome", "start", "stop", "reference", "variant",
+#'                              "sample", "gene", "consequence")
+#'
+#'
+#' # mode 2, amino acid changes are present
+#' 
+#' keep <- c("Chromosome", "Start_Position", "End_Position", "Reference_Allele",
+#'           "Tumor_Seq_Allele2", "Tumor_Sample_Barcode", "Gene", "Variant_Classification",
+#'           "Transcript_ID", "HGVSp")
+#' dataset.mode2 <- dataset[,keep]
+#' colnames(dataset.mode2) <- c("chromosome", "start", "stop", "reference", "variant",
+#'                              "sample", "gene", "consequence", "transcript", "proteinCoord")
+#' 
+#' # run Lolliplot
+#' 
+#' object <- Lolliplot(dataset.mode1, transcript="ENST00000263967",
+#'                     species="hsapiens", txdb=txdb, BSgenome=BSgenome)
+#' object <- Lolliplot(dataset.mode2, transcript="ENST00000263967",
+#'                     species="hsapiens")
 #' @export
 Lolliplot <- function(input, transcript=NULL, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, emphasize=NULL, DomainPalette=NULL, MutationPalette=NULL, labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL, sectionHeights=NULL, verbose=FALSE){
     
