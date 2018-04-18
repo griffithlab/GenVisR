@@ -58,7 +58,7 @@ VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
             # detect OS and remove slashes and extension
             if(.Platform$OS.type == "windows"){
                 sampleName <- gsub("(.*/)||(.*\\\\)", "", x)
-                sampleName <- gsub("\\.[^.]+$", "", x)
+                sampleName <- gsub("\\.[^.]+$", "", sampleName)
             } else {
                 sampleName <- gsub("(.*/)", "", x)
                 sampleName <- gsub("\\.[^.]+$", "", sampleName)
