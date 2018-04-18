@@ -600,7 +600,6 @@ test_that("buildDensityPlot is able to add layers to the plot", {
 
 test_that("buildDensityPlot works in verbose mode", {
     
-    skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
     
     expect_message(buildDensityPlot(LolliplotData.mode1.out, plotALayers=NULL, verbose=TRUE))
@@ -608,7 +607,6 @@ test_that("buildDensityPlot works in verbose mode", {
 
 test_that("buildDensityPlot errors if plotALayers is not a list", {
     
-    skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
     
     test_layer <- ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=.025), colour="red", size=10)
@@ -682,7 +680,6 @@ test_that("buildLolliplot successfullly changes colors for mutations", {
 
 test_that("buildLolliplot works in verbose mode", {
     
-    skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
     
     expect_message(buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
@@ -692,7 +689,6 @@ test_that("buildLolliplot works in verbose mode", {
 
 test_that("buildLolliplot warns if not enough colors are supplied to DomainPalette", {
     
-    skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
     
     domain_palette <- c("blue", "red", "green")
@@ -705,7 +701,6 @@ test_that("buildLolliplot warns if not enough colors are supplied to DomainPalet
 
 test_that("buildLolliplot warns if not enough colors are supplied to MutationPalette", {
     
-    skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
     
     mutation_palette <- c("blue", "red")
@@ -718,9 +713,134 @@ test_that("buildLolliplot warns if not enough colors are supplied to MutationPal
 
 test_that("buildLolliplot errors if plotBLayers is not a list", {
     
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
     test_layer <- ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=1), colour="red", size=10)
     
     expect_error(buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
                                 DomainPalette=NULL, MutationPalette=NULL,
                                 plotBLayers=test_layer, verbose=FALSE))
+})
+
+###################### test LolliplotPlots constructor #########################
+
+if(biomart_success){
+    LolliplotPlots.out <- LolliplotPlots(LolliplotData.mode1.out, labelAA=FALSE,
+                                         DomainPalette=NULL, MutationPalette=NULL,
+                                         plotALayers=NULL, plotBLayers=NULL, verbose=FALSE)
+}
+
+test_that("LolliplotPlots constructor outputs a s4 class object", {
+    
+    skip_if_not(biomart_success, "mart recieved try-error")
+    
+    expect_s4_class(LolliplotPlots.out, "LolliplotPlots")
+    
+})
+
+################################################################################
+################## test Lolliplot constructor ##################################
+
+context("Lolliplot Final Plot")
+
+if(biomart_success){
+    arrangeLolliplotPlot.out <- arrangeLolliplotPlot(LolliplotPlots.out, sectionHeights=NULL, verbose=FALSE)
+}
+
+test_that("arrangeLolliplotPlot constructs a plot", {
+
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+
+    vdiffr::expect_doppelganger("Final Lolliplot Base", grid::grid.draw(arrangeLolliplotPlot.out))
+
+})
+
+test_that("arrangeLolliplotPlot alters section heights", {
+
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+
+    arrangeLolliplotPlot.out <- arrangeLolliplotPlot(LolliplotPlots.out, sectionHeights=c(.1, .9), verbose=FALSE)
+
+    vdiffr::expect_doppelganger("Final Lolliplot alter section height", grid::grid.draw(arrangeLolliplotPlot.out))
+})
+ 
+test_that("arrangeLolliplotPlot correctly warns if section heights does not match the number of plots", {
+
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_warning(arrangeLolliplotPlot(LolliplotPlots.out, sectionHeights=c(1), verbose=FALSE))
+})
+
+test_that("arrangeLolliplotPlot correctly warns if section heights is not numeric", {
+
+    skip_if_not(biomart_success, "mart recieved try-error")
+    expect_warning(arrangeLolliplotPlot(LolliplotPlots.out, sectionHeights=c("A"), verbose=FALSE))
+})
+
+############################ test Lolliplot and accessors#######################
+
+if(biomart_success){
+    Lolliplot.out <- suppressWarnings(Lolliplot(dfObject.mode1, transcript="ENST00000263967",
+                                      species="hsapiens", host="www.ensembl.org",
+                                      txdb=txdb, BSgenome=BSgenome, emphasize=NULL,
+                                      DomainPalette=NULL, MutationPalette=NULL,
+                                      labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL,
+                                      sectionHeights=NULL, verbose=FALSE))
+}
+
+test_that("Lolliplot constructor outputs a S4 class object", {
+    expect_s4_class(Lolliplot.out, "Lolliplot")
+})
+
+################################ draw plot #####################################
+
+context("Lolliplot accessors")
+
+test_that("drawPlot constructs a Lolliplot", {
+    
+    skip_on_bioc()
+    skip_if_not(biomart_success, "mart recieved try-error")
+    vdiffr::expect_doppelganger("drawPlot Lolliplot", drawPlot(Lolliplot.out))
+})
+
+################################# getGrob ######################################
+
+test_that("getGrob outputs error if index is out of bounds", {
+    
+    expect_error(getGrob(Lolliplot.out, index=10))
+})
+
+test_that("getGrob successfully retrieves grob objects", {
+    
+    expect_s3_class(getGrob(Lolliplot.out, index=1), "gtable")
+    expect_s3_class(getGrob(Lolliplot.out, index=2), "gtable")
+    expect_s3_class(getGrob(Lolliplot.out, index=3), "gtable")
+})
+
+################################ getData #######################################
+
+test_that("getData outputs error if no name or index is given", {
+    
+    expect_error(getData(Lolliplot.out))
+    
+})
+
+test_that("getData outputs error if index exceeds the number of slots", {
+    
+    expect_error(getData(Lolliplot.out, index=10))
+    
+})
+
+test_that("getData outputs error if supplied name is not a valid slot name", {
+    
+    expect_error(getData(Lolliplot.out, name="shouldNotexist"))
+    
+})
+
+test_that("getData retrieves specified slot data correctly", {
+    
+    expect_s3_class(getData(Lolliplot.out, index=1), "data.table")
+    expect_equivalent(getData(Lolliplot.out, name="primaryData"), getData(Lolliplot.out, index=1))
+    
 })
