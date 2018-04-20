@@ -6,7 +6,8 @@
 \alias{VarScanFormat}
 \title{Class VarScanFormat}
 \usage{
-VarScanFormat(path, varscanType, verbose = FALSE)
+VarScanFormat(path = NULL, varscanData = NULL, varscanType = "LOH",
+  verbose = FALSE)
 }
 \arguments{
 \item{path}{String specifying the path to a VarScan file.}

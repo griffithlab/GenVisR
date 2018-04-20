@@ -30,8 +30,8 @@ Constructor for the VEP container class.
 When specifying a path to a VEP annotation file the option exist to
 either specify the full path to an annotation file or to use wildcards to
 specify multiple files. When specifying a full path the initalizer will check
-if a column named "sample" containg the relevant sample for each row exists.
-If such a column is not found the initalizer will assume this file
+if a column named "sample" containing the relevant sample for each row 
+exists. If such a column is not found the initalizer will assume this file
 corresponds to only one sample and populate a sample column accordingly.
 Alternatively if multiple files are specified at once using a wildcard, the
 initalizer will aggregate all the files and use the file names minus any

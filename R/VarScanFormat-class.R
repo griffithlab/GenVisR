@@ -111,11 +111,37 @@ setClass("VarScanFormat",
 #' in the VarScan. file.
 #' @seealso \code{\link{lohSpec}}
 #' @importFrom data.table fread
+#' @importFrom data.table as.data.table
 #' @export
-VarScanFormat <- function(path, varscanType, verbose=FALSE) {
-    ## Read in VarScan data
-    varscanData <- suppressWarnings(fread(input=path, stringsAsFactors=FALSE,
-                                                      verbose=verbose))
+VarScanFormat <- function(path=NULL, varscanData=NULL, varscanType="LOH", verbose=FALSE) {
+    ## Check for the input variables
+    if (!varscanType %in% c("LOH" , "CNV")) {
+        memo <- paste("The specified varscanType is not a supported. Please specify the varscanType as", 
+                      "either LOH or CNV.")
+        stop(memo)
+    }
+    if (is.null(path) & is.null(varscanData)) {
+        memo <- paste("The path and varscanData variables cannot be both NULL.")
+        warning(memo)
+    }
+    if (!is.null(varscanData)){
+        if (!is.null(path)) {
+            memo <- paste("The path variable is defined but an input dataset is provided.",
+                           "Ignoring the path variable.")
+            warning(memo)
+            if (!is.data.table(varscanData)) {
+                memo <- paste("VarscanData provided is not of class data.table.",
+                              "Attempting to coerce.")
+                warning(memo)
+                varscanData <- as.data.table(varscanData)
+            }
+        }
+    }
+    if (!is.null(path) & is.null(varscanData)) {
+        ## Read in VarScan data
+        varscanData <- suppressMessages(fread(input=path, stringsAsFactors=FALSE,
+                                              verbose=verbose))   
+    }
     
     ## Add varscanType value to dataset
     varscanData$varscanType <- varscanType
@@ -123,31 +149,71 @@ VarScanFormat <- function(path, varscanType, verbose=FALSE) {
     ## Get the sample names
     sample <- varscanData[,which(colnames(varscanData)=="sample"), with=FALSE]
     
+    ## Check if the varscan data has the proper columns
+    if (varscanType=="LOH") {
+        cnames <- c("chrom", "position", "ref", "var",
+                    "normal_reads1", "normal_reads2", "normal_var_freq",
+                    "normal_gt", "tumor_reads1", "tumor_reads2", "tumor_var_freq",
+                    "tumor_gt", "somatic_status", "variant_p_value",
+                    "somatic_p_value", "tumor_reads1_plus", "tumor_reads1_minus",
+                    "tumor_reads2_plus", "tumor_reads2_minus",
+                    "normal_reads1_plus", "normal_reads1_minus",
+                    "normal_reads2_plus", "normal_reads2_minus", "sample", "varscanType")
+    } ## Define LOH columns
+    if (varscanType=="CNV") {
+        cnames <- c("chrom", "chr_start", "chr_stop", "normal_depth",
+                    "tumor_depth", "log_ratio", "gc_content", "sample", "varscanType")
+    } ## Define CNV columns
+    ## Check to see if there are columns in dataset that aren't one of the defined columns
+    num <- which(!colnames(varscanData) %in% cnames)
+    ## Return an error if true
+    if (length(num) > 0) {
+        memo <- paste("The columns provided in the varscan data file do not match the expected columns.",
+                      "refer to http://varscan.sourceforge.net/somatic-calling.html#somatic-output", 
+                      "for appropriate column names.")
+        stop(memo)
+    }
+    
     ## If the varscan output is to visualize loh
     if (varscanType == "LOH") {
         ## Obtain coordinates that were called as germline or LOH by varscan
         varscanData <- varscanData[somatic_status=="Germline"|somatic_status=="LOH"]
         
         ## Convert VAF percentages to VAF proportions
-        varscanData$normal_var_freq <- round(as.numeric(
-            as.character(gsub(pattern="%", replacement="", 
-                              varscanData$normal_var_freq)))/100, digits = 3)
-        varscanData$tumor_var_freq <- round(as.numeric(
-            as.character(gsub(pattern="%", replacement="", 
-                              varscanData$tumor_var_freq)))/100, digits = 3)
+        np <- grep("%", varscanData$normal_var_freq)
+        tp <- grep("%", varscanData$tumor_var_freq)
+        if (length(np) > 0) {
+            memo <- paste("Normal VAF values appear to be percentages. Converting to proportions.")
+            warning(memo)
+            varscanData$normal_var_freq <- as.numeric(as.character(
+                gsub(pattern="%", replacement="", varscanData$normal_var_freq)))
+        }
+        if (length(tp) > 0) {
+            memo <- paste("Tumor VAF values appear to be percentages. Converting to proportions.")
+            warning(memo)
+            varscanData$tumor_var_freq <- as.numeric(as.character(
+                gsub(pattern="%", replacement="", varscanData$tumor_var_freq)))
+        }
+        
+        ## Check if the VAFs are out of 100, and if so, make it out of 1
+        nm <- max(range(varscanData$normal_var_freq))
+        tm <- max(range(varscanData$tumor_var_freq))
+        if (nm > 1) {
+            memo <- paste("Normal VAF values appear to be out of 100. Making VAF values out of 1.")
+            warning(memo)
+            varscanData$normal_var_freq <- round(varscanData$normal_var_freq/100, digits=3)
+        }
+        if (tm > 1) {
+            memo <- paste("Tumor VAF values appear to be out of 100. Making VAF values out of 1.")
+            warning(memo)
+            varscanData$tumor_var_freq <- round(varscanData$tumor_var_freq/100, digits=3)
+        }
     }
     
     ## If the varscan output is to visualize copy number data
     if (varscanType == "CNV") {
-        ## Read in the copy number data
-        varscanData <- suppressWarnings(fread(input=path, stringsAsFactors=FALSE,
-                                     verbose=verbose))
+        ## TODO: Add functionality for CNV data from varscan
         
-        ## Add varscanType value to dataset
-        varscanData$varscanType <- varscanType
-        
-        ## Get the sample names
-        sample <- varscanData[,which(colnames(varscanData)=="sample"), with=FALSE]
     }
     
     ## Create the varscan object
@@ -176,7 +242,6 @@ setMethod(f="getPath",
               return(path)
           })
  
-
 
 ################################################################################
 ####################### Method function definitions ############################

@@ -3,36 +3,39 @@
 \name{lohSpec}
 \alias{lohSpec}
 \alias{lohSpec}
+\alias{LohSpec}
 \title{Class lohSpec}
 \usage{
-lohSpec(x = NULL, path = NULL, fileExt = NULL, y = NULL,
-  genome = "hg19", gender = NULL, step = 1e+06, window_size = 2500000,
-  normal = 0.5, colourScheme = "inferno", plotLayer = NULL,
-  method = "slide", out = "plot")
+LohSpec(input, lohSpec = TRUE, chromosomes = "autosomes", samples = NULL,
+  BSgenome = BSgenome, step = 1e+06, windowSize = 2500000,
+  normal = FALSE, gradientMidpoint = 0.2, gradientColors = c("#ffffff",
+  "#b2b2ff", "#000000"), plotAType = "proportion", plotALohCutoff = 0.2,
+  plotAColor = "#98F5FF", plotALayers = NULL, plotBLayers = NULL,
+  sectionHeights = c(0.25, 0.75), verbose = FALSE)
 }
 \arguments{
+\item{input}{Object of class VarScan.}
+
+\item{chromosomes}{Character vector specifying chromosomes to plot. If not NULL
+all chromosomes in "input" not specified with this parameter are removed.}
+
+\item{samples}{Character vector specifying samples to plot. If not NULL
+all samples in "input" not specified with this parameter are removed.}
+
+\item{BSgenome}{Object of class BSgenome to extract genome wide chromosome 
+coordinates}
+
 \item{step}{Integer value specifying the step size (i.e. the number of base
 pairs to move the window). required when method is set to slide
 (see details).}
+
+\item{windowSize}{Integer value specifying the size of the window in base
+pairs in which to calculate the mean Loss of Heterozygosity (see details).}
 
 \item{normal}{Boolean specifiying what value to use for normal VAF when 
 calcualting average LOH difference. Defaults to .50\% if FALSE. 
 If TRUE, will use average normal VAF in each individual sample as value 
 to calculate LOH.}
-
-\item{input}{Object of class VarScan.}
-
-\item{samples}{Character vector specifying samples to plot. If not NULL
-all samples in "input" not specified with this parameter are removed.}
-
-\item{chromosomes}{Character vector specifying chromosomes to plot. If not NULL
-all chromosomes in "input" not specified with this parameter are removed.}
-
-\item{BSgenome}{Object of class BSgenome to extract genome wide chromosome 
-coordinates}
-
-\item{windowSize}{Integer value specifying the size of the window in base
-pairs in which to calculate the mean Loss of Heterozygosity (see details).}
 }
 \description{
 An S4 class for the lohSpec plot object

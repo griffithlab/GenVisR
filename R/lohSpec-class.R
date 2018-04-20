@@ -47,7 +47,7 @@ setClass(
 #' If TRUE, will use average normal VAF in each individual sample as value 
 #' to calculate LOH.
 #' @export
-lohSpec <- function(input, lohSpec=TRUE, chromosomes="autosomes", samples=NULL, 
+LohSpec <- function(input, lohSpec=TRUE, chromosomes="autosomes", samples=NULL, 
                     BSgenome=BSgenome, step=1000000, windowSize=2500000, 
                     normal=FALSE, gradientMidpoint=.2, gradientColors=c("#ffffff", "#b2b2ff", "#000000"),
                     plotAType="proportion", plotALohCutoff=0.2, plotAColor="#98F5FF",
@@ -78,7 +78,6 @@ lohSpec <- function(input, lohSpec=TRUE, chromosomes="autosomes", samples=NULL,
 #' Private Class lohData
 #' 
 #' An S4 class for the Data of the loh plot object
-#' @name lohData-class
 #' @name lohData-class
 setClass("lohData",
          representation=representation(primaryData="data.table",
@@ -213,7 +212,7 @@ lohSpecPlots <- function(object, plotALohCutoff, plotAType, plotAColor,
     }
     
     if(name == "primaryData" | index == 1){
-        data <- object@lohData
+        data <- object@primaryData
     }
     
     return(data)
@@ -237,11 +236,10 @@ setMethod(f="getData",
 #' @aliases getGrob
 #' @noRd
 .getGrob_lohSpec <- function(object, index=1, ...){
-    browser()
     if(index == 1){
-        grob <- object@lohFreq_plot
+        grob <- object@PlotA
     } else if(index == 2) {
-        grob <- object@lohSpec_plot
+        grob <- object@PlotB
     } else if (index == 3) {
         grob <- object@Grob
     } else {
@@ -335,7 +333,7 @@ setMethod(f="chrSubset",
               ## Determine which chromosomes to plot
               ## Only include autosomes
               if (chromosomes[1] == "autosomes") {
-                  chromosomes <- as.character(c(seq(1:22)))
+                  chromosomes <- paste("chr", as.character(c(seq(1:22))), sep="")
               }
               ## Include all chromosomes
               if (chromosomes[1] == "all") {
