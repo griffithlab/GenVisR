@@ -17,7 +17,8 @@
 #' @exportClass StructuralVariant
 setClass("StructuralVariant",
          representation=representation(svData="data.table",
-                                       geneData="data.table"),
+                                       geneData="data.table",
+                                       svPlots="list"),
          validity=function(object) {
              
          })
@@ -45,8 +46,8 @@ setClass("StructuralVariant",
 #' @param geneAnnotationFlank Integer specifying the size of the flanks of each SV event
 #' to include in the annotation step
 #' @param plotSpecificGene Character vector specifying which genes to plot
-#' @param plotGene1 Boolean specifying if TRA genes should be plotted
-#' @param plotGene2 Boolean specifying if non-TRA genes should be plotted
+#' @param plotTraGenes Boolean specifying if TRA genes should be plotted
+#' @param plotOtherGenes Boolean specifying if non-TRA genes should be plotted
 #' @param chrGap Integer specifying the size of the gap between the 1st and 2nd chromosome
 #' @param genome Character vector specifying which genome to use to obtain chromosome bands. 
 #' Serves as input into the getCytobands function of karyoploteR. 
@@ -65,12 +66,11 @@ StructuralVariant <- function(input, BSgenome=NULL, filter=TRUE, svType=NULL,
                               maxSvSize=NULL, sample=NULL, chromosomes=NULL, 
                               ensembl=ensembl, attributes=attributes, filters=filters,
                               annotate=TRUE, geneAnnotationFlank=10000, 
-                              plotSpecificGene=FALSE, plotGene1=FALSE, 
-                              plotGene2=FALSE, chrGap=5000000,
+                              plotSV=plotSV, plotSpecificGene=FALSE, plotTraGenes=FALSE, 
+                              plotOtherGenes=FALSE, chrGap=5000000,
                               genome="hg19", cytobandColor=c("White", "Grey"), 
                               sampleColor=NULL, verbose=FALSE, plotALayers=NULL, 
-                              plotBLayers=NULL, plotCLayers=NULL,
-                              outputDir="~/Desktop", plotWidth=15, plotHeight=12) {
+                              plotBLayers=NULL, plotCLayers=NULL) {
 
     ## Calculate all data for the plots
     svDataset <- svData(object=input, BSgenome=BSgenome, filter=filter, svType=svType, svOrder=svOrder,
@@ -79,17 +79,16 @@ StructuralVariant <- function(input, BSgenome=NULL, filter=TRUE, svType=NULL,
                         geneAnnotationFlank=geneAnnotationFlank, genome=genome, verbose=verbose)
 
     ## Create the plots from svData
-    structuralVariantPlots <- svPlots(object=svDataset, plotSpecificGene=plotSpecificGene, 
-                                      plotGene1=plotGene1, plotGene2=plotGene2, cytobandColor=cytobandColor, 
+    structuralVariantPlots <- svPlots(object=svDataset, plotSV=plotSV, plotSpecificGene=plotSpecificGene, 
+                                      plotTraGenes=plotTraGenes, plotOtherGenes=plotOtherGenes, cytobandColor=cytobandColor, 
                                       plotALayers=plotALayers, plotBLayers=plotBLayers,
                                       plotCLayers=plotCLayers, sectionHeights=sectionHeights, 
-                                      sample=sample, sampleColor=sampleColor, plotWidth=plotWidth, plotHeight=plotHeight,
-                                      outputDir=outputDir, verbose=verbose)
+                                      sample=sample, sampleColor=sampleColor, verbose=verbose)
     
     ## Intialize the object
     new("StructuralVariant", svData=getData(object=svDataset, name="primaryData"), 
-        geneData=getData(object=svDataset, name="geneData"))
-
+        geneData=getData(object=svDataset, name="geneData"),
+        svPlots=structuralVariantPlots)
 }
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
@@ -120,8 +119,6 @@ svData <- function(object, BSgenome, filter, svType, svOrder, maxSvSize, sample,
                    chromosomes, ensembl, attributes, filters, annotate, geneAnnotationFlank, chrGap, genome,
                    verbose) {
     
-    browser()
-
     ## Subset data to only passed sv calls
     primaryData <- filterStructuralVariant(object=object, 
                                            filter=filter, maxSvSize=maxSvSize, 
@@ -181,17 +178,16 @@ setClass("svPlots",
 #' @param object Object of class svData
 #' @importFrom gtable gtable
 #' @noRd
-svPlots <- function(object, plotSpecificGene, plotGene1, plotGene2, cytobandColor, 
+svPlots <- function(object, plotSV, plotSpecificGene, plotTraGenes, plotOtherGenes, cytobandColor, 
                     plotALayers, plotBLayers, plotCLayers, sectionHeights, 
-                    sample, sampleColor, plotWidth, plotHeight, outputDir, verbose, ...) {
-
+                    sample, sampleColor, verbose, ...) {
+    
     ## Create the gtable for the plots 
-    svGtables <- buildSvPlot(object=object, plotSpecificGene=plotSpecificGene, 
-                             plotGene1=plotGene1, plotGene2=plotGene2, cytobandColor=cytobandColor, 
+    svGtables <- buildSvPlot(object=object, plotSV=plotSV, plotSpecificGene=plotSpecificGene, 
+                             plotTraGenes=plotTraGenes, plotOtherGenes=plotOtherGenes, cytobandColor=cytobandColor, 
                              plotALayers=plotALayers, plotBLayers=plotBLayers,
                              plotCLayers=plotCLayers, sectionHeights=sectionHeights, sample=sample,
-                             sampleColor=sampleColor, plotWidth=plotWidth, plotHeight=plotHeight,
-                             outputDir=outputDir, verbose=verbose)
+                             sampleColor=sampleColor, verbose=verbose)
     
     ## Initialize the object
     new("svPlots", plots=svGtables)
@@ -246,6 +242,35 @@ setMethod(f="getData",
           signature="svData",
           definition=.getData_structuralVariants)
 
+#' @rdname drawSvPlot-methods
+#' @aliases drawSvPlot
+#' @importFrom grid grid.draw
+#' @importFrom grid grid.newpage
+#' @exportMethod drawSvPlot
+setMethod(f="drawSvPlot",
+          signature="StructuralVariant",
+          definition=function(object, chr1=NULL, chr2=NULL, ...) {
+              ## Get the list of gtabls
+              object <- object@svPlots@plots
+              
+              ## Get the chr combo
+              order <- paste(gtools::mixedsort(c(chr1, chr2)), collapse="_")
+              
+              ## See if the desired chr combo can be found in the plots
+              num <- which(names(object) == order)
+              if (length(num) == 0) {
+                  memo <- paste0("The plot for the chromosome combination: ",
+                                 chr1, "_", chr2, " could not be found. Make sure to append the chr name with ",
+                                 dQuote("chr"), " rather than just using the chromosome number (chr1 instead of 1).",
+                                 "The possible combinations that could be used are: ", 
+                                 paste(names(object), collapse=", "))
+                  stop(memo)
+              }
+              finalPlot <- object[[num]]
+              grid::grid.newpage()
+              grid::grid.draw(finalPlot)
+          })
+
 ################################################################################
 #################### Method function definitions ###############################
 
@@ -256,7 +281,7 @@ setMethod(f="getData",
 #' @importFrom data.table data.table
 #' @noRd
 setMethod(f="filterStructuralVariant",
-          signature="VariantCallFormat",
+          signature="data.table",
           definition=function(object, filter, maxSvSize, svType, 
                               verbose, ...) {
               
@@ -318,11 +343,12 @@ setMethod(f="filterStructuralVariant",
 #' @param verbose Boolean for status updates
 #' @return data.table object with calculated mutation distances
 #' @importFrom data.table data.table
+#' @importFrom data.table rbindlist
 #' @noRd
 setMethod(f="chrSubsetSv",
           signature="data.table",
           definition=function(object, chromosomes, verbose, ...){
-
+              
               # print status message
               if(verbose){
                   memo <- paste("Performing chromosome subsets")
@@ -406,17 +432,39 @@ setMethod(f="chrSubsetSv",
                   warning(memo)
               }
               
-              # perform the subset
+              # perform the subset - remove GL and MT chromosomes
               object <- object[-grep("GL", object$chromosome)]
               object <- object[-grep("MT", object$chromosome)]
               object <- object[-grep("GL", object$chromosome2)]
               object <- object[-grep("MT", object$chromosome2)]
-              object <- object[object$chromosome %in% chromosomes | object$chromosome2 %in% chromosomes,]
+              
+              ## Remove rows that have nothing to do with the desired chromosomes
+              ## Keep DEL/DUP/INV/INS events that occur on other chromosomes that 
+              ## have translocations with the desired chromosomes
+              allStructuralVariants <- object 
+              ## Get the chromosome combination
+              chr_combo <- data.table(paste(allStructuralVariants$chromosome, 
+                                 allStructuralVariants$chromosome2,
+                                 sep="_"))
+              otherChromosomes <- apply(chr_combo, 1, function(x, chromosomes){
+                  chr <- strsplit(x, split="_")[[1]]
+                  otherChr <- data.table(chr[-which(chr %in% chromosomes)])
+                  if (length(otherChr)!=0) {
+                      return(otherChr)
+                  }
+              }, chromosomes=chromosomes)
+              otherChromosomes <- unique(rbindlist(otherChromosomes))
+              otherChromosomes <- paste(otherChromosomes$V1, otherChromosomes$V1, sep="_")
+
+              object$chr_combo <- paste(object$chromosome, object$chromosome2, sep="_")
+              object <- object[object$chromosome %in% chromosomes | object$chromosome2 %in% chromosomes | 
+                                   object$chr_combo %in% otherChromosomes,]
               object$chromosome <- factor(object$chromosome)
               object$chromosome2 <- factor(object$chromosome2)
               
               ## Remove rows that are duplciated in the ID column
               object <- object[!duplicated(object$ID)]
+              object <- object[,-c("chr_combo")]
               
               # check that the object has a size after subsets
               if(nrow(object) < 1){
@@ -866,7 +914,7 @@ setMethod(f="adjustCentromeres",
 setMethod(f="getStructuralVariantWindow",
           signature="data.table",
           definition=function(object, chrData, chrCytobands, chrGap, verbose){
-              
+              object=adjustedPrimaryData
               ## Print status message
               if (verbose) {
                   message("Adjusting chromosome boundaries for visualization of structural variants.")
@@ -885,11 +933,20 @@ setMethod(f="getStructuralVariantWindow",
               }
               
               ## For each of the COI-chr combination, generate a dataset to plot
-              #chr <- coi$chromosomes[1]
+              chr <- coi$chromosomes[1]
               finalDf <- data.table::rbindlist(apply(coi, 1, function(chr, sampleData, chrCytobands, chrGap){
-                  #browser()
                   ## Get rows in cohort that have sv events involving COI
                   dataset <- sampleData[chromosome==chr | chromosome2 == chr,]
+                  
+                  ## Get the rows in the dataset that have sv events 2ndary to COI
+                  otherChr1 <- unique(dataset[!which(chromosome %in% chr)]$chromosome)
+                  otherChr2 <- unique(dataset[!which(chromosome2 %in% chr)]$chromosome2)
+                  otherChr <- unique(c(otherChr1, otherChr2))
+                  otherChrCombo <- paste(otherChr, otherChr, sep="_")
+                  otherDataset <- sampleData[chr_combo %in% otherChrCombo]
+                  
+                  ## Combine COI TRA with 2ndary SV events
+                  dataset <- rbind(dataset, otherDataset)
                   
                   ## Get the mate chromosome for TRA events
                   otherChr <- unique(c(as.character(dataset$chromosome), as.character(dataset$chromosome2)))
@@ -973,245 +1030,275 @@ setMethod(f="getStructuralVariantWindow",
 #' @noRd
 setMethod(f="buildSvPlot", 
           signature="svData", 
-          definition=function(object, plotSpecificGene, plotGene1, plotGene2, cytobandColor, sample, sampleColor, plotALayers, 
-                              plotBLayers, plotCLayers, sectionHeights, plotWidth, plotHeight,
-                              outputDir, verbose) {
-              ## Print status message
-              if (verbose) {
-                  message("Generating SV plots")
+          definition=function(object, plotSV, plotSpecificGene, plotTraGenes, plotOtherGenes, 
+                              cytobandColor, sample, sampleColor, plotALayers, 
+                              plotBLayers, plotCLayers, sectionHeights,  verbose) {
+              
+              if (plotSV == FALSE) {
+                  ## Print status message
+                  if (verbose) {
+                      message("plotSV was set to FALSE, so no SV plots will be generated.")
+                  }
+                  svPlots <- list()
+                  return(svPlots)
               }
               
-              ## Get the svWindow
-              svWindow <- object@svWindow
-              
-              ## Check the input variables
-              checkPlotLayer <- function(plotLayer, name) {
-                  if(!is.null(plotLayer)){
-                      if(!is.list(plotLayer)){
-                          memo <- paste(name, " is not a list", sep="")
-                          stop(memo)
+              if (plotSV == TRUE) {
+                  ## Print status message
+                  if (verbose) {
+                      message("Generating SV plots")
+                  }
+                  
+                  ## Get the svWindow
+                  svWindow <- object@svWindow
+                  
+                  ## Convert BND notation to readable format
+                  svWindow$direction <- gsub("N\\[P\\[", "3' to 5'", svWindow$direction)
+                  svWindow$direction <- gsub("N]P]", "3' to 3'", svWindow$direction)
+                  svWindow$direction <- gsub("]P]N", "5' to 3'", svWindow$direction)
+                  svWindow$direction <- gsub("\\[P\\[N", "5' to 5'", svWindow$direction)
+                  svWindow$svtype <- gsub("BND", "TRA", svWindow$svtype)
+                  
+                  
+                  ## Check the input variables
+                  checkPlotLayer <- function(plotLayer, name) {
+                      if(!is.null(plotLayer)){
+                          if(!is.list(plotLayer)){
+                              memo <- paste(name, " is not a list", sep="")
+                              stop(memo)
+                          }
+                          
+                          if(any(!unlist(lapply(plotLayer, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
+                              memo <- paste(name, " is not a list of ggproto or ",
+                                            "theme objects... setting plotALayers to NULL", sep="")
+                              warning(memo)
+                              plotLayer <- NULL
+                          }
+                      }
+                      return(plotLayer)
+                  }
+                  plotALayers <- checkPlotLayer(plotLayer=plotALayers, "plotALayers")
+                  plotBLayers <- checkPlotLayer(plotLayer=plotBLayers, "plotBLayers")
+                  plotCLayers <- checkPlotLayer(plotLayer=plotCLayers, "plotCLayers")
+                  
+                  ## Assign colors for samples 
+                  names(sampleColor) <- sample
+                  
+                  ## Split the sv window by chr_combo
+                  window <- split(svWindow, svWindow$chr_combo)
+                  
+                  ## Go through each window dataset and generate a plot
+                  svPlots <- suppressWarnings(lapply(window, function(dataset, plotSpecificGene, 
+                                                                      cytobandColor, sectionHeights, 
+                                                                      sampleColor, 
+                                                                      plotTraGenes, plotOtherGenes,
+                                                                      plotALayers, plotBLayers, 
+                                                                      plotCLayers) {
+                      ## Split the dataset by sample to assign color names
+                      df <- split(dataset, f=dataset$sample)
+                      dataset <- data.table::rbindlist(lapply(df, function(x, sampleColor){
+                          if (nrow(x) > 0) {
+                              sampleName <- as.character(x$sample[1])
+                              x$sampleColor <- sampleColor[which(names(sampleColor) == sampleName)]
+                          }
+                          return(x)
+                      }, sampleColor=sampleColor))
+                      
+                      colnames(dataset) <- c("Chromosome", "Position", "Chromosome2", "Position2", "Direction",
+                                             "SV_Type", "Total_Read_Support", "Sample", "Genes", 
+                                             "Midpoint", "chr_combo", "gene", "sampleColor")
+                      ## Sort dataset
+                      dataset$Sample <- factor(dataset$Sample, levels=gtools::mixedsort(unique(dataset$Sample)))
+                      
+                      ## Create bins for the chr positions (remove position transformation)
+                      chrOrder <- gtools::mixedsort(unique(c(as.character(dataset$Chromosome), as.character(dataset$Chromosome2))))
+                      chr1Length <- max(dataset[Direction=="cytoband" & Chromosome == chrOrder[1], Position2])
+                      ## Get chr1 data
+                      chr1OldBreaks <- round(seq(0, chr1Length, by=chr1Length/5), digits=0) 
+                      chr1NewBreaks <- round(seq(0, chr1Length, by=chr1Length/5), digits=0) 
+                      chr1 <- data.table(chr=chrOrder[1], newBreaks=chr1NewBreaks, oldBreaks=chr1OldBreaks)
+                      ## Get chr2 data
+                      chr2Start <- min(dataset[Direction=="cytoband" & Chromosome == chrOrder[2], Position])
+                      chr2Length <- max(dataset[Direction=="cytoband" & Chromosome == chrOrder[2], Position2])
+                      chr2OldBreaks <- round(seq(chr2Start, chr2Length, by=(chr2Length-chr2Start)/5), digits=0)
+                      chr2NewBreaks <- round(seq(0, chr2Length-chr1Length, by=(chr2Length-chr1Length)/5), digits=0)
+                      chr2 <- data.table(chr=chrOrder[2], newBreaks=chr2NewBreaks, oldBreaks=chr2OldBreaks)
+                      temp <- rbind(chr1, chr2)
+                      
+                      ## Get the start and stop for each chromosome
+                      chr1End <- chr1Length
+                      chr2End <- chr2Length
+                      boundaries <- data.table(start=c(0, chr2Start), end=c(chr1End, chr2End))
+                      
+                      ##############################################################
+                      ##### Plot the chromosome plot ###############################
+                      ##############################################################
+                      ## Get the cytoband data
+                      coi <- dataset[Direction=="cytoband" & SV_Type != "centromere"]
+                      coi$type <- "Chromosome"
+                      suppressWarnings(coi$Height <- c(0.4, 0.6))
+                      suppressWarnings(coi$color <- cytobandColor)
+                      coi <- coi[!duplicated(coi$SV_Type)]
+                      chrPlot <- ggplot() + geom_rect(data=coi, mapping=aes_string(xmin='Position',
+                                                                                   xmax='Position2',
+                                                                                   ymin=0,
+                                                                                   ymax=1)) +
+                          facet_grid(type ~ ., scales="fixed", space="fixed") +
+                          scale_x_continuous(expand=c(0,0), limits=c(-5000000, max(coi$Position2) + 5000000)) + 
+                          scale_y_continuous(expand=c(0,0)) + 
+                          theme_bw() + 
+                          geom_rect(data=coi, aes(xmin=Position, xmax=Position2, ymin=0, ymax=1, fill=Chromosome), fill=coi$color) +
+                          geom_text(data=coi, aes(x=Midpoint, y=Height, label=SV_Type), angle=90, size=3) +
+                          geom_vline(data=boundaries, aes(xintercept=start), linetype=2, color="Grey") + 
+                          geom_vline(data=boundaries, aes(xintercept=end), linetype=2, color="Grey") + 
+                          plotBLayers
+                      
+                      ## Get the centromeres
+                      centromeres <- dataset[SV_Type=="centromere", c("Chromosome", "Position", "Position2")]
+                      positions <- data.table::rbindlist(apply(centromeres, 1, function(x) {
+                          midpoint <- round((as.numeric(as.character(x['Position'])) + 
+                                                 as.numeric(as.character(x['Position2'])))/2, digits=0)
+                          leftPositions <- data.table(x=c(x['Position'], midpoint, x['Position']),
+                                                      y=c(0.10, 0.5, 0.90),
+                                                      SV_Type="Chromosome",
+                                                      id=paste(x['Chromosome'], "_left", sep=""))
+                          rightPositions <- data.table(x=c(x['Position2'], midpoint, x['Position2']),
+                                                       y=c(0.10, 0.5, 0.90),
+                                                       SV_Type="Chromosome",
+                                                       id=paste(x['Chromosome'], "_right", sep=""))
+                          positions <- rbind(leftPositions, rightPositions)
+                          positions$x <- as.numeric(positions$x)
+                          return(positions)
+                      }))
+                      chrPlot <- chrPlot + geom_polygon(data=positions, mapping=aes(x=x, y=y, group=id), fill="red")
+                      
+                      ## Subset svWindow dataset to get DEL/DUP/INV/etc... and TRA/BND/etc...
+                      sameChrSvWindow <- dataset[SV_Type=="DEL" | SV_Type=="DUP" | SV_Type =="INV" | SV_Type == "INS"]
+                      sameChrSvWindow$SV_size <- sameChrSvWindow$Position2 - sameChrSvWindow$Position
+                      diffChrSvWindow <- dataset[SV_Type=="BND" | SV_Type=="TRA"]
+                      
+                      ## Get the dataset for the gene text annotations
+                      dataset <- dataset[Direction!="cytoband"]
+                      gene_text <- dataset[,c("Midpoint", "Total_Read_Support", "gene", "SV_Type")]
+                      gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")] <- 
+                          as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")])) + 
+                          max(as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")])))*.05
+                      gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")] <- 
+                          as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")])) + 
+                          max(as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")])))*.05
+                      gene_text$Total_Read_Support <- as.numeric(gene_text$Total_Read_Support)
+                      gene_text <- gene_text[!duplicated(gene_text)]
+                      if (!is.null(plotSpecificGene)) {
+                          genes <- paste(plotSpecificGene, collapse="|")
+                          gene_text <- gene_text[grep(genes, as.character(gene_text$gene))]
+                          if (nrow(gene_text) == 0){
+                              if (verbose) {
+                                  message(paste0("The genes: ", plotSpecificGene, 
+                                                 " could not be found. No genes will be shown on the plot."))
+                              }
+                              gene_text <- NULL
+                              plotTraGenes <- FALSE
+                              plotOtherGenes <- FALSE
+                          }
+                          if (!is.null(gene_text)) {
+                              plotTraGenes <- any(c("TRA", "BND") %in% gene_text$SV_Type)
+                              plotOtherGenes <- any(gene_text$SV_Type %in% c("DEL", "DUP", "INV", "INS"))
+                          }
                       }
                       
-                      if(any(!unlist(lapply(plotLayer, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
-                          memo <- paste(name, " is not a list of ggproto or ",
-                                        "theme objects... setting plotALayers to NULL", sep="")
-                          warning(memo)
-                          plotLayer <- NULL
-                      }
-                  }
-                  return(plotLayer)
-              }
-              plotALayers <- checkPlotLayer(plotLayer=plotALayers, "plotALayers")
-              plotBLayers <- checkPlotLayer(plotLayer=plotBLayers, "plotBLayers")
-              plotCLayers <- checkPlotLayer(plotLayer=plotCLayers, "plotCLayers")
-              
-              ## Assign colors for samples 
-              names(sampleColor) <- sample
-              
-              ## Split the sv window by chr_combo
-              window <- split(svWindow, svWindow$chr_combo)
-              
-              ## Go through each window dataset and generate a plot
-              svPlots <- suppressWarnings(lapply(window, function(dataset, plotSpecificGene, 
-                                                                  cytobandColor, sectionHeights, 
-                                                                  sampleColor, outputDir,
-                                                                  plotWidth, plotHeight,
-                                                                  plotALayers, plotBLayers, 
-                                                                  plotCLayers) {
-                  ## Split the dataset by sample to assign color names
-                  df <- split(dataset, f=dataset$sample)
-                  dataset <- data.table::rbindlist(lapply(df, function(x, sampleColor){
-                      if (nrow(x) > 0) {
-                          sampleName <- as.character(x$sample[1])
-                          x$sampleColor <- sampleColor[which(names(sampleColor) == sampleName)]
-                      }
-                      return(x)
-                  }, sampleColor=sampleColor))
-                  
-                  colnames(dataset) <- c("Chromosome", "Position", "Chromosome2", "Position2", "Direction",
-                                         "SV_Type", "Total_Read_Support", "Sample", "Genes", 
-                                         "Midpoint", "chr_combo", "gene", "sampleColor")
-                  ## Sort dataset
-                  dataset$Sample <- factor(dataset$Sample, levels=gtools::mixedsort(unique(dataset$Sample)))
-                  
-                  ## Create bins for the chr positions (remove position transformation)
-                  chrOrder <- gtools::mixedsort(unique(c(as.character(dataset$Chromosome), as.character(dataset$Chromosome2))))
-                  chr1Length <- max(dataset[Direction=="cytoband" & Chromosome == chrOrder[1], Position2])
-                  ## Get chr1 data
-                  chr1OldBreaks <- round(seq(0, chr1Length, by=chr1Length/5), digits=0) 
-                  chr1NewBreaks <- round(seq(0, chr1Length, by=chr1Length/5), digits=0) 
-                  chr1 <- data.table(chr=chrOrder[1], newBreaks=chr1NewBreaks, oldBreaks=chr1OldBreaks)
-                  ## Get chr2 data
-                  chr2Start <- min(dataset[Direction=="cytoband" & Chromosome == chrOrder[2], Position])
-                  chr2Length <- max(dataset[Direction=="cytoband" & Chromosome == chrOrder[2], Position2])
-                  chr2OldBreaks <- round(seq(chr2Start, chr2Length, by=(chr2Length-chr2Start)/5), digits=0)
-                  chr2NewBreaks <- round(seq(0, chr2Length-chr1Length, by=(chr2Length-chr1Length)/5), digits=0)
-                  chr2 <- data.table(chr=chrOrder[2], newBreaks=chr2NewBreaks, oldBreaks=chr2OldBreaks)
-                  temp <- rbind(chr1, chr2)
-                  
-                  ## Get the start and stop for each chromosome
-                  chr1End <- chr1Length
-                  chr2End <- chr2Length
-                  boundaries <- data.table(start=c(0, chr2Start), end=c(chr1End, chr2End))
-                  
-                  ##############################################################
-                  ##### Plot the chromosome plot ###############################
-                  ##############################################################
-                  ## Get the cytoband data
-                  coi <- dataset[Direction=="cytoband" & SV_Type != "centromere"]
-                  coi$type <- "Chromosome"
-                  suppressWarnings(coi$color <- cytobandColor)
-                  chrPlot <- ggplot() + geom_rect(data=coi, mapping=aes_string(xmin='Position',
-                                                                    xmax='Position2',
-                                                                    ymin=0,
-                                                                    ymax=1)) +
-                      facet_grid(type ~ ., scales="fixed", space="fixed") +
-                      scale_x_continuous(expand=c(0,0), limits=c(-5000000, max(coi$Position2) + 5000000)) + 
-                      scale_y_continuous(expand=c(0,0)) + 
-                      theme_bw() + 
-                      geom_rect(data=coi, aes(xmin=Position, xmax=Position2, ymin=0, ymax=1, fill=Chromosome), fill=coi$color) +
-                      geom_text(data=coi, aes(x=Midpoint, y=0.5, label=SV_Type), angle=90, size=3) +
-                      geom_vline(data=boundaries, aes(xintercept=start), linetype=2, color="Grey") + 
-                      geom_vline(data=boundaries, aes(xintercept=end), linetype=2, color="Grey") + 
-                      plotBLayers
-                  
-                  ## Get the centromeres
-                  centromeres <- dataset[SV_Type=="centromere", c("Chromosome", "Position", "Position2")]
-                  positions <- data.table::rbindlist(apply(centromeres, 1, function(x) {
-                      midpoint <- round((as.numeric(as.character(x['Position'])) + 
-                                            as.numeric(as.character(x['Position2'])))/2, digits=0)
-                      leftPositions <- data.table(x=c(x['Position'], midpoint, x['Position']),
-                                 y=c(0.10, 0.5, 0.90),
-                                 SV_Type="Chromosome",
-                                 id=paste(x['Chromosome'], "_left", sep=""))
-                      rightPositions <- data.table(x=c(x['Position2'], midpoint, x['Position2']),
-                                                   y=c(0.10, 0.5, 0.90),
-                                                   SV_Type="Chromosome",
-                                                   id=paste(x['Chromosome'], "_right", sep=""))
-                      positions <- rbind(leftPositions, rightPositions)
-                      positions$x <- as.numeric(positions$x)
-                      return(positions)
-                  }))
-                  chrPlot <- chrPlot + geom_polygon(data=positions, mapping=aes(x=x, y=y, group=id), fill="red")
-                  
-                  ## Subset svWindow dataset to get DEL/DUP/INV/etc... and TRA/BND/etc...
-                  sameChrSvWindow <- dataset[SV_Type=="DEL" | SV_Type=="DUP" | SV_Type =="INV" | SV_Type == "INS"]
-                  sameChrSvWindow$SV_size <- sameChrSvWindow$Position2 - sameChrSvWindow$Position
-                  diffChrSvWindow <- dataset[SV_Type=="BND" | SV_Type=="TRA"]
-                  
-                  ## Get the dataset for the gene text annotations
-                  dataset <- dataset[Direction!="cytoband"]
-                  gene_text <- dataset[,c("Midpoint", "Total_Read_Support", "gene", "SV_Type")]
-                  gene_text$Total_Read_Support[which(gene_text$SV_Type=="BND")] <- 
-                      as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type=="BND")])) + 
-                      max(as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type=="BND")])))*.05
-                  gene_text$Total_Read_Support[which(gene_text$SV_Type!="BND")] <- 
-                      as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type!="BND")])) + 
-                      max(as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type!="BND")])))*.05
-                  gene_text$Total_Read_Support <- as.numeric(gene_text$Total_Read_Support)
-                  if (!is.null(plotSpecificGene)) {
-                      genes <- paste(plotSpecificGene, collapse="|")
-                      gene_text <- gene_text[grep(genes, as.character(gene_text$gene))]
-                      if (nrow(gene_text) == 0){
-                          message(paste0("The genes: ", plotSpecificGene, " could not be found. No genes will be shown on the plot."))
-                          gene_text <- NULL
-                      }
-                  }
-                  
-                  ## Get the start/end of chromosomes in the dataset
-                  beziers <- data.frame(data.table::rbindlist(apply(diffChrSvWindow, 1, function(x) {
-                      leftEnd <- data.table(position=as.numeric(x[2]), total_read_support=0, point="end", 
+                      ## Get the start/end of chromosomes in the dataset
+                      beziers <- data.frame(data.table::rbindlist(apply(diffChrSvWindow, 1, function(x) {
+                          leftEnd <- data.table(position=as.numeric(x[2]), total_read_support=0, point="end", 
+                                                type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
+                                                Direction=x[5], sampleColor=x[13])
+                          top <- data.table(position=as.numeric(x[10]), total_read_support=as.numeric(x[7])*2, point="control", 
                                             type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
                                             Direction=x[5], sampleColor=x[13])
-                      top <- data.table(position=as.numeric(x[10]), total_read_support=as.numeric(x[7])*2, point="control", 
-                                        type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
-                                        Direction=x[5], sampleColor=x[13])
-                      rightEnd <- data.table(position=as.numeric(x[4]), total_read_support=0, point="end", 
-                                             type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
-                                             Direction=x[5], sampleColor=x[13])
-                      final <- rbind(leftEnd, top, rightEnd)
-                      return(final)
-                  })))
-                  beziers <- beziers[!duplicated(beziers),]
+                          rightEnd <- data.table(position=as.numeric(x[4]), total_read_support=0, point="end", 
+                                                 type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
+                                                 Direction=x[5], sampleColor=x[13])
+                          final <- rbind(leftEnd, top, rightEnd)
+                          return(final)
+                      })))
+                      beziers <- beziers[!duplicated(beziers),]
+                      
+                      beziers$Sample <- factor(beziers$Sample, levels=gtools::mixedsort(unique(beziers$Sample)))
+                      
+                      ##############################################################
+                      ##### Plot the translocation data ############################
+                      ##############################################################
+                      traPlot <- ggplot() + geom_bezier(data=beziers, 
+                                                        mapping=aes_string(x='position', y='total_read_support', group='group', 
+                                                                           color='Sample', linetype='Direction')) +
+                          facet_grid(SV_Type ~ ., scales="fixed", space="fixed") +
+                          scale_x_continuous(expand=c(0,0), limits=c(-5000000, max(coi$Position2) + 5000000), 
+                                             breaks=temp$oldBreaks, labels=temp$newBreaks) + 
+                          scale_y_continuous() +
+                          geom_vline(data=boundaries, aes(xintercept=start), linetype=2, color="Grey") + 
+                          geom_vline(data=boundaries, aes(xintercept=end), linetype=2, color="Grey") + 
+                          theme_bw() + plotALayers + ylab("Total Read Support") +
+                          geom_point(data=beziers[which(beziers$point=="control"),c("position","total_read_support", "Sample")], 
+                                     aes(x=position, y=total_read_support/2, color=Sample)) 
+                      if (plotTraGenes & !is.null(gene_text)) {
+                          traPlot <- traPlot + geom_text(data=gene_text[SV_Type%in%c("TRA", "BND")], 
+                                                         mapping=aes_string(x='Midpoint', y='Total_Read_Support', label='gene'))
+                      }
+                      ## Assign colors to sample
+                      traPlot <- traPlot + scale_color_manual(name="Sample", values=sampleColor)
+                      
+                      ##############################################################
+                      ##### Plot the non TRA sv events #############################
+                      ##############################################################
+                      maxY <- max(as.numeric(as.character(sameChrSvWindow$Total_Read_Support))) + 30
+                      sameChrSvWindow$Total_Read_Support <- as.numeric(sameChrSvWindow$Total_Read_Support)
+                      nonTraPlot <- ggplot() + geom_point(data=sameChrSvWindow,
+                                                          mapping=aes_string(x='Midpoint', y='Total_Read_Support', 
+                                                                             color="Sample"), size=2.5, alpha=0.75) + 
+                          facet_grid(SV_Type ~ ., scales="fixed", space="fixed") +
+                          scale_x_continuous(expand=c(0,0), limits=c(-5000000, max(coi$Position2) + 5000000), 
+                                             breaks=temp$oldBreaks, labels=temp$newBreaks) + 
+                          scale_y_continuous(limits=c(0,maxY+maxY*0.05)) + 
+                          geom_vline(data=boundaries, aes(xintercept=start), linetype=2, color="Grey") + 
+                          geom_vline(data=boundaries, aes(xintercept=end), linetype=2, color="Grey") + 
+                          theme_bw() + plotCLayers + ylab("Total Read Support") + xlab("Position")
+                      if (plotOtherGenes & !is.null(gene_text)) {
+                          nonTraPlot <- nonTraPlot + geom_text(data=gene_text[SV_Type%in%c("DEL", "DUP", "INV", "INS")], 
+                                                               mapping=aes_string(x='Midpoint', y='Total_Read_Support', label='gene')) 
+                      }
+                      ## Assign colors to sample
+                      nonTraPlot <- nonTraPlot + scale_color_manual(name="Sample", values=sampleColor)
+                      
+                      ##############################################################
+                      ##### Combine the 3 plots ####################################
+                      ##############################################################
+                      traPlot <- ggplotGrob(traPlot)
+                      chrPlot <- ggplotGrob(chrPlot)
+                      nonTraPlot <- ggplotGrob(nonTraPlot)
+                      
+                      ## obtain the max width for relevant plots
+                      plotList <- list(traPlot, chrPlot, nonTraPlot)
+                      plotList <- plotList[lapply(plotList, length) > 0]
+                      plotWidths <- lapply(plotList, function(x) x$widths)
+                      maxWidth <- do.call(grid::unit.pmax, plotWidths)
+                      
+                      ## Set the widths for all plots
+                      for (i in 1:length(plotList)) {
+                          plotList[[i]]$widths <- maxWidth
+                      }
+                      
+                      ## Arrange the final plot
+                      p1 <- do.call(gridExtra::arrangeGrob, c(plotList, list(ncol=1, heights=sectionHeights)))
+                      plot(p1)
+                      
+                      return(p1)
+                  }, 
+                  plotSpecificGene=plotSpecificGene, cytobandColor=cytobandColor, 
+                  sectionHeights=sectionHeights, sampleColor=sampleColor, 
+                  plotTraGenes=plotTraGenes, plotOtherGenes=plotOtherGenes, 
+                  plotALayers=plotALayers, plotBLayers=plotBLayers, plotCLayers=plotCLayers))
                   
-                  beziers$Sample <- factor(beziers$Sample, levels=gtools::mixedsort(unique(beziers$Sample)))
-
-                  ##############################################################
-                  ##### Plot the translocation data ############################
-                  ##############################################################
-                  traPlot <- ggplot() + geom_bezier(data=beziers, 
-                                                    mapping=aes_string(x='position', y='total_read_support', group='group', 
-                                                                       color='Sample', linetype='Direction')) +
-                      facet_grid(SV_Type ~ ., scales="fixed", space="fixed") +
-                      scale_x_continuous(expand=c(0,0), limits=c(-5000000, max(coi$Position2) + 5000000), 
-                                         breaks=temp$oldBreaks, labels=temp$newBreaks) + 
-                      scale_y_continuous() +
-                      geom_vline(data=boundaries, aes(xintercept=start), linetype=2, color="Grey") + 
-                      geom_vline(data=boundaries, aes(xintercept=end), linetype=2, color="Grey") + 
-                      theme_bw() + plotALayers + ylab("Total Read Support") +
-                      geom_point(data=beziers[which(beziers$point=="control"),c("position","total_read_support", "Sample")], 
-                                 aes(x=position, y=total_read_support/2, color=Sample)) 
-                  if (plotGene1 & !is.null(gene_text)) {
-                      traPlot <- traPlot + geom_text(data=gene_text[SV_Type%in%c("TRA", "BND")], 
-                                                     mapping=aes_string(x='Midpoint', y='Total_Read_Support', label='gene'))
-                  }
-                  ## Assign colors to sample
-                  traPlot <- traPlot + scale_color_manual(name="Sample", values=sampleColor)
-                  
-                  ##############################################################
-                  ##### Plot the non TRA sv events #############################
-                  ##############################################################
-                  maxY <- max(as.numeric(as.character(sameChrSvWindow$Total_Read_Support))) + 30
-                  sameChrSvWindow$Total_Read_Support <- as.numeric(sameChrSvWindow$Total_Read_Support)
-                  nonTraPlot <- ggplot() + geom_point(data=sameChrSvWindow,
-                                                      mapping=aes_string(x='Midpoint', y='Total_Read_Support', 
-                                                                         color="Sample"), size=2.5, alpha=0.75) + 
-                      facet_grid(SV_Type ~ ., scales="fixed", space="fixed") +
-                      scale_x_continuous(expand=c(0,0), limits=c(-5000000, max(coi$Position2) + 5000000), 
-                                         breaks=temp$oldBreaks, labels=temp$newBreaks) + 
-                      scale_y_continuous(limits=c(0,maxY+maxY*0.05)) + 
-                      geom_vline(data=boundaries, aes(xintercept=start), linetype=2, color="Grey") + 
-                      geom_vline(data=boundaries, aes(xintercept=end), linetype=2, color="Grey") + 
-                      theme_bw() + plotCLayers + ylab("Total Read Support") + xlab("Position")
-                  if (plotGene2 & !is.null(gene_text)) {
-                      nonTraPlot <- nonTraPlot + geom_text(data=gene_text[SV_Type%in%c("DEL", "DUP", "INV", "INS")], 
-                                    mapping=aes_string(x='Midpoint', y='Total_Read_Support', label='gene')) 
-                  }
-                  ## Assign colors to sample
-                  nonTraPlot <- nonTraPlot + scale_color_manual(name="Sample", values=sampleColor)
-                  
-                  ##############################################################
-                  ##### Combine the 3 plots ####################################
-                  ##############################################################
-                  traPlot <- ggplotGrob(traPlot)
-                  chrPlot <- ggplotGrob(chrPlot)
-                  nonTraPlot <- ggplotGrob(nonTraPlot)
-                  
-                  ## obtain the max width for relevant plots
-                  plotList <- list(traPlot, chrPlot, nonTraPlot)
-                  plotList <- plotList[lapply(plotList, length) > 0]
-                  plotWidths <- lapply(plotList, function(x) x$widths)
-                  maxWidth <- do.call(grid::unit.pmax, plotWidths)
-                  
-                  ## Set the widths for all plots
-                  for (i in 1:length(plotList)) {
-                      plotList[[i]]$widths <- maxWidth
-                  }
-                  
-                  ## Arrange the final plot
-                  p1 <- do.call(gridExtra::arrangeGrob, c(plotList, list(ncol=1, heights=sectionHeights)))
-                  plot(p1)
-                  
-                  pdf(file=paste(outputDir, dataset$chr_combo[1], ".pdf", sep=""), width=plotWidth, height=plotHeight)
-                  plot(p1)
-                  dev.off()
-                  
-                  return(p1)
-              }, 
-              plotSpecificGene=plotSpecificGene, cytobandColor=cytobandColor, 
-              sectionHeights=sectionHeights, sampleColor=sampleColor,
-              plotALayers=plotALayers, plotBLayers=plotBLayers, plotCLayers=plotCLayers,
-              outputDir=outputDir, plotWidth=plotWidth, plotHeight=plotHeight))
+                  return(svPlots)
+              }
               
-              return(svPlots)
+              
           })

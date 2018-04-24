@@ -140,7 +140,7 @@ VarScanFormat <- function(path=NULL, varscanData=NULL, varscanType="LOH", verbos
     if (!is.null(path) & is.null(varscanData)) {
         ## Read in VarScan data
         varscanData <- suppressMessages(fread(input=path, stringsAsFactors=FALSE,
-                                              verbose=verbose))   
+                                              verbose=verbose, showProgress=FALSE))   
     }
     
     ## Add varscanType value to dataset
@@ -184,13 +184,17 @@ VarScanFormat <- function(path=NULL, varscanData=NULL, varscanType="LOH", verbos
         tp <- grep("%", varscanData$tumor_var_freq)
         if (length(np) > 0) {
             memo <- paste("Normal VAF values appear to be percentages. Converting to proportions.")
-            warning(memo)
+            if (verbose) {
+                warning(memo)
+            }
             varscanData$normal_var_freq <- as.numeric(as.character(
                 gsub(pattern="%", replacement="", varscanData$normal_var_freq)))
         }
         if (length(tp) > 0) {
             memo <- paste("Tumor VAF values appear to be percentages. Converting to proportions.")
-            warning(memo)
+            if (verbose) {
+                warning(memo)
+            }
             varscanData$tumor_var_freq <- as.numeric(as.character(
                 gsub(pattern="%", replacement="", varscanData$tumor_var_freq)))
         }
@@ -200,12 +204,16 @@ VarScanFormat <- function(path=NULL, varscanData=NULL, varscanType="LOH", verbos
         tm <- max(range(varscanData$tumor_var_freq))
         if (nm > 1) {
             memo <- paste("Normal VAF values appear to be out of 100. Making VAF values out of 1.")
-            warning(memo)
+            if (verbose) {
+                warning(memo)
+            }
             varscanData$normal_var_freq <- round(varscanData$normal_var_freq/100, digits=3)
         }
         if (tm > 1) {
             memo <- paste("Tumor VAF values appear to be out of 100. Making VAF values out of 1.")
-            warning(memo)
+            if (verbose) {
+                warning(memo)
+            }
             varscanData$tumor_var_freq <- round(varscanData$tumor_var_freq/100, digits=3)
         }
     }

@@ -332,6 +332,20 @@ setGeneric(
     def=function(object, ...){standardGeneric("drawPlot")}
 )
 
+#' Method drawSvPlot
+#' 
+#' @name drawSvPlot
+#' @rdname drawSvPlot-methods
+#' @param object Object of class Structural Variant
+#' @param ... additional arguments to passed
+#' @details The drawSvPlot method is used to draw plots created by GenVisR plot 
+#' constructor functions.
+#' @exportMethod drawSvPlot
+setGeneric(
+    name="drawSvPlot",
+    def=function(object, chr1, chr2, ...){standardGeneric("drawSvPlot")}
+)
+
 #' Method parseHeader
 #' 
 #' @name parseHeader
@@ -939,7 +953,6 @@ setGeneric(
 #' @rdname extractVariantCallFormat-methods
 #' @param ... additional arguments to passed
 #' @noRd
-#' @exportMethod extractVariantCallFormat
 setGeneric(
     name="extractVariantCallFormat",
     def=function(object, ...){standardGeneric("extractVariantCallFormat")}

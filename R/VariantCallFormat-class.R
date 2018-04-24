@@ -62,7 +62,7 @@ extractVariantCallFormat <- function(path=NULL, data=NULL, version="auto", svCal
     ## Get the data if the dataset is not provided
     if (is.null(data)) {
         ## Add wildcard to the path if it not present
-        if (strsplit(path, split="/")[[1]][length(strsplit(path, split="/")[[1]])] != "*") {
+        if (length(path) > 1 & strsplit(path, split="/")[[1]][length(strsplit(path, split="/")[[1]])] != "*") {
             memo <- paste("No wildcard found in the designated path. Please add wildcard to the path. For example:",  
                           "~/Desktop/StructuralVariants/* to use files in ~/Desktop/StructuralVariants/ directory.")
             stop(memo)
