@@ -50,7 +50,7 @@ setClass("VariantCallFormat",
 #' @importFrom data.table rbindlist
 #' @importFrom data.table data.table
 #' @export
-extractVariantCallFormat <- function(path=NULL, data=NULL, version="auto", svCaller=NULL, paired=paired, 
+VariantCallFormat <- function(path=NULL, data=NULL, version="auto", svCaller=NULL, paired=paired, 
                                      tumorColumn=tumorColumn, verbose=FALSE) {
     
     ## Check if both path and data are both null
@@ -219,3 +219,66 @@ extractVariantCallFormat <- function(path=NULL, data=NULL, version="auto", svCal
     ## Initialize the object
     new("VariantCallFormat", path=path, vcfObject=vcfObject, version=as.character(version))
 }
+
+################################################################################
+####################### Method function definitions ############################
+
+#' @rdname getVcfData-methods
+#' @name getVcfData
+#' @aliases getVcfData
+#' @noRd
+#' @importFrom data.table data.table
+setMethod(f="getVcfData",
+          signature="VariantCallFormat",
+          definition=function(object, filter, maxSvSize, svType, 
+                              verbose, ...) {
+              
+              ## Print status message
+              if (verbose) {
+                  memo <- paste0("converting ", class(object), " to expected ",
+                                 "StructuralVariant format")
+                  message(memo)
+              }
+              
+              object <- object@vcfObject@vcfData
+              
+              ## Filter out sv calls that are not "PASS"
+              if (filter == TRUE) {
+                  object <- object[FILTER=="PASS"]
+              }
+              
+              ## Remove large SV
+              if (is.null(maxSvSize) == FALSE) {
+                  ## Get the difference in positions
+                  temp <- suppressWarnings(data.table::rbindlist(apply(object, 1, function(x, maxSvSize){
+                      if (x["svtype"] == "BND" | x["svtype"] == "TRA"){
+                          x$diff <- maxSvSize - 1
+                      } else {
+                          x$diff <- as.numeric(x["position2"]) - as.numeric(x["position"])
+                      }
+                      return(x)
+                  }, maxSvSize=maxSvSize)))
+                  
+                  ## Perform the subset
+                  object <- temp[diff < maxSvSize, c(1:15)]
+              }
+              
+              ## Remove sv types that are not necessary
+              available_svTypes <- unlist(as.vector(object$svtype))
+              if (length(svType) > 0) {
+                  ## Check to see if the SV type is in the data.table
+                  ## Perform the subset if svtype is available
+                  if (all(svType %in% available_svTypes)) {
+                      object <- object[svtype %in% svType]
+                  }
+                  if (!all(svType %in% available_svTypes)) {
+                      memo <- paste0("Desired svtype is not found. Make sure ",
+                                     "the specified svType is one of: ", 
+                                     paste(available_svTypes, collapse=", "))
+                      stop(memo)
+                  }
+              }
+              
+              ## Stop the
+              return(object)
+            })

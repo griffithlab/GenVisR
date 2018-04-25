@@ -120,9 +120,8 @@ svData <- function(object, BSgenome, filter, svType, svOrder, maxSvSize, sample,
                    verbose) {
     
     ## Subset data to only passed sv calls
-    primaryData <- filterStructuralVariant(object=object, 
-                                           filter=filter, maxSvSize=maxSvSize, 
-                                           svType=svType, verbose=verbose)
+    primaryData <- getVcfData(object=object, filter=filter, maxSvSize=maxSvSize, 
+                              svType=svType, verbose=verbose)
     
     ## Subset data to only the chromosomes desired to be plotted
     primaryData <- chrSubsetSv(object=primaryData, chromosomes=chromosomes, verbose=verbose)
@@ -242,12 +241,12 @@ setMethod(f="getData",
           signature="svData",
           definition=.getData_structuralVariants)
 
-#' @rdname drawSvPlot-methods
-#' @aliases drawSvPlot
+#' @rdname drawPlot-methods
+#' @aliases drawPlot
 #' @importFrom grid grid.draw
 #' @importFrom grid grid.newpage
-#' @exportMethod drawSvPlot
-setMethod(f="drawSvPlot",
+#' @export
+setMethod(f="drawPlot",
           signature="StructuralVariant",
           definition=function(object, chr1=NULL, chr2=NULL, ...) {
               ## Get the list of gtabls
@@ -273,66 +272,6 @@ setMethod(f="drawSvPlot",
 
 ################################################################################
 #################### Method function definitions ###############################
-
-#' @rdname filterStructuralVariant-methods
-#' @aliases filterStructuralVariant
-#' @param object Object of class VCF
-#' @param verbose Boolean speifying if status messages should be reported
-#' @importFrom data.table data.table
-#' @noRd
-setMethod(f="filterStructuralVariant",
-          signature="data.table",
-          definition=function(object, filter, maxSvSize, svType, 
-                              verbose, ...) {
-              
-              ## Print status message
-              if (verbose) {
-                  memo <- paste0("converting ", class(object), " to expected ",
-                                "StructuralVariant format")
-                  message(memo)
-              }
-              
-              available_svTypes <- paste(as.vector(object@vcfObject@svType$svtype), collapse=", ")
-              object <- object@vcfObject@vcfData
-              
-              ## Filter out sv calls that are not "PASS"
-              if (filter == TRUE) {
-                  object <- object[FILTER=="PASS"]
-              }
-              
-              ## Remove large SV
-              if (is.null(maxSvSize) == FALSE) {
-                  ## Get the difference in positions
-                  temp <- suppressWarnings(data.table::rbindlist(apply(object, 1, function(x, maxSvSize){
-                      if (x["svtype"] == "BND" | x["svtype"] == "TRA"){
-                          x$diff <- maxSvSize - 1
-                      } else {
-                          x$diff <- as.numeric(x["position2"]) - as.numeric(x["position"])
-                      }
-                      return(x)
-                  }, maxSvSize=maxSvSize)))
-                  
-                  ## Perform the subset
-                  object <- temp[diff < maxSvSize, c(1:15)]
-              }
-              
-              ## Remove sv types that are not necessary
-              if (is.null(svType) == FALSE) {
-                  ## Check to see if the SV type is in the data.table
-                  ## Perform the subset if svtype is available
-                  if (svType %in% available_svTypes) {
-                      object <- object[svtype==svType]
-                  }
-                  if (!(svType %in% available_svTypes)) {
-                      input@vcfObject@svType
-                      memo <- paste0("Desired svtype is not found. Make sure ",
-                                     "the specified svType is one of: ", available_svTypes)
-                  }
-                  
-              }
-              return(object)
-              
-          })
 
 ######################################################
 ##### Function to obtain chromosomes of interest #####
@@ -433,10 +372,10 @@ setMethod(f="chrSubsetSv",
               }
               
               # perform the subset - remove GL and MT chromosomes
-              object <- object[-grep("GL", object$chromosome)]
-              object <- object[-grep("MT", object$chromosome)]
-              object <- object[-grep("GL", object$chromosome2)]
-              object <- object[-grep("MT", object$chromosome2)]
+              object <- object[!grepl("GL", object$chromosome)]
+              object <- object[!grepl("MT", object$chromosome)]
+              object <- object[!grepl("GL", object$chromosome2)]
+              object <- object[!grepl("MT", object$chromosome2)]
               
               ## Remove rows that have nothing to do with the desired chromosomes
               ## Keep DEL/DUP/INV/INS events that occur on other chromosomes that 
@@ -455,7 +394,15 @@ setMethod(f="chrSubsetSv",
               }, chromosomes=chromosomes)
               otherChromosomes <- unique(rbindlist(otherChromosomes))
               otherChromosomes <- paste(otherChromosomes$V1, otherChromosomes$V1, sep="_")
-
+              
+              ## Write message to say that only non-TRA events are shown
+              if (length(otherChromosomes)==0) {
+                  memo <- paste0("No translocation events detected in the dataset.")
+                  if (verbose){
+                      message(memo)
+                  }
+              }
+               
               object$chr_combo <- paste(object$chromosome, object$chromosome2, sep="_")
               object <- object[object$chromosome %in% chromosomes | object$chromosome2 %in% chromosomes | 
                                    object$chr_combo %in% otherChromosomes,]
@@ -914,7 +861,7 @@ setMethod(f="adjustCentromeres",
 setMethod(f="getStructuralVariantWindow",
           signature="data.table",
           definition=function(object, chrData, chrCytobands, chrGap, verbose){
-              object=adjustedPrimaryData
+              
               ## Print status message
               if (verbose) {
                   message("Adjusting chromosome boundaries for visualization of structural variants.")
@@ -933,7 +880,7 @@ setMethod(f="getStructuralVariantWindow",
               }
               
               ## For each of the COI-chr combination, generate a dataset to plot
-              chr <- coi$chromosomes[1]
+              #chr <- coi$chromosomes[1]
               finalDf <- data.table::rbindlist(apply(coi, 1, function(chr, sampleData, chrCytobands, chrGap){
                   ## Get rows in cohort that have sv events involving COI
                   dataset <- sampleData[chromosome==chr | chromosome2 == chr,]
@@ -952,59 +899,83 @@ setMethod(f="getStructuralVariantWindow",
                   otherChr <- unique(c(as.character(dataset$chromosome), as.character(dataset$chromosome2)))
                   otherChr <- as.data.table(otherChr[-which(otherChr %in% chr)])
                   
-                  ## For the individual COI, go through each of the chr combination
-                  #mateChr <- otherChr$V1[12]
-                  temp <- data.table::rbindlist(apply(otherChr, 1, function(mateChr, chr, dataset, sampleData, chrCytobands, chrGap){
-                      ## Get the chromosome combination to see rows which rows of the COI dataset have the correct
-                      ## matching of the chr and mate chr
-                      combo <- c(paste(chr, chr, sep="_"), paste(chr, mateChr, sep="_"), 
-                                           paste(mateChr, chr, sep="_"), paste(mateChr, mateChr, sep="_"))
-                      final <- dataset[which(chr_combo %in% combo), c("chromosome", "position", "chromosome2", "position2", "direction",
-                                                                           "svtype", "total_read_support", "sample", "genes")]
-                      
-                      ## Get the chr boundaries for the two chromosomes
-                      chrDataTemp <- chrCytobands[which(chromosome %in% c(mateChr, chr))]
-                      
-                      ## Figure out the order to plot the chromosomes
-                      chrOrder <- gtools::mixedsort(unique(as.character(chrDataTemp$chromosome)))
-                      
-                      ## Order the chrDataTemp dataset by chrOrder
-                      chrDataTemp$chromosome <- factor(chrDataTemp$chromosome, levels=chrOrder)
-                      chrDataTemp <- chrDataTemp[order(chrDataTemp$chromosome)]
-                      
-                      ## Get the "end" for each of the chromosomes
-                      chrLength <- data.table::rbindlist(lapply(split(chrDataTemp, f=chrDataTemp$chromosome), function(x) {
-                          chr <- x$chromosome[1]
-                          end <- max(x$end)
-                          final <- data.table(chromosome=chr, chrLength=end)
+                  ## For the individual COI, go through each of the chr combination if there are other chromosomes to plot
+                  if (nrow(otherChr) > 0) {
+                      #mateChr <- otherChr$V1[12]
+                      temp <- data.table::rbindlist(apply(otherChr, 1, function(mateChr, chr, dataset, sampleData, chrCytobands, chrGap)
+                          {
+                          ## Get the chromosome combination to see rows which rows of the COI dataset have the correct
+                          ## matching of the chr and mate chr
+                          combo <- c(paste(chr, chr, sep="_"), paste(chr, mateChr, sep="_"), 
+                                     paste(mateChr, chr, sep="_"), paste(mateChr, mateChr, sep="_"))
+                          final <- dataset[which(chr_combo %in% combo), c("chromosome", "position", "chromosome2", "position2", "direction",
+                                                                          "svtype", "total_read_support", "sample", "genes")]
+                          
+                          ## Get the chr boundaries for the two chromosomes
+                          chrDataTemp <- chrCytobands[which(chromosome %in% c(mateChr, chr))]
+                          
+                          ## Figure out the order to plot the chromosomes
+                          chrOrder <- gtools::mixedsort(unique(as.character(chrDataTemp$chromosome)))
+                          
+                          ## Order the chrDataTemp dataset by chrOrder
+                          chrDataTemp$chromosome <- factor(chrDataTemp$chromosome, levels=chrOrder)
+                          chrDataTemp <- chrDataTemp[order(chrDataTemp$chromosome)]
+                          
+                          ## Get the "end" for each of the chromosomes
+                          chrLength <- data.table::rbindlist(lapply(split(chrDataTemp, f=chrDataTemp$chromosome), function(x) {
+                              chr <- x$chromosome[1]
+                              end <- max(x$end)
+                              final <- data.table(chromosome=chr, chrLength=end)
+                              return(final)
+                          }))
+                          
+                          ## Add the cytoband/centromere data to the "final" dataset
+                          temp <- data.table(chromosome=chrDataTemp$chromosome, position=chrDataTemp$start,
+                                             chromosome2=chrDataTemp$chromosome, position2=chrDataTemp$end,
+                                             direction="cytoband", svtype=chrDataTemp$band, total_read_support="",
+                                             sample="", genes="")
+                          
+                          final <- rbind(final, temp)
+                          
+                          ## Add the length of the first chromosome to all of the sv calls on the second chromosome
+                          num <- which(final$chromosome == chrLength$chromosome[2])
+                          final$position[num] <- final$position[num] + chrGap + chrLength$chrLength[1]
+                          num <- which(final$chromosome2 == chrLength$chromosome[2])
+                          final$position2[num] <- final$position2[num] + chrGap + chrLength$chrLength[1]
+                          
+                          ## Get the midpoints for the dataset
+                          final$midpoint <- (as.numeric(as.character(final$position))+
+                                                 as.numeric(as.character(final$position2)))/2
+                          
+                          ## Get the chr-combo ID 
+                          final$chr_combo <- paste(chrLength$chromosome[1], chrLength$chromosome[2], sep="_")
+                          
                           return(final)
-                      }))
+                          
+                      }, 
+                      chr=chr, dataset=dataset, sampleData=sampleData, chrCytobands=chrCytobands, chrGap=chrGap))   
+                  }
+                  if (nrow(otherChr) == 0) {
+                      ## Get the positions for the sv events 
+                      dataset$midpoint <- (dataset$position + dataset$position2)/2 
+                      temp <- dataset[,c("chromosome", "position", "chromosome2", "position2",
+                                         "direction", "svtype", "total_read_support",
+                                         "sample", "genes", "midpoint", "chr_combo")]
                       
-                      ## Add the cytoband/centromere data to the "final" dataset
-                      temp <- data.table(chromosome=chrDataTemp$chromosome, position=chrDataTemp$start,
-                                 chromosome2=chrDataTemp$chromosome, position2=chrDataTemp$end,
-                                 direction="cytoband", svtype=chrDataTemp$band, total_read_support="",
-                                 sample="", genes="")
+                      ## Add in the cytoband information
+                      cytoTemp <- chrCytobands[chromosome==chr]
+                      cyto <- data.table(chromosome=cytoTemp$chromosome, 
+                                         position=cytoTemp$start,
+                                         chromosome2=cytoTemp$chromosome,
+                                         position2=cytoTemp$end,
+                                         direction="cytoband", svtype=cytoTemp$band, 
+                                         total_read_support="", sample="", genes="",
+                                         midpoint=(cytoTemp$start+cytoTemp$end)/2,
+                                         chr_combo=paste(cytoTemp$chromosome, cytoTemp$chromosome, sep="_"))
                       
-                      final <- rbind(final, temp)
-                      
-                      ## Add the length of the first chromosome to all of the sv calls on the second chromosome
-                      num <- which(final$chromosome == chrLength$chromosome[2])
-                      final$position[num] <- final$position[num] + chrGap + chrLength$chrLength[1]
-                      num <- which(final$chromosome2 == chrLength$chromosome[2])
-                      final$position2[num] <- final$position2[num] + chrGap + chrLength$chrLength[1]
-                      
-                      ## Get the midpoints for the dataset
-                      final$midpoint <- (as.numeric(as.character(final$position))+
-                                             as.numeric(as.character(final$position2)))/2
-                      
-                      ## Get the chr-combo ID 
-                      final$chr_combo <- paste(chrLength$chromosome[1], chrLength$chromosome[2], sep="_")
-                      
-                      return(final)
-                      
-                  }, 
-                  chr=chr, dataset=dataset, sampleData=sampleData, chrCytobands=chrCytobands, chrGap=chrGap))
+                      ## Combine all of the data
+                      temp <- rbind(temp, cyto)
+                  }
                   
                   return(temp)
               }, 
@@ -1116,14 +1087,16 @@ setMethod(f="buildSvPlot",
                       ## Get chr1 data
                       chr1OldBreaks <- round(seq(0, chr1Length, by=chr1Length/5), digits=0) 
                       chr1NewBreaks <- round(seq(0, chr1Length, by=chr1Length/5), digits=0) 
-                      chr1 <- data.table(chr=chrOrder[1], newBreaks=chr1NewBreaks, oldBreaks=chr1OldBreaks)
+                      temp <- data.table(chr=chrOrder[1], newBreaks=chr1NewBreaks, oldBreaks=chr1OldBreaks)
                       ## Get chr2 data
-                      chr2Start <- min(dataset[Direction=="cytoband" & Chromosome == chrOrder[2], Position])
-                      chr2Length <- max(dataset[Direction=="cytoband" & Chromosome == chrOrder[2], Position2])
-                      chr2OldBreaks <- round(seq(chr2Start, chr2Length, by=(chr2Length-chr2Start)/5), digits=0)
-                      chr2NewBreaks <- round(seq(0, chr2Length-chr1Length, by=(chr2Length-chr1Length)/5), digits=0)
-                      chr2 <- data.table(chr=chrOrder[2], newBreaks=chr2NewBreaks, oldBreaks=chr2OldBreaks)
-                      temp <- rbind(chr1, chr2)
+                      if (length(chrOrder) > 1) {
+                          chr2Start <- min(dataset[Direction=="cytoband" & Chromosome == chrOrder[2], Position])
+                          chr2Length <- max(dataset[Direction=="cytoband" & Chromosome == chrOrder[2], Position2])
+                          chr2OldBreaks <- round(seq(chr2Start, chr2Length, by=(chr2Length-chr2Start)/5), digits=0)
+                          chr2NewBreaks <- round(seq(0, chr2Length-chr1Length, by=(chr2Length-chr1Length)/5), digits=0)
+                          chr2 <- data.table(chr=chrOrder[2], newBreaks=chr2NewBreaks, oldBreaks=chr2OldBreaks)
+                          temp <- rbind(temp, chr2)
+                      }
                       
                       ## Get the start and stop for each chromosome
                       chr1End <- chr1Length
@@ -1172,6 +1145,9 @@ setMethod(f="buildSvPlot",
                       }))
                       chrPlot <- chrPlot + geom_polygon(data=positions, mapping=aes(x=x, y=y, group=id), fill="red")
                       
+                      ## Get the available SV events
+                      availableSvTypes <- unique(dataset$SV_Type[-which(dataset$Direction=="cytoband")])
+                      
                       ## Subset svWindow dataset to get DEL/DUP/INV/etc... and TRA/BND/etc...
                       sameChrSvWindow <- dataset[SV_Type=="DEL" | SV_Type=="DUP" | SV_Type =="INV" | SV_Type == "INS"]
                       sameChrSvWindow$SV_size <- sameChrSvWindow$Position2 - sameChrSvWindow$Position
@@ -1180,12 +1156,18 @@ setMethod(f="buildSvPlot",
                       ## Get the dataset for the gene text annotations
                       dataset <- dataset[Direction!="cytoband"]
                       gene_text <- dataset[,c("Midpoint", "Total_Read_Support", "gene", "SV_Type")]
-                      gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")] <- 
-                          as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")])) + 
-                          max(as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")])))*.05
-                      gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")] <- 
-                          as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")])) + 
-                          max(as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")])))*.05
+                      ## If there is sv events for translocations, get the gene text
+                      if (availableSvTypes %in% c("TRA", "BND")) {
+                          gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")] <- 
+                              as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")])) + 
+                              max(as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")])))*.05   
+                      }
+                      ## If there is sv events for non-translocations, get the gene text
+                      if (availableSvTypes %in% c("DEL", "DUP", "INV", "INS")) {
+                          gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")] <- 
+                              as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")])) + 
+                              max(as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")])))*.05                          
+                      }
                       gene_text$Total_Read_Support <- as.numeric(gene_text$Total_Read_Support)
                       gene_text <- gene_text[!duplicated(gene_text)]
                       if (!is.null(plotSpecificGene)) {
@@ -1206,77 +1188,98 @@ setMethod(f="buildSvPlot",
                           }
                       }
                       
-                      ## Get the start/end of chromosomes in the dataset
-                      beziers <- data.frame(data.table::rbindlist(apply(diffChrSvWindow, 1, function(x) {
-                          leftEnd <- data.table(position=as.numeric(x[2]), total_read_support=0, point="end", 
+                      
+                      ##########################################################
+                      ##### Plot the translocation data ########################
+                      ##########################################################
+                      ## Get the start/end of chromosomes in the dataset if there is translocation data
+                      ## TODO: Allow this to occur for intra-chromosomal translocations
+                      if (availableSvTypes %in% c("TRA", "BND")){
+                          beziers <- data.frame(data.table::rbindlist(apply(diffChrSvWindow, 1, function(x) {
+                              leftEnd <- data.table(position=as.numeric(x[2]), total_read_support=0, point="end", 
+                                                    type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
+                                                    Direction=x[5], sampleColor=x[13])
+                              top <- data.table(position=as.numeric(x[10]), total_read_support=as.numeric(x[7])*2, point="control", 
                                                 type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
                                                 Direction=x[5], sampleColor=x[13])
-                          top <- data.table(position=as.numeric(x[10]), total_read_support=as.numeric(x[7])*2, point="control", 
-                                            type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
-                                            Direction=x[5], sampleColor=x[13])
-                          rightEnd <- data.table(position=as.numeric(x[4]), total_read_support=0, point="end", 
-                                                 type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
-                                                 Direction=x[5], sampleColor=x[13])
-                          final <- rbind(leftEnd, top, rightEnd)
-                          return(final)
-                      })))
-                      beziers <- beziers[!duplicated(beziers),]
-                      
-                      beziers$Sample <- factor(beziers$Sample, levels=gtools::mixedsort(unique(beziers$Sample)))
-                      
-                      ##############################################################
-                      ##### Plot the translocation data ############################
-                      ##############################################################
-                      traPlot <- ggplot() + geom_bezier(data=beziers, 
-                                                        mapping=aes_string(x='position', y='total_read_support', group='group', 
-                                                                           color='Sample', linetype='Direction')) +
-                          facet_grid(SV_Type ~ ., scales="fixed", space="fixed") +
-                          scale_x_continuous(expand=c(0,0), limits=c(-5000000, max(coi$Position2) + 5000000), 
-                                             breaks=temp$oldBreaks, labels=temp$newBreaks) + 
-                          scale_y_continuous() +
-                          geom_vline(data=boundaries, aes(xintercept=start), linetype=2, color="Grey") + 
-                          geom_vline(data=boundaries, aes(xintercept=end), linetype=2, color="Grey") + 
-                          theme_bw() + plotALayers + ylab("Total Read Support") +
-                          geom_point(data=beziers[which(beziers$point=="control"),c("position","total_read_support", "Sample")], 
-                                     aes(x=position, y=total_read_support/2, color=Sample)) 
-                      if (plotTraGenes & !is.null(gene_text)) {
-                          traPlot <- traPlot + geom_text(data=gene_text[SV_Type%in%c("TRA", "BND")], 
-                                                         mapping=aes_string(x='Midpoint', y='Total_Read_Support', label='gene'))
+                              rightEnd <- data.table(position=as.numeric(x[4]), total_read_support=0, point="end", 
+                                                     type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
+                                                     Direction=x[5], sampleColor=x[13])
+                              final <- rbind(leftEnd, top, rightEnd)
+                              return(final)
+                          })))
+                          beziers <- beziers[!duplicated(beziers),]
+                          
+                          beziers$Sample <- factor(beziers$Sample, levels=gtools::mixedsort(unique(beziers$Sample)))
+                          
+                          ## Plot the translocation data
+                          traPlot <- ggplot() + geom_bezier(data=beziers, 
+                                                            mapping=aes_string(x='position', y='total_read_support', group='group', 
+                                                                               color='Sample', linetype='Direction')) +
+                              facet_grid(SV_Type ~ ., scales="fixed", space="fixed") +
+                              scale_x_continuous(expand=c(0,0), limits=c(-5000000, max(coi$Position2) + 5000000), 
+                                                 breaks=temp$oldBreaks, labels=temp$newBreaks) + 
+                              scale_y_continuous() +
+                              geom_vline(data=boundaries, aes(xintercept=start), linetype=2, color="Grey") + 
+                              geom_vline(data=boundaries, aes(xintercept=end), linetype=2, color="Grey") + 
+                              theme_bw() + plotALayers + ylab("Total Read Support") +
+                              geom_point(data=beziers[which(beziers$point=="control"),c("position","total_read_support", "Sample")], 
+                                         aes(x=position, y=total_read_support/2, color=Sample)) 
+                          if (plotTraGenes & !is.null(gene_text)) {
+                              traPlot <- traPlot + geom_text(data=gene_text[SV_Type%in%c("TRA", "BND")], 
+                                                             mapping=aes_string(x='Midpoint', y='Total_Read_Support', label='gene'))
+                          }
+                          ## Assign colors to sample
+                          traPlot <- traPlot + scale_color_manual(name="Sample", values=sampleColor)
                       }
-                      ## Assign colors to sample
-                      traPlot <- traPlot + scale_color_manual(name="Sample", values=sampleColor)
                       
                       ##############################################################
                       ##### Plot the non TRA sv events #############################
                       ##############################################################
-                      maxY <- max(as.numeric(as.character(sameChrSvWindow$Total_Read_Support))) + 30
-                      sameChrSvWindow$Total_Read_Support <- as.numeric(sameChrSvWindow$Total_Read_Support)
-                      nonTraPlot <- ggplot() + geom_point(data=sameChrSvWindow,
-                                                          mapping=aes_string(x='Midpoint', y='Total_Read_Support', 
-                                                                             color="Sample"), size=2.5, alpha=0.75) + 
-                          facet_grid(SV_Type ~ ., scales="fixed", space="fixed") +
-                          scale_x_continuous(expand=c(0,0), limits=c(-5000000, max(coi$Position2) + 5000000), 
-                                             breaks=temp$oldBreaks, labels=temp$newBreaks) + 
-                          scale_y_continuous(limits=c(0,maxY+maxY*0.05)) + 
-                          geom_vline(data=boundaries, aes(xintercept=start), linetype=2, color="Grey") + 
-                          geom_vline(data=boundaries, aes(xintercept=end), linetype=2, color="Grey") + 
-                          theme_bw() + plotCLayers + ylab("Total Read Support") + xlab("Position")
-                      if (plotOtherGenes & !is.null(gene_text)) {
-                          nonTraPlot <- nonTraPlot + geom_text(data=gene_text[SV_Type%in%c("DEL", "DUP", "INV", "INS")], 
-                                                               mapping=aes_string(x='Midpoint', y='Total_Read_Support', label='gene')) 
+                      if (availableSvTypes %in% c("DEL", "DUP", "INV", "INS")) {
+                          maxY <- max(as.numeric(as.character(sameChrSvWindow$Total_Read_Support))) + 30
+                          sameChrSvWindow$Total_Read_Support <- as.numeric(sameChrSvWindow$Total_Read_Support)
+                          nonTraPlot <- ggplot() + geom_point(data=sameChrSvWindow,
+                                                              mapping=aes_string(x='Midpoint', y='Total_Read_Support', 
+                                                                                 color="Sample"), size=2.5, alpha=0.75) + 
+                              facet_grid(SV_Type ~ ., scales="fixed", space="fixed") +
+                              scale_x_continuous(expand=c(0,0), limits=c(-5000000, max(coi$Position2) + 5000000), 
+                                                 breaks=temp$oldBreaks, labels=temp$newBreaks) + 
+                              scale_y_continuous(limits=c(0,maxY+maxY*0.05)) + 
+                              geom_vline(data=boundaries, aes(xintercept=start), linetype=2, color="Grey") + 
+                              geom_vline(data=boundaries, aes(xintercept=end), linetype=2, color="Grey") + 
+                              theme_bw() + plotCLayers + ylab("Total Read Support") + xlab("Position")
+                          if (plotOtherGenes & !is.null(gene_text)) {
+                              nonTraPlot <- nonTraPlot + geom_text(data=gene_text[SV_Type%in%c("DEL", "DUP", "INV", "INS")], 
+                                                                   mapping=aes_string(x='Midpoint', y='Total_Read_Support', label='gene')) 
+                          }
+                          ## Assign colors to sample
+                          nonTraPlot <- nonTraPlot + scale_color_manual(name="Sample", values=sampleColor)
                       }
-                      ## Assign colors to sample
-                      nonTraPlot <- nonTraPlot + scale_color_manual(name="Sample", values=sampleColor)
                       
                       ##############################################################
                       ##### Combine the 3 plots ####################################
                       ##############################################################
-                      traPlot <- ggplotGrob(traPlot)
-                      chrPlot <- ggplotGrob(chrPlot)
-                      nonTraPlot <- ggplotGrob(nonTraPlot)
-                      
                       ## obtain the max width for relevant plots
-                      plotList <- list(traPlot, chrPlot, nonTraPlot)
+                      if (nrow(diffChrSvWindow) > 0 & nrow(sameChrSvWindow) > 0) {
+                          traPlot <- ggplotGrob(traPlot)
+                          chrPlot <- ggplotGrob(chrPlot)
+                          nonTraPlot <- ggplotGrob(nonTraPlot)
+                          plotList <- list(traPlot, chrPlot, nonTraPlot)
+                          sectionHeightsFinal <- sectionHeights
+                      }
+                      if (nrow(diffChrSvWindow) > 0 & nrow(sameChrSvWindow) == 0) {
+                          traPlot <- ggplotGrob(traPlot)
+                          chrPlot <- ggplotGrob(chrPlot)
+                          plotList <- list(traPlot, chrPlot)
+                          sectionHeightsFinal <- c(sectionHeights[1], sectionHeights[2])
+                      }
+                      if (nrow(diffChrSvWindow) == 0 & nrow(sameChrSvWindow) > 0) {
+                          chrPlot <- ggplotGrob(chrPlot)
+                          nonTraPlot <- ggplotGrob(nonTraPlot)
+                          plotList <- list(chrPlot, nonTraPlot)
+                          sectionHeightsFinal <- c(sectionHeights[2], sectionHeights[3])
+                      }
                       plotList <- plotList[lapply(plotList, length) > 0]
                       plotWidths <- lapply(plotList, function(x) x$widths)
                       maxWidth <- do.call(grid::unit.pmax, plotWidths)
@@ -1287,7 +1290,8 @@ setMethod(f="buildSvPlot",
                       }
                       
                       ## Arrange the final plot
-                      p1 <- do.call(gridExtra::arrangeGrob, c(plotList, list(ncol=1, heights=sectionHeights)))
+                      p1 <- do.call(gridExtra::arrangeGrob, 
+                                    c(plotList, list(ncol=1, heights=sectionHeightsFinal)))
                       plot(p1)
                       
                       return(p1)
