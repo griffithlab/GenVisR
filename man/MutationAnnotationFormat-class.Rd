@@ -18,7 +18,7 @@ the version will be obtained from the header in the MAF file.}
 in the MAF file.}
 }
 \description{
-An S4 class acting as a container for MutationAnnotationFormat version sub-classes.
+An S4 class acting as a container for MutationAnnotationFormat version sub-classes, under development!!!
 }
 \section{Slots}{
 

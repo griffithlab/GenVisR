@@ -6,7 +6,7 @@
 #' Class VEP_v88
 #' 
 #' An S4 class to represent data in variant effect predictor version 88 format,
-#' inherits from the VEP_Virtual class.
+#' inherits from the VEP_Virtual class, under development!!!
 #' @name VEP_v88-class
 #' @rdname VEP_v88-class
 #' @slot header data.table object containing header information

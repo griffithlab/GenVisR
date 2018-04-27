@@ -5,7 +5,7 @@
 
 #' Class Lolliplot
 #' 
-#' An S4 class for the lolliplot object
+#' An S4 class for the lolliplot object, under development!!!
 #' @name Lolliplot-class
 #' @rdname Lolliplot-class
 #' @slot PlotA gtable object for the top sub-plot

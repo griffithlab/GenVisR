@@ -5,7 +5,7 @@
 
 #' Class VEP
 #' 
-#' An S4 class for Variant Effect Predictor input.
+#' An S4 class for Variant Effect Predictor input, under development!!!
 #' @name VEP-class
 #' @rdname VEP-class
 #' @slot path Character string specifying the paths of the VEP files read in.

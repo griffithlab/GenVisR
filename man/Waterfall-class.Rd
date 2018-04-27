@@ -98,7 +98,7 @@ should sum to one. Expects a value for each section.}
 \item{plotCLayers}{list of ggplot2 layers to be passed to the plot.}
 }
 \description{
-An S4 class for the waterfall plot object
+An S4 class for the waterfall plot object, under development!!!
 }
 \section{Slots}{
 

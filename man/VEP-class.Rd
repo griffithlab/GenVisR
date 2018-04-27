@@ -22,7 +22,7 @@ auto which will look for the version in the header.}
 reading in the VEP files.}
 }
 \description{
-An S4 class for Variant Effect Predictor input.
+An S4 class for Variant Effect Predictor input, under development!!!
 }
 \details{
 When specifying a path to a VEP annotation file the option exist to

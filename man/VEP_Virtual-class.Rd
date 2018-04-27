@@ -5,7 +5,7 @@
 \alias{VEP_Virtual-class}
 \title{Class VEP_Virtual}
 \description{
-An S4 class to act as a virtual class for VEP version sub-classes.
+An S4 class to act as a virtual class for VEP version sub-classes, under development!!!
 }
 \section{Slots}{
 

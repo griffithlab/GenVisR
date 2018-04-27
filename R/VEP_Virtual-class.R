@@ -3,7 +3,7 @@
 
 #' Class VEP_Virtual
 #' 
-#' An S4 class to act as a virtual class for VEP version sub-classes.
+#' An S4 class to act as a virtual class for VEP version sub-classes, under development!!!
 #' @name VEP_Virtual-class
 #' @rdname VEP_Virtual-class
 #' @slot header data.table object holding header information.

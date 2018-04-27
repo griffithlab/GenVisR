@@ -5,7 +5,7 @@
 
 #' Class GMS
 #' 
-#' An S4 class for Genome Modeling System annotation files.
+#' An S4 class for Genome Modeling System annotation files, under development!!!
 #' @name GMS-class
 #' @rdname GMS-class
 #' @slot path Character string specifying the paths of the GMS files read in.

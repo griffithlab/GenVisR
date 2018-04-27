@@ -5,7 +5,7 @@
 
 #' Class Waterfall
 #' 
-#' An S4 class for the waterfall plot object
+#' An S4 class for the waterfall plot object, under development!!!
 #' @name Waterfall-class
 #' @rdname Waterfall-class
 #' @slot PlotA gtable object for the top sub-plot.
@@ -310,7 +310,7 @@ WaterfallPlots <- function(object, clinical, plotA, plotATally, plotALayers,
 ################################################################################
 ###################### Accessor function definitions ###########################
 
-#' Helper function to getData from classes
+#' Helper function to getData from classes, under development!!!
 #'
 #' @rdname getData-methods
 #' @aliases getData
@@ -367,7 +367,7 @@ setMethod(f="getData",
           signature="Waterfall",
           definition=.getData_waterfall)
 
-#' Helper function to extract grobs from objects
+#' Helper function to extract grobs from objects, under development!!!
 #'
 #' @rdname getGrob-methods
 #' @aliases getGrob

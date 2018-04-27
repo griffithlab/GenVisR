@@ -22,7 +22,7 @@ version 4.}
 reading in the GMS files.}
 }
 \description{
-An S4 class for Genome Modeling System annotation files.
+An S4 class for Genome Modeling System annotation files, under development!!!
 }
 \details{
 When specifying a path to a GMS annotation file the option exist to

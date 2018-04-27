@@ -5,7 +5,7 @@
 
 #' Class MutationAnnotationFormat
 #' 
-#' An S4 class acting as a container for MutationAnnotationFormat version sub-classes.
+#' An S4 class acting as a container for MutationAnnotationFormat version sub-classes, under development!!!
 #' @name MutationAnnotationFormat-class
 #' @rdname MutationAnnotationFormat-class
 #' @slot path Character string specifying the path of the MAF file read in.

@@ -5,7 +5,7 @@
 
 #' Class Clinical
 #' 
-#' An S4 class to store clinical information and plots
+#' An S4 class to store clinical information and plots, under development!!!
 #' @name Clinical-class
 #' @rdname Clinical-class
 #' @slot clinicalGrob gtable object for the clinical plot.

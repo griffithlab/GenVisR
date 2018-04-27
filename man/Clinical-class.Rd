@@ -28,7 +28,7 @@ of wide or long format (see details).}
 \item{verbose}{Boolean specifying if progress should be reported.}
 }
 \description{
-An S4 class to store clinical information and plots
+An S4 class to store clinical information and plots, under development!!!
 }
 \details{
 The Clinical() function is a constructor to create a GenVisR object

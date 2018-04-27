@@ -5,7 +5,7 @@
 
 #' Class MutSpectra
 #' 
-#' An S4 class for the MutSpectra plot object
+#' An S4 class for the MutSpectra plot object, under development!!!
 #' @name MutSpectra-class
 #' @rdname MutSpectra-class
 #' @slot PlotA gtable object for the mutation frequencies.
@@ -181,7 +181,7 @@ MutSpectraPlots <- function(primaryData, clinical, plotALayers, plotBLayers, plo
 ################################################################################
 ###################### Accessor function definitions ###########################
 
-#' Helper function to getData from classes
+#' Helper function to getData from classes, under development!!!
 #'
 #' @rdname getData-methods
 #' @aliases getData
@@ -245,7 +245,7 @@ setMethod(f="drawPlot",
               grid::grid.draw(grob)
           })
 
-#' Helper function to extract grobs from objects
+#' Helper function to extract grobs from objects, under development!!!
 #'
 #' @rdname getGrob-methods
 #' @aliases getGrob

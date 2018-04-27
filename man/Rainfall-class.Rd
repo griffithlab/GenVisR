@@ -33,7 +33,7 @@ should sum to one. Expects a value for each section.}
 \item{plotBLayers}{list of ggplot2 layers to be passed to the density plot.}
 }
 \description{
-An S4 class for the Rainfall plot object
+An S4 class for the Rainfall plot object, under development!!!
 }
 \section{Slots}{
 

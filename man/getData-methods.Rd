@@ -67,11 +67,11 @@ Method getData
 
 Helper function to get data from classes
 
-Helper function to getData from classes
+Helper function to getData from classes, under development!!!
 
 Helper function to get data from classes
 
-Helper function to getData from classes
+Helper function to getData from classes, under development!!!
 }
 \details{
 The getData method is an accessor function used to access data held

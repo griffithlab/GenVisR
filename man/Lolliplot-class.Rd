@@ -43,7 +43,7 @@ should sum to one. Expects a value for each section.}
 \item{verbose}{Boolean specifying if status messages should be reported.}
 }
 \description{
-An S4 class for the lolliplot object
+An S4 class for the lolliplot object, under development!!!
 }
 \section{Slots}{
 

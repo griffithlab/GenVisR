@@ -17,7 +17,7 @@ header information.}
 }
 \description{
 An S4 class to represent data in variant effect predictor version 88 format,
-inherits from the VEP_Virtual class.
+inherits from the VEP_Virtual class, under development!!!
 }
 \section{Slots}{
 

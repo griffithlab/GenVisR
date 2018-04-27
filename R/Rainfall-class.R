@@ -5,7 +5,7 @@
 
 #' Class Rainfall
 #' 
-#' An S4 class for the Rainfall plot object
+#' An S4 class for the Rainfall plot object, under development!!!
 #' @name Rainfall-class
 #' @rdname Rainfall-class
 #' @slot PlotA gtable object for the rainfall plot
