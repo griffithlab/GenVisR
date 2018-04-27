@@ -2401,8 +2401,6 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                       maxLolliStack=NULL, plotLayer=NULL, paletteA=NULL,
                       paletteB=NULL, host="www.ensembl.org", out="plot")
 {
-    message(memo)
-    
     # Perform quality check
     input <- lolliplot_qual(x, y, z)
     x <- input[[1]]
