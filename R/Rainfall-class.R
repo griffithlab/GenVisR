@@ -47,6 +47,8 @@ setClass("Rainfall",
 Rainfall <- function(object, BSgenome=NULL, palette=NULL, sectionHeights=NULL, chromosomes=NULL,
                      sample=NULL, pointSize=NULL, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL){
     
+    message("This function is part of the new S4 feature and is under active development")
+    
     # construct the RainfallPrimaryData object
     primaryData <- RainfallPrimaryData(object, BSgenome=BSgenome, chromosomes=chromosomes,
                                        sample=sample, verbose=verbose)

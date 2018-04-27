@@ -58,6 +58,8 @@ Clinical <- function(path, inputData=NULL ,inputFormat=c("wide", "long"),
                      legendColumns=1, palette=NULL, clinicalLayers=NULL,
                      verbose=FALSE){
     
+    message("This function is currently under development")
+    
     # Obtain the clinical data
     if(!is.null(inputData)){
         if(!is.data.table(inputData)){

@@ -84,6 +84,8 @@ setClass("Lolliplot",
 #' @export
 Lolliplot <- function(input, transcript=NULL, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, emphasize=NULL, DomainPalette=NULL, MutationPalette=NULL, labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL, sectionHeights=NULL, verbose=FALSE){
     
+    message("This function is part of the new S4 feature and is under active development, did you mean to use lolliplot() with a lowercase l?")
+    
     # Obtain and format the data
     data <- LolliplotData(input, transcript=transcript, species=species, host=host, txdb=txdb, BSgenome=BSgenome, emphasize=emphasize, verbose=verbose)
     

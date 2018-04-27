@@ -52,6 +52,8 @@ setClass("GMS",
 #' @export
 GMS <- function(path, data=NULL, version=4, verbose=FALSE){
     
+    message("This function is part of the new S4 feature and is under active development")
+    
     # assign the annotator version
     version <- version
     

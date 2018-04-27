@@ -39,6 +39,8 @@ MutationAnnotationFormat <- function(path, version="auto", verbose=FALSE){
                                                   stringsAsFactors=TRUE,
                                                   verbose=verbose))
     
+    message("This function is part of the new S4 feature and is under active development")
+    
     # grab the maf version
     if(toupper(version) == "AUTO"){
         # read the version

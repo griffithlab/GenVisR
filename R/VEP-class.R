@@ -48,6 +48,8 @@ setClass("VEP",
 #' @export
 VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
     
+    message("This function is part of the new S4 feature and is under active development")
+    
     if(is.null(data)){
         # Grab all files and assign to slot
         vepFiles <- Sys.glob(path)

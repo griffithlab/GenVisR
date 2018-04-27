@@ -133,7 +133,6 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
                       section_heights)
 {
     
-    message("This function has been deprecated in order to implement an object oriented programming style! Please use Waterfall() with a capital W instead!")
     # Perform data quality checks and conversions
     inputDat <- waterfall_qual(x, clinData, mutBurden, file_type=fileType,
                                label_col=mainLabelCol)
@@ -1638,7 +1637,6 @@ TvTi <- function(x, fileType=NULL, y=NULL, clinData=NULL, type='Proportion',
                  clinVarOrder=NULL, clinLayer=NULL, progress=TRUE, out="plot",
                  sample_order_input, layers = NULL, return_plot = FALSE)
 { 
-    message("This function has been deprecated in order to implement an object oriented programming style! Please use MutSpectra() instead!")    
     # Perform quality checks
     output <- TvTi_qual(x, y, clinData, file_type=fileType)
     x <- output$input1
@@ -2403,8 +2401,6 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
                       maxLolliStack=NULL, plotLayer=NULL, paletteA=NULL,
                       paletteB=NULL, host="www.ensembl.org", out="plot")
 {
-    memo <- paste("lolliplot() has been deprecated and may be removed in a future release",
-                  "Please use Lolliplot() with a capital L instead!")
     message(memo)
     
     # Perform quality check

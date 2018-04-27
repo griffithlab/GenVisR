@@ -56,6 +56,8 @@ setClass("MutSpectra",
 MutSpectra <- function(object, BSgenome=NULL, sorting=NULL, palette=NULL, clinical=NULL, sectionHeights=NULL,
                        sampleNames=TRUE, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL, plotCLayers=NULL){
     
+    message("This function is part of the new S4 feature and is under active development, did you mean to use TvTi?")
+    
     # initalize the MutSpectraPrimaryData object
     primaryData <- MutSpectraPrimaryData(object, BSgenome=BSgenome, sorting=sorting, verbose=verbose)
     

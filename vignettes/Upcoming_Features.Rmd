@@ -1,5 +1,5 @@
 ---
-title: "Visualizing Small Variants"
+title: "Upcoming Features"
 author:
 - name: Zachary L. Skidmore
   affiliation: McDonnell Genome Institute - Washington University
@@ -18,6 +18,20 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+# !!!!!!!!! Please Read important note !!!!!!!!!!!!!!!
+
+GenVisR is being converted to S4 to increase flexibility for users. The S4-based functions in this vignette are operative but changes may still occur and documentation is still being developed. Please keep in mind that the **new functions based on S4 are similarily named to the established functions**; both are available for used in this release. For example:
+
+**In General new functions start with a capital, old functions do not**
+
+```{r, eval=FALSE}
+# new S4 function (note the capital W)
+?Waterfall
+
+# older established function
+?waterfall
 ```
 
 # GenVisR a brief introduction

@@ -1,0 +1,356 @@
+---
+title: "waterfall: function introduction"
+author: "Zachary Skidmore"
+date: "`r Sys.Date()`"
+output:
+    BiocStyle::html_document:
+        toc_float: true
+vignette: >
+  %\VignetteIndexEntry{waterfall: function introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Overview
+Small variants within the genome (single nucleotide variants/insertions/deletions) are a critical component in the basis for genetic diseases. The identification and summary of these types of variants is often a first step for the development of hypothesis regarding the role of these events in disease genesis and progression. The `waterfall` funtion is designed to effeciently summarize "small variant" (SNVs/indels) information at a cohort level. It is usefull for obtaining a broad sense of the type of variants observed in a cohort. Further `waterfall` will give a sense of the mutation burden, reccurently mutated genes, the mutually or co exclusivity between genes and the relation of variants to clinical data.
+
+The purpose of this vignette is to display the many features of the `waterfall` function in order to give an in depth view of it's parameters and functionality. For these examples the data frame `brcaMAf` originating from a truncated .maf file from TCGA and available within `GenVisR` will be used unless otherwise stated. Further for reproducability the seed for all examples has been set to == 426.
+
+## Functionality
+
+### Loading primary input
+Parameters covered: `fileType`, `variant_class_order`
+
+For basic use a user will only need to read a file of the proper type into R as a data frame and then supply this data frame to the `waterfall` function as the argument given to `x`. By default the data frame supplied is expected to correspond to a file in .maf ([version 2.4](https://wiki.nci.nih.gov/display/DCC/DCC+Mutation+Annotation+Format+(MAF)+Specification)) format (see below for additional supported formats). This data frame should have at a minimum the following column names "Tumor_Sample_Barcode",
+"Hugo_Symbol", "Variant_Classification", and contain rows corresponding to mutation events. Further while any value is permissible for the "Tumor_Sample_Barcode" and "Hugo_Symbol" columns which correspond to a sample name and gene name respectively, specific values are expected for the "Variant_Classification" column (see table below). This is because `waterfall` is only capable of displaying a single variant type in the main plot for a cell (i.e. gene/sample). To achieve this `waterfall` will choose to plot the most deleterious variant based on a hierarchy predefined for a .maf file. This heiararchy follows the order from top to bottom of the legend output with the plot.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+# Load the GenVisR package
+library("GenVisR")
+set.seed(426)
+
+# Plot with the MAF file type specified (default)
+# The mainRecurCutoff parameter is described in the next section
+waterfall(brcaMAF, fileType="MAF", mainRecurCutoff=.05)
+```
+
+The user is capable of supplying additional file types to `waterfall`, if desireable. This is achievable via the `fileType` parameter. For example if it were to desireable to plot an annotation file from the [Genome Modeling System](https://github.com/genome/gms) the user would simply change the fileType to equal "MGI" and supply the corresponding file as the argument `x`. As with the .maf file a predefined heirarchy has been defined to plot the most deleterious mutations in cases where there are multiple mutations in the same gene/sample (see table below).
+
+```{r, eval=FALSE, error=TRUE}
+# read in a file from the genome modeling system
+file <- read.delim("file.anno.tsv")
+
+# Plot the variant information via waterfall
+waterfall(file, fileType="MGI")
+```
+
+`waterfall` is also capable of plotting small variant information via a non-standard or unsupported file type. To do this the user should set the `fileType` parameter to "Custom", and supply to as an argument to `x` a data frame with the columns "sample", "gene", "variant_class" corresponding to the "sample", "gene", and "variant type" respectively. Further the user is required to define which variants are considered most deleterious via the parameter `variant_class_order` for cases where there are multiple mutations in the same gene/sample. This should take the form of a character vector with values corresponding to the unique values in the column "variant_class" in order of most to least deleterious. As with the previous two examples the most deleterious mutation will be plotted. The "variant_class_order" parameter can be used to change the mutational heirarchy in the previous file types as well.
+
+```{r, fig.keep='all', fig.width=10, fig.height=7, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE, fig.show='hold', fig.cap="In cell e/e (second row/first column) two variants are present \'z\' and \'x\'. In the first plot variant \'z\' is considered more deleterious (top panel), In the second plot variant \'x\' is considered more deleterious (bottom panel).", out.width="50%", out.height="50%"}
+# make sure seed is set to 426 to reproduce!
+set.seed(426)
+
+# Create a data frame of random elements to plot
+inputData <- data.frame("sample"=sample(letters[1:5], 20, replace=TRUE), "gene"=sample(letters[1:5], 20, replace=TRUE), variant_class=sample(c("x", "y", "z"), 20, replace=TRUE))
+
+# choose the most deleterious to plot with y being defined as the most deleterious
+most_deleterious <- c("y", "z", "x")
+
+# plot the data with waterfall using the "Custom" parameter
+waterfall(inputData, fileType="Custom", variant_class_order = most_deleterious, mainXlabel = TRUE)
+
+# change the most deleterious order
+waterfall(inputData, fileType="Custom", variant_class_order = rev(most_deleterious), mainXlabel = TRUE)
+```
+
+```{r kable 1, echo=FALSE, error=TRUE, fig.cap="Hierarchy of variant sub types from most to least deleterious."}
+library(knitr)
+MGI <- c("nonsense", "frame_shift_del",
+         "frame_shift_ins", "splice_site_del",
+         "splice_site_ins", "splice_site",
+         "nonstop", "in_frame_del", "in_frame_ins",
+         "missense", "splice_region_del",
+         "splice_region_ins", "splice_region",
+         "5_prime_flanking_region",
+         "3_prime_flanking_region",
+         "3_prime_untranslated_region",
+         "5_prime_untranslated_region", "rna",
+         "intronic", "silent")
+MAF <- c("Nonsense_Mutation", "Frame_Shift_Ins",
+         "Frame_Shift_Del", "Translation_Start_Site",
+         "Splice_Site", "Nonstop_Mutation",
+         "In_Frame_Ins", "In_Frame_Del",
+         "Missense_Mutation", "5\'Flank",
+         "3\'Flank", "5\'UTR", "3\'UTR", "RNA", "Intron",
+         "IGR", "Silent", "Targeted_Region", "", "")
+
+kable(as.data.frame(cbind(MAF, MGI)))
+```
+
+### Filtering options
+Parameters covered: `mainRecurCutoff`, `plotGenes`, `plotSamples`, `maxGenes`, `rmvSilent`
+
+Often it is the case that the input supplied to the `waterfall` function will contain thousands of genes and hundreds of samples. While `waterfall` can handle such scenarios the graphics device `waterfall` would neeed to output to would have to be enlarged to such a degree that the visualization may become unwieldy (see tips). To alleviate such issues `waterfall` provides a suite of filtering parameters to visualize the data of the most interest to the user. The first of these `mainRecurCutoff` accepts a numeric value between 0 and 1, and will only plot genes with mutations in x proportion of samples.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+# Plot the genes with mutatations in >= 20% of samples
+waterfall(brcaMAF, fileType="MAF", mainRecurCutoff=.2)
+```
+
+Alternatively if there are specific genes of interest those can be specified directly via the `plotGenes` parameter. Input to `plotGenes` should be a character vector of a list of genes that are desireable to be shown and is case sensitive. If a gene is supplied to this parameter and it is not within the data frame supplied to `waterfall` that specific gene will be ignored.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+# Define specific genes to plot
+genes_to_plot <- c("ERBB2", "MAPK1", "CDKN1B", "PIK3CA")
+
+# Plot the genes defined above
+waterfall(brcaMAF, plotGenes=genes_to_plot)
+```
+
+Occassionaly it may be desireable to plot only specific samples. This can be achieved via the parameter `plotSamples` and works in much the same way as the `plotGenes` parameter taking a character vector of samples. An important difference between the two is supplying a sample to `plotSamples` not within the data frame given to `waterfall` will add the sample to the data frame instead of ignoring it.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+# Define specific genes to plot
+samples_to_plot <- c("TCGA-A1-A0SO-01A-22D-A099-09", "TCGA-A2-A0EU-01A-22W-A071-09", "TCGA-A2-A0ER-01A-21W-A050-09", "TCGA-A1-A0SI-01A-11D-A142-09", "TCGA-A2-A0D0-01A-11W-A019-09")
+
+# Plot the samples defined above
+waterfall(brcaMAF, plotSamples=samples_to_plot, mainRecurCutoff=.25)
+```
+
+Two additinonal filtering options exist that have not yet been mentioned. the `maxGenes` parameter will only plot the top x genes and takes an integer value. This is usefull for example if when using the `mainRecurCutoff` parameter a vector of genes have values at x cutoff and all of them are not desired. the `rmvSilent` parameter will remove all silent mutations from the data.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+
+# plotting all genes with a mutation recurrence above 5%, limit to plot only the top 25 and remove silent mutations
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=25, rmvSilent=TRUE)
+```
+
+It is important to note that none of these subsets will affect the mutation burden calculation or plot (i.e. nothing is filtered until after that calculation is performed.)
+
+### The Mutation Burden
+Parameters covered: `mutBurden`, `plotMutBurden`, `coverageSpace`
+
+As can be seen in the prior examples `waterfall` we calculate an estimate of the mutation burden seen within the data given. This calculation follows the formula $mutations\ in\ sample/coverage\ space * 1,000,000$. This is one of the first things `waterfall` does and is unaffected by any filtering options employed. In this calcluation the coverage space used is critically important to an accurate calculation. By default the theoretical coverage space of the exome reagent "SeqCap EZ Human Exome Library v2.0" is used, however the coverage space should be adjusted to fit you're data! This can be achieved via the `coverageSpace` parameter and expects an intger specifying the number of base pairs from which a mutation could have been expected to be called.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE, fig.cap="Altering the coverage space dramatically affects the mutation burden calculation"}
+
+# Alter the coverage space to whole genome space
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=25, coverageSpace=3200000000)
+```
+
+Altering the `coverageSpace` will only give an aproximation of the mutation burden as it is infeasible to expect all samples to have identical coverage space. To remedy this the option exists to supply a data frame to the parameter `mutBurden` for user defined mutation burdens corresponding to each sample. Input to this argument should be a data frame with columns "sample" and "mut_burden". If supplied values in this data frame will be plotted instead of aproximated as mentioned above. If used, the data frame supplied to `mutBurden` should have a row for each unique sample in the data frame supplied to parameter `x`.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE}
+# Create a data frame specifying the mutation burden for each sample
+tumor_sample <- unique(brcaMAF$Tumor_Sample_Barcode)
+mutation_burden <- sample(1:10, length(tumor_sample), replace=TRUE)
+mutation_rate <- data.frame(sample=tumor_sample, mut_burden=mutation_burden)
+
+# Alter the coverage space to whole genome space
+waterfall(brcaMAF, mutBurden=mutation_rate, mainRecurCutoff=.05, maxGenes=25)
+```
+
+If plotting the mutation burden is not of interest the user has the option to turn this behavior off via the parameter `plotMutBurden` which accepts a boolean value.
+
+```{r, fig.keep='last', fig.width=10, fig.height=6.5, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE}
+# Turn off plotting of the mutation burden subplot
+waterfall(brcaMAF, plotMutBurden=FALSE, mainRecurCutoff=.05, maxGenes=25)
+```
+
+### Adding Clinical Data
+Parameters covered: `clinData`, `clinLegCol`, `clinVarOrder`, `clinVarCol`
+
+It is often informative to view patterns within the waterfall plot in the context of clinical features. This can be achieved by supplying a data frame to the `clinData` parameter. Input to this parameter should contain the columns "sample", "variable", "value" with rows representing clinical data. The data supplied should be in "Long format" with each id variable (i.e. sample) having a corresponding variable and a value for that variable. It is reccommended to use the function melt from the package reshape2 to coerce data into this format.
+
+```{r, fig.keep='last', fig.width=14, fig.height=10, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE}
+# Create clinical data
+subtype <- c('lumA', 'lumB', 'her2', 'basal', 'normal')
+subtype <- sample(subtype, 50, replace=TRUE)
+age <- c('20-30', '31-50', '51-60', '61+')
+age <- sample(age, 50, replace=TRUE)
+sample <- as.character(unique(brcaMAF$Tumor_Sample_Barcode))
+clinical <- as.data.frame(cbind(sample, subtype, age))
+
+# Melt the clinical data into "long" format.
+library(reshape2)
+clinical <- melt(clinical, id.vars=c('sample'))
+
+# create the waterfall plot with the corresponding clinical data
+waterfall(brcaMAF, clinDat=clinical, mainRecurCutoff=.05, maxGenes=25)
+```
+
+A number of options exist to alter the aesthetic properties of the clinical data subplot if the defaults produce an undesireable result. Briefly these parameters are `clinLegCol` which will alter the number of columns in the clinical legend, `clinVarOrder` which will alter the order of the clinical variables in the clinical legend subplot, and `clinVarCol` which allows a user to alter the mapping of colours to variables.
+
+```{r, fig.keep='last', fig.width=12, fig.height=7.5, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE}
+
+# Create clinical data
+subtype <- c('lumA', 'lumB', 'her2', 'basal', 'normal')
+subtype <- sample(subtype, 50, replace=TRUE)
+age <- c('20-30', '31-50', '51-60', '61+')
+age <- sample(age, 50, replace=TRUE)
+sample <- as.character(unique(brcaMAF$Tumor_Sample_Barcode))
+clinical <- as.data.frame(cbind(sample, subtype, age))
+
+# Melt the clinical data into "long" format.
+library(reshape2)
+clinical <- melt(clinical, id.vars=c('sample'))
+
+# create the waterfall plot altering various aesthetics in the clinical data
+waterfall(brcaMAF, clinDat=clinical,
+          clinVarCol=c('lumA'='blue4', 'lumB'='deepskyblue', 
+                            'her2'='hotpink2', 'basal'='firebrick2',
+                            'normal'='green4', '20-30'='#ddd1e7',
+                            '31-50'='#bba3d0', '51-60'='#9975b9',
+                            '61+'='#7647a2'), 
+          mainRecurCutoff=.05, maxGenes=25,
+          clinLegCol=2,
+          clinVarOrder=c('lumA', 'lumB', 'her2', 'basal', 'normal',
+                         '20-30', '31-50', '51-60', '61+'))
+
+```
+
+### Adding Proportion sub-plots
+Parameters covered: `plot_proportions`, `proportions_type`, `proportions_layer`
+
+In addition to the clinical subplot users have the ability to display the proportion of mutations observed in the cohort. This is achieved by setting the argument to `plot_proportions` to TRUE and will by default calculate and display the proportion of Mutation Types before any subsetting occurs.
+
+```{r, fig.keep='last', fig.width=14, fig.height=6.5, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE}
+# plot the proportion of mutation types oserved
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, plot_proportions = TRUE)
+```
+
+It is also possible to calculate and display the transition/transversion rate observed by setting the `proportion_type` to the string "TvTi" while the `plot_propotions` switch is set to TRUE. This will make a call to the primary GenVisR function TvTi and display the results as a subplot.
+
+```{r, fig.keep='last', fig.width=14, fig.height=6.5, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE}
+# plot the proportion of mutation types oserved
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, plot_proportions = TRUE, proportions_type="TvTi")
+```
+
+### Adding cell labels
+Parameters covered: `mainLabelCol`, `mainLabelSize`, `mainLabelAngle`
+
+`waterfall` allows the addition of cell labels to the waterfall plot via the parameter `mainLabelCol`. This will look for a column in the argument supplied to the parameter `x` and label the plotted cell with the value in that column.
+
+```{r, fig.keep='last', fig.width=14, fig.height=6.5, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE}
+# Use the chromosome column in brcaMAF to label cells
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainLabelCol="Chromosome")
+```
+
+Care should be taken when using the `mainLabelCol` parameter as the text plotted is always centered on the corresponding cell but not automatically sized. The parameters `mainLabelSize` and `mainLabelAngle` can help with text spilling into other cells by re-sizing and rotating text respectively.
+
+```{r, fig.keep='last', fig.width=14, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', error=TRUE, tidy=TRUE}
+# Use the amino_acid change column in brcaMAF to label cells 
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainLabelCol="amino_acid_change_WU", mainLabelAngle=90, mainLabelSize=3)
+```
+
+### Altering Plot Aesthetics
+Parameters covered: `mainGrid`, `mainXlabel`, `main_geneLabSize`, `mainDropMut`, `mainPalette`, `mainLayer`, `mutBurdenLayer`, `clinLayer`, `proportions_layer`, `section_heights`
+
+In order to give the user maximum control with minimal effort a variety of parameters exist to alter the visual aesthetics of the waterfall plot. The `mainGrid` parameter will overlay a grid ontop of the main plot to visually line up cells. The `mainXlabel` parameter will label the x axis with samples. The `main_geneLabSize` parameter will alter the text sizes of the gene labels. `mainDropMut` will remove from the main legend those variables which are not present in the main plot. Finally the `mainPalette` allows for the mapping of a custom colour pallete to mutation types. These parameters are illustrated below.
+
+```{r, fig.keep='last', fig.width=14, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', error=TRUE, tidy=TRUE}
+# Label the x-axis 
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainXlabel=TRUE)
+```
+
+```{r, fig.keep='last', fig.width=14, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+# Drop unused mutation types from the legend 
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainDropMut=TRUE)
+```
+
+```{r, fig.keep='last', fig.width=14, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+# Increase the gene label size
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainDropMut=TRUE, main_geneLabSize=14)
+```
+
+```{r, fig.keep='last', fig.width=14, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+# make a custom colour pallete
+custom_pallete <- c("#A069C7", "#9CD05B", "#C46839", "#97BDBD", "#513C4D", "#6B7644", "#C6587F")
+
+# provide a custom colour pallete
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainDropMut=TRUE, mainPalette=custom_pallete)
+```
+
+It may be desireable to emphasize different aspects of the waterfall plot for exploratory or publication purposes. A use parameter for this is `section_heights` which will alter the heights of any plot vertically aligned to the main plot. Input to this parameter is a numeric vector the same length as the number of plots aligned. As an example a waterfall plot having a proportion, main, and mutation burden plot would expect a vector of length 3.
+
+```{r, fig.keep='last', fig.width=14, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+# Increase the subplot size to be equal with the main plot
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainDropMut=TRUE, section_heights=c(1, 1))
+```
+
+For users with a familiarity with `ggplot2` the option exists to add a single layer to all subplots in waterfall giving control over virtually all aesthetic aspects of the plot. The parameters for this control are `mainLayer`, `mutBurdenLayer`, `clinLayer`, `proportions_layer` and will add a ggplot2 layer to the main, mutation burden and clinical plot respectively. This parameter is recommended only for advance use as it may have unintential consequences (see ggplot2 docs for help).
+
+```{r, fig.keep='last', fig.width=14, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, fig.cap="As can be seen we have changed the theme via ggplot2 however this has overwritten the previously defined theme which had suppressed the x-axis labels and removed the rotation.", error=TRUE}
+# load ggplot2
+library(ggplot2)
+
+# suppress the y axis labels in the mutation burden plot
+mut_burden_layer <- theme(axis.ticks.y=element_blank(), axis.text.y=element_blank(), axis.title.y=element_blank())
+
+# change the ggplot theme back to default in the main plot
+main_layer <- theme_grey()
+
+# Run waterfall with the new layer
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, mainDropMut=TRUE, mainLayer=main_layer, mutBurdenLayer=mut_burden_layer)
+```
+
+### Rearranging cells
+Parameters covered: `sampOrder`, `geneOrder`
+
+In the interest of giving the user full control over the plot the `waterfall` gives the option of rearranging the axis to suit the display purpose of the graphic. As an example by default `waterfall` arrages samples via a hierarchical sort in order to effeciently display mutually exclusive or co-occuring events, however it may be desireable to arrange samples via a clinical variable instead. This is achieved via the `sampOrder` parameter.
+
+```{r, fig.keep='last', fig.width=14, fig.height=10, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+# Create clinical data
+subtype <- c('lumA', 'lumB', 'her2', 'basal', 'normal')
+subtype <- sample(subtype, 50, replace=TRUE)
+age <- c('20-30', '31-50', '51-60', '61+')
+age <- sample(age, 50, replace=TRUE)
+sample <- as.character(unique(brcaMAF$Tumor_Sample_Barcode))
+clinical <- as.data.frame(cbind(sample, subtype, age))
+
+# Melt the clinical data into "long" format.
+library(reshape2)
+clinical <- melt(clinical, id.vars=c('sample'))
+
+# Obtain a sample order corresponding to the clinical data
+new_samp_order <- as.character(unique(clinical[order(clinical$variable, clinical$value),]$sample))
+
+# create the waterfall plot with the corresponding clinical data
+waterfall(brcaMAF, clinDat=clinical, mainRecurCutoff=.05, maxGenes=25, sampOrder=new_samp_order)
+```
+
+Similarly, in order to display the mutual exclusivity or co-occurence between two genes of interest it may be desireable for these genes to be plotted together. Genes can be re-arraged via the `geneOrder` parameter.
+
+```{r, fig.keep='last', fig.width=14, fig.height=8.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
+# Define a custom gene order
+new_gene_order <- c("MUC16", "MUC17", "MUC12", "RYR2", "PIK3CA", "TP53", "USH2A", "MLL3", "TTN", "LRP2")
+
+# Increase the gene label size
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10, geneOrder=new_gene_order)
+```
+
+## Tips and hints
+Parameters covered: `out`
+
+### Types of output
+In the interest of visibility and debugging purposes `GenVisR` gives the option of outputing a grob or the data that would be input to the internal plotting function instead of drawing the plot. This is achievable via the `out` parameter.
+
+### Saving plots
+It is recommended to open a new graphics device, draw the plots GenVisR produces, and close the graphics In order to save a GenVisR plot.
+```{r, eval=FALSE, error=TRUE}
+# Save a GenVisR plot
+pdf(file="myplot.pdf", height=10, width=15)
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10)
+dev.off()
+```
+
+### Grob collisions
+Due to the way plots are constructed users are encouraged to allow for adequate room for the plot to render, if something doesn't look right it may be due to individual grobs within the plot colliding. The plot can always be re-sized after it has been drawn and saved to a file!
+```{r, fig.keep='last', fig.width=5, fig.height=5, message=FALSE, warning=FALSE, error=TRUE, results='hide', tidy=TRUE, fig.cap="A small graphics device may cause grob collisions, here the device size is 5 by 5"}
+# A GenVisR plot on a small graphics device
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10)
+```
+```{r, fig.keep='last', fig.width=10, fig.height=7, message=FALSE, warning=FALSE, results='hide', error=TRUE, tidy=TRUE, fig.cap="Increasing the size of the graphic device will alleviate this issue, here the device size is 10 by 7"}
+# A GenVisR plot on a small graphics device
+waterfall(brcaMAF, mainRecurCutoff=.05, maxGenes=10)
+```
