@@ -23,14 +23,14 @@ setClass(
 ################################################################################
 ###################### Accessor function definitions ###########################
 
-#' @name getVcf
-#' @rdname getVcf-methods
-#' @aliases getVcf
-setMethod(f="getVcf",
+#' @name getHeader
+#' @rdname getHeader-methods
+#' @aliases getHeader
+setMethod(f="getHeader",
           signature="VCF_Virtual",
           definition=function(object, ...){
-              vcf <- object@vcf
-              return(vcf)
+              header <- object@description
+              return(header)
           })
 
 #' @name getSample
@@ -41,4 +41,22 @@ setMethod(f="getSample",
           definition=function(object, ...){
               sample <- object@sample
               return(sample)
+          })
+
+#' @rdname getMeta-methods
+#' @aliases getMeta
+setMethod(f="getMeta",
+          signature="VCF_Virtual",
+          definition=function(object, ...) {
+              meta <- object@vcfData
+              return(meta)
+          })
+
+#' @rdname getMutation-methods
+#' @aliases getMutation
+setMethod(f="getMutation",
+          signature="VCF_Virtual",
+          definition=function(object, ...) {
+              mutation <- object@svType
+              return(mutation)
           })

@@ -1,0 +1,129 @@
+---
+title: "Visualizing Large-Scale Chromosomal Aberrations with GenVisR"
+author: 
+  name: "Jason Kunisaki"
+  affiliation: "McDonnell Genome Institute - Washington University School of Medicine"
+date: "`r Sys.Date()`"
+output:
+    BiocStyle::html_document:
+        toc_float: true
+package: GenVisR
+abstract: 
+    Instructions for visualizing large chromosomal aberrations using the GenVisR package
+vignette: >
+  %\VignetteIndexEntry{Visualizing_Large_Chromosomal_Aberrations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+ 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# GenVisR a brief introduction
+
+Intuitively visualizing and interpreting data from high-throughput genomic technologies continues to be challenging. Often creating a publication ready graphic not only requires extensive manipulation of data but also an in-depth knowledge of graphics libraries. As such creating such visualizations has traditionally taken a significant amount of time in regards to both data pre-processing and aesthetic manipulations. GenVisR (Genomic Visulizations in R) attempts to alleviate this burden by providing highly customizable publication-quality graphics in an easy to use structure. Many of the plotting functions in this library have a focus in the realm of human cancer genomics however we support a large number of species and many of the plotting methods incorprated within are of use for visualizing any type of genomic abnormality.
+
+## Getting Started
+
+For the majority of users we recommend installing GenVisR from the release branch of Bioconductor, Installation instructions using this method can be found on the [GenVisR](https://bioconductor.org/packages/GenVisR) landing page on Bioconductor.
+
+Please note that GenVisR imports a few packages that have “system requirements”, in most cases these requirements will already be installed. If they are not please follow the instructions to install these packages given in the R terminal. Briefly these packages are: “libcurl4-openssl-dev” and “libxml2-dev”
+
+Once GenVisR is successfully installed it will need to be loaded. For the purposes of this vignette we do this here and set a seed to ensure reproducibility.
+
+```{r, message=FALSE, tidy=TRUE}
+# set a seed
+set.seed(426)
+
+# load GenVisR into R
+library(GenVisR)
+```
+
+## Visualizing Large-Scale Chromosomal Aberrations
+
+Complex variants in the form of copy number amplification or deletion, loss of heterozygosity, and structural variation are important genomic aberrations that can lead to the pathogensis of various diseases. Intuitive visualzations are needed to aid in the analysis and interpretation of these large-scale genomic variants. We present 3 functions that serve this purpose to provide cohort-level visualization of these aberrations, allowing for the identification of recurrent patterns that can be associated with genomic diseases. 
+
+## Supported Files with Data on Large-Scale Chromosomal Aberrations
+
+To visualize large-scale genomic aberrations, GenVisR is designed to work with 4 file formats. The first is from  [VarScan2](http://varscan.sourceforge.net/somatic-calling.html), a computational tool that analyzes sequence data to make variant calls. The second, third, and fourth supported files are all [VCF](https://samtools.github.io/hts-specs/VCFv4.1.pdf) from the structural variant callers: [Manta](https://github.com/Illumina/manta), [Lumpy](https://github.com/arq5x/lumpy-sv), and [Delly](https://github.com/dellytools/delly). Additionally, users can supply a `data.table` object to the GenVisR functions that produce visualizations for large-scale chromosomal aberrations, but the `data.table` object must contain the expected columns (see details for specific functions).
+
+## Functions to Visualize Large-Scale Chromosomal Aberrations
+The output from `StructuralVariant()`, `LohSpec()`, and `cnLoh()` are objects that store the data used to generate the visualizations as well as the final arranged plot. The reason for storing the data and plots in such a manner is two-fold. First allowing access to the data which was plotted provides transparency as to how the plot was produced. Secondly, these items can be accessed by the user, allowing for greater flexibility and customizability. These data and plots can be accessed with the `getData()` and `getGrob()` functions respectively. The final plot can be printed with the `drawPlot()` function which takes one of the afore mentioned objects. 
+
+# Basic Pipeline to Generate Visualizations
+
+## Reading in data
+
+When constructing a plot with GenVisR there are three basic steps. First one must load the data into R, as mentioned previously GenVisR supports four filetypes which can be read in this manner. An example for each is supplied below using test data installed with the package. 
+
+### Basic Syntax
+
+**Reading in a VarScan file**<br />
+The required columns for a VarScan file with LOH data are: .  
+```{r, message=FALSE, tidy=TRUE}
+# get the disk location for VarScan test file
+testFile <- "~/Google Drive/GenVisR_ranch/GenVisR/inst/extdata/HCC1395.varscan.tsv"
+
+# define the objects for testing
+varscanObject <- VarScanFormat(testFile)
+```
+
+**Reading in Manta/Delly/Lumpy-VCF file**<br />
+The `svCaller` variable designates which structural variant caller was used. Currently, GenVisR supports data from [Manta](https://github.com/Illumina/manta), [Lumpy](https://github.com/arq5x/lumpy-sv), and [Delly](https://github.com/dellytools/delly). Many of these callers can be run pairwise (e.g. Tumor - Normal) or with a single sample. If the analysis was run pairwise, the read support column for variants in the tumor sample must be specified with the `tumorColumn` variable. The `version` parameter specifies the version of the VCF file. The default setting is "auto", which informs the function to find the version from the VCF header. The `version` parameter must be specified if a VCF dataset is provided, since the dataset does not include the VCF header. 
+```{r, message=FALSE, tidy=TRUE}
+# get the disk location for VCF files 
+dataset <- data.table::fread("~/Google Drive/hcc_sv_dataset.txt", showProgress=FALSE)
+
+# define the objects for testing
+vcfObject <- VariantCallFormat(data=dataset, svCaller="Manta", version="4.1", paired=TRUE, tumorColumn=11)
+```
+
+### Viewing Data
+
+In some cases you may want to view data after it has been read in, there are functions available to make viewing these data easier. Briefly these are `getVersion()`, `getPath()`, `getHeader()`, `getVersion()`, `getSample()`, `getMeta()`, and `getMutation()` which are globally available for each object type (VariantCallFormat). Let's test one out by viewing the samples from the VCF file that was read in with `VariantCallFormat()`.
+
+```{r, tidy=TRUE, eval=FALSE}
+# view the samples from the VEP file
+getSample(vcfObject)
+
+# view the path used to get the VCF file
+getPath(vcfObject)
+
+# view the header of the VCF file
+getHeader(vcfObject)
+
+# view the version of the VCF file 
+getVersion(vcfObject)
+
+# view the samples in the VCF file
+getSample(vcfObject)
+
+# view the data of the VCF file
+getMeta(vcfObject)
+
+# view the Strutural Variant types in the VCF file
+getMutation(vcfObject)
+```
+
+### Additional Notes
+
+All of these functions expect a path to a file of the appropriate type. Optionally a wildcard can be supplied with * as was done with `VariantCallFormat()` causing the function to read in multiple files at once. If a sample column is not found one will be created based on the filenames. Each of these functions will attempt to infer a file specification version from the file header. If a version is not found one will need to be specified via the `version` parameter.
+
+## Constructing a Plot Object and viewing plotted data
+
+Once the data is read in and stored in one of the previously mentioned objects the data can be plotted with one of the plotting functions. We will go over each plotting function in more detail in section 4 however to continue with our example pipeline let's create a structural variant plot with the structural variant caller.
+
+```{r, tidy=TRUE, warning=FALSE}
+library(BSgenome)
+library(biomaRt)
+ensembl <- useMart("ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org")
+ensembl <- useDataset(dataset="hsapiens_gene_ensembl", mart=ensembl)
+attributes <- c("hgnc_symbol")
+filters <- c("chromosome_name", "start", "end")
+
+BSgenome <- getBSgenome(genome = "BSgenome.Hsapiens.UCSC.hg19")
+waterfallPlot <- StructuralVariant(input=vcfObject, BSgenome=BSgenome, )
+```
+
+With the plot object created we can view the actual data making up the plot with the `getData()` function. This is an accessor function to pull out specific data making up the plot (Refer to the R documentation for `Waterfall()` to see available slots in the object which hold data). Let's use it here to extract the data making up the main plot panel, we can specify the slot either by name or it's index.
