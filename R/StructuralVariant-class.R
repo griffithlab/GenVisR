@@ -159,7 +159,6 @@ checkSvInputParameters <- function(object, BSgenome, filterSvCalls, svType, svOr
                                    genome, plotSV, plotSpecificGene, plotTraGenes, 
                                    plotOtherGenes, cytobandColor, plotALayers, plotBLayers,
                                    plotCLayers, sectionHeights, sampleColor, verbose, ...) {
-    browser()
     ##### Check verbose parameter #####
     ## Check to see if verbose is a booelean
     if (!is.logical(verbose) | is.null(verbose)) {
@@ -1518,7 +1517,6 @@ setMethod(f="buildSvPlot",
                                                                       plotTraGenes, plotOtherGenes,
                                                                       plotALayers, plotBLayers, 
                                                                       plotCLayers) {
-                      
                       ## Split the dataset by sample to assign color names
                       df <- split(dataset, f=dataset$sample)
                       dataset <- data.table::rbindlist(lapply(df, function(x, sampleColor){
@@ -1532,7 +1530,7 @@ setMethod(f="buildSvPlot",
                               }
                           }
                           return(x)
-                      }, sampleColor=sampleColor))
+                      }, sampleColor=sampleColor), fill=TRUE)
                       
                       colnames(dataset) <- c("Chromosome", "Position", "Chromosome2", "Position2", "Direction",
                                              "SV_Type", "Total_Read_Support", "Sample", "Genes", 
