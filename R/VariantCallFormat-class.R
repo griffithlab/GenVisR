@@ -37,12 +37,21 @@ setClass("VariantCallFormat",
 #' Only used when paired=TRUE. 
 #' @param verbose Bolean specifying if progress should be reported while reading
 #' in the VCF file
+#' @details When specifying a path to a VCF file, the option exists to either
+#' specify the full path to a vcf file or to us wildcards to specify multiple 
+#' files. When specifying a full path, the initializer will check if a column
+#' named "sample" containing the relevant sample for each row exists. If such a 
+#' column is not found, the initializer will assume this file correspnds to 
+#' only one sample and populate a sample column accordingly. Alternatively, if 
+#' multiple files are specified at once using a wildcard, the initializer will 
+#' aggregate all the files and use the filenames minus any extension to 
+#' populate the "sample" column.
 #' @importFrom data.table fread
 #' @importFrom data.table rbindlist
 #' @importFrom data.table data.table
 #' @export
 VariantCallFormat <- function(path=NULL, data=NULL, version="auto", svCaller=NULL, paired=paired, 
-                tumorColumn=tumorColumn, verbose=FALSE) {
+                                     tumorColumn=tumorColumn, verbose=FALSE) {
     
     ## Check if both path and data are both null
     if (is.null(path) & is.null(data)) {
@@ -79,9 +88,9 @@ VariantCallFormat <- function(path=NULL, data=NULL, version="auto", svCaller=NUL
             ## Find where the headers stops and read the data
             skip <- length(header)
             vcfData <- suppressWarnings(data.table::fread(input=x,
-                                                          stringsAsFactors=TRUE,
-                                                          verbose=verbose, 
-                                                          skip=skip))
+                                                     stringsAsFactors=TRUE,
+                                                     verbose=verbose, 
+                                                     skip=skip))
             
             ## Set sample if it is not already in the data table
             if(any(colnames(vcfData) %in% "sample")){
@@ -212,71 +221,6 @@ VariantCallFormat <- function(path=NULL, data=NULL, version="auto", svCaller=NUL
 }
 
 ################################################################################
-###################### Accessor function definitions ###########################
-
-#' @rdname writeData-methods
-#' @aliases writeData
-setMethod(f="writeData",
-          signature="VariantCallFormat",
-          definition=function(object, file, ...){
-              writeData(object@vcfObject@vcfData, file, sep="\t")
-          })
-
-#' @rdname getVersion-methods
-#' @aliases getVersion
-setMethod(f="getVersion",
-          signature="VariantCallFormat",
-          definition=function(object, ...) {
-              version <- object@version
-              return(version)
-          })
-
-#' @rdname getPath-methods
-#' @aliases getPath
-setMethod(f="getPath",
-          signature="VariantCallFormat",
-          definition=function(object, ...){
-              path <- object@path
-              return(path)
-          })
-
-#' @rdname getHeader-methods
-#' @aliases getHeader
-setMethod(f="getHeader",
-          signature="VariantCallFormat",
-          definition=function(object, ...) {
-              header <- getHeader(object@vcfObject)
-              return(header)
-          })
-
-#' @rdname getSample-methods
-#' @aliases getSample
-setMethod(f="getSample",
-          signature="VariantCallFormat",
-          definition=function(object, ...) {
-              sample <- getSample(object@vcfObject)
-              return(sample)
-          })
-
-#' @rdname getMeta-methods
-#' @aliases getMeta
-setMethod(f="getMeta",
-          signature="VariantCallFormat",
-          definition=function(object, ...) {
-              meta <- getMeta(object@vcfObject)
-              return(meta)
-          })
-
-#' @rdname getMutation-methods
-#' @aliases getMutation
-setMethod(f="getMutation",
-          signature="VariantCallFormat",
-          definition=function(object, ...) {
-              mutations <- getMutation(object@vcfObject)
-              return(mutations)
-          })
-
-################################################################################
 ####################### Method function definitions ############################
 
 #' @rdname getVcfData-methods
@@ -286,9 +230,9 @@ setMethod(f="getMutation",
 #' @importFrom data.table data.table
 setMethod(f="getVcfData",
           signature="VariantCallFormat",
-          definition=function(object, filterSvCalls, maxSvSize, svType, 
+          definition=function(object, filter, maxSvSize, svType, 
                               verbose, ...) {
-
+              
               ## Print status message
               if (verbose) {
                   memo <- paste0("converting ", class(object), " to expected ",
@@ -296,29 +240,11 @@ setMethod(f="getVcfData",
                   message(memo)
               }
               
-              availableSvTypes <- object@vcfObject@svType$svtype
               object <- object@vcfObject@vcfData
               
               ## Filter out sv calls that are not "PASS"
-              if (filterSvCalls == TRUE) {
+              if (filter == TRUE) {
                   object <- object[FILTER=="PASS"]
-              }
-              
-              ## Check if the sv types are found in the actual sv dataset
-              if (!is.null(svType)) {
-                  svType <- svType[which(svType %in% availableSvTypes)]
-                  if (length(svType) == 0) {
-                      memo <- paste0("The desired sv types as designated in the svType ",
-                                     "variable are not found in the sv dataset. Setting ",
-                                     "svType to NULL, which will include all sv's in the dataset.")
-                      message(memo)
-                      svType <- NULL
-                  }
-              }
-              if (!is.numeric(maxSvSize) & !is.null(maxSvSize)) {
-                  memo <- paste0("maxSvSize variable not of the numeric class. Attempting to coerce.")
-                  maxSvSize <- as.numeric(maxSvSize)
-                  message(memo) 
               }
               
               ## Remove large SV
@@ -339,7 +265,7 @@ setMethod(f="getVcfData",
               
               ## Remove sv types that are not necessary
               available_svTypes <- unlist(as.vector(object$svtype))
-              if (length(svType) > 0 & !is.null(svType)) {
+              if (length(svType) > 0) {
                   ## Check to see if the SV type is in the data.table
                   ## Perform the subset if svtype is available
                   if (all(svType %in% available_svTypes)) {
@@ -352,8 +278,7 @@ setMethod(f="getVcfData",
                       stop(memo)
                   }
               }
-            
               
               ## Stop the
               return(object)
-          })
+            })

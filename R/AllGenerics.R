@@ -943,14 +943,3 @@ setGeneric(
     name="getVcfData",
     def=function(object, ...){standardGeneric("getVcfData")}
 )
-
-#' Method checkSvInputParameters
-#' 
-#' @name checkSvInputParameters
-#' @rdname checkSvInputParameters-methods
-#' @param ... additional arguments to passed
-#' @noRd
-setGeneric(
-    name="checkSvInputParameters",
-    def=function(object, ...){standardGeneric("checkSvInputParameters")}
-)

@@ -18,7 +18,7 @@
 setClass("StructuralVariant",
          representation=representation(svData="data.table",
                                        geneData="data.table",
-                                       svPlots="svPlots"),
+                                       svPlots="list"),
          validity=function(object) {
              
          })
@@ -61,7 +61,7 @@ setClass("StructuralVariant",
 #' @param plotHeight Integer for height of SV visualizations
 #' @param verbose Boolean specifying if status messages should be reported
 #' @export
-StructuralVariant <- function(input, BSgenome=NULL, filterSvCalls=TRUE, svType=NULL,
+StructuralVariant <- function(input, BSgenome=NULL, filter=TRUE, svType=NULL,
                               svOrder=c("TRA", "BND", "DEL", "DUP", "INV", "INS"),
                               maxSvSize=NULL, sample=NULL, chromosomes=NULL, 
                               ensembl=ensembl, attributes=attributes, filters=filters,
@@ -70,46 +70,20 @@ StructuralVariant <- function(input, BSgenome=NULL, filterSvCalls=TRUE, svType=N
                               plotOtherGenes=FALSE, chrGap=5000000,
                               genome="hg19", cytobandColor=c("White", "Grey"), 
                               sampleColor=NULL, verbose=FALSE, plotALayers=NULL, 
-                              plotBLayers=NULL, plotCLayers=NULL, sectionHeights=c(0.4, 0.1, 0.5)) {
+                              plotBLayers=NULL, plotCLayers=NULL) {
 
-    ## Check the input parameters
-    inputParameters <- checkSvInputParameters(object=object, BSgenome=BSgenome, filterSvCalls=filterSvCalls, 
-                                              svType=svType, svOrder=svOrder,
-                                              maxSvSize=maxSvSize, sample=sample, chromosomes=chromosomes, 
-                                              ensembl=ensembl, attributes=attributes, 
-                                              filters=filters, chrGap=chrGap, annotate=annotate, 
-                                              geneAnnotationFlank=geneAnnotationFlank, genome=genome, 
-                                              plotSV=plotSV, plotSpecificGene=plotSpecificGene, 
-                                              plotTraGenes=plotTraGenes, plotOtherGenes=plotOtherGenes, 
-                                              cytobandColor=cytobandColor, 
-                                              plotALayers=plotALayers, plotBLayers=plotBLayers,
-                                              plotCLayers=plotCLayers, sectionHeights=sectionHeights, 
-                                              sampleColor=sampleColor, verbose=verbose)
-    
     ## Calculate all data for the plots
-    svDataset <- svData(object=input, BSgenome=inputParameters@BSgenome, 
-                        filterSvCalls=inputParameters@filterSvCalls, 
-                        svType=inputParameters@svType, svOrder=inputParameters@svOrder,
-                        maxSvSize=inputParameters@maxSvSize, sample=inputParameters@sample, 
-                        chromosomes=inputParameters@chromosomes, 
-                        ensembl=inputParameters@ensembl, attributes=inputParameters@attributes, 
-                        filters=inputParameters@filters, chrGap=inputParameters@chrGap, 
-                        annotate=inputParameters@annotate, 
-                        geneAnnotationFlank=inputParameters@geneAnnotationFlank, 
-                        genome=inputParameters@genome, verbose=inputParameters@verbose)
+    svDataset <- svData(object=input, BSgenome=BSgenome, filter=filter, svType=svType, svOrder=svOrder,
+                        maxSvSize=maxSvSize, sample=sample, chromosomes=chromosomes, 
+                        ensembl=ensembl, attributes=attributes, filters=filters, chrGap=chrGap, annotate=annotate, 
+                        geneAnnotationFlank=geneAnnotationFlank, genome=genome, verbose=verbose)
 
     ## Create the plots from svData
-    structuralVariantPlots <- svPlots(object=svDataset, plotSV=inputParameters@plotSV, 
-                                      plotSpecificGene=inputParameters@plotSpecificGene, 
-                                      plotTraGenes=inputParameters@plotTraGenes, 
-                                      plotOtherGenes=inputParameters@plotOtherGenes, 
-                                      cytobandColor=inputParameters@cytobandColor, 
-                                      plotALayers=inputParameters@plotALayers, 
-                                      plotBLayers=inputParameters@plotBLayers,
-                                      plotCLayers=inputParameters@plotCLayers, 
-                                      sectionHeights=inputParameters@sectionHeights, 
-                                      sample=inputParameters@sample, sampleColor=inputParameters@sampleColor, 
-                                      verbose=inputParameters@verbose)
+    structuralVariantPlots <- svPlots(object=svDataset, plotSV=plotSV, plotSpecificGene=plotSpecificGene, 
+                                      plotTraGenes=plotTraGenes, plotOtherGenes=plotOtherGenes, cytobandColor=cytobandColor, 
+                                      plotALayers=plotALayers, plotBLayers=plotBLayers,
+                                      plotCLayers=plotCLayers, sectionHeights=sectionHeights, 
+                                      sample=sample, sampleColor=sampleColor, verbose=verbose)
     
     ## Intialize the object
     new("StructuralVariant", svData=getData(object=svDataset, name="primaryData"), 
@@ -118,487 +92,6 @@ StructuralVariant <- function(input, BSgenome=NULL, filterSvCalls=TRUE, svType=N
 }
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
-
-#' Private Class svInputParameters
-#' 
-#' An S4 class to check input parameters of the StructuralVariant function
-#' @name svInputParameters-class
-#' @noRd
-setClass("svInputParameters",
-         representation=representation(BSgenome="BSgenome", filterSvCalls="logical", svType="character", 
-                                       svOrder="character", maxSvSize="numeric", 
-                                       sample="character", chromosomes="character", 
-                                       ensembl="Mart", attributes="character", 
-                                       filters="character", chrGap="numeric", 
-                                       annotate="logical", geneAnnotationFlank="numeric", 
-                                       genome="character", plotSV="logical", 
-                                       plotSpecificGene="character", plotTraGenes="logical", 
-                                       plotOtherGenes="logical", cytobandColor="character", 
-                                       plotALayers="list", plotBLayers="list",
-                                       plotCLayers="list", sectionHeights="numeric", 
-                                       sampleColor="character", verbose="logical"), 
-         validity=function(object){
-             
-         })
-
-#' Constructor for the svInputParameters class
-#' 
-#' @name svInputParameters
-#' @rdname svInputParameters-class
-#' @importFrom karyoploteR getCytobands
-#' @noRd
-checkSvInputParameters <- function(object, BSgenome, filterSvCalls, svType, svOrder, maxSvSize, 
-                                   sample, chromosomes, ensembl, attributes, 
-                                   filters, chrGap, annotate, geneAnnotationFlank, 
-                                   genome, plotSV, plotSpecificGene, plotTraGenes, 
-                                   plotOtherGenes, cytobandColor, plotALayers, plotBLayers,
-                                   plotCLayers, sectionHeights, sampleColor, verbose) {
-    
-    ##### Check verbose parameter #####
-    ## Check to see if verbose is a booelean
-    if (!is.logical(verbose) | is.null(verbose)) {
-        memo <- paste0("The verbose parameter is not a boolean (T/F). Coercing verbose to be FALSE...")
-        message(memo)
-        verbose <- FALSE
-    }
-    
-    ##### Check BSgenome parameter #####
-    ## Check to see if BSgenome is a BSgenome
-    if (is.null(BSgenome)) {
-        memo <- paste("BSgenome object is not specified, whole chromosomes",
-                      "will not be plotted, this is not recommended!")
-        warning(memo)
-    } else if (is(BSgenome, "BSgenome")) {
-        memo <- paste("BSgenome passed object validity checks")
-        message(memo)
-    } else {
-        memo <- paste("class of the BSgenome object is", class(BSgenome),
-                      "should either be of class BSgenome or NULL",
-                      "setting this to param to NULL")
-        warning(memo)
-        BSgenome <- NULL
-    }
-    
-    ##### Check filterSvCalls parameter ##### 
-    ## Check to see if filterSvCalls is a boolean
-    if (is.null(filterSvCalls) | !is.logical(filterSvCalls)) {
-        memo <- paste0("The filterSvCalls parameter is not a boolean (T/F). Coercing filterSvCalls to be FALSE...")
-        message(memo)
-        filterSvCalls <- FALSE
-    }
-    
-    ##### Check svType parameter #####
-    ## Check if it null
-    if (is.null(svType)) {
-        svType <- as.character(object@vcfObject@svType$svtype)
-        memo <- paste0("svType variable cannot be NULL. Using all of the sv types ",
-                       "available in the sv dataset")
-        message(memo)
-    }
-    ## check if svType is a character vector
-    if (!is.character(svType)) {
-        memo <- paste0("svType variable not of the character class. Attempting to coerce.")
-        svType <- as.character(svType)
-        message(memo)
-    }
-    
-    ##### Check svOrder parameter #####
-    ## Check if svOrder is NULL
-    if (is.null(svOrder)) {
-        svOrder <- svType
-        memo <- paste0("svOrder variable cannot be NULL. Setting the deleterious order ",
-                       "of sv events to that designated in the svType: ", 
-                       paste(svType, collapse=", "))
-        message(memo)
-    }
-    if (!is.character(svOrder)) {
-        memo <- paste0("svOrder variable not of the character class. Attempting to coerce.")
-        svOrder <- as.character(svOrder)
-        message(memo)
-    }
-    
-    ##### Check maxSvSize parameter #####
-    ## Check if maxSvSize is NULL
-    if (is.null(maxSvSize)) {
-        maxSvSize <- 0
-        memo <- paste0("maxSvSize parameter cannot be NULL. Setting the maxSvSize value to 0.")
-        message(memo)
-    }
-    ## Check if maxSvSize is numeric
-    if (!is.numeric(maxSvSize)) {
-        memo <- paste0("maxSvSize variable not of the numeric class. Attempting to coerce.")
-        maxSvSize <- as.numeric(maxSvSize)
-        message(memo)
-    }
-    
-    ##### Check sample parameter #####
-    ## Check is sample is NULL
-    if (is.null(sample)) {
-        sample <- unique(object@vcfObject@sample$sample)
-        memo <- paste0("Sample parameter cannot be NULL. All samples will be plotted.")
-    }
-    ## Check if sample is a character vector
-    if (!is.character(sample)) {
-        memo <- paste0("sample variable not of the character class. Attempting to coerce.")
-        sample <- as.character(sample)
-        message(memo)
-    }
-    
-    ##### Check chromosomes parameter #####
-    ## Check is chromosomes is NULL
-    if (is.null(chromosomes)) {
-        chromosomes <- paste("chr", seq(1:22), sep="")
-        memo <- paste0("chromosomes parameter cannot be NULL. Using all autosomes...")
-        message(memo)
-    }
-    ## Check if chromosomes is a character vector
-    if (!is.character(chromosomes)) {
-        memo <- paste0("chromosomes variable not of the character class. Attempting to coerce.")
-        chromosomes <- as.character(chromosomes)
-        message(memo)
-    }
-    ## Check if it has the "chr" prefix
-    # Check to see if the chromosomes variable has "chr" in front if not NULL, autosomes, or all
-    if (all(chromosomes!="autosomes") & all(chromosomes!="all")) {
-        if (!all(grepl("^chr", chromosomes))) {
-            if (verbose) {
-                memo <- paste0("Did not detect the prefix chr in the chromosomes specified ",
-                               "in the `chromosomes` variable... adding prefix")
-                message(memo)
-                chromosomes <- paste("chr", chromosomes, sep="")
-            } 
-        } else if (all(grepl("^chr", chromosomes))) {
-            if (verbose) {
-                memo <- paste0("Detected chr in the `chromosomes` variable...",
-                               "proceeding")
-                message(memo)
-            } 
-        } else {
-            memo <- paste0("Detected unknown or mixed prefixes in the `chromosomes`` variable",
-                           " colum of object... should either be chr or non (i.e.) chr1 or 1")
-            message(memo)
-        }
-    }
-    ##### Check annotate parameter #####
-    ## Check if annotate is a boolean
-    if (!is.logical(annotate) | is.null(annotate)) {
-        memo <- paste0("The annotate parameter is not a boolean (T/F). Coercing annotate to be FALSE...")
-        message(memo)
-        annotate <- FALSE
-    }
-    ##### Check ensembl parameter #####
-    ## Check if ensembl is of class "mart"
-    if (is.null(ensembl)) {
-        memo <- paste("ensembl object cannot be NULL if SV annotations are desired, ",
-                      "in which case, the ensembl object must be of class Mart...")
-        if (!annotate) {
-            warning(memo)
-        }
-        if (annotate) {
-            stop(memo)
-        }
-    } 
-    else if (is(ensembl, "Mart")) {
-        memo <- paste("ensembl passed object validity checks")
-        message(memo)
-    } 
-    else {
-        memo <- paste("class of the ensembl object is", class(ensembl),
-                      "should either be of class ensembl or NULL",
-                      "setting this to param to NULL and will not perform ",
-                      "sv annotations.")
-        warning(memo)
-        ensembl <- NULL
-        annotate <- FALSE
-        
-    }
-    
-    
-    ##### Check if attributes and filters are valid #####
-    if (annotate) {
-        ## If ensembl is not NULL, check if these are character vectors
-        if (!is.null(ensembl) & (!is.character(attributes))) {
-            if (is.null(attributes)) {
-                memo <- paste0("If annotations are desired, the attributes parameter ",
-                               "cannot be NULL. These values are used to specify the ouput ",
-                               "for biomaRt annotations.")
-                stop(memo)
-            }
-            memo <- paste0("attributes variable not of the character class. Attempting to coerce.")
-            attributes <- as.character(attributes)
-            message(memo)
-        }
-        if (!is.null(ensembl) & (!is.character(filters))) {
-            if (is.null(filters)) {
-                memo <- paste0("If annotations are desired, the filters parameter ",
-                               "cannot be NULL. These values are used to specify the input ",
-                               "for biomaRt annotations.")
-                stop(memo)
-            }
-            memo <- paste0("filters variable not of the character class. Attempting to coerce.")
-            filters <- as.character(filters)
-            message(memo)
-        }
-        
-        ## If ensembl is not NULL, check that these are valid inputs for getBM
-        if (!is.null(ensembl)) {
-            temp <- data.table(listAttributes(mart=ensembl))
-            if (!all(attributes %in% temp$name)) {
-                `%nin%` = Negate(`%in%`)
-                discrepantAttributes <- attributes[which(attributes %nin% temp$name)]
-                memo <- paste0("The following attributes: ", paste(discrepantAttributes, collapse="|"),
-                               " are not valid inputs for the designated ensembl database. Please run ",
-                               "biomaRt::listAttributes(ensembl) to get valid attributes.")
-                stop(memo)
-            }
-            temp <- data.table(listFilters(mart=ensembl))
-            if (!all(filters %in% temp$name)) {
-                `%nin%` = Negate(`%in%`)
-                discrepantFilters <- filters[which(filters %nin% temp$name)]
-                memo <- paste0("The following filters: ", paste(discrepantFilters, collapse="|"),
-                               " are not valid inputs for the designated ensembl database. Please run ",
-                               "biomaRt::listFilters(ensembl) to get valid filters")
-                stop(memo)
-            }
-        }
-        
-        ## If ensembl is NULL, set these variables to NULL
-        if (is.null(ensembl)) {
-            attributes <- NULL
-            filters <- NULL
-        }   
-    }
-    
-    ##### Check chrGap parameter #####
-    ## Check if chrGap is NULL
-    if (is.null(chrGap)) {
-        chrGap <- 5000000
-        memo <- paste0("chrGap variable cannot be NULL. Using the default value of 5,000,000.")
-    }
-    ## Check if chrGap is numeric
-    if (!is.numeric(chrGap)) {
-        memo <- paste0("chrGap variable not of the numeric class. Attempting to coerce.")
-        chrGap <- as.numeric(chrGap)
-        message(memo)
-    }
-    
-    ##### Check geneAnnotationFlank parameter #####
-    ## Check if geneAnnotationFlank is NULL
-    if (is.null(geneAnnotationFlank)) {
-        geneAnnotationFlank <- 10000
-        memo <- paste0("geneAnnotationFlank variable cannot be NULL. Setting the variable's ",
-                       "value to 10,000 base pairs.")
-        message(memo)
-    }
-    ## Check if geneAnnotationFlank is numeric and is greater than 0
-    if (!is.numeric(geneAnnotationFlank)) {
-        memo <- paste0("geneAnnotationFlank variable not of the numeric class. Attempting to coerce.")
-        geneAnnotationFlank <- as.numeric(geneAnnotationFlank)
-        message(memo)
-        if (geneAnnotationFlank < 0) {
-            memo <- paste0("geneAnnotationFlank cannot be a negative number. Changing ",
-                           "geneAnnotationFlank to be 0.")
-            message(memo)
-            geneAnnotationFlank <- 0
-        }
-    }
-    
-    ##### Check genome parameter #####
-    ## Check if genome is not NULL
-    if (is.null(genome)) {
-        memo <- paste0("The genome variable cannot be NULL. Valid options are those used by ",
-                       "the karyoploteR package (e.g. hg19, mm10, etc...)")
-        stop(memo)
-        
-    }
-    ## Check if genome is of length 1
-    if (length(genome) > 1) {
-        memo <- paste0("The genome variable must be of length 1. Using the first value.")
-        genome <- genome[1]
-        message(memo)
-    }
-    ## Check if genome is a character
-    if (!is.character(genome) & !is.null(genome)) {
-        memo <- paste0("genome variable not of the character class. Attempting to coerce.")
-        genome <- as.character(genome)
-        message(memo)
-    }
-    ## Check if the genome exists in KaryoploteR
-    temp <- suppressMessages(getCytobands(genome))
-    if (nrow(as.data.table(temp@seqnames))==0) {
-        memo <- paste0("The inputted genome is not available in the karyoploteR package, ",
-                       "which is used to generate the cytoband positions... Please submit a request to the ",
-                       "karyoploteR github page: https://github.com/bernatgel/karyoploteR")
-        stop(memo)
-    }
-    
-    ##### Check plotSV parameter #####
-    ## Check to see if filter is a boolean
-    if (!is.logical(plotSV)) {
-        memo <- paste0("plotSV parameter is not a boolean (T/F). Coercing plotSpecificGene to be FALSE...")
-        plotSV <- FALSE
-        message(memo)
-    }
-    
-    ##### Check plotSpecificGene parameter #####
-    ## Check if plotSpecificGene is NULL
-    if (is.null(plotSpecificGene)) {
-        plotSpecificGene <- ""
-    }
-    ## Check to see if plotSpecificGene is a booelean
-    if (!is.character(plotSpecificGene)) {
-        memo <- paste0("The plotSpecificGene variable not of the character class. Attempting to coerce...")
-        message(memo)
-        plotSpecificGene <- as.character(plotSpecificGene)
-    }
-    ##### Check plotTraGenes parameter #####
-    ## Check to see if plotTraGenes is a booelean
-    if (!is.logical(plotTraGenes)) {
-        memo <- paste0("The plotTraGenes parameter is not a boolean (T/F). Coercing plotTraGenes to be FALSE...")
-        message(memo)
-        plotTraGenes <- FALSE
-    }
-    ##### Check plotOtherGenes parameter #####
-    ## Check to see if plotOtherGenes is a booelean
-    if (!is.logical(plotOtherGenes)) {
-        memo <- paste0("The plotOtherGenes parameter is not a boolean (T/F). Coercing plotOtherGenes to be FALSE...")
-        message(memo)
-        plotOtherGenes <- FALSE
-    }
-    
-    ##### Check cytobandColor parameter #####
-    ## Check if it is a character vector
-    if (is.null(cytobandColor)) {
-        memo <- paste0("cytobandColor was set to NULL. Setting the colors to Dark grey and light grey.")
-        message(memo)
-        cytobandColor <- c("Dark Grey", "Light Grey")
-    }
-    if (!is.character(cytobandColor)) {
-        memo <- paste0("cytobandColor variable not of the character class. Attempting to coerce.")
-        cytobandColor <- as.character(cytobandColor)
-        message(memo)
-    }
-    ## Check if desired colors are valid 
-    areColors <- function(x) {
-        sapply(x, function(X) {
-            tryCatch(is.matrix(col2rgb(X)), 
-                     error = function(e) FALSE)
-        })
-    }
-    if (any(areColors(cytobandColor) == FALSE)) {
-        ## Get the invalid color
-        nonColor <- cytobandColor[which(data.table(areColors(cytobandColor))$V1==FALSE)]
-        memo <- paste0("The ", nonColor, " designated in the cytobandColor parameter is not a valid color. ",
-                       "Making the cytoband colors dark grey and light grey.")
-    }
-    
-    ##### Check sampleColor parameter #####
-    ## Check if sampleColor is NULL
-    if (is.null(sampleColor)) {
-        ## Set the sampleColor to be of the same length as the number of samples
-        sampleColor <- rainbow(length(sample))
-        memo <- paste0("sampleColor parameter cannot be NULL...attempting to generate distinctive colors.")
-        message(memo)
-    }
-    if (!is.null(sampleColor)) {
-        ## Check if it is a character vector
-        if (!is.character(sampleColor)) {
-            memo <- paste0("sampleColor variable not of the character class. Attempting to coerce.")
-            sampleColor <- as.character(sampleColor)
-            message(memo)
-        }
-        
-        ## Check if desired colors are valid 
-        areColors <- function(x) {
-            sapply(x, function(X) {
-                tryCatch(is.matrix(col2rgb(X)), 
-                         error = function(e) FALSE)
-            })
-        }
-        if (any(areColors(sampleColor) == FALSE)) {
-            ## Get the invalid color
-            nonColor <- sampleColor[which(data.table(areColors(sampleColor))$V1==FALSE)]
-            memo <- paste0("The ", nonColor, " designated in the sampleColor parameter is not a valid color. ",
-                           "Making the cytoband colors dark grey and light grey.")
-        }
-        
-        ## If sampleColor is not NULL, check if it's length is the same as 
-        ## the desired number of samples 
-        if (length(sampleColor) != length(sample)) {
-            memo <- paste0("The number of colors for each sample (designated with the sampleColor variable) ",
-                           "does not equal the number of samples in the sv dataset (n=", length(sample), ") .")
-            stop(memo)
-        }
-    }
-    
-    ##### Check plotALayers, plotBLayers, and plotC Layers parameter #####
-    checkPlotLayer <- function(plotLayer, name) {
-        if(!is.null(plotLayer)){
-            if(!is.list(plotLayer)){
-                memo <- paste(name, " is not a list", sep="")
-                stop(memo)
-            }
-            
-            if(any(!unlist(lapply(plotLayer, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
-                memo <- paste(name, " is not a list of ggproto or ",
-                              "theme objects... setting plotALayers to NULL", sep="")
-                warning(memo)
-                plotLayer <- NULL
-            }
-        }
-        return(plotLayer)
-    }
-    plotALayers <- checkPlotLayer(plotLayer=plotALayers, "plotALayers")
-    plotBLayers <- checkPlotLayer(plotLayer=plotBLayers, "plotBLayers")
-    plotCLayers <- checkPlotLayer(plotLayer=plotCLayers, "plotCLayers")
-    ##### Check sectionHeights parameter #####
-    ## Check if it not NULL
-    if (is.null(sectionHeights)) {
-        sectionHeights <- c(0.4, 0.1, 0.5)
-        memo <- paste0("sectionHeights variable cannot be NULL. Using default values.")
-        message(memo)
-    }
-    
-    ## Check that values are numeric
-    if (!is.numeric(sectionHeights)) {
-        memo <- paste0("sectionHeights valures are not class numeric. Attempting to coerce...")
-        message(memo)
-        sectionHeights <- as.numeric(sectionHeights)
-    }
-    
-    ## Check that the values are > 0
-    if (any(sectionHeights<0)) {
-        memo <- paste0("sectionHeights cannot be a negative value. Using default values.")
-        message(memo)
-        sectionHeights <- c(0.4, 0.1, 0.5)
-    }
-    
-    ## Check that there are 3 values in the variable
-    if (length(sectionHeights)!=3) {
-        memo <- paste0("3 values must be supplied to the sectionHeights parameter, which specifies the ",
-                       "relative height of the plot for translocations, the chromosomes, and non-translocations ",
-                       "respectively.")
-        message(memo)
-        sectionHeights <- c(0.4, 0.1, 0.5)
-    }
-    
-    ## Check that the values sum up to 1
-    if (sum(sectionHeights)!=1) {
-        memo <- paste0("sectionHeight values do not equal 1. Using default values.")
-        message(memo)
-        sectionHeights <- c(0.4, 0.1, 0.5)
-    }
-    
-    new("svInputParameters", BSgenome=BSgenome, filterSvCalls=filterSvCalls, 
-        svType=svType, svOrder=svOrder,
-        maxSvSize=maxSvSize, sample=sample, chromosomes=chromosomes, 
-        ensembl=ensembl, attributes=attributes, filters=filters, chrGap=chrGap, annotate=annotate, 
-        geneAnnotationFlank=geneAnnotationFlank, genome=genome, plotSV=plotSV, plotSpecificGene=plotSpecificGene, 
-        plotTraGenes=plotTraGenes, plotOtherGenes=plotOtherGenes, cytobandColor=cytobandColor, 
-        plotALayers=plotALayers, plotBLayers=plotBLayers,
-        plotCLayers=plotCLayers, sectionHeights=sectionHeights, 
-        sampleColor=sampleColor, verbose=verbose)
-}
 
 #' Private Class svData
 #' 
@@ -622,11 +115,12 @@ setClass("svData",
 #' @name StructuralVariant
 #' @importFrom data.table data.table
 #' @noRd
-svData <- function(object, BSgenome, filterSvCalls, svType, svOrder, maxSvSize, sample, 
+svData <- function(object, BSgenome, filter, svType, svOrder, maxSvSize, sample, 
                    chromosomes, ensembl, attributes, filters, annotate, geneAnnotationFlank, chrGap, genome,
                    verbose) {
+    
     ## Subset data to only passed sv calls
-    primaryData <- getVcfData(object=object, filterSvCalls=filterSvCalls, maxSvSize=maxSvSize, 
+    primaryData <- getVcfData(object=object, filter=filter, maxSvSize=maxSvSize, 
                               svType=svType, verbose=verbose)
     
     ## Subset data to only the chromosomes desired to be plotted
@@ -654,7 +148,7 @@ svData <- function(object, BSgenome, filterSvCalls, svType, svOrder, maxSvSize, 
     adjustedPrimaryData <- adjustCentromeres(object=primaryData, chrCytobands=chrCytobands, verbose=verbose)
     
     ## Get the new positions for SV calls and cytobands
-    svWindow <- getStructuralVariantWindow(object=adjustedPrimaryData, chromosomes=chromosomes, chrCytobands=chrCytobands, chrData=chrData, 
+    svWindow <- getStructuralVariantWindow(object=adjustedPrimaryData, chrCytobands=chrCytobands, chrData=chrData, 
                                            chrGap=chrGap, verbose=verbose)
 
     ## Initialize the object
@@ -793,25 +287,37 @@ setMethod(f="drawPlot",
 setMethod(f="chrSubsetSv",
           signature="data.table",
           definition=function(object, chromosomes, verbose, ...){
+              
               # print status message
               if(verbose){
                   memo <- paste("Performing chromosome subsets")
                   message(memo)
               }
               
-              # if chromosomes is null we dont want to do anything just return all autosomes
+              # if chromosomes is null we dont want to do anything just return the object back
               if(is.null(chromosomes)){
-                  chromosomes <- "autosomes"
-              }              
-             
-              ## Check format of the chromosome1 column
+                  return(object)
+              }
+              
+              # perform quality checks on the chromosome parameter arguments
+              
+              # check for character vector
+              if(!is.character(chromosomes)){
+                  memo <- paste("Input to chromosomes should be a character vector,
+                                specifying which chromosomes to plot, 
+                                attempting to coerce...")
+                  warning(memo)
+                  chromosomes <- as.character(chromosomes)
+              }
+              
+              ## Check format of the chromosome column
               if (!all(grepl("^chr", object$chromosome))) {
                   if (verbose) {
-                      memo <- paste0("Did not detect the prefix chr in the chromosome1 column ",
+                      memo <- paste0("Did not detect the prefix chr in the chromosome1 column",
                                      "of x... adding prefix")
                       message (memo)
-                      object$chromosome <- paste("chr", object$chromosome, sep="")
                   }
+                  object$chromosome <- paste("chr", object$chromosome, sep="")
               } else if (all(grepl("^chr", object$chromosome))) {
                   if (verbose) {
                       memo <- paste0("Detected chr in the chromosome1 column of x...",
@@ -830,8 +336,8 @@ setMethod(f="chrSubsetSv",
                       memo <- paste0("Did not detect the prefix chr in the chromosome2 column",
                                      "of x... adding prefix")
                       message (memo)
-                      object$chromosome2 <- paste("chr", object$chromosome2, sep="")
                   }
+                  object$chromosome2 <- paste("chr", object$chromosome2, sep="")
               } else if (all(grepl("^chr", object$chromosome2))) {
                   if (verbose) { 
                       memo <- paste0("Detected chr in the chromosome2 column of x...",
@@ -847,11 +353,11 @@ setMethod(f="chrSubsetSv",
               ## Determine which chromosomes to plot
               ## Only include autosomes
               if (chromosomes[1] == "autosomes") {
-                  chromosomes <- paste("chr", as.character(c(seq(1:22))), sep="")
+                  chromosomes <- as.character(c(seq(1:22)))
               }
               ## Include all chromosomes
               if (chromosomes[1] == "all") {
-                  chromosomes <- unique(c(object$chromosome, object$chromosome2))
+                  chromosomes <- unique(object$chromosome)
                   chromosomes <- chromosomes[-grep("GL", chromosomes)]
                   chromosomes <- chromosomes[-grep("MT", chromosomes)]
               }
@@ -939,6 +445,27 @@ setMethod(f="annoGenomeCoordSv",
                   message(memo)
               }
               
+              ## Perform quality check on BSgenome object
+              if (is.null(BSgenome)) {
+                  memo <- paste("BSgenome object is not specified, whole chromosomes",
+                                "will not be plotted, this is not recommended!")
+                  warning(memo)
+                  object$chromosome <- factor(object$chromosome, levels=gtools::mixedsort(unique(as.character(object$chromosome))))
+                  object$chromosome2 <- factor(object$chromosome2, levels=gtools::mixedsort(unique(as.character(object$chromosome2))))
+                  
+                  return(object)
+              } else if (is(BSgenome, "BSgenome")) {
+                  if(verbose){
+                      memo <- paste("BSgenome passed object validity checks")
+                  }
+              } else {
+                  memo <- paste("class of the BSgenome object is", class(BSgenome),
+                                "should either be of class BSgenome or NULL",
+                                "setting this to param to NULL")
+                  warning(memo)
+                  BSgenome <- NULL
+              }
+              
               ## Create a data table of genomic coordinates end positions
               genomeCoord <- data.table::as.data.table(seqlengths(BSgenome))
               colnames(genomeCoord) <- c("end")
@@ -999,6 +526,18 @@ setMethod(f="sampleSubset",
               if(verbose){
                   memo <- paste("Performing sample subsets")
                   message(memo)
+              }
+              
+              ## If samples is null, we don't want to do anything and just return the object
+              if (is.null(samples)) {
+                  return(object)
+              }
+              
+              ## Perform quality checkes on the sample parameter arguments
+              if (!is.character(samples)) {
+                  memo <- paste("Input to samples should be a character vector, 
+                                attempting to coerce...")
+                  warning(memo)
               }
               
               ## Check for specified samples not in the original input
@@ -1151,19 +690,6 @@ setMethod(f="countGenes",
                   ## Get the total number of samples 
                   sample_num <- length(unique(object$sample))
                   
-                  ## Check if the svOrders are in the sv dataset
-                  if (!all(svOrder %in% object@vcfObject@svType$svtype)) {
-                      svOrder <- svOrder[which(svOrder %in% object@vcfObject@svType$svtype)]
-                      if (length(svOrder) == 0) {
-                          memo <- paste0("Structural variant types in the svOrder variable are not ",
-                                         "found in the SV dataset. Assigning the following order based on the ", 
-                                         "mutations found in the SV dataset: ",
-                                         paste(object@vcfObject@svType$svtype, collapse=" > "))
-                          message(memo)
-                          svOrder <- object@vcfObject@svType$svtype
-                      }
-                  }
-                  
                   ## Go through the list of genes and see how many times/samples it is mutated
                   final_df <- data.table::rbindlist(apply(genes, 1, function(x, object, svOrder, sample_num) {
                       ## Get the rows with the genes
@@ -1233,7 +759,7 @@ setMethod(f="countGenes",
 setMethod(f="svCytobands",
           signature="data.table",
           definition=function(object, genome, chrData, verbose) {
-              
+              #browser()
               ## Print status message
               if (verbose) {
                   message("Subsetting cytoband dataset.")
@@ -1286,7 +812,7 @@ setMethod(f="svCytobands",
 setMethod(f="adjustCentromeres", 
           signature="data.table",
           definition=function(object, chrCytobands, verbose) {
-              
+              #browser()
               ## Print status message
               if (verbose){
                   message("Adjusting positions of structural variants to account for centromere to aid in visualization.")
@@ -1334,7 +860,7 @@ setMethod(f="adjustCentromeres",
 #' @noRd
 setMethod(f="getStructuralVariantWindow",
           signature="data.table",
-          definition=function(object, chromosomes, chrData, chrCytobands, chrGap, verbose){
+          definition=function(object, chrData, chrCytobands, chrGap, verbose){
               
               ## Print status message
               if (verbose) {
@@ -1350,7 +876,7 @@ setMethod(f="getStructuralVariantWindow",
                   coi <- data.table(chromosomes)
               }
               if (is.null(chromosomes)) {
-                  coi <- data.table(chromosomes=unique(chrData$chromosome))
+                  coi <- unique(chrData$chromosome)
               }
               
               ## For each of the COI-chr combination, generate a dataset to plot
@@ -1504,6 +1030,28 @@ setMethod(f="buildSvPlot",
                   svWindow$direction <- gsub("\\[P\\[N", "5' to 5'", svWindow$direction)
                   svWindow$svtype <- gsub("BND", "TRA", svWindow$svtype)
                   
+                  
+                  ## Check the input variables
+                  checkPlotLayer <- function(plotLayer, name) {
+                      if(!is.null(plotLayer)){
+                          if(!is.list(plotLayer)){
+                              memo <- paste(name, " is not a list", sep="")
+                              stop(memo)
+                          }
+                          
+                          if(any(!unlist(lapply(plotLayer, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
+                              memo <- paste(name, " is not a list of ggproto or ",
+                                            "theme objects... setting plotALayers to NULL", sep="")
+                              warning(memo)
+                              plotLayer <- NULL
+                          }
+                      }
+                      return(plotLayer)
+                  }
+                  plotALayers <- checkPlotLayer(plotLayer=plotALayers, "plotALayers")
+                  plotBLayers <- checkPlotLayer(plotLayer=plotBLayers, "plotBLayers")
+                  plotCLayers <- checkPlotLayer(plotLayer=plotCLayers, "plotCLayers")
+                  
                   ## Assign colors for samples 
                   names(sampleColor) <- sample
                   
@@ -1517,18 +1065,12 @@ setMethod(f="buildSvPlot",
                                                                       plotTraGenes, plotOtherGenes,
                                                                       plotALayers, plotBLayers, 
                                                                       plotCLayers) {
-
                       ## Split the dataset by sample to assign color names
                       df <- split(dataset, f=dataset$sample)
                       dataset <- data.table::rbindlist(lapply(df, function(x, sampleColor){
                           if (nrow(x) > 0) {
                               sampleName <- as.character(x$sample[1])
-                              if (!is.null(sampleColor)) {
-                                  x$sampleColor <- sampleColor[which(names(sampleColor) == sampleName)]
-                              }
-                              if (is.null(sampleColor)) {
-                                  x$sampleColor <- sampleName
-                              }
+                              x$sampleColor <- sampleColor[which(names(sampleColor) == sampleName)]
                           }
                           return(x)
                       }, sampleColor=sampleColor))
@@ -1615,13 +1157,13 @@ setMethod(f="buildSvPlot",
                       dataset <- dataset[Direction!="cytoband"]
                       gene_text <- dataset[,c("Midpoint", "Total_Read_Support", "gene", "SV_Type")]
                       ## If there is sv events for translocations, get the gene text
-                      if (any(availableSvTypes %in% c("TRA", "BND"))) {
+                      if (availableSvTypes %in% c("TRA", "BND")) {
                           gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")] <- 
                               as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")])) + 
                               max(as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type=="TRA")])))*.05   
                       }
                       ## If there is sv events for non-translocations, get the gene text
-                      if (any(availableSvTypes %in% c("DEL", "DUP", "INV", "INS"))) {
+                      if (availableSvTypes %in% c("DEL", "DUP", "INV", "INS")) {
                           gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")] <- 
                               as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")])) + 
                               max(as.numeric(as.character(gene_text$Total_Read_Support[which(gene_text$SV_Type!="TRA")])))*.05                          
@@ -1646,30 +1188,22 @@ setMethod(f="buildSvPlot",
                           }
                       }
                       
+                      
                       ##########################################################
                       ##### Plot the translocation data ########################
                       ##########################################################
                       ## Get the start/end of chromosomes in the dataset if there is translocation data
                       ## TODO: Allow this to occur for intra-chromosomal translocations
-                      if (any(availableSvTypes %in% c("TRA", "BND"))){
+                      if (availableSvTypes %in% c("TRA", "BND")){
                           beziers <- data.frame(data.table::rbindlist(apply(diffChrSvWindow, 1, function(x) {
                               leftEnd <- data.table(position=as.numeric(x[2]), total_read_support=0, point="end", 
-                                                    type="cubic", 
-                                                    group=paste(as.character(x[2]), as.character(x[4]), as.character(x[5]),
-                                                                 as.character(x[7]), as.character(x[8]), sep="_"), 
-                                                    Sample=x[8], SV_Type=x[6],
+                                                    type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
                                                     Direction=x[5], sampleColor=x[13])
                               top <- data.table(position=as.numeric(x[10]), total_read_support=as.numeric(x[7])*2, point="control", 
-                                                type="cubic", 
-                                                group=paste(as.character(x[2]), as.character(x[4]), as.character(x[5]),
-                                                             as.character(x[7]), as.character(x[8]), sep="_"), 
-                                                Sample=x[8], SV_Type=x[6],
+                                                type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
                                                 Direction=x[5], sampleColor=x[13])
                               rightEnd <- data.table(position=as.numeric(x[4]), total_read_support=0, point="end", 
-                                                     type="cubic", 
-                                                     group=paste(as.character(x[2]), as.character(x[4]), as.character(x[5]),
-                                                                  as.character(x[7]), as.character(x[8]), sep="_"),
-                                                     Sample=x[8], SV_Type=x[6],
+                                                     type="cubic", group=as.character(x[2]), Sample=x[8], SV_Type=x[6],
                                                      Direction=x[5], sampleColor=x[13])
                               final <- rbind(leftEnd, top, rightEnd)
                               return(final)
@@ -1696,15 +1230,13 @@ setMethod(f="buildSvPlot",
                                                              mapping=aes_string(x='Midpoint', y='Total_Read_Support', label='gene'))
                           }
                           ## Assign colors to sample
-                          if (!is.null(sampleColor)) {
-                              traPlot <- traPlot + scale_color_manual(name="Sample", values=sampleColor)
-                          }
+                          traPlot <- traPlot + scale_color_manual(name="Sample", values=sampleColor)
                       }
                       
                       ##############################################################
                       ##### Plot the non TRA sv events #############################
                       ##############################################################
-                      if (any(availableSvTypes %in% c("DEL", "DUP", "INV", "INS"))) {
+                      if (availableSvTypes %in% c("DEL", "DUP", "INV", "INS")) {
                           maxY <- max(as.numeric(as.character(sameChrSvWindow$Total_Read_Support))) + 30
                           sameChrSvWindow$Total_Read_Support <- as.numeric(sameChrSvWindow$Total_Read_Support)
                           nonTraPlot <- ggplot() + geom_point(data=sameChrSvWindow,
@@ -1722,9 +1254,7 @@ setMethod(f="buildSvPlot",
                                                                    mapping=aes_string(x='Midpoint', y='Total_Read_Support', label='gene')) 
                           }
                           ## Assign colors to sample
-                          if (!is.null(sampleColor)) {
-                              nonTraPlot <- nonTraPlot + scale_color_manual(name="Sample", values=sampleColor)
-                          }
+                          nonTraPlot <- nonTraPlot + scale_color_manual(name="Sample", values=sampleColor)
                       }
                       
                       ##############################################################
