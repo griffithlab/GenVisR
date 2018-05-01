@@ -1,6 +1,21 @@
 ################################################################################
 ##################### Public/Private Class Definitions #########################
 
+#' Private Class svPlots - custom class that needs a definition
+#' 
+#' An S4 class for the of the svData class
+#' @name svPlots-class
+#' @rdname svPlots-class
+#' @slot Plots list of gtables for each chr combo
+#' @import methods
+#' @importFrom gtable gtable
+#' @noRd
+setClass("svPlots", 
+         representation=representation(plots="list"),
+         validity = function(object) {
+             
+         })
+
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Public Class !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
 
 #' Class StructuralVariant
@@ -18,7 +33,7 @@
 setClass("StructuralVariant",
          representation=representation(svData="data.table",
                                        geneData="data.table",
-                                       svPlots="list"),
+                                       svPlots="svPlots"),
          validity=function(object) {
              
          })
@@ -240,6 +255,7 @@ checkSvInputParameters <- function(object, BSgenome, filterSvCalls, svType, svOr
     ## Check is sample is NULL
     if (is.null(sample)) {
         sample <- unique(object@vcfObject@sample$sample)
+        sample <- factor(sample, levels=gtools::mixedsort(sample))
         memo <- paste0("Sample parameter cannot be NULL. All samples will be plotted.")
     }
     ## Check if sample is a character vector
@@ -664,21 +680,6 @@ svData <- function(object, BSgenome, filterSvCalls, svType, svOrder, maxSvSize, 
     ## Initialize the object
     new("svData", primaryData=primaryData, geneData=geneData, chrData=chrData, svWindow=svWindow, cytobands=chrCytobands)
 }
-
-#' Private Class svPlots
-#' 
-#' An S4 class for the of the svData class
-#' @name svPlots-class
-#' @rdname svPlots-class
-#' @slot Plots list of gtables for each chr combo
-#' @import methods
-#' @importFrom gtable gtable
-#' @noRd
-setClass("svPlots", 
-         representation=representation(plots="list"),
-         validity = function(object) {
-             
-         })
 
 #' Constructor for the svPlots class
 #' 
@@ -1478,7 +1479,7 @@ setMethod(f="buildSvPlot",
           definition=function(object, plotSV, plotSpecificGene, plotTraGenes, plotOtherGenes, 
                               cytobandColor, sample, sampleColor, plotALayers, 
                               plotBLayers, plotCLayers, sectionHeights,  verbose) {
-              
+
               if (plotSV == FALSE) {
                   ## Print status message
                   if (verbose) {
