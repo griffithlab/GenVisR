@@ -18,7 +18,7 @@
 setClass("StructuralVariant",
          representation=representation(svData="data.table",
                                        geneData="data.table",
-                                       svPlots="svPlots"),
+                                       svPlots="list"),
          validity=function(object) {
              
          })
