@@ -89,21 +89,21 @@ StructuralVariant <- function(input, BSgenome=NULL, filterSvCalls=TRUE, svType=N
                               sectionHeights=c(0.4, 0.1, 0.5), verbose=FALSE) {
 
     ## Check the input parameters
-    inputParameters <- checkSvInputParameters(object=input, BSgenome=BSgenome, 
-                                              filterSvCalls=filterSvCalls, 
-                                              svType=svType, svOrder=svOrder,
-                                              maxSvSize=maxSvSize, 
-                                              sample=sample, 
-                                              chromosomes=chromosomes, 
-                                              ensembl=ensembl, attributes=attributes, 
-                                              filters=filters, chrGap=chrGap, annotate=annotate, 
-                                              geneAnnotationFlank=geneAnnotationFlank, genome=genome, 
-                                              plotSV=plotSV, plotSpecificGene=plotSpecificGene, 
-                                              plotTraGenes=plotTraGenes, plotOtherGenes=plotOtherGenes, 
-                                              cytobandColor=cytobandColor, 
-                                              plotALayers=plotALayers, plotBLayers=plotBLayers,
-                                              plotCLayers=plotCLayers, sectionHeights=sectionHeights, 
-                                              sampleColor=sampleColor, verbose=verbose)
+    inputParameters <- checkSvInputParameters(object=input, BSgenome.=BSgenome, 
+                                              filterSvCalls.=filterSvCalls, 
+                                              svType.=svType, svOrder.=svOrder,
+                                              maxSvSize.=maxSvSize, 
+                                              sample.=sample, 
+                                              chromosomes.=chromosomes, 
+                                              ensembl.=ensembl, attributes.=attributes, 
+                                              filters.=filters, chrGap.=chrGap, annotate.=annotate, 
+                                              geneAnnotationFlank.=geneAnnotationFlank, genome.=genome, 
+                                              plotSV.=plotSV, plotSpecificGene.=plotSpecificGene, 
+                                              plotTraGenes.=plotTraGenes, plotOtherGenes.=plotOtherGenes, 
+                                              cytobandColor.=cytobandColor, 
+                                              plotALayers.=plotALayers, plotBLayers.=plotBLayers,
+                                              plotCLayers.=plotCLayers, sectionHeights.=sectionHeights, 
+                                              sampleColor.=sampleColor, verbose.=verbose)
     
     ## Calculate all data for the plots
     svDataset <- svData(object=input, BSgenome=inputParameters@BSgenome, 
