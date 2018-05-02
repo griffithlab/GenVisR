@@ -162,14 +162,14 @@ VariantCallFormat <- function(path=NULL, data=NULL, version="auto", svCaller=NUL
         x <- x[grepl("fileformat=", x)]
         
         ## Extract the version
-        x <- regmatches(x, regexpr("[0-9]+\\.*[0-9]*",x))
+        x <- as.character(regmatches(x, regexpr("[0-9]+\\.*[0-9]*",x)))
         
         if (length(x) != 1) {
             memo <- paste("Expected 1 entry for VCF version found:",
-                          length(x), "using", as.numeric(x[1]))
+                          length(x), "using", as.character(x[1]))
             warning(memo)
         }
-        return(as.numeric(x[1]))
+        return(as.character(x[1]))
     }
     if (version == "auto") {
         version <- unique(unlist(lapply(vcfHeader, a2)))
@@ -187,7 +187,7 @@ VariantCallFormat <- function(path=NULL, data=NULL, version="auto", svCaller=NUL
     }
     
     ## Perform quality check for the svCaller
-    if (!svCaller %in% c("Manta")) {
+    if (!svCaller %in% c("Manta", "Lumpy")) {
         memo <- paste0("The specified svCaller: ", svCaller, " is not supported. ",
                        "Only the following callers are support: Manta. ",
                        "Make sure the svCaller is one of the ",
@@ -200,8 +200,12 @@ VariantCallFormat <- function(path=NULL, data=NULL, version="auto", svCaller=NUL
         vcfObject <- VCF_Manta_v4.1(vcfData=vcfData, vcfHeader=vcfHeader, paired=paired, tumorColumn=tumorColumn)
     } else if (version == "4.2" & svcaller =="Manta") {
         vcfObject <- VCF_Manta_v4.2(vcfData=vcfData, vcfHeader=vcfHeader, paired=paired, tumorColumn=tumorColumn)
+    } else if (version=="4.1" & svCaller == "Lumpy"){
+        vcfObject <- VCF_Lumpy_v4.1(vcfData=vcfData, vcfHeader=vcfHeader, paired=paired, tumorColumn=tumorColumn)
+    } else if (version == "4.2" & svCaller=="Lumpy") {
+        vcfObject <- VCF_Lumpy_v4.2(vcfData=vcfData, vcfHeader=vcfHeader, paired=paired, tumorColumn=tumorColumn)
     } else {
-        memo <- paste("Currently only VCF versions 4.1 and 4.2 for Manta are supported,",
+        memo <- paste("Currently only VCF versions 4.1 and 4.2 outputted by Manta and Lumpy are supported,",
                       "make a feature request on", 
                       "https://github.com/griffithlab/GenVisR!")
         stop(memo)

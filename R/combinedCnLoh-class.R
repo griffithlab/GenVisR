@@ -45,26 +45,51 @@ setClass(
 #' coordinates
 #' @export
 cnLoh <- function(cnInput, lohInput, samples, chromosomes, BSgenome, windowSize,
-                  step, normal, plotAColor, plotALayers, plotBAlpha,
-                  somaticLohCutoff, plotBTumorColor, plotBNormalColor, plotBLayers,
-                  plotCLimits, plotCLowColor, plotCHighColor, plotCLayers, 
+                  step, getHeterozygousLohCalls, plotAColor, plotALayers, plotBAlpha,
+                  somaticLohCutoff, plotBColors, plotBLayers,
+                  plotCLimits, plotCColors, plotCLayers, 
                   sectionHeights, verbose) {
     
+    ## Check each of the input parameters
+    cnLohInputParameters <- checkCombinedCnLohInputParameters(cnInput=cnInput, lohInput=lohInput, samples=samples,
+                                                              chromosomes=chromosomes, BSgenome=BSgenome,
+                                                              windowSize=windowSize, step=step, 
+                                                              getHeterozygousLohCalls=getHeterozygousLohCalls,
+                                                              somaticLohCutoff=somaticLohCutoff,
+                                                              plotAColor=plotAColor, plotALayers=plotALayers,
+                                                              plotBAlpha=plotBAlpha, plotBColors=plotBColors,
+                                                              plotBLayers=plotBLayers, plotClimits=plotCLimits,
+                                                              plotCColors=plotCColors, plotCLayers=plotCLayers,
+                                                              sectionHeights=sectionHeights, verbose=verbose)
+    
     ## Obtain cn, somatic loh, and germline loh datasets to plot
-    cnLohDataset <- cnLohData(cnInput=cnInput, lohInput=lohInput, samples=samples, chromosomes=chromosomes,
-                              BSgenome=BSgenome, windowSize=windowSize,
-                              step=step, normal=normal, verbose=verbose)
+    cnLohDataset <- cnLohData(cnInput=cnInput, lohInput=lohInput, 
+                              samples=checkCombinedCnLohInputParameters@samples, 
+                              chromosomes=checkCombinedCnLohInputParameters@chromosomes,
+                              BSgenome=checkCombinedCnLohInputParameters@BSgenome, 
+                              windowSize=checkCombinedCnLohInputParameters@windowSize,
+                              step=checkCombinedCnLohInputParameters@step, 
+                              normal=checkCombinedCnLohInputParameters@getHeterozygousLohCalls, 
+                              verbose=checkCombinedCnLohInputParameters@verbose)
     
     ## Generate the cn, somatic LOH, and germline LOH plots
-    plots <- cnLohPlots(object=cnLohDataset, plotAColor=plotAColor, plotALayers=plotALayers, 
-                        plotBAlpha=plotBAlpha, somaticLohCutoff=somaticLohCutoff, plotBTumorColor=plotBTumorColor, 
-                        plotBNormalColor=plotBNormalColor, plotBLayers=plotBLayers, 
-                        plotCLimits=plotCLimits, 
-                        plotCLowColor=plotCLowColor, plotCHighColor=plotCHighColor, 
-                        plotCLayers=plotCLayers, verbose=verbose)
+    plots <- cnLohPlots(object=cnLohDataset, 
+                        somaticLohCutoff=checkCombinedCnLohInputParameters@somaticLohCutoff, 
+                        plotAColor=checkCombinedCnLohInputParameters@plotAColor, 
+                        plotALayers=checkCombinedCnLohInputParameters@plotALayers, 
+                        plotBAlpha=checkCombinedCnLohInputParameters@plotBAlpha, 
+                        plotBColors=checkCombinedCnLohInputParameters@plotBColors,
+                        plotBNormalColor=checkCombinedCnLohInputParameters@plotBNormalColor, 
+                        plotBLayers=checkCombinedCnLohInputParameters@plotBLayers, 
+                        plotCLimits=checkCombinedCnLohInputParameters@plotCLimits, 
+                        plotCLowColor=checkCombinedCnLohInputParameters@plotCColors, 
+                        plotCLayers=checkCombinedCnLohInputParameters@plotCLayers, 
+                        verbose=checkCombinedCnLohInputParameters@verbose)
     
     ## Arrange all of the plots together
-    Grob <- arrangeCnLohPlots(object=plots, sectionHeights=sectionHeights, verbose=verbose)
+    Grob <- arrangeCnLohPlots(object=plots, 
+                              sectionHeights=checkCombinedCnLohInputParameters@sectionHeights, 
+                              verbose=checkCombinedCnLohInputParameters@verbose)
     
     ## Initialize the object
     new("cnLoh", cnData=getData(cnLohDataset, index=1), cnPlot=getGrob(plots, index=1),
@@ -74,6 +99,360 @@ cnLoh <- function(cnInput, lohInput, samples, chromosomes, BSgenome, windowSize,
 }
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
+#' Private Class cnLohInputParameters
+#' 
+#' An S4 class to check input parameters of the combinedCnLoh function
+#' @name cnLohInputParameters-class
+#' @noRd
+setClass("cnLohInputParameters",
+         representation=representation(samples="character",
+                                       chromosomes="character", BSgenome="BSgenome",
+                                       windowSize="numeric", step="numeric", 
+                                       getHeterozygousLohCalls="logical",
+                                       somaticLohCutoff="numeric",
+                                       plotAColor="character", plotALayers="list",
+                                       plotBAlpha="numeric", plotBColors="character",
+                                       plotBLayers="list", plotClimits="numeric",
+                                       plotCColors="character", plotCLayers="list",
+                                       sectionHeights="numeric", verbose="logical"), 
+         validity=function(object){
+             
+         })
+
+#' Constructor for the cnLohInputParameters class
+#' 
+#' @name cnLohInputParameters
+#' @rdname cnLohInputParameters-class
+#' @noRd
+checkCombinedCnLohInputParameters <- function(cnInput, lohInput, samples, chromosomes, BSgenome,
+                                              windowSize, step, getHeterozygousLohCalls,
+                                              somaticLohCutoff, plotAColor, plotALayers,
+                                              plotBAlpha, plotBColors, plotBLayers, plotClimits,
+                                              plotCColors, plotCLayers, sectionHeights, verbose) {
+    ##### Check the verbose parameter #####
+    ## Check to see if verbose is a boolean
+    if (!is.logical(verbose) | is.null(verbose)) {
+        memo <- paste0("The verbose parameter is not a boolean (T/F). Coercing verbose to be FALSE...")
+        message(memo)
+        verbose <- FALSE
+    }
+    
+    ##### TODO: Check the samples parameter ##### 
+    ## Check is samples is NULL
+    if (is.null(samples)) {
+        samples <- unique(object@sample$sample)
+        samples <- factor(samples, levels=gtools::mixedsort(samples))
+        memo <- paste0("Sample parameter cannot be NULL. All samples will be plotted.")
+        message(memo)
+    }
+    ## Check if samples is a character vector
+    if (!is.character(samples)) {
+        memo <- paste0("samples variable not of the character class. Attempting to coerce.")
+        samples <- as.character(samples)
+        message(memo)
+    }
+    
+    ## Check if the designated samples is in the sv dataset
+    if (!is.null(samples)) {
+        `%nin%` = Negate(`%in%`)
+        discrepantSamples <- paste(samples[which(samples %nin% unique(object@sample$sample))], collapse=", ")
+        if (length(discrepantSamples) > 0 & discrepantSamples != "") {
+            memo <- paste0("The desired samples: ", discrepantSamples, " are not found ",
+                           "in the SV dataset. Available sample names include: ", 
+                           paste(unique(object@sample$sample), collapse=", "), ". ",
+                           "Please designate valid sample names.")
+            stop(memo)
+        }
+    }
+    
+    ##### Check the chromosomes parameter #####
+    if (is.null(chromosomes)) {
+        chromosomes <- paste("chr", seq(1:22), sep="")
+        memo <- paste0("chromosomes parameter cannot be NULL. Using all autosomes...")
+        message(memo)
+    }
+    ## Check if chromosomes is a character vector
+    if (!is.character(chromosomes)) {
+        memo <- paste0("chromosomes variable not of the character class. Attempting to coerce.")
+        chromosomes <- as.character(chromosomes)
+        message(memo)
+    }
+    ## Check if it has the "chr" prefix
+    # Check to see if the chromosomes variable has "chr" in front if not NULL, autosomes, or all
+    if (all(chromosomes!="autosomes") & all(chromosomes!="all")) {
+        if (!all(grepl("^chr", chromosomes))) {
+            if (verbose) {
+                memo <- paste0("Did not detect the prefix chr in the chromosomes specified ",
+                               "in the `chromosomes` variable... adding prefix")
+                message(memo)
+                chromosomes <- paste("chr", chromosomes, sep="")
+            } 
+        } else if (all(grepl("^chr", chromosomes))) {
+            if (verbose) {
+                memo <- paste0("Detected chr in the `chromosomes` variable...",
+                               "proceeding")
+                message(memo)
+            } 
+        } else {
+            memo <- paste0("Detected unknown or mixed prefixes in the `chromosomes`` variable",
+                           " colum of object... should either be chr or non (i.e.) chr1 or 1")
+            message(memo)
+        }
+    }
+    
+    ##### Check the BSgenome parameter #####
+    ## Check to see if BSgenome is a BSgenome
+    if (is.null(BSgenome)) {
+        memo <- paste("BSgenome object is not specified. This parameter is required ",
+                      "to get the lengths of the chromsomes being plotted.")
+        stop(memo)
+    } else if (is(BSgenome, "BSgenome")) {
+        memo <- paste("BSgenome passed object validity checks")
+        message(memo)
+    } else {
+        memo <- paste("class of the BSgenome object is", class(BSgenome),
+                      ". Should be of class BSgenome. This parameter is required ",
+                      "to get the lengths of the chromsomes being plotted.")
+        stop(memo)
+        BSgenome <- NULL
+    }
+    
+    ##### Check the windowSize parameter #####
+    if (is.null(windowSize)) {
+        windowSize <- 2500000
+        memo <- paste0("windowSize parameter cannot be NULL. Setting the windowSize value to 2500000.")
+        message(memo)
+    }
+    ## Check if windowSize is numeric
+    if (!is.numeric(windowSize)) {
+        memo <- paste0("windowSize variable not of the numeric class. Attempting to coerce.")
+        windowSize <- as.numeric(windowSize)
+        message(memo)
+    }
+    
+    ##### Check the step parameter #####
+    if (is.null(step)) {
+        step <- 1000000
+        memo <- paste0("step parameter cannot be NULL. Setting the step value to 1000000.")
+        message(memo)
+    }
+    ## Check if step is numeric
+    if (!is.numeric(step)) {
+        memo <- paste0("step variable not of the numeric class. Attempting to coerce.")
+        step <- as.numeric(step)
+        message(memo)
+    }
+    ## Check to see if step is greater than windowSize
+    if (step > windowSize) {
+        memo <- paste("Step value is greater than windowSize. Make sure that the step value is 
+                      at most equal to the WindowSize. Using default values for both parameters.")
+        warning(memo)
+        step <- 1000000
+        windowSize <- 2500000
+        
+    }
+    
+    ##### Check the getHeterozygousLohCalls #####
+    if (!is.logical(getHeterozygousLohCalls) | is.null(getHeterozygousLohCalls)) {
+        memo <- paste0("The getHeterozygousLohCalls parameter is not a boolean (T/F). ",
+                       "Coercing getHeterozygousLohCalls to be TRUE...")
+        message(memo)
+        getHeterozygousLohCalls <- FALSE
+    }
+    
+    ##### Check the somaticLohCutoff #####
+    if (is.null(somaticLohCutoff)) {
+        somaticLohCutoff <- 0.1
+        memo <- paste0("somaticLohCutoff parameter cannot be NULL. Setting the somaticLohCutoff value to 0.1.")
+        message(memo)
+    }
+    ## Check if somaticLohCutoff is numeric
+    if (!is.numeric(somaticLohCutoff)) {
+        memo <- paste0("somaticLohCutoff variable not of the numeric class. Attempting to coerce.")
+        somaticLohCutoff <- as.numeric(somaticLohCutoff)
+        message(memo)
+    }
+    
+    ##### Check the plotALayers, plotBLayers, and plotCLayers #####
+    checkPlotLayer <- function(plotLayer, name) {
+        if(!is.null(plotLayer)){
+            if(!is.list(plotLayer)){
+                memo <- paste(name, " is not a list", sep="")
+                stop(memo)
+            }
+            
+            if(any(!unlist(lapply(plotLayer, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
+                memo <- paste(name, " is not a list of ggproto or ",
+                              "theme objects... setting plotALayers to NULL", sep="")
+                warning(memo)
+                plotLayer <- NULL
+            }
+        }
+        return(plotLayer)
+    }
+    plotALayers <- checkPlotLayer(plotLayer=plotALayers, "plotALayers")
+    plotBLayers <- checkPlotLayer(plotLayer=plotBLayers, "plotBLayers")
+    plotCLayers <- checkPlotLayer(plotLayer=plotCLayers, "plotCLayers")
+    
+    ##### Check the plotAColor #####
+    ## Check if it is a character vector
+    if (is.null(plotAColor)) {
+        memo <- paste0("plotAColor was set to NULL. Using default color.")
+        message(memo)
+        plotAColor <- c("Blue")
+    }
+    if (!is.character(plotAColor)) {
+        memo <- paste0("plotAColor variable not of the character class. Attempting to coerce.")
+        plotAColor <- as.character(plotAColor)
+        message(memo)
+    }
+    areColors <- function(x) {
+        sapply(x, function(X) {
+            tryCatch(is.matrix(col2rgb(X)), 
+                     error = function(e) FALSE)
+        })
+    }
+    if (any(areColors(plotAColor) == FALSE)) {
+        ## Get the invalid color
+        nonColor <- plotAColor[which(data.table(areColors(plotAColor))$V1==FALSE)]
+        memo <- paste0("The ", nonColor, " designated in the plotAColor parameter is not a valid color. ",
+                       "Making the plotAColor to be: Blue.")
+        
+        message(memo)
+        plotAColor <- c("Blue")
+    }
+    
+    ##### Check the plotBAlpha #####
+    if (is.null(plotBAlpha)) {
+        plotBAlpha <- 0.75
+        memo <- paste0("plotBAlpha parameter cannot be NULL. Setting the plotBAlpha value to 0.75")
+        message(memo)
+    }
+    ## Check if plotBAlpha is numeric
+    if (!is.numeric(plotBAlpha)) {
+        memo <- paste0("plotBAlpha variable not of the numeric class. Attempting to coerce.")
+        plotBAlpha <- as.numeric(plotBAlpha)
+        message(memo)
+    }
+    
+    ##### Check the plotBColors #####
+    ## Check if it is a character vector
+    if (is.null(plotBColors)) {
+        memo <- paste0("plotBColors was set to NULL. Using default colors. ",
+                       "Tumor vaf calls will be ",
+                       "dark green and normal vaf calls will be dark red.")
+        message(memo)
+        plotBColors <- c("Dark Green", "Dark Red")
+    }
+    if (!is.character(plotBColors)) {
+        memo <- paste0("plotBColors variable not of the character class. Attempting to coerce.")
+        plotBColors <- as.character(plotBColors)
+        message(memo)
+    }
+    areColors <- function(x) {
+        sapply(x, function(X) {
+            tryCatch(is.matrix(col2rgb(X)), 
+                     error = function(e) FALSE)
+        })
+    }
+    if (any(areColors(plotBColors) == FALSE)) {
+        ## Get the invalid color
+        nonColor <- plotBColors[which(data.table(areColors(plotBColors))$V1==FALSE)]
+        memo <- paste0("The ", nonColor, " designated in the plotBColors parameter is not a valid color. ",
+                       "Making the plotBColors to be: dark green and dark red. Tumor vaf calls will be ",
+                       "dark green and normal vaf calls will be dark red.")
+        
+        message(memo)
+        plotBColors <- c("Dark Green", "Dark Red")
+    }
+    
+    ##### Check the plotCLimits #####
+    if (is.null(plotCLimits)) {
+        plotCLimits <- 25
+        memo <- paste0("plotCLimits parameter cannot be NULL. Setting the plotCLimits value to 25")
+        message(memo)
+    }
+    ## Check if plotCLimits is numeric
+    if (!is.numeric(plotCLimits)) {
+        memo <- paste0("plotCLimits variable not of the numeric class. Attempting to coerce.")
+        plotCLimits <- as.numeric(plotCLimits)
+        message(memo)
+    }
+    
+    ##### Check the plotCColors #####
+    ## Check if it is a character vector
+    if (is.null(plotCColors)) {
+        memo <- paste0("plotCColors was set to NULL. Using default colors. ",
+                       "Tumor vaf calls will be ",
+                       "dark green and normal vaf calls will be dark red.")
+        message(memo)
+        plotCColors <- c("white", "Dark Red")
+    }
+    if (!is.character(plotCColors)) {
+        memo <- paste0("plotCColors variable not of the character class. Attempting to coerce.")
+        plotCColors <- as.character(plotCColors)
+        message(memo)
+    }
+    areColors <- function(x) {
+        sapply(x, function(X) {
+            tryCatch(is.matrix(col2rgb(X)), 
+                     error = function(e) FALSE)
+        })
+    }
+    if (any(areColors(plotCColors) == FALSE)) {
+        ## Get the invalid color
+        nonColor <- plotCColors[which(data.table(areColors(plotCColors))$V1==FALSE)]
+        memo <- paste0("The ", nonColor, " designated in the plotCColors parameter is not a valid color. ",
+                       "Making the plotCColors to be: white and dark red.")
+        
+        message(memo)
+        plotCColors <- c("white", "Dark Red")
+    }
+    ##### Check the sectionHeights #####
+    ## Check if it not NULL
+    if (is.null(sectionHeights)) {
+        sectionHeights <- c(0.3, 0.4, 0.3)
+        memo <- paste0("sectionHeights variable cannot be NULL. Using default values.")
+        message(memo)
+    }
+    
+    ## Check that values are numeric
+    if (!is.numeric(sectionHeights)) {
+        memo <- paste0("sectionHeights valures are not class numeric. Attempting to coerce...")
+        message(memo)
+        sectionHeights <- as.numeric(sectionHeights)
+    }
+    
+    ## Check that the values are > 0
+    if (any(sectionHeights<0)) {
+        memo <- paste0("sectionHeights cannot be a negative value. Using default values.")
+        message(memo)
+        sectionHeights <- c(0.3, 0.4, 0.3)
+    }
+    
+    ## Check that there are 2 values in the variable
+    if (length(sectionHeights)!=3) {
+        memo <- paste0("3 values must be supplied to the sectionHeights parameter, which specifies the ",
+                       "relative height of the cn plot, somatic loh plot, and germline plot respecively.")
+        message(memo)
+        sectionHeights <- c(0.3, 0.4, 0.3)
+    }
+    
+    ## Check that the values sum up to 1
+    if (sum(sectionHeights)!=1) {
+        memo <- paste0("sectionHeight values do not equal 1. Using default values.")
+        message(memo)
+        sectionHeights <- c(0.3, 0.4, 0.3)
+    }
+    
+    new("cnLohInputParameters", samples=samples, chromosomes=chromosomes, BSgenome=BSgenome,
+        windowSize=windowSize, step=step, getHeterozygousLohCalls=getHeterozygousLohCalls,
+        somaticLohCutoff=somaticLohCutoff, plotAColor=plotAColor, plotALayers=plotALayers,
+        plotBAlpha=plotBAlpha, plotBColors=plotBColors, plotBLayers=plotBLayers, 
+        plotClimits=plotCLimits, plotCColors=plotCColors, plotCLayers=plotCLayers,
+        sectionHeights=sectionHeights, verbose=verbose)    
+}
 
 #' Private Class cnLohData
 #' 
@@ -345,22 +724,6 @@ setMethod(f="chrSubset",
                   message(memo)
               }
               
-              # if chromosomes is null we dont want to do anything just return the object back
-              if(is.null(chromosomes)){
-                  return(object)
-              }
-              
-              # perform quality checks on the chromosome parameter arguments
-              
-              # check for character vector
-              if(!is.character(chromosomes)){
-                  memo <- paste("Input to chromosomes should be a character vector,
-                                specifying which chromosomes to plot, 
-                                attempting to coerce...")
-                  warning(memo)
-                  chromosomes <- as.character(chromosomes)
-              }
-              
               ## Check format of the chromosome column
               if (!all(grepl("^chr", object$chromosome))) {
                   memo <- paste0("Did not detect the prefix chr in the chromosome column ",
@@ -428,18 +791,6 @@ setMethod(f="sampleSubset",
               if(verbose){
                   memo <- paste("Performing sample subsets")
                   message(memo)
-              }
-              
-              ## If samples is null, we don't want to do anything and just return the object
-              if (is.null(samples)) {
-                  return(object)
-              }
-              
-              ## Perform quality checkes on the sample parameter arguments
-              if (!is.character(samples)) {
-                  memo <- paste("Input to samples should be a character vector, 
-                                attempting to coerce...")
-                  warning(memo)
               }
               
               ## Check for specified samples not in the original input
@@ -556,25 +907,6 @@ setMethod(f="annoGenomeCoord",
                   message(memo)
               }
               
-              ## Perform quality check on BSgenome object
-              if (is.null(BSgenome)) {
-                  memo <- paste("BSgenome object is not specified, whole chromosomes",
-                                "will not be plotted, this is not recommended!")
-                  warning(memo)
-                  object$chromosome <- factor(object$chromosome, levels=gtools::mixedsort(unique(as.character(object$chromosome))))
-                  return(object)
-              } else if (is(BSgenome, "BSgenome")) {
-                  if(verbose){
-                      memo <- paste("BSgenome passed object validity checks")
-                  }
-              } else {
-                  memo <- paste("class of the BSgenome object is", class(BSgenome),
-                                "should either be of class BSgenome or NULL",
-                                "setting this to param to NULL")
-                  warning(memo)
-                  BSgenome <- NULL
-              }
-              
               ## Create a data table of genomic coordinates end positions
               genomeCoord <- data.table::as.data.table(seqlengths(BSgenome))
               colnames(genomeCoord) <- c("end")
@@ -630,33 +962,6 @@ setMethod(f="getLohSlidingWindow",
                   message("Calcuating window sizes for loh calcluations on all chromosomes in each individual sample")
               }
               
-              ## Perform quality check on input variables
-              
-              ## Check that step and windowSize are numeric vectors with length of 1
-              if (!is.numeric(windowSize)) {
-                  memo <- paste("WindowSize input value is not a numeric vector, attempting to coerce...")
-                  warning(memo)
-              }
-              if (!is.numeric(step)) {
-                  memo <- paste("Step input value is not a numeric vector, attempting to coerce...")
-                  warning(memo)
-              }
-              if (length(windowSize) > 1) {
-                  memo <- paste("Use only 1 numeric value to specify window size.")
-                  warning(memo)
-                  stop()
-              }
-              if (length(step) > 1) {
-                  memo <- paste("Use only 1 numeric value to specify step size.")
-                  warning(memo)
-                  stop()
-              }
-              if (step > windowSize) {
-                  memo <- paste("Step value is greater than windowSize. Make sure that the step value is 
-                                at most equal to the WindowSize. Changing step value to match the windowSize value.")
-                  warning(memo)
-                  step <- windowSize
-              }
               ## Obtain lists for each sample and chromosome
               out <- split(object, list(as.character(object$chromosome),
                                         as.character(object$sample)))
@@ -700,7 +1005,6 @@ setMethod(f="getLohSlidingWindow",
               return(window)
           })
 
-
 ###############################################################
 ##### Function to perform loh calcluations in each window #####
 #' @rdname getLohCalculation-methods
@@ -716,14 +1020,6 @@ setMethod(f="getLohCalculation",
               ## Print status message
               if (verbose) {
                   message("Calculating absolute mean difference between t/n VAF at each coordinate provided.")
-              }
-              
-              ## Perform quality checkes on the input parameters
-              if (!is.logical(normal)) {
-                  memo <- ("Input to specify normal VAF should be a boolean (T/F). True if 
-                           user wants to use normal VAF from varscan to identify tumor/normal LOH difference. 
-                           Flase if user wants to use 0.5 to identify tumor/normal LOH difference.")
-                  message(memo)
               }
               
               ## Split object for each unqiuq sample-chr combination
@@ -944,21 +1240,6 @@ setMethod(f="buildSomaticLohPlot",
                   message("Building somatic loh plot")
               }
               
-              ## Perform quality checks on the input variables
-              if(!is.null(plotBLayers)){
-                  if(!is.list(plotBLayers)){
-                      memo <- paste("plotBLayers is not a list")
-                      stop(memo)
-                  }
-                  
-                  if(any(!unlist(lapply(plotBLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
-                      memo <- paste("plotBLayers is not a list of ggproto or ",
-                                    "theme objects... setting plotBLayers to NULL")
-                      warning(memo)
-                      plotBLayers <- NULL
-                  }
-              } 
-              
               ## Separate datasets
               segLohData <- object@segLohData
               segLohData <- segLohData[seg.mean > somaticLohCutoff]
@@ -1031,21 +1312,6 @@ setMethod(f="buildGermlineLohPlot",
                   message("Building germline loh plot")
               }
               
-              ## Perform quality checks on the input variables
-              if(!is.null(plotCLayers)){
-                  if(!is.list(plotCLayers)){
-                      memo <- paste("plotCLayers is not a list")
-                      stop(memo)
-                  }
-                  
-                  if(any(!unlist(lapply(plotCLayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
-                      memo <- paste("plotCLayers is not a list of ggproto or ",
-                                    "theme objects... setting plotCLayers to NULL")
-                      warning(memo)
-                      plotCLayers <- NULL
-                  }
-              }
-              
               ## Separate datasets
               germlineLohData <- object@rawGermlineLohData
               chrData <- object@chrData
@@ -1094,20 +1360,6 @@ setMethod(f="arrangeCnLohPlots",
                   message("Combining cn, somatic loh, and germline loh plots")
               }
               
-              ## Perform quality checkes on input parameters
-              if (!is.numeric(sectionHeights)) {
-                  memo <- paste("Values specified for the section heights are 
-                                not numeric, attempting to coerce...")
-                  message(memo)
-              }
-              if (length(sectionHeights) != 3) {
-                  memo <- paste("Heights for cn/loh figures are not specified. The sectionHegihts
-                                variable should be a numeric vector of legth 3 specifying the heights of each of the 
-                                3 figures (cn, somatic loh, and germline loh).")
-                  message(memo)
-                  stop()
-              } 
-              
               ## Grab the data we need
               plotA <- object@cnPlot
               plotB <- object@somaticLohPlot
@@ -1122,27 +1374,6 @@ setMethod(f="arrangeCnLohPlots",
               ## Set the widths for all plots
               for (i in 1:length(plotList)) {
                   plotList[[i]]$widths <- maxWidth
-              }
-              
-              ## Set section heights based upon the number of sections
-              defaultPlotHeights <- c(0.3, 0.4, 0.3)
-              
-              if(is.null(sectionHeights)){
-                  if(length(plotList) < 3){
-                      defaultPlotHeights <- defaultPlotHeights[-length(defaultPlotHeights)]
-                  }
-                  sectionHeights <- defaultPlotHeights
-              } else if(length(sectionHeights) != length(plotList)){
-                  memo <- paste("There are", length(sectionHeights), "section heights provided",
-                                "but", length(plotList), "vertical sections...",
-                                "using default values!")
-                  warning(memo)
-                  sectionHeights <- defaultPlotHeights
-              } else if(!all(is.numeric(sectionHeights))) {
-                  memo <- paste("sectionHeights must be numeric... Using",
-                                "default values!")
-                  warning(memo)
-                  sectionHeights <- defaultPlotHeights
               }
               
               ## Arrange the final plot

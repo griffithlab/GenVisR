@@ -954,3 +954,25 @@ setGeneric(
     name="checkSvInputParameters",
     def=function(object, ...){standardGeneric("checkSvInputParameters")}
 )
+
+#' Method checkLohInputParameters
+#' 
+#' @name checkLohInputParameters
+#' @rdname checkLohInputParameters-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="checkLohInputParameters",
+    def=function(object, ...){standardGeneric("checkLohInputParameters")}
+)
+
+#' Method checkCnLohInputParameters
+#' 
+#' @name checkCnLohInputParameters
+#' @rdname checkCnLohInputParameters-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="checkCnLohInputParameters",
+    def=function(object, ...){standardGeneric("checkCnLohInputParameters")}
+)

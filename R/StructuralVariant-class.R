@@ -89,21 +89,21 @@ StructuralVariant <- function(input, BSgenome=NULL, filterSvCalls=TRUE, svType=N
                               sectionHeights=c(0.4, 0.1, 0.5), verbose=FALSE) {
 
     ## Check the input parameters
-    inputParameters <- checkSvInputParameters(object=input, BSgenome.=BSgenome, 
-                                              filterSvCalls.=filterSvCalls, 
-                                              svType.=svType, svOrder.=svOrder,
-                                              maxSvSize.=maxSvSize, 
-                                              sample.=sample, 
-                                              chromosomes.=chromosomes, 
-                                              ensembl.=ensembl, attributes.=attributes, 
-                                              filters.=filters, chrGap.=chrGap, annotate.=annotate, 
-                                              geneAnnotationFlank.=geneAnnotationFlank, genome.=genome, 
-                                              plotSV.=plotSV, plotSpecificGene.=plotSpecificGene, 
-                                              plotTraGenes.=plotTraGenes, plotOtherGenes.=plotOtherGenes, 
-                                              cytobandColor.=cytobandColor, 
-                                              plotALayers.=plotALayers, plotBLayers.=plotBLayers,
-                                              plotCLayers.=plotCLayers, sectionHeights.=sectionHeights, 
-                                              sampleColor.=sampleColor, verbose.=verbose)
+    inputParameters <- checkSvInputParameters(object=input, BSgenome=BSgenome, 
+                                              filterSvCalls=filterSvCalls, 
+                                              svType=svType, svOrder=svOrder,
+                                              maxSvSize=maxSvSize, 
+                                              sample=sample, 
+                                              chromosomes=chromosomes, 
+                                              ensembl=ensembl, attributes=attributes, 
+                                              filters=filters, chrGap=chrGap, annotate=annotate, 
+                                              geneAnnotationFlank=geneAnnotationFlank, genome=genome, 
+                                              plotSV=plotSV, plotSpecificGene=plotSpecificGene, 
+                                              plotTraGenes=plotTraGenes, plotOtherGenes=plotOtherGenes, 
+                                              cytobandColor=cytobandColor, 
+                                              plotALayers=plotALayers, plotBLayers=plotBLayers,
+                                              plotCLayers=plotCLayers, sectionHeights=sectionHeights, 
+                                              sampleColor=sampleColor, verbose=verbose)
     
     ## Calculate all data for the plots
     svDataset <- svData(object=input, BSgenome=inputParameters@BSgenome, 
@@ -185,17 +185,17 @@ checkSvInputParameters <- function(object, BSgenome, filterSvCalls, svType, svOr
     ##### Check BSgenome parameter #####
     ## Check to see if BSgenome is a BSgenome
     if (is.null(BSgenome)) {
-        memo <- paste("BSgenome object is not specified, whole chromosomes",
-                      "will not be plotted, this is not recommended!")
-        warning(memo)
+        memo <- paste("BSgenome object is not specified. This parameter is required ",
+                      "to get the lengths of the chromsomes being plotted.")
+        stop(memo)
     } else if (is(BSgenome, "BSgenome")) {
         memo <- paste("BSgenome passed object validity checks")
         message(memo)
     } else {
         memo <- paste("class of the BSgenome object is", class(BSgenome),
-                      "should either be of class BSgenome or NULL",
-                      "setting this to param to NULL")
-        warning(memo)
+                      ". Should be of class BSgenome. This parameter is required ",
+                      "to get the lengths of the chromsomes being plotted.")
+        stop(memo)
         BSgenome <- NULL
     }
     
@@ -257,12 +257,26 @@ checkSvInputParameters <- function(object, BSgenome, filterSvCalls, svType, svOr
         sample <- unique(object@vcfObject@sample$sample)
         sample <- factor(sample, levels=gtools::mixedsort(sample))
         memo <- paste0("Sample parameter cannot be NULL. All samples will be plotted.")
+        message(memo)
     }
     ## Check if sample is a character vector
     if (!is.character(sample)) {
         memo <- paste0("sample variable not of the character class. Attempting to coerce.")
         sample <- as.character(sample)
         message(memo)
+    }
+    
+    ## Check if the designated samples is in the sv dataset
+    if (!is.null(sample)) {
+        `%nin%` = Negate(`%in%`)
+        discrepantSamples <- paste(sample[which(sample %nin% object@vcfObject@sample$sample)], collapse=", ")
+        if (length(discrepantSamples) > 0 & discrepantSamples != "") {
+            memo <- paste0("The desired samples: ", discrepantSamples, " are not found ",
+                           "in the SV dataset. Available sample names include: ", 
+                           paste(object@vcfObject@sample$sample, collapse=", "), ". ",
+                           "Please designate valid sample names.")
+            stop(memo)
+        }
     }
     
     ##### Check chromosomes parameter #####
@@ -510,6 +524,7 @@ checkSvInputParameters <- function(object, BSgenome, filterSvCalls, svType, svOr
         nonColor <- cytobandColor[which(data.table(areColors(cytobandColor))$V1==FALSE)]
         memo <- paste0("The ", nonColor, " designated in the cytobandColor parameter is not a valid color. ",
                        "Making the cytoband colors dark grey and light grey.")
+        stop(memo)
     }
     
     ##### Check sampleColor parameter #####
@@ -539,7 +554,8 @@ checkSvInputParameters <- function(object, BSgenome, filterSvCalls, svType, svOr
             ## Get the invalid color
             nonColor <- sampleColor[which(data.table(areColors(sampleColor))$V1==FALSE)]
             memo <- paste0("The ", nonColor, " designated in the sampleColor parameter is not a valid color. ",
-                           "Making the cytoband colors dark grey and light grey.")
+                           "Please input a valid color before continuing.")
+            stop(memo)
         }
         
         ## If sampleColor is not NULL, check if it's length is the same as 
@@ -1506,7 +1522,7 @@ setMethod(f="buildSvPlot",
                   svWindow$svtype <- gsub("BND", "TRA", svWindow$svtype)
                   
                   ## Assign colors for samples 
-                  names(sampleColor) <- sample
+                  names(sampleColor) <- gtools::mixedsort(sample)
                   
                   ## Split the sv window by chr_combo
                   window <- split(svWindow, svWindow$chr_combo)
@@ -1612,6 +1628,8 @@ setMethod(f="buildSvPlot",
                       availableSvTypes <- unique(dataset$SV_Type[-which(dataset$Direction=="cytoband")])
                       
                       ## Subset svWindow dataset to get DEL/DUP/INV/etc... and TRA/BND/etc...
+                      dataset$Sample <- factor(dataset$Sample,
+                                               levels=gtools::mixedsort(as.character(unique(dataset$Sample))))
                       sameChrSvWindow <- dataset[SV_Type=="DEL" | SV_Type=="DUP" | SV_Type =="INV" | SV_Type == "INS"]
                       diffChrSvWindow <- dataset[SV_Type=="BND" | SV_Type=="TRA"]
                       
@@ -1686,6 +1704,7 @@ setMethod(f="buildSvPlot",
                           traPlot <- ggplot() + geom_bezier(data=beziers, 
                                                             mapping=aes_string(x='position', y='total_read_support', group='group', 
                                                                                color='Sample', linetype='Direction')) +
+                              guides(color=guide_legend(ncol=2)) + guides(linetype=guide_legend(ncol=2)) +
                               facet_grid(SV_Type ~ ., scales="fixed", space="fixed") +
                               scale_x_continuous(expand=c(0,0), limits=c(-5000000, max(coi$Position2) + 5000000), 
                                                  breaks=temp$oldBreaks, labels=temp$newBreaks) + 

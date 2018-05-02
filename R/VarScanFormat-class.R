@@ -261,7 +261,7 @@ setMethod(f="getPath",
 #' @importFrom data.table data.table
 setMethod(f="getLohData",
           signature="VarScanFormat",
-          definition=function(object, verbose, lohSpec, germline, ...) {
+          definition=function(object, verbose, getHeterozygousCalls, germline, ...) {
 
               ## Print status message
               if (verbose) {
@@ -284,7 +284,7 @@ setMethod(f="getLohData",
               colnames(primaryData) <- c("chromosome", "position", "tumor_var_freq", 
                                          "normal_var_freq", "sample")
               
-              if (lohSpec) {
+              if (getHeterozygousCalls) {
                   ## Remove rows if necessary
                   if (any(object@varscan$normal_var_freq<0.4 | object@varscan$normal_var_freq>0.6)) {
                       message("Detected values with a variant allele fraction either ",
