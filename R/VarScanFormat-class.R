@@ -15,8 +15,8 @@ setClass("VarScanFormat",
          representation=representation(path="character"), 
          contains="VarScanFormat_Virtual",
          validity = function(object) {
-             ## Perform validity checks on loh data
-             if (object@varscan$varscanType[1] == "LOH") {
+             ## Perform validity checks on somatic loh data
+             if (object@varscan$type[1]=="somatic loh") {
                  ## Expected varscan column names
                  cnames <- c("chrom", "position", "ref", "var",
                              "normal_reads1", "normal_reads2", "normal_var_freq",
@@ -25,13 +25,16 @@ setClass("VarScanFormat",
                              "somatic_p_value", "tumor_reads1_plus", "tumor_reads1_minus",
                              "tumor_reads2_plus", "tumor_reads2_minus",
                              "normal_reads1_plus", "normal_reads1_minus",
-                             "normal_reads2_plus", "normal_reads2_minus", "sample", "varscanType")
+                             "normal_reads2_plus", "normal_reads2_minus", "sample", "type")
                  
                  ## Check to see if there is any data after the filtering steps for varscan
                  if (nrow(object@varscan) == 0) {
                      stop("No varscan data can be found after filtering based on 
                           normal VAF and Germline/LOH somatic_status")
                  }
+                 
+                 ## Convert nVAF to 0.50 if there is no normal column (all NA values)
+                 object@varscan$normal_var_freq[is.na(object@varscan$normal_var_freq)] <- 0.50
                  
                  ## Check the column names to see if there is the appropriate input
                  varscan_column_names <- colnames(object@varscan)
@@ -68,10 +71,61 @@ setClass("VarScanFormat",
                  }
              }
              
+             ## Perform validity checks on germline loh data
+             if (object@varscan$type[1] == "germline loh") {
+                 ## Expected varscan column names
+                 cnames <- c("chrom", "position", "ref", "var",
+                             "normal_reads1", "normal_reads2", "normal_var_freq",
+                             "normal_gt", "tumor_reads1", "tumor_reads2", "tumor_var_freq",
+                             "tumor_gt", "somatic_status", "variant_p_value",
+                             "somatic_p_value", "tumor_reads1_plus", "tumor_reads1_minus",
+                             "tumor_reads2_plus", "tumor_reads2_minus",
+                             "normal_reads1_plus", "normal_reads1_minus",
+                             "normal_reads2_plus", "normal_reads2_minus", "sample", "type")
+                 
+                 ## Check to see if there is any data after the filtering steps for varscan
+                 if (nrow(object@varscan) == 0) {
+                     stop("No varscan data can be found after filtering based on 
+                          normal VAF and Germline/LOH somatic_status")
+                 }
+                 ## Check the column names to see if there is the appropriate input
+                 varscan_column_names <- colnames(object@varscan)
+                 num <- which(!varscan_column_names%in%cnames)
+                 if (length(num) > 0 & length(varscan_column_names) == length(cnames)) {
+                     mismatch <- paste(as.character(varscan_column_names[num]), collapse=", ")
+                     stop(paste0("Column names of varscan input are not what is expected. Please ",
+                                 "refer to http://varscan.sourceforge.net/somatic-calling.html#somatic-output ", 
+                                 "for appropriate column names. The columns: ", 
+                                 mismatch, " are discrepant."))
+                 }
+                 
+                 if (length(num) > 0 & length(varscan_column_names) != length(cnames)) {
+                     stop("Number of columns in varscan input are not what is expected. 23
+                          columns are expected. Please refer to 
+                          http://varscan.sourceforge.net/somatic-calling.html#somatic-output
+                          for appropriate columns and column names.")
+                 }
+                 
+                 ## Check to see if the VAF columns are percentage as opposed to proportion
+                 ## Function requires input in percentages and will convert percentage to proportion
+                 normal_per <- any(grepl("%", object@varscan$normal_var_freq) == TRUE)
+                 if (normal_per == TRUE) {
+                     message("Make sure the tumor/normal VAF column is in percentage and not proportion. 
+                             (i.e. 75.00% as opposed to 0.75).")
+                 }
+                 
+                 ## Check to see if the VAF provided are somatic or not
+                 if (any(object@varscan$normal_var_freq >1)) {
+                     message("Detected values in either the normal or tumor variant ",
+                             "allele fraction columns above 1. Values supplied should ",
+                             "be a proportion between 0-1!")
+                 }
+             }
+             
              ## Perform validity checks on cnv data
-             if (object@varscan$varscanType[1] == "CNV") {
+             if (object@varscan$type[1] == "cnv") {
                  cnames <- c("chrom", "chr_start", "chr_stop", "normal_depth",
-                          "tumor_depth", "log_ratio", "gc_content", "sample", "varscanType")
+                          "tumor_depth", "log_ratio", "gc_content", "sample", "type")
              }
              
              ## Check to see if there is any data after the filtering steps for varscan
@@ -113,44 +167,90 @@ setClass("VarScanFormat",
 #' @importFrom data.table fread
 #' @importFrom data.table as.data.table
 #' @export
-VarScanFormat <- function(path=NULL, varscanData=NULL, varscanType="LOH", verbose=FALSE) {
+VarScanFormat <- function(path=NULL, varscanData=NULL, type="somatic loh", verbose=FALSE) {
     ## Check for the input variables
-    if (!varscanType %in% c("LOH" , "CNV")) {
-        memo <- paste("The specified varscanType is not a supported. Please specify the varscanType as", 
-                      "either LOH or CNV.")
+    if (!type %in% c("somatic loh", "germline loh", "cnv")) {
+        memo <- paste("The specified type is not a supported. Please specify the type as", 
+                      "either somatic loh, germline loh, or cnv.")
         stop(memo)
-    }
+    } 
+    
+    ## Read in the data through filenames or through a dataset
     if (is.null(path) & is.null(varscanData)) {
         memo <- paste("The path and varscanData variables cannot be both NULL.")
-        warning(memo)
-    }
-    if (!is.null(varscanData)){
+        stop(memo)
+    } else if (!is.null(varscanData)){
         if (!is.null(path)) {
             memo <- paste("The path variable is defined but an input dataset is provided.",
-                           "Ignoring the path variable.")
+                          "Ignoring the path variable.")
+            warning(memo) 
+        }
+        path <- as.character()
+        if (!is.data.table(varscanData)) {
+            memo <- paste("VarscanData provided is not of class data.table.",
+                          "Attempting to coerce.")
             warning(memo)
-            if (!is.data.table(varscanData)) {
-                memo <- paste("VarscanData provided is not of class data.table.",
-                              "Attempting to coerce.")
-                warning(memo)
-                varscanData <- as.data.table(varscanData)
+            varscanData <- as.data.table(varscanData)
+        }
+        varscanHeader <- data.table()
+    } else if (!is.null(path) & is.null(varscanData)) {
+        ## get the files
+        varscanFiles <- Sys.glob(path)
+        path <- varscanFiles
+        
+        # anonymous function to read in files
+        a1 <- function(x, verbose){
+            # detect OS and remove slashes and extension
+            if(.Platform$OS.type == "windows"){
+                sampleName <- gsub("(.*/)||(.*\\\\)", "", x)
+                sampleName <- gsub("\\.[^.]+$", "", x)
+            } else {
+                sampleName <- gsub("(.*/)", "", x)
+                sampleName <- gsub("\\.[^.]+$", "", sampleName)
+            }
+            # read the header
+            header <- readLines(con=x, n=400)
+            header <- header[grepl("^##", header)]
+            # find where headers stop and read the data
+            skip <- length(header)
+            varscanData <- suppressWarnings(data.table::fread(input=x,
+                                                          stringsAsFactors=TRUE,
+                                                          verbose=verbose,
+                                                          skip=skip))
+            # set sample if it's not already in the data table
+            if(any(colnames(varscanData) %in% "sample")){
+                return(list("data"=varscanData, "header"=header))
+            } else {
+                varscanData$sample <- sampleName
+                return(list("data"=varscanData, "header"=header))
             }
         }
-    }
-    if (!is.null(path) & is.null(varscanData)) {
-        ## Read in VarScan data
-        varscanData <- suppressMessages(fread(input=path, stringsAsFactors=FALSE,
-                                              verbose=verbose, showProgress=FALSE))   
+        
+        # aggregate data into a single data table if necessary
+        if(length(varscanFiles) == 0){
+            memo <- paste("No files found using:", path)
+            stop(memo)
+        } else {
+            # Read in the information
+            varscanInfo <- lapply(varscanFiles, a1, verbose)
+            
+            # extract header and data information
+            varscanHeader <- as.data.table(lapply(varscanInfo, function(x) x[["header"]]))
+            varscanData <- lapply(varscanInfo, function(x) x[["data"]])
+            
+            # aggregate the data
+            varscanData <- data.table::rbindlist(varscanData, fill=TRUE)
+        } 
     }
     
-    ## Add varscanType value to dataset
-    varscanData$varscanType <- varscanType
+    ## Add type value to dataset
+    varscanData$type <- type
     
     ## Get the sample names
-    sample <- varscanData[,which(colnames(varscanData)=="sample"), with=FALSE]
+    sample <- unique(varscanData[,which(colnames(varscanData)=="sample"), with=FALSE])
     
     ## Check if the varscan data has the proper columns
-    if (varscanType=="LOH") {
+    if (type=="somatic loh" | type=="germline loh") {
         cnames <- c("chrom", "position", "ref", "var",
                     "normal_reads1", "normal_reads2", "normal_var_freq",
                     "normal_gt", "tumor_reads1", "tumor_reads2", "tumor_var_freq",
@@ -158,26 +258,42 @@ VarScanFormat <- function(path=NULL, varscanData=NULL, varscanType="LOH", verbos
                     "somatic_p_value", "tumor_reads1_plus", "tumor_reads1_minus",
                     "tumor_reads2_plus", "tumor_reads2_minus",
                     "normal_reads1_plus", "normal_reads1_minus",
-                    "normal_reads2_plus", "normal_reads2_minus", "sample", "varscanType")
-    } ## Define LOH columns
-    if (varscanType=="CNV") {
+                    "normal_reads2_plus", "normal_reads2_minus", "sample", "type")
+    } 
+    
+    ## Define CNV columns
+    if (type=="cnv") {
         cnames <- c("chrom", "chr_start", "chr_stop", "normal_depth",
-                    "tumor_depth", "log_ratio", "gc_content", "sample", "varscanType")
-    } ## Define CNV columns
-    ## Check to see if there are columns in dataset that aren't one of the defined columns
-    num <- which(!colnames(varscanData) %in% cnames)
-    ## Return an error if true
-    if (length(num) > 0) {
-        memo <- paste("The columns provided in the varscan data file do not match the expected columns.",
-                      "refer to http://varscan.sourceforge.net/somatic-calling.html#somatic-output", 
-                      "for appropriate column names.")
+                    "tumor_depth", "log_ratio", "gc_content", "sample", "type")
+    } 
+    
+    `%nin%` = Negate(`%in%`)
+    num <- which(cnames %nin% colnames(varscanData))
+    if (all(colnames(varscanData) %in% cnames) & length(num) > 0) {
+        memo <- paste0("All of the columns in the varscan dataset are valid and are the bare-minimum required ",
+                       "to run the function, but the dataset is missing ",
+                       length(num), " columns, which are normally included in varscan output. Will attempt to add missing columns and fill ",
+                       "in values with NA.")
+        message(memo)
+        missingColumns <- cnames[num]
+        varscanData[,missingColumns] <- NA        
+    }
+    if (!all(colnames(varscanData) %in% cnames)) {
+        memo <- paste0("Columns in the loh dataset are not valid. Refer to ",
+                       "http://varscan.sourceforge.net/somatic-calling.html#somatic-output ", 
+                       "for appropriate column names.")
         stop(memo)
     }
     
-    ## If the varscan output is to visualize loh
-    if (varscanType == "LOH") {
+    ## If the varscan output is to visualize somatic loh
+    if (type == "somatic loh") {
         ## Obtain coordinates that were called as germline or LOH by varscan
-        varscanData <- varscanData[somatic_status=="Germline"|somatic_status=="LOH"]
+        varscanData <- varscanData[somatic_status=="LOH"]
+        
+        ## Check if there are any calls left
+        if (nrow(varscanData) == 0) {
+            memo <- paste0("There are no calls with somatic status: LOH.")
+        }
         
         ## Convert VAF percentages to VAF proportions
         np <- grep("%", varscanData$normal_var_freq)
@@ -218,14 +334,46 @@ VarScanFormat <- function(path=NULL, varscanData=NULL, varscanType="LOH", verbos
         }
     }
     
+    ## If the varscan output is to visualize germline loh
+    if (type == "germline loh") {
+        ## Obtain coordinates that were called as germline or LOH by varscan
+        varscanData <- varscanData[somatic_status=="Germline"]
+        
+        ## Check if there are any calls left
+        if (nrow(varscanData) == 0) {
+            memo <- paste0("There are no calls with somatic status: Germline.")
+        }
+        
+        ## Convert VAF percentages to VAF proportions
+        np <- grep("%", varscanData$normal_var_freq)
+        if (length(np) > 0) {
+            memo <- paste("Normal VAF values appear to be percentages. Converting to proportions.")
+            if (verbose) {
+                warning(memo)
+            }
+            varscanData$normal_var_freq <- as.numeric(as.character(
+                gsub(pattern="%", replacement="", varscanData$normal_var_freq)))
+        }
+        
+        ## Check if the VAFs are out of 100, and if so, make it out of 1
+        nm <- max(range(varscanData$normal_var_freq))
+        if (nm > 1) {
+            memo <- paste("Normal VAF values appear to be out of 100. Making VAF values out of 1.")
+            if (verbose) {
+                warning(memo)
+            }
+            varscanData$normal_var_freq <- round(varscanData$normal_var_freq/100, digits=3)
+        }
+    }
+    
     ## If the varscan output is to visualize copy number data
-    if (varscanType == "CNV") {
+    if (type == "CNV") {
         ## TODO: Add functionality for CNV data from varscan
         
     }
-    
     ## Create the varscan object
-    varscanObject <- new(Class="VarScanFormat", path=path, varscan=varscanData, sample=sample)
+    varscanObject <- new(Class="VarScanFormat", path=path, header=varscanHeader, 
+                         varscan=varscanData, sample=sample)
     return(varscanObject)
     
 }
@@ -249,6 +397,15 @@ setMethod(f="getPath",
               path <- object@path
               return(path)
           })
+
+#' @rdname getHeader-methods
+#' @aliases getHeader
+setMethod(f="getHeader",
+          signature="VarScanFormat",
+          definition=function(object, ...){
+              header <- object@header
+              return(header)
+          })
  
 
 ################################################################################
@@ -261,20 +418,14 @@ setMethod(f="getPath",
 #' @importFrom data.table data.table
 setMethod(f="getLohData",
           signature="VarScanFormat",
-          definition=function(object, verbose, getHeterozygousCalls, germline, ...) {
+          definition=function(object, verbose, getHeterozygousLohCalls, ...) {
 
               ## Print status message
               if (verbose) {
                   message("Generating LOH dataset.")
               }
               
-              ## Obtain loh data
-              primaryData <- object@varscan[somatic_status=="Germline" | somatic_status=="LOH"]
-              
-              ## Get germline data if necessary
-              if (germline) {
-                  primaryData <- primaryData[somatic_status=="Germline"]
-              }
+              primaryData <- object@varscan
                
               ## Get the necessary columns from varscan output
               primaryData <- primaryData[,c("chrom", "position", "tumor_var_freq", 
@@ -284,7 +435,7 @@ setMethod(f="getLohData",
               colnames(primaryData) <- c("chromosome", "position", "tumor_var_freq", 
                                          "normal_var_freq", "sample")
               
-              if (getHeterozygousCalls) {
+              if (getHeterozygousLohCalls) {
                   ## Remove rows if necessary
                   if (any(object@varscan$normal_var_freq<0.4 | object@varscan$normal_var_freq>0.6)) {
                       message("Detected values with a variant allele fraction either ",
@@ -309,7 +460,7 @@ setMethod(f="getLohData",
 #' @importFrom data.table data.table
 setMethod(f="getCnvData",
           signature="VarScanFormat",
-          definition=function(object, verbose, ...) {
+          definition=function(object, cnvType, verbose, ...) {
               
               ## Print status message
               if (verbose) {
@@ -325,7 +476,15 @@ setMethod(f="getCnvData",
                                          "tumor_depth", "cn", "gc_content", "sample")
               
               ## Convert out of log space into absolute copy number
-              primaryData$cn <- (2^primaryData$cn)*2
+              if (cnvType == "logratio") {
+                  return(primaryData)
+              }
+              if (cnvType == "absolute") {
+                  primaryData$cn <- (2^primaryData$cn)*2
+              }
+              if (cnvType == "relative") {
+                  primaryData$cn <- ((2^primaryData$cn)*2)-2
+              }
               
               return(primaryData)
               

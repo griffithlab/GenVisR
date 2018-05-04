@@ -790,48 +790,15 @@ setGeneric(
     def=function(object, ...){standardGeneric("getCnSegmentation")}
 )
 
-#' Method buildCnPlot
+#' Method buildCnLohPlot
 #' 
-#' @name buildCnPlot
-#' @rdname buildCnPlot-methods
+#' @name buildCnLohPlot
+#' @rdname buildCnLohPlot-methods
 #' @param ... additional arguments to passed
 #' @noRd
 setGeneric(
-    name="buildCnPlot",
-    def=function(object, ...){standardGeneric("buildCnPlot")}
-)
-
-#' Method buildSomaticLohPlot
-#' 
-#' @name buildSomaticLohPlot
-#' @rdname buildSomaticLohPlot-methods
-#' @param ... additional arguments to passed
-#' @noRd
-setGeneric(
-    name="buildSomaticLohPlot",
-    def=function(object, ...){standardGeneric("buildSomaticLohPlot")}
-)
-
-#' Method buildGermlineLohPlot
-#' 
-#' @name buildGermlineLohPlot
-#' @rdname buildGermlineLohPlot-methods
-#' @param ... additional arguments to passed
-#' @noRd
-setGeneric(
-    name="buildGermlineLohPlot",
-    def=function(object, ...){standardGeneric("buildGermlineLohPlot")}
-)
-
-#' Method arrangeCnLohPlots
-#' 
-#' @name arrangeCnLohPlots
-#' @rdname arrangeCnLohPlots-methods
-#' @param ... additional arguments to passed
-#' @noRd
-setGeneric(
-    name="arrangeCnLohPlots",
-    def=function(object, ...){standardGeneric("arrangeCnLohPlots")}
+    name="buildCnLohPlot",
+    def=function(object, ...){standardGeneric("buildCnLohPlot")}
 )
 
 #' Method removeGapsSegmentation

@@ -1,6 +1,23 @@
 ################################################################################
 ##################### Public/Private Class Definitions #########################
 
+#' Private Class cnLohPlots
+#' 
+#' An S4 class for the cn, somatic loh, and germline loh plots
+#' @rdname cnLohPlots-class
+#' @name cnLohPlots
+#' @slot cnPlot gtable object for the cn plot
+#' @slot somaticLohPlot gtable object for the somatic loh plot
+#' @slot germlineLohPlot gtable object for the germline loh plot
+#' @import methods
+#' @importFrom gtable gtable
+#' @noRd
+setClass("cnLohPlots",
+         representation=representation(cnLohPlot="list"),
+         validity=function(object) {
+             
+         })
+
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Public Class !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
 #' Class cnLoh
 #' 
@@ -8,26 +25,20 @@
 #' @name cnLoh-class
 #' @rdname cnLoh-class
 #' @slot cnData data.table object for cn plot
-#' @slot cnPlot gtable object for the cn plot
 #' @slot somaticLohData data.table object for the somatic loh plot
-#' @slot somaticLohPlot gtable object for the somatic loh plot
 #' @slot germlineLohData data.table object for the germline loh plot
-#' @slot germlineLohData gtable object for the germline loh plot
+#' @slot cnLohPlots gtable object for the combined plots
 #' @exportClass cnLoh
 #' @import methods
 #' @importFrom data.table data.table
 #' @importFrom gtable gtable
 methods::setOldClass("gtable")
-setClass(
-    Class="cnLoh",
-    representation=representation(cnData="data.table",
-                                  cnPlot="gtable",
-                                  somaticLohData="data.table",
-                                  somaticLohPlot="gtable",
-                                  germlineLohData="data.table",
-                                  germlineLohPlot="gtable",
-                                  Grob="gtable"),
-    validity=function(object){
+setClass(Class="cnLoh",
+         representation=representation(cnData="data.table",
+                                       somaticLohData="data.table",
+                                       germlineLohData="data.table",
+                                       cnLohPlots="cnLohPlots"),
+         validity=function(object){
         
     }
 )
@@ -36,24 +47,42 @@ setClass(
 #' 
 #' @name cnLoh
 #' @rdname cnLoh-class
-#' @param input Object of class cnLohDataFormat
+#' @param cnInput Object of class cnLohDataFormat
+#' @param somaticLohInput
+#' @param germlineLohInput
 #' @param samples Character vector specifying samples to plot. If not NULL
 #' all samples in "input" not specified with this parameter are removed.
 #' @param chromosomes Character vector specifying chromosomes to plot. If not NULL
 #' all chromosomes in "input" not specified with this parameter are removed.
+#' @param cnvType
 #' @param BSgenome Object of class BSgenome to extract genome wide chromosome 
 #' coordinates
+#' @param getHeterozygousLohCalls
+#' @param plotAColor
+#' @param plotALayers
+#' @param somaticLohCutoff
+#' @param plotBAlpha
+#' @param plotBColors
+#' @param plotBLayers
+#' @param plotCLimits
+#' @param plotCColors
+#' @param plotCLayers
+#' @param sectionHeights
+#' @param verbose
 #' @export
-cnLoh <- function(cnInput, lohInput, samples, chromosomes, BSgenome, windowSize,
-                  step, getHeterozygousLohCalls, plotAColor, plotALayers, plotBAlpha,
+cnLoh <- function(cnInput, somaticLohInput, germlineLohInput, samples, chromosomes, 
+                  cnvType, BSgenome, 
+                  getHeterozygousLohCalls, plotAColor, plotALayers, plotBAlpha,
                   somaticLohCutoff, plotBColors, plotBLayers,
                   plotCLimits, plotCColors, plotCLayers, 
                   sectionHeights, verbose) {
     
     ## Check each of the input parameters
-    cnLohInputParameters <- checkCombinedCnLohInputParameters(cnInput=cnInput, lohInput=lohInput, samples=samples,
-                                                              chromosomes=chromosomes, BSgenome=BSgenome,
-                                                              windowSize=windowSize, step=step, 
+    cnLohInputParameters <- checkCombinedCnLohInputParameters(cnInput=cnInput, 
+                                                              somaticLohInput=somaticLohInput, 
+                                                              germlineLohInput=germlineLohInput, 
+                                                              samples=samples, chromosomes=chromosomes, 
+                                                              cnvType=cnvType, BSgenome=BSgenome,
                                                               getHeterozygousLohCalls=getHeterozygousLohCalls,
                                                               somaticLohCutoff=somaticLohCutoff,
                                                               plotAColor=plotAColor, plotALayers=plotALayers,
@@ -63,39 +92,35 @@ cnLoh <- function(cnInput, lohInput, samples, chromosomes, BSgenome, windowSize,
                                                               sectionHeights=sectionHeights, verbose=verbose)
     
     ## Obtain cn, somatic loh, and germline loh datasets to plot
-    cnLohDataset <- cnLohData(cnInput=cnInput, lohInput=lohInput, 
-                              samples=checkCombinedCnLohInputParameters@samples, 
-                              chromosomes=checkCombinedCnLohInputParameters@chromosomes,
-                              BSgenome=checkCombinedCnLohInputParameters@BSgenome, 
-                              windowSize=checkCombinedCnLohInputParameters@windowSize,
-                              step=checkCombinedCnLohInputParameters@step, 
-                              normal=checkCombinedCnLohInputParameters@getHeterozygousLohCalls, 
-                              verbose=checkCombinedCnLohInputParameters@verbose)
+    cnLohDataset <- cnLohData(cnInput=cnInput, somaticLohInput=somaticLohInput,
+                              germlineLohInput=germlineLohInput,
+                              samples=cnLohInputParameters@samples, 
+                              chromosomes=cnLohInputParameters@chromosomes,
+                              cnvType=cnLohInputParameters@cnvType, 
+                              BSgenome=cnLohInputParameters@BSgenome,
+                              getHeterozygousLohCalls=cnLohInputParameters@getHeterozygousLohCalls, 
+                              verbose=cnLohInputParameters@verbose)
     
     ## Generate the cn, somatic LOH, and germline LOH plots
-    plots <- cnLohPlots(object=cnLohDataset, 
-                        somaticLohCutoff=checkCombinedCnLohInputParameters@somaticLohCutoff, 
-                        plotAColor=checkCombinedCnLohInputParameters@plotAColor, 
-                        plotALayers=checkCombinedCnLohInputParameters@plotALayers, 
-                        plotBAlpha=checkCombinedCnLohInputParameters@plotBAlpha, 
-                        plotBColors=checkCombinedCnLohInputParameters@plotBColors,
-                        plotBNormalColor=checkCombinedCnLohInputParameters@plotBNormalColor, 
-                        plotBLayers=checkCombinedCnLohInputParameters@plotBLayers, 
-                        plotCLimits=checkCombinedCnLohInputParameters@plotCLimits, 
-                        plotCLowColor=checkCombinedCnLohInputParameters@plotCColors, 
-                        plotCLayers=checkCombinedCnLohInputParameters@plotCLayers, 
-                        verbose=checkCombinedCnLohInputParameters@verbose)
-    
-    ## Arrange all of the plots together
-    Grob <- arrangeCnLohPlots(object=plots, 
-                              sectionHeights=checkCombinedCnLohInputParameters@sectionHeights, 
-                              verbose=checkCombinedCnLohInputParameters@verbose)
+    plots <- cnLohPlots(object=cnLohDataset,
+                        cnvType=cnLohInputParameters@cnvType,
+                        somaticLohCutoff=cnLohInputParameters@somaticLohCutoff, 
+                        plotAColor=cnLohInputParameters@plotAColor, 
+                        plotALayers=cnLohInputParameters@plotALayers, 
+                        plotBAlpha=cnLohInputParameters@plotBAlpha, 
+                        plotBColors=cnLohInputParameters@plotBColors,
+                        plotBLayers=cnLohInputParameters@plotBLayers, 
+                        plotCLimits=cnLohInputParameters@plotCLimits, 
+                        plotCColors=cnLohInputParameters@plotCColors, 
+                        plotCLayers=cnLohInputParameters@plotCLayers, 
+                        sectionHeights=cnLohInputParameters@sectionHeights,
+                        verbose=cnLohInputParameters@verbose)
     
     ## Initialize the object
-    new("cnLoh", cnData=getData(cnLohDataset, index=1), cnPlot=getGrob(plots, index=1),
-        somaticLohData=getData(cnLohDataset, index=2), somaticLohPlot=getGrob(plots, index=2),
-        germlineLohData=getData(cnLohDataset, index=3), germlineLohPlot=getGrob(plots, index=3),
-        Grob=Grob)
+    new("cnLoh", cnData=getData(cnLohDataset, index=1), 
+        somaticLohData=getData(cnLohDataset, index=2), 
+        germlineLohData=getData(cnLohDataset, index=3), 
+        cnLohPlots=plots)
 }
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Private Classes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
@@ -107,13 +132,13 @@ cnLoh <- function(cnInput, lohInput, samples, chromosomes, BSgenome, windowSize,
 #' @noRd
 setClass("cnLohInputParameters",
          representation=representation(samples="character",
-                                       chromosomes="character", BSgenome="BSgenome",
-                                       windowSize="numeric", step="numeric", 
+                                       chromosomes="character", 
+                                       cnvType="character", BSgenome="BSgenome",
                                        getHeterozygousLohCalls="logical",
                                        somaticLohCutoff="numeric",
                                        plotAColor="character", plotALayers="list",
                                        plotBAlpha="numeric", plotBColors="character",
-                                       plotBLayers="list", plotClimits="numeric",
+                                       plotBLayers="list", plotCLimits="numeric",
                                        plotCColors="character", plotCLayers="list",
                                        sectionHeights="numeric", verbose="logical"), 
          validity=function(object){
@@ -125,8 +150,8 @@ setClass("cnLohInputParameters",
 #' @name cnLohInputParameters
 #' @rdname cnLohInputParameters-class
 #' @noRd
-checkCombinedCnLohInputParameters <- function(cnInput, lohInput, samples, chromosomes, BSgenome,
-                                              windowSize, step, getHeterozygousLohCalls,
+checkCombinedCnLohInputParameters <- function(cnInput, somaticLohInput, germlineLohInput, samples, chromosomes, 
+                                              cnvType, BSgenome, getHeterozygousLohCalls,
                                               somaticLohCutoff, plotAColor, plotALayers,
                                               plotBAlpha, plotBColors, plotBLayers, plotClimits,
                                               plotCColors, plotCLayers, sectionHeights, verbose) {
@@ -138,10 +163,16 @@ checkCombinedCnLohInputParameters <- function(cnInput, lohInput, samples, chromo
         verbose <- FALSE
     }
     
-    ##### TODO: Check the samples parameter ##### 
+    ##### Check the samples parameter ##### 
+    ## Check if the samples in the somaticLohInput, germlineLohInput, and cnInput all match
+    cnSamples <- as.character(cnInput@sample$sample)
+    somaticLohSamples <- as.character(somaticLohInput@sample$sample)
+    germlineLohSamples <- as.character(germlineLohInput@sample$sample)
+    allSamples <- unique(c(cnSamples, somaticLohSamples, germlineLohSamples))
+    
     ## Check is samples is NULL
     if (is.null(samples)) {
-        samples <- unique(object@sample$sample)
+        samples <- allSamples
         samples <- factor(samples, levels=gtools::mixedsort(samples))
         memo <- paste0("Sample parameter cannot be NULL. All samples will be plotted.")
         message(memo)
@@ -156,11 +187,11 @@ checkCombinedCnLohInputParameters <- function(cnInput, lohInput, samples, chromo
     ## Check if the designated samples is in the sv dataset
     if (!is.null(samples)) {
         `%nin%` = Negate(`%in%`)
-        discrepantSamples <- paste(samples[which(samples %nin% unique(object@sample$sample))], collapse=", ")
+        discrepantSamples <- paste(samples[which(samples %nin% allSamples)], collapse=", ")
         if (length(discrepantSamples) > 0 & discrepantSamples != "") {
             memo <- paste0("The desired samples: ", discrepantSamples, " are not found ",
-                           "in the SV dataset. Available sample names include: ", 
-                           paste(unique(object@sample$sample), collapse=", "), ". ",
+                           "in either of the cnv, somatic loh, or germline loh dataset. Available sample names include: ", 
+                           paste(allSamples, collapse=", "), ". ",
                            "Please designate valid sample names.")
             stop(memo)
         }
@@ -201,6 +232,25 @@ checkCombinedCnLohInputParameters <- function(cnInput, lohInput, samples, chromo
         }
     }
     
+    ##### Check the cnvType parameter #####
+    ## Check if cnvType is not null
+    if (is.null(cnvType)){
+        memo <- paste0("the cnvType parameter cannot be null. Using absolute copy number values.")
+        cnvType <- "absolute"
+        message(memo)
+    }
+    ## Check if cnvType is a character
+    if (!is.character(cnvType)) {
+        memo <- paste0("cnvType paramter not of class character. Attempting to coerce...")
+        message(memo)
+        cnvType <- as.character(cnvType)
+    }
+    ## Check if cnvType has a valid value
+    if (!(cnvType %in% c("logratio", "absolute", "relative"))) {
+        memo <- paste0("cnvType parameter is not a valid value. Valid values include: ",
+                       "logration, absolute, and relative. Using absolute copy number values.")
+    }
+    
     ##### Check the BSgenome parameter #####
     ## Check to see if BSgenome is a BSgenome
     if (is.null(BSgenome)) {
@@ -216,41 +266,6 @@ checkCombinedCnLohInputParameters <- function(cnInput, lohInput, samples, chromo
                       "to get the lengths of the chromsomes being plotted.")
         stop(memo)
         BSgenome <- NULL
-    }
-    
-    ##### Check the windowSize parameter #####
-    if (is.null(windowSize)) {
-        windowSize <- 2500000
-        memo <- paste0("windowSize parameter cannot be NULL. Setting the windowSize value to 2500000.")
-        message(memo)
-    }
-    ## Check if windowSize is numeric
-    if (!is.numeric(windowSize)) {
-        memo <- paste0("windowSize variable not of the numeric class. Attempting to coerce.")
-        windowSize <- as.numeric(windowSize)
-        message(memo)
-    }
-    
-    ##### Check the step parameter #####
-    if (is.null(step)) {
-        step <- 1000000
-        memo <- paste0("step parameter cannot be NULL. Setting the step value to 1000000.")
-        message(memo)
-    }
-    ## Check if step is numeric
-    if (!is.numeric(step)) {
-        memo <- paste0("step variable not of the numeric class. Attempting to coerce.")
-        step <- as.numeric(step)
-        message(memo)
-    }
-    ## Check to see if step is greater than windowSize
-    if (step > windowSize) {
-        memo <- paste("Step value is greater than windowSize. Make sure that the step value is 
-                      at most equal to the WindowSize. Using default values for both parameters.")
-        warning(memo)
-        step <- 1000000
-        windowSize <- 2500000
-        
     }
     
     ##### Check the getHeterozygousLohCalls #####
@@ -447,10 +462,10 @@ checkCombinedCnLohInputParameters <- function(cnInput, lohInput, samples, chromo
     }
     
     new("cnLohInputParameters", samples=samples, chromosomes=chromosomes, BSgenome=BSgenome,
-        windowSize=windowSize, step=step, getHeterozygousLohCalls=getHeterozygousLohCalls,
+        cnvType=cnvType, getHeterozygousLohCalls=getHeterozygousLohCalls,
         somaticLohCutoff=somaticLohCutoff, plotAColor=plotAColor, plotALayers=plotALayers,
         plotBAlpha=plotBAlpha, plotBColors=plotBColors, plotBLayers=plotBLayers, 
-        plotClimits=plotCLimits, plotCColors=plotCColors, plotCLayers=plotCLayers,
+        plotCLimits=plotCLimits, plotCColors=plotCColors, plotCLayers=plotCLayers,
         sectionHeights=sectionHeights, verbose=verbose)    
 }
 
@@ -475,13 +490,13 @@ setClass("cnLohData",
 #' @name cnLohData
 #' @rdname cnLohData-class
 #' @param object Object of class cnLohDataFormat
-cnLohData <- function(cnInput, lohInput, samples, chromosomes, BSgenome,
-                      windowSize, step, normal, verbose=FALSE) {
+cnLohData <- function(cnInput, somaticLohInput, germlineLohInput, samples, 
+                      getHeterozygousLohCalls, chromosomes, cnvType, BSgenome, verbose) {
 
     ############################################################################
     #################### Prepare copy number variant dataset ###################
     ## Obtain raw cnv data
-    cnData <- getCnvData(object=cnInput, verbose=verbose)
+    cnData <- getCnvData(object=cnInput, cnvType=cnvType, verbose=verbose)
     
     ## Subset copy number data by chromosome
     cnData <- chrSubset(object=cnData, chromosomes=chromosomes, verbose=verbose)
@@ -501,7 +516,7 @@ cnLohData <- function(cnInput, lohInput, samples, chromosomes, BSgenome,
     ############################################################################
     ##################### Prepare somatic loh dataset ##########################
     ## Obtain LOH data for desired chromosomes and samples
-    lohData <- getLohData(object=lohInput, verbose=verbose, lohSpec=TRUE, germline=FALSE)
+    lohData <- getLohData(object=somaticLohInput, verbose=verbose, getHeterozygousLohCalls=TRUE)
     
     ## Subset loh data by chromosome
     lohData <- chrSubset(object=lohData, chromosomes=chromosomes, verbose=verbose)
@@ -509,20 +524,8 @@ cnLohData <- function(cnInput, lohInput, samples, chromosomes, BSgenome,
     ## Subset loh data by sample
     lohData <- sampleSubset(object=lohData, samples=samples, verbose=verbose)
     
-    ## Produce data.table with window position data
-    windowData <- getLohSlidingWindow(object=lohData, step=step, windowSize=windowSize,
-                                      verbose=verbose)
-    
-    ## Perform loh calculations on each chromosome and samples within each window
-    lohAbsDiff <- getLohCalculation(object=lohData, windowData=windowData, normal=normal,
-                                    verbose=verbose)
-    
-    ## Calculate avg loh for overlapping regions
-    lohAbsDiffOverlap <- rbindlist(getLohStepCalculation(object=lohAbsDiff,
-                                                         step=step, verbose=verbose))
-    
     ## Obtain loh segmentation dataset
-    lohSegmentation <- getLohSegmentation(object=lohAbsDiffOverlap, verbose=verbose)
+    lohSegmentation <- getLohSegmentation(object=lohData, verbose=verbose)
     
     ## Remove gaps 
     lohSegmentation <- removeGapsSegmentation(object=lohSegmentation, chrData=chrData,
@@ -531,7 +534,7 @@ cnLohData <- function(cnInput, lohInput, samples, chromosomes, BSgenome,
     ############################################################################
     ##################### Prepare germline loh dataset #########################
     ## Obtain germlineloh data by chromosome
-    germlineLohData <- getLohData(object=lohInput, verbose=TRUE, lohSpec=FALSE, germline=TRUE)
+    germlineLohData <- getLohData(object=germlineLohInput, verbose=verbose, getHeterozygousLohCalls=FALSE)
     
     ## Subset loh data by chromosome
     germlineLohData <- chrSubset(object=germlineLohData, chromosomes=chromosomes, verbose=verbose)
@@ -545,25 +548,6 @@ cnLohData <- function(cnInput, lohInput, samples, chromosomes, BSgenome,
         chrData=chrData)
 } 
 
-#' Private Class cnLohPlots
-#' 
-#' An S4 class for the cn, somatic loh, and germline loh plots
-#' @rdname cnLohPlots-class
-#' @name cnLohPlots
-#' @slot cnPlot gtable object for the cn plot
-#' @slot somaticLohPlot gtable object for the somatic loh plot
-#' @slot germlineLohPlot gtable object for the germline loh plot
-#' @import methods
-#' @importFrom gtable gtable
-#' @noRd
-setClass("cnLohPlots",
-         representation=representation(cnPlot="gtable",
-                                       somaticLohPlot="gtable",
-                                       germlineLohPlot="gtable"),
-         validity=function(object) {
-             
-         })
-
 #' Constructor for cnLohPlots class
 #' 
 #' @rdname cnLohPlots-class
@@ -572,29 +556,19 @@ setClass("cnLohPlots",
 #' @importFrom gtable gtable
 #' @import ggplot2
 #' @noRd 
-cnLohPlots <- function(object, plotAColor, plotALayers, 
-                       somaticLohCutoff, plotBAlpha, plotBTumorColor, plotBNormalColor, plotBLayers, 
-                       plotCLimits, plotCLowColor, plotCHighColor, 
-                       plotCLayers, verbose) {
+cnLohPlots <- function(object, cnvType, plotAColor, plotALayers, 
+                       somaticLohCutoff, plotBAlpha, plotBColors, plotBLayers, 
+                       plotCLimits, plotCColors, plotCLayers, sectionHeights, verbose) {
     
     ## Build the cn plot
-    cnPlot <- buildCnPlot(object=object, plotAColor=plotAColor, plotALayers)
-    
-    ## Build the somatic loh plot
-    somaticLohPlot <- buildSomaticLohPlot(object=object, somaticLohCutoff=somaticLohCutoff,
-                                          plotBAlpha=plotBAlpha,
-                                          plotBTumorColor=plotBTumorColor, 
-                                          plotBNormalColor=plotBNormalColor,
-                                          plotBLayers=plotBLayers, verbose=verbose)
-    
-    ## Build the germline loh plot
-    germlineLohPlot <- buildGermlineLohPlot(object=object, 
-                                            plotCLimits=plotCLimits, plotCLowColor=plotCLowColor,
-                                            plotCHighColor=plotCHighColor, plotCLayers=plotCLayers,
-                                            verbose=verbose)
+    cnLohPlot <- buildCnLohPlot(object=object, cnvType=cnvType, plotAColor=plotAColor, plotALayers=plotALayers, 
+                             plotBAlpha=plotBAlpha, plotBColors=plotBColors, plotBLayers=plotBLayers,
+                             somaticLohCutoff=somaticLohCutoff, plotCLimits=plotCLimits,
+                             plotCColors=plotCColors, plotCLayers=plotCLayers, 
+                             sectionHeights=sectionHeights, verbose=verbose)
     
     ## Initialize the object
-    new("cnLohPlots", cnPlot=cnPlot, somaticLohPlot=somaticLohPlot, germlineLohPlot=germlineLohPlot)
+    new("cnLohPlots", cnLohPlot=cnLohPlot)
 }
 
 ################################################################################
@@ -695,8 +669,25 @@ setMethod(f="getGrob",
 setMethod(
     f="drawPlot",
     signature="cnLoh",
-    definition=function(object, ...){
-        mainPlot <- getGrob(object, index=4)
+    definition=function(object, chr=NULL, sample=NULL, ...){
+        ## Get the list of gtables 
+        object <- object@cnLohPlots@cnLohPlot
+        
+        ## Get the chromosome-sample combinations
+        name <- paste0(chr, "_", sample)
+        
+        ## See if the desired chr-sample combo can be found in the plots
+        num <- which(names(object) == name)
+        if (length(num) == 0) {
+            memo <- paste0("The plot for the chromosome-sample combination: ",
+                   name, " could not be found. Make sure to append the chr name ",
+                   "with ", dQuote("chr"), " rather than just using the chromosome number (chr1 instead of 1). ",
+                   "The possible combinations that could be used are: ", 
+                   paste(names(object), collapse=", "))
+            stop(memo)
+        }
+        
+        mainPlot <- object[[num]]
         grid::grid.newpage()
         grid::grid.draw(mainPlot)
     }
@@ -832,13 +823,16 @@ setMethod(f="getCnSegmentation",
                   message("Segmenting copy number data")
               }
               
+              ## Get the sample-chr combination
+              object$sample_chr_combo <- paste0(object$chromosome, "_", object$sample)
+              
               ## Split object by sample
-              segDfTemp <- split(object, list(as.character(object$sample)))
+              segDfTemp <- split(object, f=object$sample_chr_combo)
               
               ## Perform segmentation
               segmentationDF <- rbindlist(lapply(segDfTemp, function(x) {
                   cnSeg <- CNA(genomdat=as.numeric(x$cn), chrom=x$chromosome,
-                                maploc=x$position, data.type="logratio", sampleid = unique(x$sample))
+                                maploc=x$position, data.type="logratio", sampleid = unique(x$sample_chr_combo))
                   
                   ## Run CBS
                   cnSeg <- segment(cnSeg, min.width=3, undo.splits="sdundo",
@@ -846,7 +840,6 @@ setMethod(f="getCnSegmentation",
                   cnSeg <- cnSeg$output
                   return(cnSeg)
               }))
-              
               return(segmentationDF)
           })
 
@@ -867,9 +860,8 @@ setMethod(f="removeGapsSegmentation",
               }
               
               ## Get the list of the chromosomes
-              chrList <- as.list(as.character(unique(object$chrom)))
-              segs <- rbindlist(lapply(chrList, function(x, object, chrData) {
-                  df <- object[chrom==x]
+              splitDf <- split(object, f=object$ID)
+              segs <- rbindlist(lapply(splitDf, function(df) {
                   for (i in 1:(nrow(df) - 1)) {
                       ## Don't merge segments if they are far apart
                       if ((df$loc.start[i+1]-df$loc.end[i]) < 5000000) {
@@ -879,7 +871,7 @@ setMethod(f="removeGapsSegmentation",
                       }
                   }
                   return(df)
-              }, object=object))
+              }))
               return(segs)
           })
 
@@ -945,184 +937,6 @@ setMethod(f="annoGenomeCoord",
               
           })
 
-##########################################################################
-##### Function to generate window position data for loh calculations #####
-#' @rdname getLohSlidingWindow-methods
-#' @name getLohSlidingWindow
-#' @param object of class data.table 
-#' @param step integer specifying the step size between the start position of
-#' each window
-#' @param windowSize integer specifying the window size for loh calcuations
-#' @return Data.table with window start/stop positions
-#' @aliases getLohSlidingWindow
-setMethod(f="getLohSlidingWindow",
-          signature="data.table",
-          definition=function(object, step, windowSize, ...){
-              if (verbose) {
-                  message("Calcuating window sizes for loh calcluations on all chromosomes in each individual sample")
-              }
-              
-              ## Obtain lists for each sample and chromosome
-              out <- split(object, list(as.character(object$chromosome),
-                                        as.character(object$sample)))
-              
-              ## Obtain the window position values
-              window <- lapply(out, function(x, step, windowSize) {
-                  ## Get the min and max position on the chromosome
-                  min <- integer()
-                  max <- integer()
-                  window_stop_1 <- integer()
-                  window_num <- integer()
-                  min <- as.integer(min(as.numeric(as.character(x$position))))
-                  max <- as.integer(max(as.numeric(as.character(x$position))))
-                  ## Get the end of the first window position
-                  window_stop_1 <- min+windowSize
-                  ## Calculate the number of windows necessary
-                  num <- as.integer((max-min)/step)
-                  num <- as.vector(1:num)
-                  window_data_start <- vector()
-                  window_data_stop <- vector()
-                  
-                  ## Calculate exact window positions
-                  window_data <- lapply(num, function(x){
-                      window_data_start[x] <- as.integer(min+(step*(x-1)))
-                      window_data_stop[x] <- as.integer(window_stop_1+(step*(x-1)))
-                      window_data <- data.table(cbind(window_data_start[x], window_data_stop[x]))
-                      return(window_data)
-                  })
-                  window_data <- rbindlist(window_data)
-                  # Get window positions whose values are below max & set max as the 
-                  # final window position (end of the chromosome)
-                  colnames(window_data) <- c("window_start", "window_stop")
-                  window_final <- window_data[window_data$window_stop <= max,]
-                  window_final[nrow(window_final), 2] <- max
-                  ## Put in the chromosome 
-                  window_final$chromosome <- as.character(x$chromosome[1])
-                  return(window_final)
-              }, 
-              step = step, windowSize = windowSize)
-              
-              return(window)
-          })
-
-###############################################################
-##### Function to perform loh calcluations in each window #####
-#' @rdname getLohCalculation-methods
-#' @name getLohCalculation
-#' @param object of class data.table 
-#' @param window_data of class data.table 
-#' @param normal integer specifying normal vaf
-#' @aliases getLohCalculation
-setMethod(f="getLohCalculation", 
-          signature="data.table",
-          definition=function(object, windowData, normal, verbose, ...) {
-              
-              ## Print status message
-              if (verbose) {
-                  message("Calculating absolute mean difference between t/n VAF at each coordinate provided.")
-              }
-              
-              ## Split object for each unqiuq sample-chr combination
-              object <- split(object, list(as.character(object$chromosome),
-                                           as.character(object$sample)))
-              
-              ## Separate out sample and window data by chromosome name
-              df <- lapply(object, function(sampleData, window, 
-                                            normal) {
-                  chromosome <- as.character(sampleData[1,chromosome])
-                  sample <- as.character(sampleData[1,sample])
-                  chromosome.sample <- paste("\\b", paste(chromosome, sample, sep = "."), "\\b", sep = "")
-                  window <- windowData[[grep(chromosome.sample, names(windowData))]]
-                  ## For each window position, get the vaf data that falls 
-                  ## within that window
-                  dataset <- rbindlist(apply(window, 1, function(x, sampleData, normal){
-                      ## Determine which value to use for normal
-                      if (normal==FALSE) {
-                          normal <- 0.5
-                      }
-                      if (normal == TRUE) {
-                          normal <- round(sampleData[,mean(normal_var_freq)], 
-                                          digits=3)
-                      }
-                      
-                      w_start <- as.numeric(as.character(x[1]))
-                      w_stop <- as.numeric(as.character(x[2]))
-                      ## Filter out vaf data outside the window
-                      filtered_data <- sampleData[position >= w_start &
-                                                      position <= w_stop]
-                      
-                      ## Peroform loh calclulation to obtain avg loh in the 
-                      ## window's frame
-                      loh_calc_avg <- mean(abs(as.numeric(as.character(
-                          filtered_data$tumor_var_freq)) - normal))
-                      ## If no coordinates are found within the window,
-                      ## make as NA
-                      if (is.na(loh_calc_avg)) {
-                          loh_calc_avg <- NA
-                          w_start <- NA
-                          w_stop <- NA
-                      }
-                      filtered_data$loh_diff_avg <- loh_calc_avg
-                      filtered_data$window_start <- w_start
-                      filtered_data$window_stop <- w_stop
-                      return(filtered_data)
-                  }, 
-                  sampleData=sampleData, normal=normal))
-                  dataset <- na.omit(dataset, cols = c("loh_diff_avg", 
-                                                       "window_start", 
-                                                       "window_stop"))
-                  return(dataset)
-              }, window=windowData, normal=normal)
-              return(df)
-          })
-
-#######################################################################
-##### Function to perform loh calcluations in overlapping windows #####
-#' @rdname getLohStepCalculation-methods
-#' @name getLohStepCalculation
-#' @param object of class data.table
-#' @param step integer 
-#' @aliases getLohStepCalculation
-setMethod(f = "getLohStepCalculation",
-          signature="list",
-          definition=function(object, step, ...) {
-              
-              ## Print status message
-              if (verbose) {
-                  message("Calculating loh in overlapping windows")
-              }
-              step_loh_calc <- lapply(object, function(x, step) {
-                  ## Get the sample and chromosome information
-                  sample <- unique(x$sample)
-                  chromosome <- unique(x$chromosome)
-                  
-                  ## Obtain boundaries for each step-sized window
-                  start <- unique(x$window_start)
-                  stop <- c(start[-1], max(x$window_stop))
-                  step_boundaries <- data.table(chromosome=chromosome, start=start, stop=stop)
-                  step_boundaries$sample <- sample
-                  
-                  ## Get the average loh within each step-sized window
-                  loh_df <- x
-                  loh_step_avg <- apply(step_boundaries, 1, function(x, loh_df_data) {
-                      start <- as.numeric(as.character(x[2]))
-                      stop <- as.numeric(as.character(x[3]))
-                      step_df <- loh_df_data[position >= start & 
-                                                 position < stop]
-                      if (nrow(step_df) == 0) {
-                          loh_step_avg <- 0
-                      }
-                      if (nrow(step_df) > 0) {
-                          loh_step_avg <- mean(step_df$loh_diff_avg)
-                      }
-                      return(loh_step_avg)
-                  }, loh_df_data=loh_df)
-                  step_boundaries$loh_step_avg <- loh_step_avg
-                  return(step_boundaries)
-              }, step=step)
-              return(step_loh_calc)
-          })
-
 #############################################################
 ##### Function to generate segmentation dataset for loh #####
 #' @rdname getLohSegmentation-methods
@@ -1138,11 +952,17 @@ setMethod(f = "getLohSegmentation",
               if (verbose) {
                   message("Determining segmeans from LOH calculations")
               }
-              segDfTemp <- split(object, list(as.character(object$sample)))
+              
+              ## Get the sample-chr combination
+              object$sample_chr_combo <- paste0(object$chromosome, "_", object$sample)
+              
+              ## Get the absolute loh difference
+              object$absDiff <- abs(as.numeric(as.character(object$tumor_var_freq)) - 0.50)
+              segDfTemp <- split(object, list(as.character(object$sample_chr_combo)))
               segmentationDf <- rbindlist(lapply(segDfTemp, function(x){
-                  x$midpoint <- floor((as.numeric(x$start) + as.numeric(x$stop))/2)
-                  lohSeg <- CNA(genomdat = as.numeric(x$loh_step_avg), chrom = x$chromosome,
-                                maploc = x$midpoint, data.type = "binary", sampleid = unique(x$sample))
+                  x$midpoint <- x$position
+                  lohSeg <- CNA(genomdat = as.numeric(x$absDiff), chrom = x$chromosome,
+                                maploc = x$midpoint, data.type = "binary", sampleid = unique(x$sample_chr_combo))
                   lohSeg <- segment(lohSeg)
                   lohSeg <- lohSeg$output
                   return(lohSeg)
@@ -1153,231 +973,225 @@ setMethod(f = "getLohSegmentation",
 
 ########################################
 ##### Function to generate cn plot #####
-#' @rdname buildCnPlot-methods
-#' @name buildCnPlot
-#' @aliases buildCnPlot
+#' @rdname buildCnLohPlot-methods
+#' @name buildCnLohPlot
+#' @aliases buildCnLohPlot
 #' @param object of class data.table
 #' @noRd
-setMethod(f="buildCnPlot",
+setMethod(f="buildCnLohPlot",
           signature="cnLohData",
-          definition=function(object, plotAColor, plotALayers, ...){
+          definition=function(object, cnvType, plotAColor, plotALayers,
+                              plotBAlpha, plotBColors, plotBLayers, 
+                              somaticLohCutoff, plotCLimits, plotCColors,
+                              plotCLayers, sectionHeights, verbose){
               
               ## Print status message
               if (verbose) {
                   message("Building cnv plot")
               }
-              
-              ## Perform quality checks on the input variables
-              if(!is.null(plotALayers)){
-                  if(!is.list(plotALayers)){
-                      memo <- paste("plotALayers is not a list")
-                      stop(memo)
-                  }
-                  
-                  if(any(!unlist(lapply(plotALayers, function(x) ggplot2::is.ggproto(x) | ggplot2::is.theme(x) | is(x, "labels"))))){
-                      memo <- paste("plotALayers is not a list of ggproto or ",
-                                    "theme objects... setting plotALayers to NULL")
-                      warning(memo)
-                      plotALayers <- NULL
-                  }
-              } 
-              
-              ## Separate datasets
+              object=cnLohDataset
+              ## Get the cn data (segments and raw data)
               rawCnData <- object@rawCnData
+              rawCnData$chr_sample_combo <- paste0(rawCnData$chromosome, "_", rawCnData$sample)
               segCnData <- object@segCnData
               
-              ## Define parameters of the plot
-              plotTheme <- theme(axis.ticks.x=element_blank(),
-                                 axis.text.x=element_blank(),
-                                 axis.ticks.y=element_blank(),
-                                 panel.grid.major=element_blank(),
-                                 panel.grid.minor=element_blank(), 
-                                 legend.position="none")
-              
-              ## Create hline data for cn plot
-              hline.dat <- data.table(chromosome=segCnData$chrom,
-                                      x=segCnData$loc.start,
-                                      xend=segCnData$loc.end,
-                                      y=segCnData$seg.mean,
-                                      yend=segCnData$seg.mean)
-              
-              ## Define the hline plot
-              hline <- geom_hline(yintercept = 2, lty=2)            
-              segHLines <- geom_segment(data=hline.dat, aes(x=x, xend=xend, y=y, yend=yend), lty=1, col="red", size = 2)
-              
-              ## Define the facet
-              facet <- facet_grid(sample~chromosome, scale="free_x", space="fixed")
-              
-              ## Define the scales
-              scale_x <- scale_x_continuous(name="Position", expand=c(0,0))
-              scale_y <- scale_y_continuous(name="Absolute Copy Number")
-              
-              ## Build the plot
-              p1 <- ggplot(data=rawCnData, aes(x=position,y=cn)) + 
-                  geom_point(color=plotAColor) + facet + hline + segHLines + 
-                  scale_x + scale_y + plotALayers
-                 
-              ## Convert to grob
-              cnPlotGrob <- ggplotGrob(p1)
-              plot(cnPlotGrob)
-              return(cnPlotGrob)
-          })
-
-#################################################
-##### Function to generate somatic loh plot #####
-#' @rdname buildSomaticLohPlot-methods
-#' @name buildSomaticLohPlot
-#' @aliases buildSomaticLohPlot
-#' @param object of class data.table
-#' @noRd
-setMethod(f="buildSomaticLohPlot",
-          signature="cnLohData",
-          definition=function(object, somaticLohCutoff, plotBAlpha, plotBTumorColor, plotBNormalColor,
-                              plotBLayers, ...){
-              
-              ## Print status message
-              if (verbose) {
-                  message("Building somatic loh plot")
-              }
-              
-              ## Separate datasets
+              ## Get the somatic loh data (segments and raw data)
+              rawLohData <- object@rawLohData
+              rawLohData$chr_sample_combo <- paste0(rawLohData$chromosome, "_", rawLohData$sample)
               segLohData <- object@segLohData
               segLohData <- segLohData[seg.mean > somaticLohCutoff]
-              rawLohData <- object@rawLohData
               
-              ## Prepare loh data to be plotted
-              normalDf <- rawLohData[,c(1,2,4,5)]
-              colnames(normalDf) <- c("chromosome", "position", "VAF", "sample")
-              normalDf$Type <- "Normal"
-              tumorDf <- rawLohData[,c(1,2,3,5)]
-              colnames(tumorDf) <- c("chromosome", "position", "VAF", "sample")
-              tumorDf$Type <- "Tumor"
-              rawLohData <- rbind(normalDf, tumorDf)
+              ## Get the germline loh data (segments and raw data)
+              rawGermlineLohData <- object@rawGermlineLohData
+              rawGermlineLohData$chr_sample_combo <- paste0(rawGermlineLohData$chromosome, "_", rawGermlineLohData$sample)
               
-              ## Define parameters of the plot
-              plotTheme <- theme(axis.ticks.x=element_blank(),
-                                 axis.text.x=element_blank(),
-                                 axis.ticks.y=element_blank(),
-                                 panel.grid.major=element_blank(),
-                                 panel.grid.minor=element_blank(), 
-                                 legend.position="none")
-              
-              ## Create hline data for cn plot
-              hline.dat <- data.table(chromosome=segLohData$chrom,
-                                      x=segLohData$loc.start,
-                                      xend=segLohData$loc.end,
-                                      y=0.5+segLohData$seg.mean,
-                                      yend=0.5+segLohData$seg.mean)
-              
-              ## Define the hline plot
-              h1 <- geom_hline(yintercept = 0.4, lty=2) 
-              h2 <- geom_hline(yintercept = 0.6, lty=2)
-              segHLines <- geom_segment(data=hline.dat, aes(x=x, xend=xend, y=y, yend=yend), lty=1, col="red", size = 2)
-              
-              ## Define the facet
-              facet <- facet_grid(sample~chromosome, scale="free_x", space="fixed")
-              
-              ## Define the scale
-              scale_x <- scale_x_continuous(name="Position", expand=c(0,0))
-              scale_y <- scale_y_continuous(name="VAF", limits=c(0,1))
-              
-              ## Define the colors
-              color <- scale_color_manual(values=c(plotBNormalColor, plotBTumorColor))
-
-              ## Build the plot
-              p1 <- ggplot(data=rawLohData, aes(x=position,y=VAF, col=Type)) + 
-                  geom_point(alpha=plotBAlpha) + facet + h1 + h2 + segHLines + 
-                  scale_x + scale_y + color + plotBLayers
-              
-              ## Convert to grob
-              somaticLohPlotGrob <- ggplotGrob(p1)
-              plot(somaticLohPlotGrob)
-              return(somaticLohPlotGrob)
-          })
-
-##################################################
-##### Function to generate germline loh plot #####
-#' @rdname buildGermlineLohPlot-methods
-#' @name buildGermlineLohPlot
-#' @aliases buildGermlineLohPlot
-#' @param object of class data.table
-#' @noRd
-setMethod(f="buildGermlineLohPlot",
-          signature="cnLohData",
-          definition=function(object, plotCLimits, plotCLowColor,
-                              plotCHighColor, plotCLayers, verbose=verbose){
-              
-              ## Print status message
-              if (verbose) {
-                  message("Building germline loh plot")
-              }
-              
-              ## Separate datasets
-              germlineLohData <- object@rawGermlineLohData
+              ## Get the chromosome and sample data
               chrData <- object@chrData
+              samples <- unique(c(as.character(unique(rawCnData$sample)), 
+                                  as.character(unique(rawLohData$sample)), 
+                                  as.character(unique(rawGermlineLohData$sample))))
+              sample_chr_combo <- data.table(chr_sample_combo=as.vector(outer(chrData$chromosome, samples, paste, sep="_")))
               
-              ## Define parameters of the plot
-              plotTheme <- theme(panel.grid.major=element_blank(),
-                                 panel.grid.minor=element_blank())
+              ## Split the dataset by chr_sample_combo
+              splitDf <- split(sample_chr_combo, f=sample_chr_combo$chr_sample_combo)
               
-            
-              ## Define the facet
-              facet <- facet_grid(sample~chromosome, scale="free_x", space="fixed")
-              
-              ## Define the scale 
-              scale_x <- scale_x_continuous(name="Position", expand=c(0,0))
-              scale_y <- scale_y_continuous(name="Normal VAF", breaks = c(0, 0.25, 0.5, 0.75, 1.0))
-              
-              ## Define the gradient
-              gradient <- scale_fill_gradient2(low=plotCLowColor, high=plotCHighColor,
-                                               limits=plotCLimits, oob=squish, trans="sqrt")
+              ## Generate combined cn/somatic loh/ germline loh plots 
+              #x <- splitDf[[8]]$chr_sample_combo
+              combinedPlots <- lapply(splitDf, function(x, chrData, cnvType, plotAColor, plotALayers,
+                                                        plotBAlpha, plotBColors, plotBLayers, 
+                                                        somaticLohCutoff, plotCLimits, plotCColors,
+                                                        plotCLayers, sectionHeights, verbose){
+                  ## Print status message
+                  if (verbose) {
+                      memo <- paste0("Generating combined cn/somatic loh/ germline loh plots")
+                      message(memo)
+                  }
+                  
+                  ## Subset out the datasets to chr and sample of interest
+                  cnData <- rawCnData[chr_sample_combo==x]
+                  cnSeg <- segCnData[ID==x]
+                  somaticLohData <- rawLohData[chr_sample_combo==x]
+                  lohSeg <- segLohData[ID==x]
+                  germlineLohData  <- rawGermlineLohData[chr_sample_combo==x]
+                  
+                  ## Get the chromosome of interest
+                  chr <- strsplit(as.character(x), split="_")[[1]][1]
+                  chr <- chrData[chromosome==chr]
+                  
+                  ##############################################################              
+                  ##### Build the copy number variation plot ###################
+                  ##############################################################
+                  ## Define parameters of the plot
+                  plotTheme <- theme(axis.ticks.x=element_blank(),
+                                     axis.text.x=element_blank(),
+                                     axis.ticks.y=element_blank(),
+                                     panel.grid.major=element_blank(),
+                                     panel.grid.minor=element_blank(), 
+                                     legend.position="none")
+                  
+                  ## Create hline data for cn plot
+                  hline.dat <- data.table(chromosome=cnSeg$chrom,
+                                          x=cnSeg$loc.start,
+                                          xend=cnSeg$loc.end,
+                                          y=cnSeg$seg.mean,
+                                          yend=cnSeg$seg.mean)
+                  
+                  ## Define the hline plot
+                  if (cnvType=="absolute" | cnvType == "logratio") {
+                      hline <- geom_hline(yintercept = 2, lty=2)            
+                  }
+                  if (cnvType == "relative") {
+                      hline <- geom_hline(yintercept = 0, lty=2)
+                  }
+                  segHLines <- geom_segment(data=hline.dat, aes(x=x, xend=xend, y=y, yend=yend), lty=1, col="red", size = 2)
+                  
+                  ## Define the facet
+                  facet <- facet_grid(sample~chromosome, scale="free_x", space="fixed")
+                  
+                  ## Define the scales
+                  scale_x <- scale_x_continuous(name="Position", expand=c(0,0), limits=c(chr$start, chr$end))
+                  scale_y <- scale_y_continuous(name=paste0(cnvType, " Copy Number"))
+                  
+                  ## Build the plot
+                  p1 <- ggplot(data=cnData, aes(x=position,y=cn)) + 
+                      geom_point(color=plotAColor) + facet + hline + segHLines + 
+                      scale_x + scale_y + plotALayers
+                  
+                  ##############################################################
+                  ##### Build the somatic LOH plot #############################
+                  ##############################################################
+                  ## Print status message
+                  if (verbose) {
+                      message("Building somatic loh plot")
+                  }
+                  
+                  ## Prepare somatic loh data to be plotted
+                  normalDf <- somaticLohData[,c(1,2,4,5)]
+                  colnames(normalDf) <- c("chromosome", "position", "VAF", "sample")
+                  normalDf$Type <- "Normal"
+                  tumorDf <- somaticLohData[,c(1,2,3,5)]
+                  colnames(tumorDf) <- c("chromosome", "position", "VAF", "sample")
+                  tumorDf$Type <- "Tumor"
+                  allLohData <- rbind(normalDf, tumorDf)
+                  
+                  ## Define parameters of the plot
+                  plotTheme <- theme(axis.ticks.x=element_blank(),
+                                     axis.text.x=element_blank(),
+                                     axis.ticks.y=element_blank(),
+                                     panel.grid.major=element_blank(),
+                                     panel.grid.minor=element_blank(), 
+                                     legend.position="none")
+                  
+                  ## Create hline data for cn plot
+                  hline.dat <- data.table(chromosome=lohSeg$chrom,
+                                          x=lohSeg$loc.start,
+                                          xend=lohSeg$loc.end,
+                                          y=0.5+lohSeg$seg.mean,
+                                          yend=0.5+lohSeg$seg.mean)
+                  
+                  ## Define the hline plot
+                  h1 <- geom_hline(yintercept = 0.4, lty=2) 
+                  h2 <- geom_hline(yintercept = 0.6, lty=2)
+                  segHLines <- geom_segment(data=hline.dat, aes(x=x, xend=xend, y=y, yend=yend), lty=1, col="red", size = 2)
+                  
+                  ## Define the facet
+                  facet <- facet_grid(sample~chromosome, scale="free_x", space="fixed")
+                  
+                  ## Define the scale
+                  scale_x <- scale_x_continuous(name="Position", expand=c(0,0), limits=c(chr$start, chr$end))
+                  scale_y <- scale_y_continuous(name="VAF", limits=c(0,1))
+                  
+                  ## Define the colors
+                  color <- scale_color_manual(values=plotBColors)
+                  
+                  ## Build the plot
+                  p2 <- ggplot(data=allLohData, aes(x=position,y=VAF, col=Type)) + 
+                      geom_point(alpha=plotBAlpha) + facet + h1 + h2 + segHLines + 
+                      scale_x + scale_y + color + plotBLayers
 
-              ## Build the plot
-              p1 <- ggplot(data=germlineLohData, aes(x=position,y=normal_var_freq)) + 
-                  geom_hex(binwidth=c((chrData$end[1]*.025/4),0.025)) + facet + gradient + scale_x + scale_y + 
-                  plotTheme + plotCLayers
+                  ##############################################################                  
+                  ##### Build the germline LOH plot ############################
+                  ##############################################################
+                  ## Print status message
+                  if (verbose) {
+                      message("Building germline loh plot")
+                  }
+                  
+                  ## Define parameters of the plot
+                  plotTheme <- theme(panel.grid.major=element_blank(),
+                                     panel.grid.minor=element_blank())
+                  
+                  
+                  ## Define the facet
+                  facet <- facet_grid(sample~chromosome, scale="free_x", space="fixed")
+                  
+                  ## Define the scale 
+                  scale_x <- scale_x_continuous(name="Position", expand=c(0,0), limits=c(chr$start, chr$end))
+                  scale_y <- scale_y_continuous(name="Normal VAF", breaks = c(0, 0.25, 0.5, 0.75, 1.0))
+                  
+                  ## Define the gradient
+                  gradient <- scale_fill_gradient2(low=plotCColors[1], high=plotCColors[2],
+                                                   limits=c(0, plotCLimits), oob=squish, trans="sqrt")
+                  
+                  ## Build the plot
+                  p3 <- ggplot(data=germlineLohData, aes(x=position,y=normal_var_freq)) + 
+                      geom_hex(binwidth=c((chr$end*.025/4),0.025)) + facet + gradient + scale_x + scale_y + 
+                      plotTheme + plotCLayers
+                  
+                  
+                  ##############################################################
+                  ##### Combine all of the plots into 1 plot ###################
+                  ##############################################################
+                  ## Print status message
+                  if (verbose) {
+                      message("Combining cn, somatic loh, and germline loh plots")
+                  }
+                  
+                  ## Obtain the max width for relevant plots
+                  cnPlot <- ggplotGrob(p1)
+                  somaticLohPlot <- ggplotGrob(p2)
+                  germlineLohPlot <- ggplotGrob(p3)
+                  plotList <- list(cnPlot, somaticLohPlot, germlineLohPlot)
+                  
+                  plotList <- plotList[lapply(plotList, length) > 0]
+                  plotWidths <- lapply(plotList, function(x) x$widths)
+                  maxWidth <- do.call(grid::unit.pmax, plotWidths)
+                  
+                  ## Set the widths for all plots
+                  for (i in 1:length(plotList)) {
+                      plotList[[i]]$widths <- maxWidth
+                  }
+                  
+                  ## Arrange the final plot
+                  finalPlot <- do.call(gridExtra::arrangeGrob, c(plotList, list(ncol=1, heights=sectionHeights)))
+                  plot(finalPlot)
+                  return(finalPlot)
+              }, 
+              chrData=chrData, cnvType=cnvType, plotAColor=plotAColor, plotALayers=plotALayers, 
+              plotBAlpha=plotBAlpha, plotBColors=plotBColors, plotBLayers=plotBLayers,
+              somaticLohCutoff=somaticLohCutoff, plotCLimits=plotCLimits,
+              plotCColors=plotCColors, plotCLayers=plotCLayers, sectionHeights=sectionHeights, 
+              verbose=verbose)
               
-              ## Convert to grob
-              germlineLohPlot <- ggplotGrob(p1)
-              plot(germlineLohPlot)
-              return(germlineLohPlot)
-              
-          }) 
-
-#########################################################
-##### Function to arrange lohSpec and lohFreq plots #####
-#' @rdname arrangeCnLohPlots-methods
-#' @name arrangeCnLohPlots
-#' @param object of class cnLohData
-#' @aliases arrangeCnLohPlots
-#' @noRd
-setMethod(f="arrangeCnLohPlots",
-          signature="cnLohPlots",
-          definition=function(object, sectionHeights, verbose, ...) {
-              
-              ## Print status message
-              if (verbose) {
-                  message("Combining cn, somatic loh, and germline loh plots")
-              }
-              
-              ## Grab the data we need
-              plotA <- object@cnPlot
-              plotB <- object@somaticLohPlot
-              plotC <- object@germlineLohPlot
-              
-              ## obtain the meax width for relevant plots
-              plotList <- list(plotA, plotB, plotC)
-              plotList <- plotList[lapply(plotList, length) > 0]
-              plotWidths <- lapply(plotList, function(x) x$widths)
-              maxWidth <- do.call(grid::unit.pmax, plotWidths)
-              
-              ## Set the widths for all plots
-              for (i in 1:length(plotList)) {
-                  plotList[[i]]$widths <- maxWidth
-              }
-              
-              ## Arrange the final plot
-              finalPlot <- do.call(gridExtra::arrangeGrob, c(plotList, list(ncol=1, heights=sectionHeights)))
-              plot(finalPlot)
-              return(finalPlot)
+              return(combinedPlots)
           })

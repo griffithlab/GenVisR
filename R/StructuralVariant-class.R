@@ -776,7 +776,7 @@ setMethod(f="getData",
 setMethod(f="drawPlot",
           signature="StructuralVariant",
           definition=function(object, chr1=NULL, chr2=NULL, ...) {
-              ## Get the list of gtabls
+              ## Get the list of gtables
               object <- object@svPlots@plots
               
               ## Get the chr combo

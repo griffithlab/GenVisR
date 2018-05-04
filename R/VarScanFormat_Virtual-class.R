@@ -15,6 +15,7 @@ setClass(
     Class="VarScanFormat_Virtual",
     representation=representation(varscan="data.table",
                                   sample="data.table",
+                                  header="data.table",
                                   "VIRTUAL")
 )
 

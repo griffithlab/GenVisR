@@ -236,6 +236,19 @@ checkLohInputParameters <- function(object, getHeterozygousCalls, chromosomes, s
         stop(memo)
         BSgenome <- NULL
     }
+    ##### Check the windowSize parameter #####
+    if (is.null(windowSize)) {
+        windowSize <- 2500000
+        memo <- paste0("windowSize parameter cannot be NULL. Setting the windowSize value to 2500000.")
+        message(memo)
+    }
+    ## Check if windowSize is numeric
+    if (!is.numeric(windowSize)) {
+        memo <- paste0("windowSize variable not of the numeric class. Attempting to coerce.")
+        windowSize <- as.numeric(windowSize)
+        message(memo)
+    }
+    
     ##### Check the step parameter #####
     if (is.null(step)) {
         step <- 1000000
@@ -248,18 +261,14 @@ checkLohInputParameters <- function(object, getHeterozygousCalls, chromosomes, s
         step <- as.numeric(step)
         message(memo)
     }
-    
-    ##### Check the windowSize parameter #####
-    if (is.null(windowSize)) {
+    ## Check to see if step is greater than windowSize
+    if (step > windowSize) {
+        memo <- paste("Step value is greater than windowSize. Make sure that the step value is 
+                      at most equal to the WindowSize. Using default values for both parameters.")
+        warning(memo)
+        step <- 1000000
         windowSize <- 2500000
-        memo <- paste0("windowSize parameter cannot be NULL. Setting the windowSize value to 2500000.")
-        message(memo)
-    }
-    ## Check if windowSize is numeric
-    if (!is.numeric(windowSize)) {
-        memo <- paste0("windowSize variable not of the numeric class. Attempting to coerce.")
-        windowSize <- as.numeric(windowSize)
-        message(memo)
+        
     }
     
     ##### Check the normalVAF parameter #####
