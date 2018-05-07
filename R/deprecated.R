@@ -304,7 +304,7 @@ waterfall <- function(x, mainRecurCutoff=0, mainGrid=TRUE, mainXlabel=FALSE,
         pA <- waterfall_align(genes = gene_plot, heatmap = heatmap, burden = burden_plot, 
                               clinical = clinical_plot, proportion = proportions_plot, 
                               section_heights = section_heights)
-        return(grid::grid.draw(pA))
+        #return(grid::grid.draw(pA))
     } else 
     {
         pA <- waterfall_align(genes = gene_plot, heatmap = heatmap, burden = burden_plot, 
