@@ -88,6 +88,7 @@ setMethod(f="getMeta",
 #' @aliases parseDescription,VEP_Virtual
 #' @param object List of character vectors obtained from the vep header
 #' @importFrom data.table setDT
+#' @importFrom data.table data.table
 #' @noRd
 setMethod(f="parseDescription",
           signature="list",
@@ -103,8 +104,12 @@ setMethod(f="parseDescription",
                   x <- x[descriptionFieldIndex]
                   return(x)
               }
-              # obtain the column descriptions and clean up
-              description<- lapply(vepHeader, a)
+              # obtain the column descriptions and clean up, if there are no column descriptions return NA
+              if(any(grepl("Extra column keys", vepHeader))){
+                  description<- lapply(vepHeader, a)
+              } else {
+                  return(data.table::data.table())
+              }
               description <- unique(unlist(description))
               description <- gsub("## ", "", description)
               
@@ -138,7 +143,11 @@ setMethod(f="parseHeader",
               }
               
               # obtain the column headers and clean up
-              header <- lapply(vepHeader, a)
+              if(any(grepl("Extra column keys", vepHeader))){
+                  header <- lapply(vepHeader, a)
+              } else {
+                  header <- vepHeader
+              }
               header <- lapply(header, function(x) x[-which(grepl("Output produced at", x))])
               header <- unique(unlist(header))
               header <- gsub("## ", "", header)
