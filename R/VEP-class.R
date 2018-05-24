@@ -70,6 +70,7 @@ VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
             header <- header[grepl("^##", header)]
             # find where headers stop and read the data
             skip <- length(header)
+            browser()
             vepData <- suppressWarnings(data.table::fread(input=x,
                                                           stringsAsFactors=TRUE,
                                                           verbose=verbose,
@@ -144,7 +145,7 @@ VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
     }
     
     # assign the vepData to it's slot
-    if(version >= 88 & version < 89){
+    if(version >= 88 & version <= 90.5){
         vepObject <- VEP_v88(vepData=vepData, vepHeader=vepHeader)
     } else {
         memo <- paste("Currently only VEP version 88 is supported, make a",
@@ -252,6 +253,7 @@ setMethod(f="getMeta",
 setMethod(f="setMutationHierarchy",
           signature="VEP",
           definition=function(object, mutationHierarchy, verbose, ...){
+              
               # set the mutation hierarchy if a custom hierarchy is unspecified
               if(is.null(mutationHierarchy)){
                   mutationHierarchy$mutation <- c("transcript_ablation", "splice_acceptor_variant",
@@ -308,8 +310,10 @@ setMethod(f="setMutationHierarchy",
               # these are split up and taken care of in toWaterfall(), see below
               consequences <- as.character(unique(object@vepObject@mutation$Consequence))
               consequences <- consequences[grepl(",", consequences, fixed=TRUE)]
-              consequencesSplit <- strsplit(consequences, ",", fixed=TRUE)
-              consequences <- consequences[sapply(consequencesSplit, function(x) all(x %in% mutationHierarchy$mutation))]
+              if(length(consequences) != 0){
+                  consequencesSplit <- strsplit(consequences, ",", fixed=TRUE)
+                  consequences <- consequences[sapply(consequencesSplit, function(x) all(x %in% mutationHierarchy$mutation))]
+              }
               
               # check that all mutations are specified, if not add entries for them
               if(!all(object@vepObject@mutation$Consequence %in% c(mutationHierarchy$mutation, consequences))){
