@@ -70,7 +70,6 @@ VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
             header <- header[grepl("^##", header)]
             # find where headers stop and read the data
             skip <- length(header)
-            browser()
             vepData <- suppressWarnings(data.table::fread(input=x,
                                                           stringsAsFactors=TRUE,
                                                           verbose=verbose,
