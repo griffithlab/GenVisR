@@ -372,8 +372,15 @@ setMethod(f="toWaterfall",
               sample <- object@vepObject@sample
               mutation <- object@vepObject@mutation[,"Consequence"]
               gene <- object@vepObject@meta[,"SYMBOL"]
+              altGene <- object@vepObject@meta[,"Gene"]
               label <- NA
               labelFlag <- TRUE
+              
+              # fill in gene values from the two gene colums we have
+              if(any(gene$SYMBOL %in% c("-"))){
+                  index <- which(gene$SYMBOL %in% c("-"))
+                  gene[index,] <- altGene[index,]
+              }
               
               # if a label column exists and is proper overwrite the label variable
               # if not change the flag
