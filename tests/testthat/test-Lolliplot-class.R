@@ -38,13 +38,13 @@ toLolliplot.mode1.out <- toLolliplot(dfObject.mode1, verbose=FALSE)
 toLolliplot.mode2.out <- toLolliplot(dfObject.mode2, verbose=FALSE)
 
 test_that("toLolliplot stops if a required column is not detected", {
-    
+
     dfObject.mode1$sample <- NULL
     expect_error(toLolliplot(dfObject.mode1, verbose=FALSE))
 })
 
 test_that("toLolliplot works in verbose mode",{
-    
+
     expect_message(toLolliplot(dfObject.mode1, verbose=TRUE))
 })
 
@@ -58,25 +58,25 @@ if(biomart_success){
 }
 
 test_that("retrieveMart retrieves a valid mart for a given species", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error, biomart is possibly down or there is no internet connection.")
     expect_true(class(retrieveMart.out) == "Mart")
 })
 
 test_that("retrieveMart errors if the species matches more than one dataset in the mart", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     expect_error(retrieveMart("m", host="www.ensembl.org", verbose=FALSE))
 })
 
 test_that("retreiveMart errors if the supplied species is not found", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     expect_error(retrieveMart("titan", host="www.ensembl.org", verbose=FALSE))
 })
 
 test_that("retreiveMart works in verbose mode", {
-    
+
     expect_message(retrieveMart("hsapiens", host="www.ensembl.org", verbose=TRUE))
 })
 
@@ -85,15 +85,15 @@ if(biomart_success){
     annotateGene.mode1.out <- annotateGene(toLolliplot.mode1.out,
                                            transcript="ENST00000263967",
                                            ensembl_mart=retrieveMart.out,
-                                           verbose=FALSE) 
+                                           verbose=FALSE)
     annotateGene.mode2.out <- annotateGene(toLolliplot.mode2.out,
                                            transcript="ENST00000263967",
                                            ensembl_mart=retrieveMart.out,
-                                           verbose=FALSE) 
+                                           verbose=FALSE)
 }
 
 test_that("annotateGene adds the ensembl, hgnc, and entrez gene identifiers for the supplied transcript", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     expect_equivalent(as.character(unique(annotateGene.mode1.out$biomaRt_ensembl_gene_id)), "ENSG00000121879")
     expect_equivalent(as.character(unique(annotateGene.mode1.out$biomaRt_hgnc_symbol)), "PIK3CA")
@@ -101,7 +101,7 @@ test_that("annotateGene adds the ensembl, hgnc, and entrez gene identifiers for 
 })
 
 test_that("annotateGene errors if no transcript is supplied", {
-    
+
     expect_error(annotateGene(toLolliplot.mode1.out,
                               transcript=NULL,
                               ensembl_mart=retrieveMart.out,
@@ -109,7 +109,7 @@ test_that("annotateGene errors if no transcript is supplied", {
 })
 
 test_that("annotateGene warns if transcript is not a character", {
-    
+
     expect_warning(annotateGene(toLolliplot.mode1.out,
                                 transcript=factor("ENST00000263967"),
                                 ensembl_mart=retrieveMart.out,
@@ -117,7 +117,7 @@ test_that("annotateGene warns if transcript is not a character", {
 })
 
 test_that("annotateGene warns if more than 1 element is supplied to transcript", {
-    
+
     expect_warning(annotateGene(toLolliplot.mode1.out,
                                 transcript=rep("ENST00000263967", 2),
                                 ensembl_mart=retrieveMart.out,
@@ -125,7 +125,7 @@ test_that("annotateGene warns if more than 1 element is supplied to transcript",
 })
 
 test_that("annotateGene errors if a valid ensembl transcript is not supplied", {
-    
+
     expect_error(annotateGene(toLolliplot.mode1.out,
                               transcript="unicorn",
                               ensembl_mart=retrieveMart.out,
@@ -133,7 +133,7 @@ test_that("annotateGene errors if a valid ensembl transcript is not supplied", {
 })
 
 test_that("annotateGene works in verbose mode", {
-    
+
     expect_message(annotateGene(toLolliplot.mode1.out,
                                 transcript="ENST00000263967",
                                 ensembl_mart=retrieveMart.out,
@@ -142,16 +142,16 @@ test_that("annotateGene works in verbose mode", {
 
 ################ test filterByGene #############################################
 if(biomart_success){
-    filterByGene.mode1.out <- filterByGene(annotateGene.mode1.out, verbose=FALSE) 
-    filterByGene.mode2.out <- filterByGene(annotateGene.mode2.out, verbose=FALSE) 
+    filterByGene.mode1.out <- filterByGene(annotateGene.mode1.out, verbose=FALSE)
+    filterByGene.mode2.out <- filterByGene(annotateGene.mode2.out, verbose=FALSE)
 }
 
 test_that("filterByGene correctly filters data by gene", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     annotateGene.mode1.out$gene <- as.character(annotateGene.mode1.out$gene)
     annotateGene.mode1.out$gene[1:length(annotateGene.mode1.out$gene)-1] <- c("newTranscript")
-    filterByGene.mode1.out <- filterByGene(annotateGene.mode1.out, verbose=FALSE) 
+    filterByGene.mode1.out <- filterByGene(annotateGene.mode1.out, verbose=FALSE)
     expect_equal(nrow(filterByGene.mode1.out), 1)
 })
 
@@ -159,25 +159,25 @@ test_that("filterByGene can determine which value to filter by", {
 
     skip_if_not(biomart_success, "mart recieved try-error")
     annotateGene.mode1.out$gene <- as.character(annotateGene.mode1.out$gene)
-    
+
     annotateGene.mode1.out$gene[1] <- as.character("PIK3CA")
     annotateGene.mode1.out$gene[2:nrow(annotateGene.mode1.out)] <- as.character("unicorn")
-    filterByGene.mode1.out <- filterByGene(annotateGene.mode1.out, verbose=FALSE) 
+    filterByGene.mode1.out <- filterByGene(annotateGene.mode1.out, verbose=FALSE)
     expect_equal(nrow(filterByGene.mode1.out), 1)
-    
+
     annotateGene.mode1.out$gene[1] <- as.character("5290")
     annotateGene.mode1.out$gene[2:nrow(annotateGene.mode1.out)] <- as.character("unicorn")
-    filterByGene.mode1.out <- filterByGene(annotateGene.mode1.out, verbose=FALSE) 
+    filterByGene.mode1.out <- filterByGene(annotateGene.mode1.out, verbose=FALSE)
     expect_equal(nrow(filterByGene.mode1.out), 1)
-    
+
     annotateGene.mode1.out$gene[1] <- as.character("ENSG00000121879")
     annotateGene.mode1.out$gene[2:nrow(annotateGene.mode1.out)] <- as.character("unicorn")
-    filterByGene.mode1.out <- filterByGene(annotateGene.mode1.out, verbose=FALSE) 
+    filterByGene.mode1.out <- filterByGene(annotateGene.mode1.out, verbose=FALSE)
     expect_equal(nrow(filterByGene.mode1.out), 1)
 })
 
 test_that("filterByGene errors if no gene is found to filter on", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     annotateGene.mode1.out$gene <- as.character(annotateGene.mode1.out$gene)
     annotateGene.mode1.out$gene[1:length(annotateGene.mode1.out$gene)] <- c("unicorn")
@@ -185,31 +185,31 @@ test_that("filterByGene errors if no gene is found to filter on", {
 })
 
 test_that("filterByGene prints status messages", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     expect_message(filterByGene(annotateGene.mode1.out, verbose=TRUE))
 })
 
 ############### test annotateTranscript ########################################
 if(biomart_success){
-    annotateTranscript.mode1.out <- annotateTranscript(filterByGene.mode1.out, ensembl=retrieveMart.out, verbose=FALSE) 
-    annotateTranscript.mode2.out <- annotateTranscript(filterByGene.mode2.out, ensembl=retrieveMart.out, verbose=FALSE) 
+    annotateTranscript.mode1.out <- annotateTranscript(filterByGene.mode1.out, ensembl=retrieveMart.out, verbose=FALSE)
+    annotateTranscript.mode2.out <- annotateTranscript(filterByGene.mode2.out, ensembl=retrieveMart.out, verbose=FALSE)
 }
 
 test_that("annotateTranscript annotates an ensembl transcript if none is present", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     expect_true("biomaRt_ensembl_transcript_id" %in% colnames(annotateTranscript.mode1.out))
 })
 
 test_that("annotateTranscript does not attempt to annotate a transcript if one is already present", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     expect_true("ensembl_transcript_id" %in% colnames(annotateTranscript.mode2.out))
 })
 
 test_that("annotateTranscript works in verbose mode", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     expect_message(annotateTranscript(filterByGene.mode1.out, ensembl=retrieveMart.out, verbose=TRUE))
     expect_message(annotateTranscript(filterByGene.mode2.out, ensembl=retrieveMart.out, verbose=TRUE))
@@ -218,13 +218,13 @@ test_that("annotateTranscript works in verbose mode", {
 ######################### test annotateProteinCoord ############################
 
 if(biomart_success){
-    
+
     annotateProteinCoord.mode1.out <- suppressWarnings(annotateProteinCoord(annotateTranscript.mode1.out,
                                                            ensembl=retrieveMart.out,
                                                            txdb=txdb,
                                                            BSgenome=BSgenome,
                                                            verbose=FALSE))
-    
+
     annotateProteinCoord.mode2.out <- suppressWarnings(annotateProteinCoord(annotateTranscript.mode2.out,
                                                            ensembl=retrieveMart.out,
                                                            txdb=NULL,
@@ -233,10 +233,10 @@ if(biomart_success){
 }
 
 test_that("annotateProteinCoord adds protein coordinates if none are present", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     expect_true(class(annotateProteinCoord.mode1.out$proteinCoord) == "integer")
-    
+
     # check 1 position of what the annotation file said to what genvisr said
     expect <- unique(annotateProteinCoord.mode2.out[annotateProteinCoord.mode2.out$ensembl_transcript_id == "ENST00000263967" &
                                                     annotateProteinCoord.mode2.out$chromosome == "chr3" &
@@ -250,7 +250,7 @@ test_that("annotateProteinCoord adds protein coordinates if none are present", {
 })
 
 test_that("annotateProteinCoord removes p. notation from protein coords if they are present", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     annotateTranscript.mode2.out <- annotateTranscript.mode2.out[1:5,]
     annotateProteinCoord.mode2.out <- suppressWarnings(annotateProteinCoord(annotateTranscript.mode2.out,
@@ -315,7 +315,7 @@ test_that("filterByTranscript warns if transcript input has multiple elements", 
     skip_if_not(biomart_success, "mart recieved try-error")
     expect_warning(filterByTranscript(annotateProteinCoord.mode1.out,
                                       transcript=rep("ENST00000263967", 2),
-                                      verbose=FALSE))    
+                                      verbose=FALSE))
 })
 
 test_that("filterByTranscript warns if a given transcript is not found", {
@@ -354,7 +354,7 @@ test_that("calcMutFreq correctly calculates the mutation frequency", {
                                            calcMutFreq.mode1.out$reference == "A" &
                                            calcMutFreq.mode1.out$variant == "T",]$mutationFreq)
     expect_equal(expected, actual)
-    
+
     expected <- 13
     actual <- unique(calcMutFreq.mode2.out[calcMutFreq.mode2.out$chromosome == "chr3" &
                                            calcMutFreq.mode2.out$start == 179234297 &
@@ -382,11 +382,11 @@ if(biomart_success){
 }
 
 test_that("constructTranscriptData is able to retrieve protein domains", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     constructTranscriptData.mode1.out <- constructTranscriptData.mode1.out[constructTranscriptData.mode1.out$source == "domain",]
     expect_true(length(constructTranscriptData.mode1.out) >= 1)
-    
+
     constructTranscriptData.mode2.out <- constructTranscriptData.mode2.out[constructTranscriptData.mode2.out$source == "domain",]
     expect_true(length(constructTranscriptData.mode2.out) >= 1)
 })
@@ -395,7 +395,7 @@ test_that("constructTranscriptData is able to retrieve a protein length", {
     skip_if_not(biomart_success, "mart recieved try-error")
     constructTranscriptData.mode1.out <- constructTranscriptData.mode1.out[constructTranscriptData.mode1.out$source == "protein",]
     expect_true(constructTranscriptData.mode1.out$proteinStop >= 1)
-    
+
     constructTranscriptData.mode2.out <- constructTranscriptData.mode2.out[constructTranscriptData.mode2.out$source == "protein",]
     expect_true(constructTranscriptData.mode2.out$proteinStop >= 1)
 })
@@ -441,7 +441,7 @@ test_that("setTierTwo increases the height of each different mutation that resid
 
 test_that("setTierTwo emphasize parameter works", {
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     setTierTwo.mode1.out <- setTierTwo(calcMutFreq.mode1.out, proteinData=constructTranscriptData.mode1.out,
                                        emphasize=c(70, 81), verbose=FALSE)
     setTierTwo.mode1.out <- setTierTwo.mode1.out[setTierTwo.mode1.out$tier == "second",]
@@ -463,11 +463,11 @@ if(biomart_success){
 
 test_that("first tier mutation heights increase as the mutation frequency increases", {
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     setTierOne.mode1.out <- setTierOne.mode1.out[setTierOne.mode1.out$tier == "first",]
     setTierOne.mode1.out <- setTierOne.mode1.out[order(setTierOne.mode1.out$mutationFreq),]
     expect_true(all(diff(setTierOne.mode1.out$height) >= 0))
-    
+
     setTierOne.mode2.out <- setTierOne.mode2.out[setTierOne.mode2.out$tier == "first",]
     setTierOne.mode2.out <- setTierOne.mode2.out[order(setTierOne.mode2.out$mutationFreq),]
     expect_true(all(diff(setTierOne.mode2.out$height) >= 0))
@@ -475,7 +475,7 @@ test_that("first tier mutation heights increase as the mutation frequency increa
 
 test_that("setTierOne works in verbose mode", {
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     expect_message(setTierOne(setTierTwo.mode1.out, verbose=TRUE))
 })
 
@@ -499,7 +499,7 @@ test_that("addLabel is able to correctly add labels in the expected format", {
     expected <- "p.Phe83Ser"
     actual <- as.character(addLabel.mode2.out[addLabel.mode2.out$proteinCoordAdj == 83]$label)
     expect_equivalent(expected, actual)
-    
+
     expected <- "p.F83S"
     actual <- as.character(addLabel.mode1.out[addLabel.mode1.out$proteinCoordAdj == 83]$label)
     expect_equivalent(expected, actual)
@@ -518,7 +518,7 @@ if(biomart_success){
 }
 
 test_that("setDomainHeights domains are nested correctly", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
     expected <- 6
     actual <- setDomainHeights.mode1.out[setDomainHeights.mode1.out$interproShortDesc == "PI3/4_kinase_cat_sf",]$nest
@@ -530,27 +530,27 @@ test_that("setDomainHeights domains are nested correctly", {
 })
 
 test_that("setDomainHeights adjusts heights correctly based on the nest value", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     setDomainHeights.mode1.out <- setDomainHeights.mode1.out[order(setDomainHeights.mode1.out$nest),]
     expect_true(all(diff(setDomainHeights.mode1.out$maxHeight) >= 0))
-    
+
     setDomainHeights.mode1.out <- setDomainHeights.mode1.out[order(setDomainHeights.mode1.out$nest),]
     expect_true(all(diff(setDomainHeights.mode1.out$minHeight) <= 0))
 })
 
 test_that("setDomainHeights works in verbose mode", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     expect_message(setDomainHeights(constructTranscriptData.mode1.out, verbose=TRUE))
 })
 
 ############ test Lolliplotdata constructor ####################################
 
 if(biomart_success){
-    
+
     LolliplotData.mode1.out <- suppressWarnings(LolliplotData(dfObject.mode1, transcript="ENST00000263967",
                                                               species="hsapiens", host="www.ensembl.org",
                                                               txdb=txdb, BSgenome=BSgenome, emphasize=NULL,
@@ -564,9 +564,9 @@ if(biomart_success){
 
 
 test_that("LolliplotData outputs a S4 class object", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     expect_s4_class(LolliplotData.mode1.out, "LolliplotData")
     expect_s4_class(LolliplotData.mode2.out, "LolliplotData")
 })
@@ -580,46 +580,46 @@ context("LolliplotPlots Constructor")
 ##################### test buildDensityPlot ####################################
 
 test_that("buildDensityPlot constructs the expected plot", {
-    
+
     skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     buildDensityPlot.out <- buildDensityPlot(LolliplotData.mode1.out, plotALayers=NULL, verbose=FALSE)
     vdiffr::expect_doppelganger("Lolliplot Density Plot", grid::grid.draw(buildDensityPlot.out))
 })
 
 test_that("buildDensityPlot is able to add layers to the plot", {
-     
+
      skip_on_bioc()
      skip_if_not(biomart_success, "mart recieved try-error")
-     
+
      test_layer <- list(ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=.025), colour="red", size=10))
      buildDensityPlot.out <- buildDensityPlot(LolliplotData.mode1.out, plotALayers=test_layer, verbose=FALSE)
      vdiffr::expect_doppelganger("Lolliplot Density Plot Layer", grid::grid.draw(buildDensityPlot.out))
 })
 
 test_that("buildDensityPlot works in verbose mode", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     expect_message(buildDensityPlot(LolliplotData.mode1.out, plotALayers=NULL, verbose=TRUE))
 })
 
 test_that("buildDensityPlot errors if plotALayers is not a list", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     test_layer <- ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=.025), colour="red", size=10)
     expect_error(buildDensityPlot(LolliplotData.mode1.out, plotALayers=test_layer, verbose=FALSE))
 })
- 
+
 ####################### test buildLolliplot ####################################
 
 test_that("buildLolliplot constructs a plot", {
-    
+
     skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
                                          DomainPalette=NULL, MutationPalette=NULL,
                                          plotBLayers=NULL, verbose=FALSE)
@@ -627,12 +627,12 @@ test_that("buildLolliplot constructs a plot", {
 })
 
 test_that("buildLolliplot successfullly adds layers", {
-    
+
     skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     test_layer <- list(ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=1), colour="red", size=10))
-    
+
     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
                                          DomainPalette=NULL, MutationPalette=NULL,
                                          plotBLayers=test_layer, verbose=FALSE)
@@ -640,10 +640,10 @@ test_that("buildLolliplot successfullly adds layers", {
 })
 
 test_that("buildLolliplot successfullly adds labels", {
-    
+
     skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=TRUE,
                                          DomainPalette=NULL, MutationPalette=NULL,
                                          plotBLayers=NULL, verbose=FALSE)
@@ -651,14 +651,14 @@ test_that("buildLolliplot successfullly adds labels", {
 })
 
 test_that("buildLolliplot successfullly changes colors for domains", {
-    
+
     skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     domain_palette <- c("blue", "red", "green", "yellow", "orange", "purple",
                         "indianred", "salmon", "plum", "thistle", "seagreen1",
                         "slateblue1", "slategrey")
-    
+
     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
                                          DomainPalette=domain_palette, MutationPalette=NULL,
                                          plotBLayers=NULL, verbose=FALSE)
@@ -666,12 +666,12 @@ test_that("buildLolliplot successfullly changes colors for domains", {
 })
 
 test_that("buildLolliplot successfullly changes colors for mutations", {
-    
+
     skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     mutation_palette <- c("blue", "red", "green", "yellow")
-    
+
     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
                                          DomainPalette=NULL, MutationPalette=mutation_palette,
                                          plotBLayers=NULL, verbose=FALSE)
@@ -679,44 +679,44 @@ test_that("buildLolliplot successfullly changes colors for mutations", {
 })
 
 test_that("buildLolliplot works in verbose mode", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     expect_message(buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
                                   DomainPalette=NULL, MutationPalette=NULL,
                                   plotBLayers=NULL, verbose=TRUE))
 })
 
 test_that("buildLolliplot warns if not enough colors are supplied to DomainPalette", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     domain_palette <- c("blue", "red", "green")
-    
+
     expect_warning(buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
                                   DomainPalette=domain_palette, MutationPalette=NULL,
                                   plotBLayers=NULL, verbose=FALSE))
-    
+
 })
 
 test_that("buildLolliplot warns if not enough colors are supplied to MutationPalette", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     mutation_palette <- c("blue", "red")
-    
+
     expect_warning(buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
                                   DomainPalette=NULL, MutationPalette=mutation_palette,
                                   plotBLayers=NULL, verbose=FALSE))
-    
+
 })
 
 test_that("buildLolliplot errors if plotBLayers is not a list", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     test_layer <- ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=1), colour="red", size=10)
-    
+
     expect_error(buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
                                 DomainPalette=NULL, MutationPalette=NULL,
                                 plotBLayers=test_layer, verbose=FALSE))
@@ -731,11 +731,11 @@ if(biomart_success){
 }
 
 test_that("LolliplotPlots constructor outputs a s4 class object", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
-    
+
     expect_s4_class(LolliplotPlots.out, "LolliplotPlots")
-    
+
 })
 
 ################################################################################
@@ -765,7 +765,7 @@ test_that("arrangeLolliplotPlot alters section heights", {
 
     vdiffr::expect_doppelganger("Final Lolliplot alter section height", grid::grid.draw(arrangeLolliplotPlot.out))
 })
- 
+
 test_that("arrangeLolliplotPlot correctly warns if section heights does not match the number of plots", {
 
     skip_if_not(biomart_success, "mart recieved try-error")
@@ -798,7 +798,7 @@ test_that("Lolliplot constructor outputs a S4 class object", {
 context("Lolliplot accessors")
 
 test_that("drawPlot constructs a Lolliplot", {
-    
+
     skip_on_bioc()
     skip_if_not(biomart_success, "mart recieved try-error")
     vdiffr::expect_doppelganger("drawPlot Lolliplot", drawPlot(Lolliplot.out))
@@ -807,12 +807,12 @@ test_that("drawPlot constructs a Lolliplot", {
 ################################# getGrob ######################################
 
 test_that("getGrob outputs error if index is out of bounds", {
-    
+
     expect_error(getGrob(Lolliplot.out, index=10))
 })
 
 test_that("getGrob successfully retrieves grob objects", {
-    
+
     expect_s3_class(getGrob(Lolliplot.out, index=1), "gtable")
     expect_s3_class(getGrob(Lolliplot.out, index=2), "gtable")
     expect_s3_class(getGrob(Lolliplot.out, index=3), "gtable")
@@ -821,26 +821,26 @@ test_that("getGrob successfully retrieves grob objects", {
 ################################ getData #######################################
 
 test_that("getData outputs error if no name or index is given", {
-    
+
     expect_error(getData(Lolliplot.out))
-    
+
 })
 
 test_that("getData outputs error if index exceeds the number of slots", {
-    
+
     expect_error(getData(Lolliplot.out, index=10))
-    
+
 })
 
 test_that("getData outputs error if supplied name is not a valid slot name", {
-    
+
     expect_error(getData(Lolliplot.out, name="shouldNotexist"))
-    
+
 })
 
 test_that("getData retrieves specified slot data correctly", {
-    
+
     expect_s3_class(getData(Lolliplot.out, index=1), "data.table")
     expect_equivalent(getData(Lolliplot.out, name="primaryData"), getData(Lolliplot.out, index=1))
-    
+
 })

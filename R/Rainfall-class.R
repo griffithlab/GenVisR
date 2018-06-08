@@ -395,14 +395,14 @@ setMethod(f="calcMutDist",
                   message(memo)
               }
               
-              # split the data.table into lists by sample/chromosome to avoid
+              # split the data.table into lists by chromosome to avoid
               # calculating inter mutation differences among these variables
-              object <- split(object, by=c("sample", "chromosome"))
+              object <- split(object, by=c("chromosome"))
               
               # caluclate log10 of distance between mutations, data.tables must be sorted for this
               a <- function(x){
                   x <- x[order(x$start),]
-                  difference <- log10(diff(x$start))
+                  difference <- log10(diff(x$start) + 1)
                   difference <- c(NA, difference)
                   x$log10_difference <- difference
                   return(x)
@@ -484,6 +484,7 @@ setMethod(f="annoGenomeCoord",
               # print status message
               if(verbose){
                   memo <- paste("adding chromosome boundaries from BSgenome object")
+                  message(memo)
               }
               
               # perform quality check on the BSgenome object
@@ -497,13 +498,13 @@ setMethod(f="annoGenomeCoord",
               } else if(is(BSgenome, "BSgenome")) {
                   if(verbose){
                       memo <- paste("BSgenome passed object validity checks")
+                      message(memo)
                   }
               } else {
                   memo <- paste("class of the BSgenome object is", class(BSgenome),
                                 "should either be of class BSgenome or NULL",
                                 "setting this to param to NULL")
-                  warning(memo)
-                  BSgenome <- NULL
+                  stop(memo)
               }
               
               # create a data table of genomic coordinates end positions
@@ -612,7 +613,8 @@ setMethod(f="formatSample",
               }
               
               # perform the neccessary alterations to the data for sample highlighting
-              object <- object[object$sample %in% sample,]
+              index <- object$sample %in% sample
+              object <- object[index,]
               
               # return the formated object
               return(object)
