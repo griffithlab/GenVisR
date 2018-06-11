@@ -824,6 +824,11 @@ setMethod(f="arrangeRainfallPlot",
               plotA <- getGrob(object, 1)
               plotB <- getGrob(object, 2)
               
+              if(verbose){
+                  memo <- paste("Arranging Rainfal sub-plot")
+                  message(memo)
+              }
+              
               # Obtain the max width for relevant plots
               plotList <- list(plotB, plotA)
               plotList <- plotList[lapply(plotList, length) > 0]

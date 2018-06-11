@@ -305,8 +305,8 @@ test_that("arrangeRainfallPlot works in verbose mode", {
 ################################################################################
 ################## test Rainfall constructor and accessors #####################
 
-Rainfall.out <- Rainfall(vepObject, BSgenome=BSgenome, palette=NULL, sectionHeights=NULL, chromosomes=c("chr1", "chr2"),
-                         sample=NULL, pointSize=NULL, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL)
+Rainfall.out <- suppressWarnings(Rainfall(vepObject, BSgenome=BSgenome, palette=NULL, sectionHeights=NULL, chromosomes=c("chr1", "chr2"),
+                                          sample=NULL, pointSize=NULL, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL))
 
 test_that("Rainfall constructor outputs a S4 class object", {
     
