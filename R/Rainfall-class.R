@@ -139,7 +139,7 @@ RainfallPlots <- function(object, palette=palette, pointSize=pointSize, plotALay
     PlotA <- buildRainfallPlot(object, palette=palette, pointSize=pointSize, plotALayers=plotALayers, verbose=verbose)
     
     # build the corresponding density plot
-    PlotB <- buildDensityPlot(object, palette=palette, plotBLayers=plotBLayers, verbose=verbose)
+    PlotB <- buildDensityPlot(object, plotBLayers=plotBLayers, verbose=verbose)
     
     new("RainfallPlots", PlotA=PlotA, PlotB=PlotB)
 }

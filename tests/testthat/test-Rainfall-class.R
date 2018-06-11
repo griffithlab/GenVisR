@@ -257,4 +257,22 @@ test_that("buildDensityPlot works in verbose mode", {
     expect_message(buildDensityPlot(RainfallPrimaryData.out, plotBLayers=NULL, verbose=TRUE))
 })
 
+###################### test RainfallPlots class contruction ####################
+
+context("RainfallPlots Contructor")
+
+RainfallPlots.out <- RainfallPlots(RainfallPrimaryData.out, palette=NULL, pointSize=NULL, plotALayers=NULL,
+                                   plotBLayers=NULL, verbose=FALSE)
+
+test_that("RainfallPlots constructor outputs a S4 class object", {
+    
+    expect_s4_class(RainfallPlots.out, "RainfallPlots")
+})
+
+################################################################################
+################### test Rainfall constructor and associate functions ##########
+
+context("Rainfall Final Plot")
+
+
 
