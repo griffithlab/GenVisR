@@ -729,7 +729,7 @@ setMethod(f="buildRainfallPlot",
 #' @import ggplot2
 setMethod(f="buildDensityPlot",
           signature="RainfallPrimaryData",
-          definition=function(object, palette, plotBLayers, verbose=verbose){
+          definition=function(object, plotBLayers, verbose=verbose){
               
               # extract the data we need
               primaryData <- getData(object, name="primaryData")
@@ -766,21 +766,7 @@ setMethod(f="buildDensityPlot",
               primaryData_by_chr <- primaryData_by_chr[lapply(primaryData_by_chr, nrow) > 4]
               primaryData_filtered <- data.table::rbindlist(primaryData_by_chr)
               
-              # add the palette for encoding transitions/transversions
-              if(is.null(palette)){
-                  palette <- c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753", "#ff9999")
-              } else if(length(palette) != 7){
-                  memo <- paste("The input to the parameter \"palette\" is not of length",
-                                "7, a color should be specified for each transition/transversion in:",
-                                toString(unique(primaryData$TransTranv)), "! using the default palette.")
-                  warning(memo)
-                  palette <- c("#77C55D", "#A461B4", "#C1524B", "#93B5BB", "#4F433F", "#BFA753", "#ff9999")
-              }
-              
               ############ start building the plot #############################
-              
-              # define a palette
-              plotPalette <- scale_color_manual("Transitions/Transversions", values=palette, na.value="grey70")
               
               # base theme
               baseTheme <- theme_bw()
@@ -817,7 +803,7 @@ setMethod(f="buildDensityPlot",
               
               # combine plot elements
               densityPlot <- densityPlot + plotGeom + plotFacet + baseTheme +
-                  plotTheme + plotLabels + plotPalette + plotBLayers + geom_blank(data=coordData, aes_string(x='start'))
+                  plotTheme + plotLabels + plotBLayers + geom_blank(data=coordData, aes_string(x='start'))
               
               # convert to grob
               densityGrob <- ggplotGrob(densityPlot)

@@ -136,7 +136,7 @@ test_that("annoGenomeCoord works in verbose mode", {
     expect_message(annoGenomeCoord(chrSubset.out, BSgenome=BSgenome, verbose=TRUE))
 })
 
-# ####################### formatSample ###########################################
+######################## formatSample ##########################################
 formatSample.out <- formatSample(annoGenomeCoord.out, sample="FLX0070Naive", verbose=FALSE)
 
 test_that("formatSample correctly subsets samples if the sample parameter is set", {
@@ -145,4 +145,116 @@ test_that("formatSample correctly subsets samples if the sample parameter is set
     actual <- as.character(unique(formatSample.out$sample))
     expect_equal(expected, actual)
 })
+
+test_that("formatSample checks if sample is a character vector", {
+    
+    expect_warning(formatSample(annoGenomeCoord.out, sample=as.factor("FLX0070Naive"), verbose=FALSE))
+})
+
+test_that("formatSample errors if a sample is given that does not exist", {
+    
+    expect_error(formatSample(annoGenomeCoord.out, sample="does_not_exist", verbose=FALSE))
+})
+
+test_that("formatSample works in verbose mode", {
+    
+    expect_message(formatSample(annoGenomeCoord.out, sample="FLX0070Naive", verbose=TRUE))
+})
+
+################# test RainfallPrimaryData constructor #########################
+
+RainfallPrimaryData.out <- suppressWarnings(RainfallPrimaryData(vepObject, BSgenome=BSgenome, sample=NULL, chromosomes=c("chr1", "chr2") , verbose=FALSE))
+
+test_that("RainfallPrimaryData outputs a S4 class object", {
+    
+    expect_s4_class(RainfallPrimaryData.out, "RainfallPrimaryData")
+})
+
+################################################################################
+############## test RainfallPlots constructor and various methods ##############
+
+############# test buildRainfallPlot ###########################################
+
+context("Rainfall Main Plot")
+
+test_that("buildRainfallPlot contructs a plot", {
+    
+    skip_on_bioc()
+    
+    buildRainfallPlot.out <- buildRainfallPlot(RainfallPrimaryData.out, palette=NULL, pointSize=NULL, plotALayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("Rainfall Main Plot", grid::grid.draw(buildRainfallPlot.out))
+})
+
+test_that("buildRainfallPlot is able to add layers to the plot", {
+    
+    skip_on_bioc()
+    
+    test_plotALayers <- list(ggplot2::geom_hline(yintercept=c(5), colour="black", size=2), ggplot2::geom_vline(xintercept=c(1.5e8), colour="black", size=2))
+    buildRainfallPlot.out <- buildRainfallPlot(RainfallPrimaryData.out, palette=NULL, pointSize=NULL, plotALayers=test_plotALayers , verbose=FALSE)
+    vdiffr::expect_doppelganger("Rainfall Plot add layer", grid::grid.draw(buildRainfallPlot.out))
+})
+
+test_that("buildRainfallPlot aesthetic options work", {
+    
+    skip_on_bioc()
+   
+    colorPalette <- c("red", "blue", "green", "yellow", "orange", "purple", "black")
+    buildRainfallPlot.out <- buildRainfallPlot(RainfallPrimaryData.out, palette=colorPalette, pointSize=10, plotALayers=NULL , verbose=FALSE)
+    vdiffr::expect_doppelganger("Rainfall Plot aesthetic options", grid::grid.draw(buildRainfallPlot.out))
+})
+
+test_that("buildRainfallPlot warns if plotALayers is not passed as a list", {
+    
+    test_plotALayers <- ggplot2::geom_hline(yintercept=c(30), colour="black", size=2)
+    expect_error(buildRainfallPlot(RainfallPrimaryData.out, palette=NULL, pointSize=NULL, plotALayers=test_plotALayers , verbose=FALSE))
+})
+
+test_that("buildRainfallPlot warns if plotALayers does not contain valid ggplot2 layers", {
+    
+    test_plotALayers <- list(c("THIS IS A TEST"))
+    expect_warning(buildRainfallPlot(RainfallPrimaryData.out, palette=NULL, pointSize=NULL, plotALayers=test_plotALayers , verbose=FALSE))
+})
+
+test_that("buildRainfallPlot works in verbose mode", {
+    expect_message(buildRainfallPlot(RainfallPrimaryData.out, palette=NULL, pointSize=NULL, plotALayers=NULL, verbose=TRUE))
+})
+
+############# test buildDensityPlots ###########################################
+
+context("Rainfall Density Plot")
+
+test_that("buildDensityPlot contructs a plot", {
+    
+    skip_on_bioc()
+    
+    buildDensityPlot.out <- buildDensityPlot(RainfallPrimaryData.out, plotBLayers=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("Density Main Plot", grid::grid.draw(buildDensityPlot.out))
+})
+
+test_that("buildDensityPlot is able to add layers to the plot", {
+    
+    skip_on_bioc()
+    
+    test_plotBLayers <- list(ggplot2::geom_hline(yintercept=c(2e-9), colour="black", size=2), ggplot2::geom_vline(xintercept=c(1.5e8), colour="black", size=2))
+    buildDensityPlot.out <- buildDensityPlot(RainfallPrimaryData.out, plotBLayers=test_plotBLayers , verbose=FALSE)
+    vdiffr::expect_doppelganger("Density Plot add layer", grid::grid.draw(buildDensityPlot.out))
+})
+
+
+test_that("buildDensityPlot warns if plotBLayers is not passed as a list", {
+    
+    test_plotBLayers <- ggplot2::geom_hline(yintercept=c(30), colour="black", size=2)
+    expect_error(buildDensityPlot(RainfallPrimaryData.out, plotBLayers=test_plotBLayers , verbose=FALSE))
+})
+
+test_that("buildDensityPlot warns if plotBLayers does not contain valid ggplot2 layers", {
+    
+    test_plotBLayers <- list(c("THIS IS A TEST"))
+    expect_warning(buildDensityPlot(RainfallPrimaryData.out, plotBLayers=test_plotBLayers , verbose=FALSE))
+})
+
+test_that("buildDensityPlot works in verbose mode", {
+    expect_message(buildDensityPlot(RainfallPrimaryData.out, plotBLayers=NULL, verbose=TRUE))
+})
+
 
