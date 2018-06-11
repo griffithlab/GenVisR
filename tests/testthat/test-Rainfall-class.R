@@ -274,5 +274,75 @@ test_that("RainfallPlots constructor outputs a S4 class object", {
 
 context("Rainfall Final Plot")
 
+################### arrangeRainfallPlot ########################################
 
+test_that("arrangeRainfallPlot plots a base plot", {
+    
+    skip_on_bioc()
+    
+    arrangeRainfallPlot.out <- arrangeRainfallPlot(RainfallPlots.out, sectionHeights=NULL, verbose=FALSE)
+    vdiffr::expect_doppelganger("Final Rainfall Base", grid::grid.draw(arrangeRainfallPlot.out))
+})
+
+test_that("arrangeRainfallPlot can alter section heights", {
+    
+    skip_on_bioc()
+    
+    arrangeRainfallPlot.out <- arrangeRainfallPlot(RainfallPlots.out, sectionHeights=c(1, 1), verbose=FALSE)
+    vdiffr::expect_doppelganger("Final Rainfall alter section hieghts", grid::grid.draw(arrangeRainfallPlot.out))
+})
+
+test_that("arrangeRainfallPlot warns if section heights does not match the number of plot elements", {
+    
+    expect_warning(arrangeRainfallPlot(RainfallPlots.out, sectionHeights=c(1, 1, 1), verbose=FALSE))
+})
+
+test_that("arrangeRainfallPlot works in verbose mode", {
+    
+    expect_message(arrangeRainfallPlot(RainfallPlots.out, sectionHeights=NULL, verbose=TRUE))
+})
+
+################################################################################
+################## test Rainfall constructor and accessors #####################
+
+Rainfall.out <- Rainfall(vepObject, BSgenome=BSgenome, palette=NULL, sectionHeights=NULL, chromosomes=c("chr1", "chr2"),
+                         sample=NULL, pointSize=NULL, verbose=FALSE, plotALayers=NULL, plotBLayers=NULL)
+
+test_that("Rainfall constructor outputs a S4 class object", {
+    
+    expect_s4_class(Rainfall.out, "Rainfall")
+})
+
+############################ accessors #########################################
+
+test_that("drawPlot constructs a Rainfall plot from grob objects in the Rainfall object", {
+    
+    skip_on_bioc()
+    
+    vdiffr::expect_doppelganger("drawPlot Rainfall", drawPlot(Rainfall.out))
+})
+
+test_that("getData outputs error if no name or index is given", {
+    
+    expect_error(getData(Rainfall.out))
+    
+})
+
+test_that("getData outputs error if index exceeds the number of slots", {
+    
+    expect_error(getData(Rainfall.out, index=10))
+    
+})
+
+test_that("getData outputs error if supplied name is not a valid slot name", {
+    
+    expect_error(getData(Rainfall.out, name="shouldNotexist"))
+    
+})
+
+test_that("getData retrieves specified slot data correctly", {
+    
+    expect_s3_class(getData(Rainfall.out, index=1), "data.table")
+    expect_equivalent(getData(Rainfall.out, name="primaryData"), getData(Rainfall.out, index=1))
+})
 
