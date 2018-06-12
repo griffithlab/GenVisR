@@ -9,13 +9,70 @@ testFile <- Sys.glob(paste0(testFileDir, "/*.vep"))
 
 # define the object for testing
 vepObject <- VEP(testFile)
-toRainfall.out <- suppressWarnings(toRainfall(vepObject, BSgenome=BSgenome, verbose=FALSE))
 
 ################################################################################
 ###### Test Rainfall class and associated functions in constructor #############
 ################################################################################
 
 context("Rainfall Constructor")
+
+###################### toRainfall ##############################################
+
+toRainfall.out <- suppressWarnings(toRainfall(vepObject, BSgenome=BSgenome, verbose=FALSE))
+
+test_that("toRainfall removes duplicate genomic mutations", {
+    
+    datatableObject <- data.table::data.table("sample"=rep("test", 3), "chromosome"=rep(1, 3),
+                                              "start"=c(rep(12345, 2), 112358), "stop"=c(rep(12345, 2), 112358),
+                                              "refAllele"=rep("A", 3), "variantAllele"=rep("G", 3))
+    toRainfall.out <- suppressWarnings(toRainfall(datatableObject, BSgenome=NULL, verbose=FALSE))
+    
+    expect <- 2
+    actual <- nrow(toRainfall.out)
+    expect_equal(expect, actual)
+})
+
+test_that("toRainfall removes entries with no mutation", {
+    
+    datatableObject <- data.table::data.table("sample"=rep("test", 3), "chromosome"=rep(1, 3),
+                                              "start"=c(rep(12345, 2), 112358), "stop"=c(rep(12345, 2), 112358),
+                                              "refAllele"=rep("A", 3), "variantAllele"=c(rep("A", 2), "G"))
+    toRainfall.out <- suppressWarnings(toRainfall(datatableObject, BSgenome=NULL, verbose=FALSE))
+    
+    expect <- 1
+    actual <- nrow(toRainfall.out)
+    expect_equal(expect, actual)
+})
+
+test_that("toRainfall errors if the proper columns are not present", {
+    
+    datatableObject <- data.table::data.table("wrong"=rep("test", 3), "chromosome"=rep(1, 3),
+                                              "start"=c(rep(12345, 2), 112358), "stop"=c(rep(12345, 2), 112358),
+                                              "refAllele"=rep("A", 3), "variantAllele"=c(rep("A", 2), "G"))
+    expect_error(toRainfall(datatableObject, BSgenome=NULL, verbose=FALSE), "sample")
+})
+
+test_that("toRainfall works in verbose mode", {
+    
+    datatableObject <- data.table::data.table("sample"=rep("test", 2), "chromosome"=rep(1, 2),
+                                              "start"=c(12345, 112358), "stop"=c(12345, 112358),
+                                              "refAllele"=rep("A", 2), "variantAllele"=rep("G", 2))
+    expect_message(toRainfall(datatableObject, BSgenome=NULL, verbose=TRUE))
+    
+    dataframeObject <- as.data.frame(datatableObject)
+    expect_message(toRainfall(dataframeObject, BSgenome=NULL, verbose=TRUE), "converting")
+})
+
+test_that("toRainfall returns object of the proper type", {
+    
+    datatableObject <- data.table::data.table("sample"=rep("test", 2), "chromosome"=rep(1, 2),
+                                              "start"=c(12345, 112358), "stop"=c(12345, 112358),
+                                              "refAllele"=rep("A", 2), "variantAllele"=rep("G", 2))
+    expect_s3_class(toRainfall(datatableObject, BSgenome=NULL, verbose=TRUE), "data.table")
+    
+    dataframeObject <- as.data.frame(datatableObject)
+    expect_s3_class(toRainfall(dataframeObject, BSgenome=NULL, verbose=TRUE), "data.table")
+})
 
 ####################### annoRainfall ###########################################
 annoRainfall.out <- annoRainfall(toRainfall.out, verbose=FALSE)

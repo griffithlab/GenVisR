@@ -785,15 +785,17 @@ setMethod(f="buildDensityPlot",
               # define plot labels
               plotLabels <- labs(y="Mutation Density")
               
-              # define the geom, when doing this we need to filter the data
-              # where there are two few entries to calculate an nice density
-              # this should prevent wierd issues with two few points when doing densit plots
-              primaryData_by_chr <- split(primaryData, by="chromosome")
-              primaryData_by_chr <- primaryData_by_chr[lapply(primaryData_by_chr, nrow) > 4]
-              primaryData_filtered <- data.table::rbindlist(primaryData_by_chr)
+              # define the geom ( note that if primaryData_filtered is empty we need a blank geom to avoid errors)
+              if(nrow(primaryData_filtered) == 0){
                   
-              # define the geom
-              plotGeom <- geom_density(data=primaryData_filtered, mapping=aes_string(x='start'), fill="lightcyan4", color="lightcyan4")
+                  memo <- paste("Less than 4 entries for each individual chromosome, densities will not be plotted!")
+                  warning(memo)
+                  
+                  plotGeom <- geom_blank()
+              } else {
+                  plotGeom <- geom_density(data=primaryData_filtered, mapping=aes_string(x='start'), fill="lightcyan4", color="lightcyan4")
+              }
+              
               
               # define the faceting
               plotFacet <- facet_grid(. ~ chromosome, scales="free_x")
