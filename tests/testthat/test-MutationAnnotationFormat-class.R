@@ -211,3 +211,43 @@ test_that("toMutSpectra creates a data.table with appropriate column names", {
 test_that("toMutSpectra works in verbose mode", {
     expect_message(toMutSpectra(mafObject, verbose=TRUE))
 })
+
+################################################################################
+############# test the toRainfall method in Rainfall ###########################
+################################################################################
+
+test_that("toRainfall removes duplicate genomic mutations", {
+    
+    # create vep object with a duplicate row
+    mafObject@mafObject@position <- mafObject@mafObject@position[c(1, 1),]
+    mafObject@mafObject@mutation <- mafObject@mafObject@mutation[c(1, 1),]
+    mafObject@mafObject@sample <- mafObject@mafObject@sample[c(1, 1),]
+    mafObject@mafObject@meta <- mafObject@mafObject@meta[c(1, 1),]
+    
+    toRainfall.out <- suppressWarnings(toRainfall(mafObject, BSgenome=NULL, verbose=FALSE))
+    
+    expect <- 1
+    actual <- nrow(toRainfall.out)
+    expect_equal(expect, actual)
+})
+
+test_that("toRainfall removes entries with no mutation", {
+    
+    # create maf object with a row containing no mutation
+    mafObject@mafObject@position <- mafObject@mafObject@position[c(1, 1),]
+    mafObject@mafObject@mutation <- mafObject@mafObject@mutation[c(1, 1),]
+    mafObject@mafObject@sample <- mafObject@mafObject@sample[c(1, 1),]
+    mafObject@mafObject@meta <- mafObject@mafObject@meta[c(1, 1),]
+    mafObject@mafObject@mutation[1,"Tumor_Seq_Allele2"] <- "T"
+    
+    toRainfall.out <- suppressWarnings(toRainfall(mafObject, BSgenome=NULL, verbose=FALSE))
+    
+    expect <- 1
+    actual <- nrow(toRainfall.out)
+    expect_equal(expect, actual)
+})
+
+test_that("toRainfall works in verbose mode", {
+    
+    expect_message(suppressWarnings(toRainfall(mafObject, BSgenome=NULL, verbose=TRUE)))
+})

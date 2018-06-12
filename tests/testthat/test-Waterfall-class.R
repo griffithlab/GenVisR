@@ -16,6 +16,86 @@ toWaterfall.out <- toWaterfall(mafObject, hierarchy=setMutationHierarchy.out, la
 
 context("WaterfalData Constructor")
 
+#################### setMutationHierarchy ######################################
+datatableObject <- data.table::data.table("sample"=rep("test1", 5), "gene"=c(rep("egfr", 2), rep("rb1", 3)),
+                                          "mutation"=c(rep("missense", 2), rep("nonsense", 2), "frameshift"),
+                                          "amino_acid_change"=rep("p.L546Q", 5))
+setMutationHierarchy.out.dt <- suppressWarnings(setMutationHierarchy(datatableObject, mutationHierarchy=NULL, verbose=FALSE))
+
+test_that("setMutationHierarchy outputs a data.table with proper columns", {
+    
+    # test that it is a data.table
+    expect_is(setMutationHierarchy.out.dt, "data.table")
+    
+    # test that it has the proper columns
+    actualCol <- colnames(setMutationHierarchy.out.dt)
+    expectedCol <- c("mutation", "color", "label")
+    expect_true(all(actualCol %in% expectedCol))
+})
+
+# define an empty table of mutation hierarchies
+emptyMutationHierarchy <- data.table::data.table()
+
+test_that("setMutationHierarchy adds values for missing mutations not specified but in the primary data", {
+
+    # test that a warning message is created
+    expect_warning(setMutationHierarchy(datatableObject, mutationHierarchy=emptyMutationHierarchy, verbose=FALSE))
+
+    # test that output is created for every mutation
+    mutationHierarchy <- suppressWarnings(setMutationHierarchy(datatableObject, mutationHierarchy=emptyMutationHierarchy, verbose=FALSE))
+    expectedMutations <- unique(datatableObject$mutation)
+    actualMutations <- mutationHierarchy$mutation
+    expect_true(all(expectedMutations %in% actualMutations))
+})
+
+# define table with duplicate mutations
+duplicateMutationHierarchy <- data.table::data.table("mutation"=c("frameshift", "frameshift"), "color"=c("blue", "red"))
+
+test_that("setMutationHierarchy checks for duplicate mutations supplied to input", {
+
+    # test that warning is created
+    expect_warning(setMutationHierarchy(datatableObject, mutationHierarchy=duplicateMutationHierarchy, verbose=FALSE))
+
+    # test that the duplicate is removed
+    output <- suppressWarnings(setMutationHierarchy(datatableObject, mutationHierarchy=duplicateMutationHierarchy, verbose=FALSE)$mutation)
+
+    boolean <- !any(duplicated(output))
+    expect_true(boolean)
+})
+
+test_that("setMutationHierarchy errors if the proper columns are not found in hierarchy", {
+    mutations <- setMutationHierarchy.out.dt[,c("mutation", "color")]
+    colnames(mutations) <- c("wrong", "columns")
+    expect_error(setMutationHierarchy(datatableObject, mutationHierarchy=mutations, verbose=FALSE))
+})
+
+test_that("setMutationHierarchy works in verbose mode", {
+    expect_message(suppressWarnings(setMutationHierarchy(datatableObject, mutationHierarchy=NULL, verbose=TRUE)))
+})
+
+#################### toWaterfall ###############################################
+
+# define additional objects needed for testing
+setMutationHierarchy.out.dt <- suppressWarnings(setMutationHierarchy(datatableObject, mutationHierarchy=NULL, verbose=FALSE))
+toWaterfall.out.dt <- toWaterfall(datatableObject, hierarchy=setMutationHierarchy.out.dt, labelColumn=NULL, verbose=FALSE)
+
+test_that("toWaterfall outputs the correct columns and data types", {
+    
+    # check that the data is of the proper class
+    expect_is(toWaterfall.out.dt, "data.table")
+    
+    # check for the correct columns
+    expectedCol <- c("sample", "gene", "mutation", "label")
+    actualCol <- colnames(toWaterfall.out.dt)
+    expect_true(all(actualCol %in% expectedCol))
+})
+
+test_that("toWaterfall adds a specified label column", {
+    toWaterfall.out <- toWaterfall(datatableObject, hierarchy=setMutationHierarchy.out.dt, labelColumn="amino_acid_change", verbose=FALSE)
+    expectedValues <- datatableObject$amino_acid_change
+    expect_true(all(toWaterfall.out$label %in% expectedValues))
+})
+
 ##################### sampSubset ###############################################
 
 test_that("sampSubset filters samples not specified to be kept", {

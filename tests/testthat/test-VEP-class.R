@@ -316,7 +316,7 @@ test_that("toMutSpectra keeps only SNPs", {
 
 test_that("toMutSpectra removes duplicate mutations", {
     
-    # create maf object with a duplicate row
+    # create vep object with a duplicate row
     vepObject@vepObject@position <- vepObject@vepObject@position[c(1, 1),]
     vepObject@vepObject@mutation <- vepObject@vepObject@mutation[c(1, 1),]
     vepObject@vepObject@sample <- vepObject@vepObject@sample[c(1, 1),]
@@ -360,4 +360,89 @@ test_that("toMutSpectra works in verbose mode", {
     expect_message(suppressWarnings(toMutSpectra(vepObject, BSgenome=BSgenome.Hsapiens.UCSC.hg19, verbose=TRUE)))
 })
 
+################################################################################
+############# test the toRainfall method in Rainfall ###########################
+################################################################################
 
+# define object for testing
+toRainfall.out <- suppressWarnings(toRainfall(vepObject, BSgenome=BSgenome.Hsapiens.UCSC.hg19, verbose=FALSE))
+
+test_that("toRainfall correctly adds reference bases for a genomic position", {
+    
+    expected <- "G"
+    actual <- as.character(toRainfall.out[toRainfall.out$chromosome == "chr1" & toRainfall.out$start == 2489782 & toRainfall.out$stop == 2489782,]$refAllele)
+    expect_equivalent(expected, actual)
+    
+    expected <- "CAG"
+    actual <- as.character(toRainfall.out[toRainfall.out$chromosome == "chr10" & toRainfall.out$start == 98273392 & toRainfall.out$stop == 98273394,]$refAllele)
+    expect_equivalent(expected, actual)
+})
+
+test_that("toRainfall removes duplicate genomic mutations", {
+    
+    # create vep object with a duplicate row
+    vepObject@vepObject@position <- vepObject@vepObject@position[c(1, 1),]
+    vepObject@vepObject@mutation <- vepObject@vepObject@mutation[c(1, 1),]
+    vepObject@vepObject@sample <- vepObject@vepObject@sample[c(1, 1),]
+    vepObject@vepObject@meta <- vepObject@vepObject@meta[c(1, 1),]
+    
+    toRainfall.out <- suppressWarnings(toRainfall(vepObject, BSgenome=BSgenome.Hsapiens.UCSC.hg19, verbose=FALSE))
+    
+    expect <- 1
+    actual <- nrow(toRainfall.out)
+    expect_equal(expect, actual)
+})
+
+test_that("toRainfall removes entries with no mutation", {
+    
+    # create vep object with a row containing no mutation
+    vepObject@vepObject@position <- vepObject@vepObject@position[c(1, 1),]
+    vepObject@vepObject@mutation <- vepObject@vepObject@mutation[c(1, 1),]
+    vepObject@vepObject@sample <- vepObject@vepObject@sample[c(1, 1),]
+    vepObject@vepObject@meta <- vepObject@vepObject@meta[c(1, 1),]
+    vepObject@vepObject@mutation[1,"Allele"] <- "G"
+    
+    toRainfall.out <- suppressWarnings(toRainfall(vepObject, BSgenome=BSgenome.Hsapiens.UCSC.hg19, verbose=FALSE))
+    
+    expect <- 1
+    actual <- nrow(toRainfall.out)
+    expect_equal(expect, actual)
+})
+
+test_that("toRainfall works in verbose mode", {
+    
+    expect_message(suppressWarnings(toRainfall(vepObject, BSgenome=BSgenome.Hsapiens.UCSC.hg19, verbose=TRUE)))
+})
+
+################################################################################
+############# test the toLolliplot method in Lolliplot #########################
+################################################################################
+
+toLolliplot.out <- suppressWarnings(toLolliplot(vepObject, BSgenome=BSgenome.Hsapiens.UCSC.hg19, verbose=FALSE))
+
+test_that("toLolliplot outputs the correct columns if HGVSp is present", {
+    
+    # test that it has the proper columns
+    actualCol <- colnames(toLolliplot.out)
+    expectedCol <- c("sample", "chromosome", "start", "stop", "reference", "variant", "gene", "consequence", "transcript", "proteinCoord", "label")
+    expect_true(all(actualCol %in% expectedCol))
+})
+
+test_that("toLolliplot outputs the correct columns if HGVSp is not present", {
+    
+    # create vep object without HGVSp
+    vepObject@vepObject@position <- vepObject@vepObject@position[c(1),]
+    vepObject@vepObject@mutation <- vepObject@vepObject@mutation[c(1),]
+    vepObject@vepObject@sample <- vepObject@vepObject@sample[c(1),]
+    vepObject@vepObject@meta <- vepObject@vepObject@meta[c(1),]
+    vepObject@vepObject@meta$HGVSp <- NULL
+    
+    # run toLolliplot
+    toLolliplot.out <- suppressWarnings(toLolliplot(vepObject, BSgenome=BSgenome.Hsapiens.UCSC.hg19, verbose=FALSE))
+    
+    # test that it has the proper columns
+    actualCol <- colnames(toLolliplot.out)
+    expectedCol <- c("sample", "chromosome", "start", "stop", "reference", "variant", "gene", "consequence")
+    expect_true(all(actualCol %in% expectedCol))
+
+})

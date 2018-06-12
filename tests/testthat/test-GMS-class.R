@@ -213,7 +213,7 @@ test_that("toMutSpectra keeps only SNPs", {
 
 test_that("toMutSpectra removes duplicate mutations", {
     
-    # create maf object with a duplicate row
+    # create gms object with a duplicate row
     gmsObject@gmsObject@position <- gmsObject@gmsObject@position[c(1, 1),]
     gmsObject@gmsObject@mutation <- gmsObject@gmsObject@mutation[c(1, 1),]
     gmsObject@gmsObject@sample <- gmsObject@gmsObject@sample[c(1, 1),]
@@ -238,4 +238,63 @@ test_that("toMutSpectra creates a data.table with appropriate column names", {
 
 test_that("toMutSpectra works in verbose mode", {
     expect_message(toMutSpectra(gmsObject, verbose=TRUE))
+})
+
+################################################################################
+############# test the toRainfall method in Rainfall ###########################
+################################################################################
+
+test_that("toRainfall removes duplicate genomic mutations", {
+    
+    # create gms object with a duplicate row
+    gmsObject@gmsObject@position <- gmsObject@gmsObject@position[c(1, 1),]
+    gmsObject@gmsObject@mutation <- gmsObject@gmsObject@mutation[c(1, 1),]
+    gmsObject@gmsObject@sample <- gmsObject@gmsObject@sample[c(1, 1),]
+    gmsObject@gmsObject@meta <- gmsObject@gmsObject@meta[c(1, 1),]
+    
+    toRainfall.out <- suppressWarnings(toRainfall(gmsObject, BSgenome=NULL, verbose=FALSE))
+    
+    expect <- 1
+    actual <- nrow(toRainfall.out)
+    expect_equal(expect, actual)
+})
+
+test_that("toRainfall removes entries with no mutation", {
+    
+    # create gms object with a duplicate row
+    gmsObject@gmsObject@position <- gmsObject@gmsObject@position[c(1, 1),]
+    gmsObject@gmsObject@mutation <- gmsObject@gmsObject@mutation[c(1, 1),]
+    gmsObject@gmsObject@sample <- gmsObject@gmsObject@sample[c(1, 1),]
+    gmsObject@gmsObject@meta <- gmsObject@gmsObject@meta[c(1, 1),]
+    gmsObject@gmsObject@mutation[1,"variant"] <- "G"
+    
+    toRainfall.out <- suppressWarnings(toRainfall(gmsObject, BSgenome=NULL, verbose=FALSE))
+    
+    expect <- 1
+    actual <- nrow(toRainfall.out)
+    expect_equal(expect, actual)
+})
+
+test_that("toRainfall works in verbose mode", {
+    
+    expect_message(suppressWarnings(toRainfall(gmsObject, BSgenome=NULL, verbose=TRUE)))
+})
+
+################################################################################
+############# test the toLolliplot method in Lolliplot #########################
+################################################################################
+
+toLolliplot.out <- toLolliplot(gmsObject, BSgenome=NULL, verbose=FALSE)
+
+test_that("toLolliplot outputs the correct columns", {
+    
+    # test that it has the proper columns
+    actualCol <- colnames(toLolliplot.out)
+    expectedCol <- c("sample", "chromosome", "start", "stop", "reference", "variant", "gene", "consequence", "transcript", "proteinCoord", "label")
+    expect_true(all(actualCol %in% expectedCol))
+})
+
+test_that("toLolliplot works in verbose mode", {
+    
+    expect_message(toLolliplot(gmsObject, BSgenome=NULL, verbose=TRUE))
 })

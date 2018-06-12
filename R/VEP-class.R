@@ -932,13 +932,14 @@ setMethod(f="toLolliplot",
               colnames(lolliplotFormat) <- c("sample", "chromosome", "start", "stop", "reference", "variant", "gene", "consequence")
               
               # if amino acid position is available grab this as well so we don't rely on biomaRt to annotate
-              HGVSp <- object@vepObject@meta[,"HGVSp"]
+              HGVSp <- object@vepObject@meta$HGCSp
               label <- HGVSp
-              transcript <- object@vepObject@meta[,"Feature"]
+              transcript <- object@vepObject@meta$Feature
               valueCheck <- c(is.null(transcript), is.null(HGVSp))
+              valueCheckvalue <- c("transcript", "HGVSp")
               if(any(valueCheck)){
                   missingIndex <- which(valueCheck == TRUE)
-                  memo <- paste("Could not find the follwing required fields:", toString(valueCheck[missingINdex]),
+                  memo <- paste("Could not find the follwing required fields:", toString(valueCheckvalue[missingIndex]),
                                 "unable to use file supplied protein positions, please contact developer to report error!")
                   warning(memo)
               } else {

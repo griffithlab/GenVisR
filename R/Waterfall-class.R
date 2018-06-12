@@ -514,6 +514,7 @@ setMethod(f="setMutationHierarchy",
 #' @param object Object of class data.table
 #' @param verbose Boolean for status updates
 #' @noRd
+#' @importFrom data.table as.data.table
 setMethod(f="toWaterfall",
           signature="data.table",
           definition=function(object, hierarchy, labelColumn, verbose, ...){
@@ -525,7 +526,19 @@ setMethod(f="toWaterfall",
                   message(memo)
               }
               
+              # check for correct columns
+              correctCol <- c("sample", "gene", "mutation")
+              if(!all(correctCol %in% colnames(object))){
+                  missingCol <- correctCol[!correctCol %in% colnames(object)]
+                  memo <- paste("Could not find correct column names, missing:",
+                                toString(missingCol))
+                  stop(memo)
+              }
+              
               # set up the label variables
+              sample <- object$sample
+              mutation <- object$mutation
+              gene <- object$gene
               label <- NA
               labelFlag <- TRUE
               
@@ -551,17 +564,8 @@ setMethod(f="toWaterfall",
                   }
               }
               
-              # check for correct columns
-              correctCol <- c("sample", "gene", "mutation")
-              if(!all(correctCol %in% colnames(object))){
-                  missingCol <- correctCol[!correctCol %in% colnames(object)]
-                  memo <- paste("Could not find correct column names, missing:",
-                                toString(missingCol))
-                  stop(memo)
-              }
-              
               # combine all columns into a consistent format
-              waterfallFormat <- cbind(object, label)
+              waterfallFormat <- data.table::as.data.table(cbind(sample, gene, mutation, label))
               colnames(waterfallFormat) <- c("sample", "gene", "mutation", "label")
               
               # convert appropriate columns to factor
