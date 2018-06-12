@@ -179,8 +179,13 @@ test_that("annoGenomeCoord successfully adds chromosome boundaries from the BSge
 
 test_that("annoGenomeCoord warns if BSgenome is not set", {
     
-    
     expect_warning(annoGenomeCoord(chrSubset.out, BSgenome=NULL, verbose=FALSE))
+})
+
+test_that("annoGenomeCoord checks if appending chr causes a BSgenome match", {
+    
+    chrSubset.out$chromosome <- gsub("chr", "", chrSubset.out$chromosome)
+    expect_warning(annoGenomeCoord(chrSubset.out, BSgenome=BSgenome, verbose=FALSE), "The following")
 })
 
 test_that("annoGenomeCoord stops if an unexpected input is given to BSgenome", {
@@ -272,6 +277,13 @@ test_that("buildRainfallPlot warns if plotALayers does not contain valid ggplot2
     expect_warning(buildRainfallPlot(RainfallPrimaryData.out, palette=NULL, pointSize=NULL, plotALayers=test_plotALayers , verbose=FALSE))
 })
 
+test_that("buildRainfallPlot checks aesthetic parameters", {
+    colorPalette <- c("red", "blue", "green", "yellow", "orange", "purple", "black", "gray")
+    expect_warning(buildRainfallPlot(RainfallPrimaryData.out, palette=NULL, pointSize=as.character(c(1)), plotALayers=NULL, verbose=FALSE))
+    expect_warning(buildRainfallPlot(RainfallPrimaryData.out, palette=NULL, pointSize=c(1, 2), plotALayers=NULL, verbose=FALSE))
+    expect_warning(buildRainfallPlot(RainfallPrimaryData.out, palette=colorPalette, pointSize=NULL, plotALayers=NULL, verbose=FALSE))
+})
+
 test_that("buildRainfallPlot works in verbose mode", {
     expect_message(buildRainfallPlot(RainfallPrimaryData.out, palette=NULL, pointSize=NULL, plotALayers=NULL, verbose=TRUE))
 })
@@ -352,6 +364,11 @@ test_that("arrangeRainfallPlot can alter section heights", {
 test_that("arrangeRainfallPlot warns if section heights does not match the number of plot elements", {
     
     expect_warning(arrangeRainfallPlot(RainfallPlots.out, sectionHeights=c(1, 1, 1), verbose=FALSE))
+})
+
+test_that("arrangeRainfallPlot warns if section heights are not numeric", {
+    
+    expect_warning(arrangeRainfallPlot(RainfallPlots.out, sectionHeights=as.character(c(1, 1, 1)), verbose=FALSE))
 })
 
 test_that("arrangeRainfallPlot works in verbose mode", {
