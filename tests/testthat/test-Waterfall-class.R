@@ -88,12 +88,35 @@ test_that("toWaterfall outputs the correct columns and data types", {
     expectedCol <- c("sample", "gene", "mutation", "label")
     actualCol <- colnames(toWaterfall.out.dt)
     expect_true(all(actualCol %in% expectedCol))
+    
+    # also test data frame
+    dataframeObject <- as.data.frame(datatableObject)
+    toWaterfall.out.df <- toWaterfall(dataframeObject, hierarchy=setMutationHierarchy.out.dt, labelColumn=NULL, verbose=FALSE)
+    actualCol <- colnames(toWaterfall.out.df)
+    expect_true(all(actualCol %in% expectedCol))
 })
 
 test_that("toWaterfall adds a specified label column", {
     toWaterfall.out <- toWaterfall(datatableObject, hierarchy=setMutationHierarchy.out.dt, labelColumn="amino_acid_change", verbose=FALSE)
     expectedValues <- datatableObject$amino_acid_change
     expect_true(all(toWaterfall.out$label %in% expectedValues))
+})
+
+test_that("toWaterfall errors if a column is missing", {
+    
+    datatableObject <- datatableObject[,c("sample", "gene")]
+    expect_error(toWaterfall(datatableObject, hierarchy=setMutationHierarchy.out.dt,  labelColumn=NULL, verbose=FALSE))
+})
+
+test_that("toWaterfall checks the label parameter", {
+    
+    expect_warning(toWaterfall(datatableObject, hierarchy=setMutationHierarchy.out.dt, labelColumn=c("amino_acid_change", "extra"), verbose=FALSE))
+    expect_warning(toWaterfall(datatableObject, hierarchy=setMutationHierarchy.out.dt, labelColumn=c("Not Here"), verbose=FALSE))
+})
+
+test_that("toWaterfall works in verbose mode", {
+    
+    expect_message(toWaterfall(datatableObject, hierarchy=setMutationHierarchy.out.dt,  labelColumn=NULL, verbose=TRUE))
 })
 
 ##################### sampSubset ###############################################
