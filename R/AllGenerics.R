@@ -769,3 +769,14 @@ setGeneric(
     name="addLabel",
     def=function(object, ...){standardGeneric("addLabel")}
 )
+
+#' Method retrieve_BSgenome
+#'
+#' @name retrieve_BSgenome
+#' @rdname retrieve_BSgenome-methods
+#' @param ... additional arguments to passed
+#' @noRd
+setGeneric(
+    name="retrieve_BSgenome",
+    def=function(object, ...){standardGeneric("retrieve_BSgenome")}
+)

@@ -501,47 +501,7 @@ setMethod(f="toMutSpectra",
               
               # grab the BSgenome
               if(is.null(BSgenome)){
-                  if(verbose){
-                      memo <- paste("Looking for correct genome for reference base annotation.")
-                      message(memo)
-                  }
-                  
-                  # look for assembly version in header
-                  header <- object@vepObject@header
-                  header <- header$Info[grepl("assembly", header$Info)]
-                  header <- regmatches(header,regexpr("\\w+(\\d)+", header))
-                  if(length(header) != 1){
-                      memo <- paste("Unable to infer assembly from VEP header,",
-                                    "please use the BSgenome parameter!")
-                      stop(memo) 
-                  }
-                  
-                  # determine if a genome is available
-                  availableGenomes <- BSgenome::available.genomes()
-                  availableGenomes <- availableGenomes[grepl(header, availableGenomes)]
-                  if(length(availableGenomes) == 0){
-                      memo <- paste("Could not find a compatible BSgenome for", toString(header),
-                                    "Please specify the bioconductor BSgenome to annotate references bases!")
-                      stop(memo)
-                  }
-                  
-                  # determine if the available genome in an installed package
-                  installedGenomes <- BSgenome::installed.genomes()
-                  installedGenomes <- installedGenomes[installedGenomes == availableGenomes]
-                  if(length(installedGenomes) == 0){
-                      memo <- paste("The BSgenome", toString(availableGenomes), "is available",
-                                    "but is not installed! Please install", toString(availableGenomes),
-                                    "via bioconductor!")
-                      stop(memo)
-                  }
-                  
-                  # grab the genome
-                  BSgenome <- installedGenomes[1]
-                  if(verbose){
-                      memo <- paste("attempting to use", toString(BSgenome), "to annotate reference bases!")
-                  }
-                  requireNamespace(BSgenome)
-                  BSgenome <- getExportedValue(BSgenome, BSgenome)
+                  BSgenome <- retrieve_BSgenome(object, verbose, ...)
               }
               
               # get an index of only the snvs
@@ -660,47 +620,7 @@ setMethod(f="toRainfall",
               
               # grab the BSgenome
               if(is.null(BSgenome)){
-                  if(verbose){
-                      memo <- paste("Looking for correct genome for reference base annotation.")
-                      message(memo)
-                  }
-                  
-                  # look for assembly version in header
-                  header <- object@vepObject@header
-                  header <- header$Info[grepl("assembly", header$Info)]
-                  header <- regmatches(header,regexpr("\\w+(\\d)+", header))
-                  if(length(header) != 1){
-                      memo <- paste("Unable to infer assembly from VEP header,",
-                                    "please use the BSgenome parameter!")
-                      stop(memo) 
-                  }
-                  
-                  # determine if a genome is available
-                  availableGenomes <- BSgenome::available.genomes()
-                  availableGenomes <- availableGenomes[grepl(header, availableGenomes)]
-                  if(length(availableGenomes) == 0){
-                      memo <- paste("Could not find a compatible BSgenome for", toString(header),
-                                    "Please specify the bioconductor BSgenome to annotate references bases!")
-                      stop(memo)
-                  }
-                  
-                  # determine if the available genome in an installed package
-                  installedGenomes <- BSgenome::installed.genomes()
-                  installedGenomes <- installedGenomes[installedGenomes == availableGenomes]
-                  if(length(installedGenomes) == 0){
-                      memo <- paste("The BSgenome", toString(availableGenomes), "is available",
-                                    "but is not installed! Please install", toString(availableGenomes),
-                                    "via bioconductor!")
-                      stop(memo)
-                  }
-                  
-                  # grab the genome
-                  BSgenome <- installedGenomes[1]
-                  if(verbose){
-                      memo <- paste("attempting to use", toString(BSgenome), "to annotate reference bases!")
-                  }
-                  requireNamespace(BSgenome)
-                  BSgenome <- getExportedValue(BSgenome, BSgenome)
+                  BSgenome <- retrieve_BSgenome(object, verbose, ...)
               }
               
               # grab the sample, mutation, position columns
@@ -825,47 +745,7 @@ setMethod(f="toLolliplot",
               
               # grab the BSgenome
               if(is.null(BSgenome)){
-                  if(verbose){
-                      memo <- paste("Looking for correct genome for reference base annotation.")
-                      message(memo)
-                  }
-                  
-                  # look for assembly version in header
-                  header <- object@vepObject@header
-                  header <- header$Info[grepl("assembly", header$Info)]
-                  header <- regmatches(header,regexpr("\\w+(\\d)+", header))
-                  if(length(header) != 1){
-                      memo <- paste("Unable to infer assembly from VEP header,",
-                                    "please use the BSgenome parameter!")
-                      stop(memo) 
-                  }
-                  
-                  # determine if a genome is available
-                  availableGenomes <- BSgenome::available.genomes()
-                  availableGenomes <- availableGenomes[grepl(header, availableGenomes)]
-                  if(length(availableGenomes) == 0){
-                      memo <- paste("Could not find a compatible BSgenome for", toString(header),
-                                    "Please specify the bioconductor BSgenome to annotate references bases!")
-                      stop(memo)
-                  }
-                  
-                  # determine if the available genome in an installed package
-                  installedGenomes <- BSgenome::installed.genomes()
-                  installedGenomes <- installedGenomes[installedGenomes == availableGenomes]
-                  if(length(installedGenomes) == 0){
-                      memo <- paste("The BSgenome", toString(availableGenomes), "is available",
-                                    "but is not installed! Please install", toString(availableGenomes),
-                                    "via bioconductor!")
-                      stop(memo)
-                  }
-                  
-                  # grab the genome
-                  BSgenome <- installedGenomes[1]
-                  if(verbose){
-                      memo <- paste("attempting to use", toString(BSgenome), "to annotate reference bases!")
-                  }
-                  requireNamespace(BSgenome)
-                  BSgenome <- getExportedValue(BSgenome, BSgenome)
+                  BSgenome <- retrieve_BSgenome(object, verbose, ...)
               }
               
               # grab the sample, mutation, position columns
@@ -958,4 +838,70 @@ setMethod(f="toLolliplot",
               
               # return the object
               return(lolliplotFormat)
+          })
+
+#' @rdname retrieve_BSgenome-methods
+#' @aliases retrieve_BSgenome
+#' @param object Object of class VEP
+#' @param BSgenome Object of class BSgenome, used to extract reference bases if
+#' not supplied by the file format.
+#' @param verbose Boolean specifying if status messages should be reported
+#' @importFrom Rsamtools getSeq
+#' @importFrom IRanges IRanges
+#' @importFrom GenomicRanges GRanges
+#' @importFrom BSgenome available.genomes
+#' @importFrom BSgenome installed.genomes
+#' @importFrom data.table as.data.table
+#' @importFrom GenomeInfoDb seqlevels
+#' @importFrom GenomeInfoDb seqnames
+#' @noRd
+setMethod(f="retrieve_BSgenome",
+          signature="VEP",
+          definition=function(object, verbose, ...){
+              
+              # grab the BSgenome
+              if(verbose){
+                  
+                  memo <- paste("Looking for correct genome for reference base annotation.")
+                  message(memo)
+              }
+                  
+              # look for assembly version in header
+              header <- object@vepObject@header
+              header <- header$Info[grepl("assembly", header$Info)]
+              header <- regmatches(header,regexpr("\\w+(\\d)+", header))
+              if(length(header) != 1){
+                  memo <- paste("Unable to infer assembly from VEP header,",
+                                "please use the BSgenome parameter!")
+                  stop(memo) 
+              }
+                  
+              # determine if a genome is available
+              availableGenomes <- BSgenome::available.genomes()
+              availableGenomes <- availableGenomes[grepl(header, availableGenomes)]
+              if(length(availableGenomes) == 0){
+                  memo <- paste("Could not find a compatible BSgenome for", toString(header),
+                                "Please specify the bioconductor BSgenome to annotate references bases!")
+                  stop(memo)
+              }
+                  
+              # determine if the available genome in an installed package
+              installedGenomes <- BSgenome::installed.genomes()
+              installedGenomes <- installedGenomes[installedGenomes == availableGenomes]
+              if(length(installedGenomes) == 0){
+                  memo <- paste("The BSgenome", toString(availableGenomes), "is available",
+                                "but is not installed! Please install", toString(availableGenomes),
+                                "via bioconductor!")
+                  stop(memo)
+              }
+                  
+              # grab the genome
+              BSgenome <- installedGenomes[1]
+              if(verbose){
+                  memo <- paste("attempting to use", toString(BSgenome), "to annotate reference bases!")
+              }
+              requireNamespace(BSgenome)
+              BSgenome <- getExportedValue(BSgenome, BSgenome)
+                  
+              return(BSgenome)
           })
