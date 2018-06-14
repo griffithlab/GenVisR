@@ -20,6 +20,8 @@ context("Rainfall Constructor")
 
 toRainfall.out <- suppressWarnings(toRainfall(vepObject, BSgenome=BSgenome, verbose=FALSE))
 
+###################### test method for datatable and dataframe #################
+
 test_that("toRainfall removes duplicate genomic mutations", {
     
     datatableObject <- data.table::data.table("sample"=rep("test", 3), "chromosome"=rep(1, 3),

@@ -251,3 +251,23 @@ test_that("toRainfall works in verbose mode", {
     
     expect_message(suppressWarnings(toRainfall(mafObject, BSgenome=NULL, verbose=TRUE)))
 })
+
+################################################################################
+############# test the toLolliplot method in Lolliplot #########################
+################################################################################
+
+toLolliplot.out <- toLolliplot(mafObject, verbose=FALSE)
+
+test_that("toLolliplot outputs the correct columns", {
+    
+    # test that it has the proper columns
+    actualCol <- colnames(toLolliplot.out)
+    expectedCol <- c("sample", "chromosome", "start", "stop", "reference", "variant", "gene", "consequence")
+    expect_true(all(actualCol %in% expectedCol))
+})
+
+test_that("toLolliplot works in verbose mode", {
+    
+    expect_message(toLolliplot(mafObject, verbose=TRUE))
+})
+

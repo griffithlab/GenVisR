@@ -15,6 +15,76 @@ toMutSpectra.out <- toMutSpectra(gmsObject, verbose=FALSE)
 
 context("MutSpectraPrimaryData Constructor")
 
+#################### test toMutSpectra for dataframes and datatables ###########
+
+dataTableObject <- data.table::data.table("sample"=rep("test", 5), "chromosome"=rep(1, 5),
+                                          "start"=1:5, "stop"=1:5,
+                                          "refAllele"=c("A", "C", "G", "T", "T"),
+                                          "variantAllele"=c("T", "T", "A", "G", "C"))
+
+test_that("toMutSpectra errors if correct columns are not present columns", {
+    
+    colnames(dataTableObject)[1] <- "wrong"
+    expect_error(toMutSpectra(dataTableObject, verbose=FALSE), "sample")
+})
+
+test_that("toMutSpectra removes entires which are not snvs", {
+    
+    dataTableObject[1,"variantAllele"] <- "-"
+    expect_warning(toMutSpectra(dataTableObject, verbose=FALSE), "1")
+    
+    expected <- 4
+    actual <- nrow(suppressWarnings(toMutSpectra(dataTableObject, verbose=FALSE)))
+    expect_equal(expected, actual)
+})
+
+test_that("toMutSpectra removes entires which are duplicated", {
+    
+    dataTableObject <- rbind(dataTableObject[1,], dataTableObject)
+    expect_warning(toMutSpectra(dataTableObject, verbose=FALSE), "1")
+    
+    expected <- 5
+    actual <- nrow(suppressWarnings(toMutSpectra(dataTableObject, verbose=FALSE)))
+    expect_equal(expected, actual)
+})
+
+test_that("toMutSpectra removes entries where no variant exist", {
+    
+    dataTableObject[1,"variantAllele"] <- "A"
+    expect_warning(toMutSpectra(dataTableObject, verbose=FALSE), "1")
+    
+    expected <- 4
+    actual <- nrow(suppressWarnings(toMutSpectra(dataTableObject, verbose=FALSE)))
+    expect_equal(expected, actual)
+})
+
+test_that("toMutSpectra works in verbose mode", {
+    
+    expect_message(toMutSpectra(dataTableObject, verbose=TRUE))
+    
+    dataFrameObject <- as.data.frame(dataTableObject)
+    expect_message(toMutSpectra(dataFrameObject, verbose=TRUE))
+})
+
+test_that("toMutSpectra returns an object of the proper type", {
+    
+    expect_s3_class(toMutSpectra(dataTableObject, verbose=FALSE), "data.table")
+    
+    dataFrameObject <- as.data.frame(dataTableObject)
+    expect_s3_class(toMutSpectra(dataFrameObject, verbose=FALSE), "data.table")
+})
+
+test_that("toRainfall returns object of the proper type", {
+    
+    datatableObject <- data.table::data.table("sample"=rep("test", 2), "chromosome"=rep(1, 2),
+                                              "start"=c(12345, 112358), "stop"=c(12345, 112358),
+                                              "refAllele"=rep("A", 2), "variantAllele"=rep("G", 2))
+    expect_s3_class(toRainfall(datatableObject, BSgenome=NULL, verbose=TRUE), "data.table")
+    
+    dataframeObject <- as.data.frame(datatableObject)
+    expect_s3_class(toRainfall(dataframeObject, BSgenome=NULL, verbose=TRUE), "data.table")
+})
+
 ##################### test annoMutSpectra ######################################
 
 annoMutSpectra.out <- annoMutSpectra(toMutSpectra.out, verbose=FALSE)

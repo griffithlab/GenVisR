@@ -305,41 +305,31 @@ setMethod(f="toMutSpectra",
                                 toString(missingCol))
                   stop(memo)
               }
-              mutSectraFormat <- object
-              
-              # grab only the snvs
-              snvIndex <- which(nchar(mutSectraFormat$refAllele) == 1 & nchar(mutSectraFormat$variantAllele) == 1)
-              if(verbose){
-                  memo <- paste("Removing", nrow(mutSectraFormat)-length(snvIndex),
-                                "entries which are not snvs!")
-                  message(memo)
-              }
+              mutSpectraFormat <- object
               
               # make sure snvs are of the expected base type
               expectedBases <- c("C", "G", "T", "A")
-              if(!all(toupper(mutSectraFormat$refAllele) %in% expectedBases)){
-                  abnormalBasesIndex_ins <-  !mutSectraFormat$refAllele %in% expectedBases
-              }
-              if(!all(toupper(mutSectraFormat$variantAllele) %in% expectedBases)){
-                  abnormalBasesIndex_del <-  !mutSectraFormat$variantAllele %in% expectedBases
-              }
+              abnormalBasesIndex_ins <-  which(!toupper(mutSpectraFormat$refAllele) %in% expectedBases)
+              abnormalBasesIndex_del <-  which(!toupper(mutSpectraFormat$variantAllele) %in% expectedBases)
               abnormalBasesIndex <- unique(c(abnormalBasesIndex_ins, abnormalBasesIndex_del))
-              if(length(abnormalBasesIndex > 1)){
+              
+              if(length(abnormalBasesIndex) >= 1){
                   memo <- paste("Removing", length(abnormalBasesIndex), "entries with unexpected",
-                                "bases in either the refAllele or variantAllele columns!")
-                  mutSectraFormat <- mutSectraFormat[-abnormalBasesIndex,]
+                                "bases in either the refAllele or variantAllele columns, bases should be A, C, G, T!")
+                  warning(memo)
+                  mutSpectraFormat <- mutSpectraFormat[-abnormalBasesIndex,]
               }
               
               # unique, to make sure no duplicate variants exist to throw off the counts
-              rowCountOrig <- nrow(mutSectraFormat)
-              mutSectraFormat <- unique(mutSectraFormat)
+              rowCountOrig <- nrow(mutSpectraFormat)
+              mutSpectraFormat <- unique(mutSpectraFormat)
               
               # print status message
-              if(verbose){
-                  memo <- paste("Removed", rowCountOrig - nrow(mutSectraFormat),
+              if(rowCountOrig != nrow(mutSpectraFormat)){
+                  memo <- paste("Removed", rowCountOrig - nrow(mutSpectraFormat),
                                 "rows from the data which harbored duplicate",
                                 "genomic locations")
-                  message(memo)
+                  warning(memo)
               }
               
               # Remove cases where there is not change between reference and variant
@@ -347,10 +337,10 @@ setMethod(f="toMutSpectra",
               mutSpectraFormat$variantAllele <- as.character(mutSpectraFormat$variantAllele)
               alleleMatchIndex <- mutSpectraFormat$refAllele == mutSpectraFormat$variantAllele
               mutSpectraFormat <- mutSpectraFormat[!alleleMatchIndex,]
-              if(verbose){
-                  memo <- paste("Removed", length(alleleMatchIndex), "entries",
+              if(sum(alleleMatchIndex) > 0){
+                  memo <- paste("Removed", sum(alleleMatchIndex), "entries",
                                 "where the reference allele matched the tumor allele")
-                  message(memo)
+                  warning(memo)
               }
               
               # convert appropriate columns to factor
