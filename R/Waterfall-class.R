@@ -51,7 +51,8 @@ setClass("Waterfall",
 #' 
 #' @name Waterfall
 #' @rdname Waterfall-class
-#' @param input Object of class MutationAnnotationFormat, or GMS.
+#' @param input Object of class \code{\link{MutationAnnotationFormat}}, \code{\link{VEP}},
+#' \code{\link{GMS}}, or alterantively a data frame/data table with column names "sample", "gene", "mutation".
 #' @param labelColumn Character vector specifying a column name from which to
 #' extract labels for cells.
 #' @param samples Character vector specifying samples to plot. If not NULL
@@ -104,6 +105,10 @@ setClass("Waterfall",
 #' should sum to one. Expects a value for each section.
 #' @param verbose Boolean specifying if status messages should be reported
 #' @param plotCLayers list of ggplot2 layers to be passed to the plot.
+#' @seealso \code{\link{MutationAnnotationFormat}}, \code{\link{VEP}}, \code{\link{GMS}}, \code{\link{Clinical}}
+#' @details TODO
+#' @examples
+#' # create a data frame with required column names
 #' @export
 Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
                       mutation=NULL, genes=NULL, mutationHierarchy=NULL,
@@ -1445,6 +1450,12 @@ setMethod(f="constructGeneData",
               gene <- mutation <- NULL # appeases R CMD CHECK
               geneData <- primaryData[, count := .N, by = list(gene, mutation)]
               geneData <- unique(geneData[,c("gene", "mutation", "count")])
+              
+              # if a gene is present but has NA for mutation this probably means
+              # you want to plot it but it's count needs to be 0
+              geneData[is.na(geneData$mutation),"count"] <- 0
+              
+              # set the levels
               geneData$gene <- factor(geneData$gene, levels=levels(primaryData$gene))
               
               return(geneData)
@@ -1475,7 +1486,7 @@ setMethod(f="buildGenePlot",
               if(is.null(plotB)) return(gtable::gtable())
               
               # extract the data needed for this plot
-              geneData <- na.omit(getData(object, name="geneData"))
+              geneData <- getData(object, name="geneData")
               
               # print status message
               if(verbose) {
@@ -1533,7 +1544,7 @@ setMethod(f="buildGenePlot",
               # legend
               if(plotBTally == "simple"){
                   # if simple we have to reset mutations to NA
-                  geneData$mutation <- NA
+                  geneData$mutation <- "NA"
                   plotLegend <- scale_fill_manual(name="Translational Effect",
                                                   na.value="deepskyblue4", values="deepskyblue4")
               }else if(plotBTally == "complex"){
@@ -1641,6 +1652,10 @@ setMethod(f="buildWaterfallPlot",
               # remove legend entries for those not in the primary data at all
               mutationData <- as.character(unique(mutationData[mutationData$Freq > 0,]$mutation))
               paletteData <- paletteData[paletteData$mutation %in% mutationData,]
+              
+              # related to adding support for genes with no mutations, we need to assign
+              # any NA samples to an actual sample so the gene with no mutation is plotted
+              primaryData$sample[is.na(primaryData$sample)] <- levels(primaryData$sample)[1]
               
               # this should keep the hierarchy but remove unused levels based on mutationData
               primaryData$mutation <- factor(primaryData$mutation,
@@ -1933,8 +1948,12 @@ setMethod(
         {
             newGenes <- na.omit(genes[!genes %in% primaryData$gene])
             memo <- paste("The following genes were designated to be kept but were",
-                          "not found in the data:", toString(newGenes))
+                          "not found in the data:", toString(newGenes), "adding these to the data!")
             warning(memo)
+            newGenes <- data.table::data.table("sample"=NA, "gene"=newGenes, "mutation"=NA, "label"=NA)
+            primaryData <- list(primaryData, newGenes)
+            primaryData <- data.table::rbindlist(primaryData, use.names=TRUE,
+                                                 fill=TRUE)
         }
         
         # subset the original data frame based on the following: keep gene if it is

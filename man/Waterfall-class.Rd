@@ -17,7 +17,8 @@ Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
   plotCLayers = NULL)
 }
 \arguments{
-\item{input}{Object of class MutationAnnotationFormat, or GMS.}
+\item{input}{Object of class \code{\link{MutationAnnotationFormat}}, \code{\link{VEP}},
+\code{\link{GMS}}, or alterantively a data frame/data table with column names "sample", "gene", "mutation".}
 
 \item{labelColumn}{Character vector specifying a column name from which to
 extract labels for cells.}
@@ -100,6 +101,9 @@ should sum to one. Expects a value for each section.}
 \description{
 An S4 class for the waterfall plot object, under development!!!
 }
+\details{
+TODO
+}
 \section{Slots}{
 
 \describe{
@@ -133,3 +137,9 @@ type in order of most to least important and the mapping of mutation type to
 color. Should have column names mutation, color, and label.}
 }}
 
+\examples{
+# create a data frame with required column names
+}
+\seealso{
+\code{\link{MutationAnnotationFormat}}, \code{\link{VEP}}, \code{\link{GMS}}, \code{\link{Clinical}}
+}

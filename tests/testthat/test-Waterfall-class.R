@@ -420,7 +420,11 @@ test_that("geneFilter correctly subsets data to only genes specified", {
 test_that("geneFilter correctly identifies if a gene is specified to be filtered but is not found", {
     keepGenes <- c(keepGenes, "not_in_data")
     expect_warning(geneFilter(mutHierarchySubset.out, genes=keepGenes, verbose=FALSE), "not found in")
+    
+    geneFilter.out <- suppressWarnings(geneFilter(mutHierarchySubset.out, genes=keepGenes, verbose=FALSE))
+    expect_true("not_in_data" %in% geneFilter.out$gene)
 })
+
 
 test_that("geneFilter works in verbose mode", {
     keepGenes <- unique(c(geneSubset.out, recurrenceSubset.out))
@@ -1124,6 +1128,23 @@ test_that("drawPlot constructs a waterfall plot from grob objects in Waterfall o
     skip_on_bioc()
     
     vdiffr::expect_doppelganger("drawPlot waterfall", drawPlot(Waterfall.out))
+})
+
+test_that("Waterfall adds genes into the plot which are not in the data", {
+    
+    Waterfall.out <- suppressWarnings(Waterfall(mafObject, labelColumn=NULL, samples=NULL, coverage=NULL,
+                               mutation=NULL, genes=c("not_here_1", "not_here_2"),
+                               mutationHierarchy=NULL,
+                               recurrence=.4, geneOrder=NULL, geneMax=NULL,
+                               sampleOrder=NULL, plotA=c("frequency", "burden", NULL),
+                               plotATally=c("simple", "complex"), plotALayers=NULL,
+                               plotB=c("proportion", "frequency", NULL),
+                               plotBTally=c("simple", "complex"), plotBLayers=NULL,
+                               gridOverlay=FALSE, drop=TRUE, labelSize=5, labelAngle=0,
+                               sampleNames=TRUE, clinical=NULL, sectionHeights=NULL,
+                               sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL))
+    
+    vdiffr::expect_doppelganger("addgene waterfall", drawPlot(Waterfall.out))
 })
 
 ########################### getData ############################################
