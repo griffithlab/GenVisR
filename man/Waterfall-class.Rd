@@ -21,10 +21,11 @@ Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
 \code{\link{GMS}}, or alterantively a data frame/data table with column names "sample", "gene", "mutation".}
 
 \item{labelColumn}{Character vector specifying a column name from which to
-extract labels for cells.}
+extract label names for cells, must be a column within the object passed to input.}
 
 \item{samples}{Character vector specifying samples to plot. If not NULL
-all samples in "input" not specified with this parameter are removed.}
+all samples in "input" not specified with this parameter are removed. Further samples specified but not
+present in the data will be added.}
 
 \item{coverage}{Integer specifying the size in base pairs of the genome
 covered by sequence data from which mutations could be called. Required for
@@ -35,10 +36,11 @@ calculations.}
 \item{mutation}{Character vector specifying mutations to keep, if defined
 mutations not supplied are removed from the main plot.}
 
-\item{genes}{Character vector of genes to keep}
+\item{genes}{Character vector specifying genes to keep, if not "NULL" all genes not specified
+are removed. Further genes specified but not present in the data will be added.}
 
-\item{mutationHierarchy}{Data.table object with rows specifying the order of
-mutations from most to least deleterious and column names "mutation" and
+\item{mutationHierarchy}{data.table/data.frame object with rows specifying the order of
+mutations from most to least deleterious and containing column names "mutation" and
 "color". Used to change the default colors and/or to give priority to a
 mutation for the same gene/sample (see details and vignette).}
 
@@ -50,8 +52,8 @@ proportion of samples defined are removed.}
 genes.}
 
 \item{geneMax}{Integer specifying the maximum number of genes to be plotted.
-Genes kept will be choosen based on the reccurence of mutations in samples.
-Unless geneOrder is specified.}
+Genes kept will be choosen based on the reccurence of mutations in samples,
+unless geneOrder is specified.}
 
 \item{sampleOrder}{Character vector specifying the order in which to plot
 samples.}
@@ -75,18 +77,18 @@ simplified or complex tally of genes respectively.}
 \item{plotBLayers}{list of ggplot2 layers to be passed to the plot.}
 
 \item{gridOverlay}{Boolean specifying if a grid should be overlayed on the
-waterfall plot.}
+waterfall plot. This is not recommended for large cohorts.}
 
 \item{drop}{Boolean specifying if mutations not in the main plot should be dropped from the
 legend. If FALSE the legend will be based on mutations in the data before any subsets occur.}
 
-\item{labelSize}{Integer specifying the size of label text}
+\item{labelSize}{Integer specifying the size of label text within each cell if "labelColumn" has been specified.}
 
-\item{labelAngle}{Numeric value specifying the angle of label text}
+\item{labelAngle}{Numeric value specifying the angle of label text if "labelColumn" has been specified.}
 
-\item{sampleNames}{Boolean specifying if samples should be labeled on the plot.}
+\item{sampleNames}{Boolean specifying if samples should be labeled on the x-axis of the plot.}
 
-\item{clinical}{Object of class Clinical, used for adding a clinical data subplot.}
+\item{clinical}{Object of class \code{\link{Clinical}}, used for adding a clinical data subplot.}
 
 \item{sectionHeights}{Numeric vector specifying relative heights of each plot section,
 should sum to one. Expects a value for each section.}
@@ -94,15 +96,25 @@ should sum to one. Expects a value for each section.}
 \item{sectionWidths}{Numeric vector specifying relative heights of each plot section,
 should sum to one. Expects a value for each section.}
 
-\item{verbose}{Boolean specifying if status messages should be reported}
+\item{verbose}{Boolean specifying if status messages should be reported.}
 
-\item{plotCLayers}{list of ggplot2 layers to be passed to the plot.}
+\item{plotCLayers}{list of ggplot2 layers to be passed to the main plot.}
 }
 \description{
 An S4 class for the waterfall plot object, under development!!!
 }
 \details{
-TODO
+`Waterfall()` is designed to visualize the mutations seen in
+a cohort. As input the function takes an object of class MutationAnnotationFormat, VEP, or GMS.
+Alternatively a user can provide either of data.table or data.frame as long as the column names
+of those objects include "sample", "gene", and "mutation". When supplying an object of class data.table
+or data.frame the user must also provide input to the `mutationHierarchy` parameter.
+
+The `mutationHierarchy` parameter expects either a data.table or data.frame object containing
+the column names "mutation" and "color". Each row should match a mutation type given in the param `input`.
+The `mutationHierarchy` parameter is intended to both change the colors of mutations on the
+plot and to set a hierarchy of which mutation type to plot if there are more than 1 mutation types
+for the same gene/sample combination.
 }
 \section{Slots}{
 
@@ -138,7 +150,7 @@ color. Should have column names mutation, color, and label.}
 }}
 
 \examples{
-set.seed(383)
+set.seed(426)
 
 # create a data frame with required column names
 mutationDF <- data.frame("sample"=sample(c("sample_1", "sample_2", "sample_3"), 10, replace=TRUE),

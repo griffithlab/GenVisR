@@ -54,9 +54,10 @@ setClass("Waterfall",
 #' @param input Object of class \code{\link{MutationAnnotationFormat}}, \code{\link{VEP}},
 #' \code{\link{GMS}}, or alterantively a data frame/data table with column names "sample", "gene", "mutation".
 #' @param labelColumn Character vector specifying a column name from which to
-#' extract labels for cells.
+#' extract label names for cells, must be a column within the object passed to input.
 #' @param samples Character vector specifying samples to plot. If not NULL
-#' all samples in "input" not specified with this parameter are removed.
+#' all samples in "input" not specified with this parameter are removed. Further samples specified but not
+#' present in the data will be added.
 #' @param coverage Integer specifying the size in base pairs of the genome
 #' covered by sequence data from which mutations could be called. Required for
 #' the mutation burden sub-plot (see details and vignette). Optionally a named 
@@ -64,19 +65,20 @@ setClass("Waterfall",
 #' calculations.
 #' @param mutation Character vector specifying mutations to keep, if defined
 #' mutations not supplied are removed from the main plot.
-#' @param mutationHierarchy Data.table object with rows specifying the order of
-#' mutations from most to least deleterious and column names "mutation" and
+#' @param mutationHierarchy data.table/data.frame object with rows specifying the order of
+#' mutations from most to least deleterious and containing column names "mutation" and
 #' "color". Used to change the default colors and/or to give priority to a
 #' mutation for the same gene/sample (see details and vignette).
 #' @param recurrence Numeric value between 0 and 1 specifying a
 #' mutation recurrence cutoff. Genes which do not have mutations in the
 #' proportion of samples defined are removed.
-#' @param genes Character vector of genes to keep
+#' @param genes Character vector specifying genes to keep, if not "NULL" all genes not specified
+#' are removed. Further genes specified but not present in the data will be added.
 #' @param geneOrder Character vector specifying the order in which to plot
 #' genes.
 #' @param geneMax Integer specifying the maximum number of genes to be plotted.
-#' Genes kept will be choosen based on the reccurence of mutations in samples.
-#' Unless geneOrder is specified.
+#' Genes kept will be choosen based on the reccurence of mutations in samples,
+#' unless geneOrder is specified.
 #' @param sampleOrder Character vector specifying the order in which to plot
 #' samples.
 #' @param plotA String specifying the type of plot for the top sub-plot, one of
@@ -92,21 +94,31 @@ setClass("Waterfall",
 #' simplified or complex tally of genes respectively.
 #' @param plotBLayers list of ggplot2 layers to be passed to the plot.
 #' @param gridOverlay Boolean specifying if a grid should be overlayed on the
-#' waterfall plot.
+#' waterfall plot. This is not recommended for large cohorts.
 #' @param drop Boolean specifying if mutations not in the main plot should be dropped from the
 #' legend. If FALSE the legend will be based on mutations in the data before any subsets occur.
-#' @param labelSize Integer specifying the size of label text
-#' @param labelAngle Numeric value specifying the angle of label text
-#' @param sampleNames Boolean specifying if samples should be labeled on the plot.
-#' @param clinical Object of class Clinical, used for adding a clinical data subplot.
+#' @param labelSize Integer specifying the size of label text within each cell if "labelColumn" has been specified.
+#' @param labelAngle Numeric value specifying the angle of label text if "labelColumn" has been specified.
+#' @param sampleNames Boolean specifying if samples should be labeled on the x-axis of the plot.
+#' @param clinical Object of class \code{\link{Clinical}}, used for adding a clinical data subplot.
 #' @param sectionHeights Numeric vector specifying relative heights of each plot section,
 #' should sum to one. Expects a value for each section.
 #' @param sectionWidths Numeric vector specifying relative heights of each plot section,
 #' should sum to one. Expects a value for each section.
-#' @param verbose Boolean specifying if status messages should be reported
-#' @param plotCLayers list of ggplot2 layers to be passed to the plot.
+#' @param verbose Boolean specifying if status messages should be reported.
+#' @param plotCLayers list of ggplot2 layers to be passed to the main plot.
 #' @seealso \code{\link{MutationAnnotationFormat}}, \code{\link{VEP}}, \code{\link{GMS}}, \code{\link{Clinical}}
-#' @details TODO
+#' @details `Waterfall()` is designed to visualize the mutations seen in
+#' a cohort. As input the function takes an object of class MutationAnnotationFormat, VEP, or GMS.
+#' Alternatively a user can provide either of data.table or data.frame as long as the column names
+#' of those objects include "sample", "gene", and "mutation". When supplying an object of class data.table
+#' or data.frame the user must also provide input to the `mutationHierarchy` parameter.
+#' 
+#' The `mutationHierarchy` parameter expects either a data.table or data.frame object containing
+#' the column names "mutation" and "color". Each row should match a mutation type given in the param `input`.
+#' The `mutationHierarchy` parameter is intended to both change the colors of mutations on the
+#' plot and to set a hierarchy of which mutation type to plot if there are more than 1 mutation types
+#' for the same gene/sample combination.
 #' @examples
 #' set.seed(426)
 #' 
