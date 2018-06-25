@@ -108,7 +108,20 @@ setClass("Waterfall",
 #' @seealso \code{\link{MutationAnnotationFormat}}, \code{\link{VEP}}, \code{\link{GMS}}, \code{\link{Clinical}}
 #' @details TODO
 #' @examples
+#' set.seed(426)
+#' 
 #' # create a data frame with required column names
+#' mutationDF <- data.frame("sample"=sample(c("sample_1", "sample_2", "sample_3"), 10, replace=TRUE),
+#'                          "gene"=sample(c("egfr", "tp53", "rb1", "apc"), 10, replace=TRUE),
+#'                          "mutation"=sample(c("missense", "frame_shift", "splice_site"), 10, replace=TRUE))
+#' 
+#' # set the mutation hierarchy (required for DF)
+#' hierarchyDF <- data.frame("mutation"=c("missense", "frame_shift", "slice_site"),
+#'                           "color"=c("#3B3B98", "#BDC581", "#6A006A"))
+#'                           
+#' # Run the Waterfall Plot and draw the output
+#' Waterfall.out <- Waterfall(mutationDF, mutationHierarchy=hierarchyDF)
+#' drawPlot(Waterfall.out)
 #' @export
 Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
                       mutation=NULL, genes=NULL, mutationHierarchy=NULL,
@@ -514,6 +527,39 @@ setMethod(f="setMutationHierarchy",
               return(mutationHierarchy)
           })
 
+#' @rdname setMutationHierarchy-methods
+#' @aliases setMutationHierarchy
+#' @noRd
+#' @importFrom data.table as.data.table
+setMethod(f="setMutationHierarchy",
+          signature="data.frame",
+          definition=function(object, mutationHierarchy, verbose, ...){
+              
+              # print status message
+              if(verbose){
+                  memo <- paste("Converting", class(object),
+                                "to data.table in setMutationHierarchy")
+                  message(memo)
+              }
+              
+              # convert to data.table
+              object <- data.table::as.data.table(object)
+              
+              # if mutationHierarchy is a data.frame convert that too
+              if(is.data.frame(mutationHierarchy)) mutationHierarchy <- data.table::as.data.table(mutationHierarchy)
+              
+              # check that hierarchy is the proper class
+              if(!"data.table" %in% class(mutationHierarchy)){
+                  memo <- paste("mutationHierarchy must be an object of class data.table or data.frame!")
+                  stop(memo)
+              }
+              
+              # convert to waterfall format
+              object <- setMutationHierarchy(object, mutationHierarchy=mutationHierarchy, verbose=verbose)
+              
+              return(object)
+          })
+
 #' @rdname Waterfall-methods
 #' @aliases Waterfall
 #' @param object Object of class data.table
@@ -570,7 +616,7 @@ setMethod(f="toWaterfall",
               }
               
               # combine all columns into a consistent format
-              waterfallFormat <- data.table::as.data.table(cbind(sample, gene, mutation, label))
+              waterfallFormat <- data.table::as.data.table(cbind.data.frame(sample, gene, mutation, label))
               colnames(waterfallFormat) <- c("sample", "gene", "mutation", "label")
               
               # convert appropriate columns to factor
@@ -597,7 +643,7 @@ setMethod(f="toWaterfall",
               }
               
               # convert to data.table
-              object <- as.data.table(object)
+              object <- data.table::as.data.table(object)
               
               # convert to waterfall format
               object <- toWaterfall(object, hierarchy=hierarchy, labelColumn=labelColumn, verbose=verbose)

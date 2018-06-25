@@ -138,7 +138,20 @@ color. Should have column names mutation, color, and label.}
 }}
 
 \examples{
+set.seed(383)
+
 # create a data frame with required column names
+mutationDF <- data.frame("sample"=sample(c("sample_1", "sample_2", "sample_3"), 10, replace=TRUE),
+                         "gene"=sample(c("egfr", "tp53", "rb1", "apc"), 10, replace=TRUE),
+                         "mutation"=sample(c("missense", "frame_shift", "splice_site"), 10, replace=TRUE))
+
+# set the mutation hierarchy (required for DF)
+hierarchyDF <- data.frame("mutation"=c("missense", "frame_shift", "slice_site"),
+                          "color"=c("#3B3B98", "#BDC581", "#6A006A"))
+                          
+# Run the Waterfall Plot and draw the output
+Waterfall.out <- Waterfall(mutationDF, mutationHierarchy=hierarchyDF)
+drawPlot(Waterfall.out)
 }
 \seealso{
 \code{\link{MutationAnnotationFormat}}, \code{\link{VEP}}, \code{\link{GMS}}, \code{\link{Clinical}}
