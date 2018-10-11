@@ -844,7 +844,7 @@ setMethod(f="constructTranscriptData",
                   protein$source <- "protein"
                   protein$proteinStop <- protein$proteinStop/3
               }
-
+              
               proteinData <- data.table::rbindlist(list(protein, domain), use.names=TRUE, fill=TRUE)
               
               return(proteinData)

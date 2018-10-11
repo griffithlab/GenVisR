@@ -234,7 +234,7 @@ WaterfallData <- function(object, labelColumn, samples, mutationHierarchy,
     # calculate the frequency and mutation burden
     simpleMutationCounts <- calcSimpleMutationBurden(primaryData, coverage, verbose)
     complexMutationCounts <- calcComplexMutationBurden(primaryData, coverage, verbose)
-    
+
     # remove mutations if specified
     primaryData <- rmvMutation(primaryData, mutation, verbose)
     

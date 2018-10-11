@@ -15,7 +15,7 @@
 #' @noRd
 
 lohSpec_slidingWindow <- function(loh_data, step, window_size, normal)
-{     
+{  
     ## Obtain lists for each sample and chromosome
     out <- split(loh_data, list(as.character(loh_data$chromosome),
                                       as.character(loh_data$sample)))
