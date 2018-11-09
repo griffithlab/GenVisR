@@ -1143,7 +1143,7 @@ test_that("Waterfall adds genes into the plot which are not in the data", {
                                gridOverlay=FALSE, drop=TRUE, labelSize=5, labelAngle=0,
                                sampleNames=TRUE, clinical=NULL, sectionHeights=NULL,
                                sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL))
-    
+    skip_on_bioc()
     vdiffr::expect_doppelganger("addgene waterfall", drawPlot(Waterfall.out))
 })
 
