@@ -29,27 +29,29 @@ getData(object, ...)
 
 .getData_Lolliplot(object, name = NULL, index = NULL, ...)
 
-\S4method{getData}{LolliplotData}(object, name = NULL, index = NULL, ...)
+\S4method{getData}{LolliplotData}(object, name = NULL, index = NULL,
+  ...)
 
 \S4method{getData}{Lolliplot}(object, name = NULL, index = NULL, ...)
 
 .getData_MutSpectra(object, name = NULL, index = NULL, ...)
 
-\S4method{getData}{MutSpectraPrimaryData}(object, name = NULL, index = NULL,
-  ...)
+\S4method{getData}{MutSpectraPrimaryData}(object, name = NULL,
+  index = NULL, ...)
 
 \S4method{getData}{MutSpectra}(object, name = NULL, index = NULL, ...)
 
 .getData_Rainfall(object, name = NULL, index = NULL, ...)
 
-\S4method{getData}{RainfallPrimaryData}(object, name = NULL, index = NULL,
-  ...)
+\S4method{getData}{RainfallPrimaryData}(object, name = NULL,
+  index = NULL, ...)
 
 \S4method{getData}{Rainfall}(object, name = NULL, index = NULL, ...)
 
 .getData_waterfall(object, name = NULL, index = NULL, ...)
 
-\S4method{getData}{WaterfallData}(object, name = NULL, index = NULL, ...)
+\S4method{getData}{WaterfallData}(object, name = NULL, index = NULL,
+  ...)
 
 \S4method{getData}{Waterfall}(object, name = NULL, index = NULL, ...)
 }

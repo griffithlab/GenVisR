@@ -22,7 +22,8 @@ writeData(object, ...)
 
 \S4method{writeData}{GMS}(object, file, ...)
 
-\S4method{writeData}{MutationAnnotationFormat_Virtual}(object, file, sep, ...)
+\S4method{writeData}{MutationAnnotationFormat_Virtual}(object, file, sep,
+  ...)
 
 \S4method{writeData}{MutationAnnotationFormat}(object, file, ...)
 

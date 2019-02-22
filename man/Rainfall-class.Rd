@@ -5,9 +5,10 @@
 \alias{Rainfall}
 \title{Class Rainfall}
 \usage{
-Rainfall(object, BSgenome = NULL, palette = NULL, sectionHeights = NULL,
-  chromosomes = NULL, sample = NULL, pointSize = NULL, verbose = FALSE,
-  plotALayers = NULL, plotBLayers = NULL)
+Rainfall(object, BSgenome = NULL, palette = NULL,
+  sectionHeights = NULL, chromosomes = NULL, sample = NULL,
+  pointSize = NULL, verbose = FALSE, plotALayers = NULL,
+  plotBLayers = NULL)
 }
 \arguments{
 \item{object}{Object of class MutationAnnotationFormat, GMS, VEP.}

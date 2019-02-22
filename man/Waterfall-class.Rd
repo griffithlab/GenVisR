@@ -12,9 +12,9 @@ Waterfall(input, labelColumn = NULL, samples = NULL, coverage = NULL,
   plotATally = c("simple", "complex"), plotALayers = NULL,
   plotB = c("proportion", "frequency", NULL), plotBTally = c("simple",
   "complex"), plotBLayers = NULL, gridOverlay = FALSE, drop = TRUE,
-  labelSize = 5, labelAngle = 0, sampleNames = TRUE, clinical = NULL,
-  sectionHeights = NULL, sectionWidths = NULL, verbose = FALSE,
-  plotCLayers = NULL)
+  labelSize = 5, labelAngle = 0, sampleNames = TRUE,
+  clinical = NULL, sectionHeights = NULL, sectionWidths = NULL,
+  verbose = FALSE, plotCLayers = NULL)
 }
 \arguments{
 \item{input}{Object of class \code{\link{MutationAnnotationFormat}}, \code{\link{VEP}},

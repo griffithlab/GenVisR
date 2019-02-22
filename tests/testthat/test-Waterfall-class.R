@@ -1131,7 +1131,7 @@ test_that("drawPlot constructs a waterfall plot from grob objects in Waterfall o
 })
 
 test_that("Waterfall adds genes into the plot which are not in the data", {
-    
+    skip_on_bioc()
     Waterfall.out <- suppressWarnings(Waterfall(mafObject, labelColumn=NULL, samples=NULL, coverage=NULL,
                                mutation=NULL, genes=c("not_here_1", "not_here_2"),
                                mutationHierarchy=NULL,
