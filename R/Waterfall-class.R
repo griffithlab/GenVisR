@@ -615,7 +615,7 @@ setMethod(f="toWaterfall",
                       labelFlag <- FALSE
                   }
                   
-                  if(!labelColumn %in% colnames(object)){
+                  if(any(!labelColumn %in% colnames(object))){
                       memo <- paste("could not find column:", labelColumn,
                                     " valid names are:", toString(colnames(object)))
                       warning(memo)

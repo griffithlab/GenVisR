@@ -113,6 +113,11 @@ VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
     
     
     # grab the version and assign it
+    if(length(version) > 1){
+        memo <- paste("user supplied version is not of length 1, using first element")
+        warning(memo)
+        version <- version[1]
+    }
     a2 <- function(x){
         # find the element which defines the VEP version
         x <- x[grepl("VARIANT EFFECT PREDICTOR", x)]
@@ -392,7 +397,7 @@ setMethod(f="toWaterfall",
                       labelFlag <- FALSE
                   }
                   
-                  if(!labelColumn %in% colnames(getMeta(object))){
+                  if(any(!labelColumn %in% colnames(getMeta(object)))){
                       memo <- paste("Did not find column:", labelColumn,
                                     "in the meta slot of the vepObject! Valid",
                                     "names are:", toString(colnames(getMeta(object))))

@@ -219,7 +219,7 @@ setMethod(f="toWaterfall",
                       labelFlag <- FALSE
                   }
                   
-                  if(!labelColumn %in% colnames(getMeta(object))){
+                  if(any(!labelColumn %in% colnames(getMeta(object)))){
                       memo <- paste("Did not find column:", labelColumn,
                                     "in the meta slot of the vepObject! Valid",
                                     "names are:", toString(colnames(getMeta(object))))

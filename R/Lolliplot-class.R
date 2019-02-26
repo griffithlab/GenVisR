@@ -709,6 +709,7 @@ setMethod(f="filterByTranscript",
               if(length(transcript) > 1){
                   memo <- paste("input to transcript is not of length 1, using only the first element:", toString(transcript[1]))
                   warning(memo)
+                  transcript <- transcript[1]
               }
               
               # check that the transcript is in the data
