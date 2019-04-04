@@ -2,7 +2,6 @@
 #'
 #' split genomic segments so that none are overlapping
 #' @name cnFreq_disjoin
-#' @param force Boolean specifying if data should be forced through by converting to a simplelist
 #' @noRd
 #' @param x Object of class data frame with columns chromosome, start, end, segmean, and sample
 #' @return Object of class data frame with disjoint genomic segments
@@ -12,8 +11,7 @@
 #' @importFrom IRanges IRanges
 #' @importFrom IRanges extractList
 
-cnFreq_disjoin <- function(x, force=FALSE){
-    
+cnFreq_disjoin <- function(x){
     # create the Granges object for the data
     x <- GenomicRanges::GRanges(seqnames=x$chromosome,
                                 ranges=IRanges::IRanges(start=x$start, end=x$end),
@@ -22,12 +20,8 @@ cnFreq_disjoin <- function(x, force=FALSE){
     # disjoin with grange, get a mapping of meta columns and expand it
     disJoint_x <- GenomicRanges::disjoin(x, with.revmap=TRUE)
     revmap <- GenomicRanges::mcols(disJoint_x)$revmap
-    if(force){
-        disJoint_x <- rep(as(disJoint_x, "SimpleList"), lengths(as(revmap, "SimpleList")))
-        disJoint_x <- GRanges(as.data.frame(disJoint_x))
-    } else {
-        disJoint_x <- rep(disJoint_x, lengths(revmap))
-    }
+    disJoint_x <- rep(disJoint_x, lengths(revmap))
+
     
     # exract the meta columns and map them back to the disJoint GRanges object
     sample <- unlist(IRanges::extractList(GenomicRanges::mcols(x)$sample, revmap))

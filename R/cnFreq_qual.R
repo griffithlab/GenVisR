@@ -48,16 +48,10 @@ cnFreq_qual <- function(x)
                            " ...Performing disjoin operation")
             message(memo) 
             
-            # here we split the DF up in an attempt to avoid complaints that lists are to large 
-            # if necessary we use force to attempt to convert to a "SimpleList"
+            # here we split the DF up in an attempt to avoid complaints that lists are to large
             x <- split(x, f=x$chromosome)
-            if(any(lapply(x, nrow) >= 1000)){
-                memo <- paste("Detected a large data size, converting to SimpleList for disjoin")
-                message(memo)
-                x <- lapply(x, cnFreq_disjoin, force=TRUE)
-            } else {
-                x <- lapply(x, cnFreq_disjoin, force=FALSE)
-            }
+            x <- lapply(x, cnFreq_disjoin)
+
             
             x <- do.call(rbind, x)
         }
