@@ -481,7 +481,7 @@ setMethod(f="annotateGene",
               
               # Select attributes to retrieve (protein domain, start, stop)
               # biomaRt::listAttributes(ensembl_mart)
-              attributes <- c("ensembl_gene_id", "hgnc_symbol", "entrezgene")
+              attributes <- c("ensembl_gene_id", "hgnc_symbol", "entrezgene_id")
               
               # Retrieve data
               result <- biomaRt::getBM(attributes=attributes, filters=filters,
@@ -490,7 +490,7 @@ setMethod(f="annotateGene",
               # add in the data and return the structure
               object$biomaRt_ensembl_gene_id <- result$ensembl_gene_id
               object$biomaRt_hgnc_symbol <- result$hgnc_symbol
-              object$biomaRt_entrez_gene_id <- result$entrezgene
+              object$biomaRt_entrez_gene_id <- result$entrezgene_id
               
               return(object)
           })
