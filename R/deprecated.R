@@ -3367,7 +3367,7 @@ lolliplot_transcriptID2codingSeq <- function(transcriptID,
     ensg_id <- as.character(transcriptID)
     
     # Select attributes to retrieve coding dna sequence
-    attributes <- as.list(c("coding","cds_length"))
+    attributes <- c("coding","cds_length")
     
     # Retrieve data
     result <- biomaRt::getBM(attributes=attributes, filters=filters,
