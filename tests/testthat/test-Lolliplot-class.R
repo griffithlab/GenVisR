@@ -9,7 +9,7 @@ BSgenome <- BSgenome.Hsapiens.UCSC.hg38
 # note Lolliplot can run in two modes, we need to check both,
 # we use the internal dataset PIK3CA for this
 
-# mode 1, amino acid changes are present
+# mode 1, amino acid changes are not present
 keep <- c("Chromosome", "Start_Position", "End_Position", "Reference_Allele",
           "Tumor_Seq_Allele2", "Tumor_Sample_Barcode", "Gene", "Variant_Classification")
 dfObject.mode1 <- PIK3CA[,keep]
@@ -17,7 +17,7 @@ colnames(dfObject.mode1) <- c("chromosome", "start", "stop", "reference", "varia
                         "sample", "gene", "consequence")
 
 
-# mode 2, amino acid changes are not present
+# mode 2, amino acid changes are present
 keep <- c("Chromosome", "Start_Position", "End_Position", "Reference_Allele",
           "Tumor_Seq_Allele2", "Tumor_Sample_Barcode", "Gene", "Variant_Classification",
           "Transcript_ID", "HGVSp")
@@ -220,10 +220,10 @@ test_that("annotateTranscript works in verbose mode", {
 if(biomart_success){
 
     annotateProteinCoord.mode1.out <- suppressWarnings(annotateProteinCoord(annotateTranscript.mode1.out,
-                                                           ensembl=retrieveMart.out,
-                                                           txdb=txdb,
-                                                           BSgenome=BSgenome,
-                                                           verbose=FALSE))
+                                                                            ensembl=retrieveMart.out,
+                                                                            txdb=txdb,
+                                                                            BSgenome=BSgenome,
+                                                                            verbose=FALSE))
 
     annotateProteinCoord.mode2.out <- suppressWarnings(annotateProteinCoord(annotateTranscript.mode2.out,
                                                            ensembl=retrieveMart.out,

@@ -612,6 +612,14 @@ setMethod(f="annotateProteinCoord",
                   }
               }
               
+              #!!!!!!!!!!!!!!!!!!!!! additional note !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+              # the object up until here has been annotated with ensembl biomart, when we add in the protien
+              # coordinates from the txdb object it doesn't know the original transcript annotation just the coords
+              # consequently cases will arise where the txdb transcript and the biomart annotated transcript does not match
+              # we resolve this by getting a mapping of the txdb transcripts to biomart transcripts (biomart query),
+              # creating a key, and filtering the object to where the object biomart/txdb key matches the biomart query key
+              #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+              
               # convert data to a GRanges object
               gr1 <- GRanges(seqnames=object$chromosome, ranges=IRanges(start=object$start, end=object$stop), strand="*",
                              mcols=object[,c("biomaRt_ensembl_gene_id", "sample", "reference", "variant", "consequence", "biomaRt_ensembl_gene_id", "gene", "biomaRt_ensembl_transcript_id")])
@@ -639,14 +647,20 @@ setMethod(f="annotateProteinCoord",
                                     "txdb.transcript", "txdb.refCodon", "txdb.varCodon", "txdb.refAA", "txdb.varAA")
               object$proteinCoord <- object$txdb.proteinCoord
               
+              
+              #!!!!!!!!!!!!!!!!!!!!!!!!! additional note !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+              # it shouldn't matter if "ensemble_transcript_id_version" or "ucsc" is used
+              # both use gencode, originally ucsc was used but a biomart ommission has forced this switch
+              #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+              
               # Apply various filters using vector of values
               # biomaRt::listFilters(ensembl_mart)
-              filters <- c("ucsc")
+              filters <- c("ensembl_transcript_id_version")
               values <- unique(c(object$txdb.transcript))
               
               # Select attributes to retrieve (protein domain, start, stop)
               # biomaRt::listAttributes(ensembl_mart)
-              attributes <- c("ensembl_transcript_id", "ucsc")
+              attributes <- c("ensembl_transcript_id", "ensembl_transcript_id_version")
               
               # Retrieve data
               result <- biomaRt::getBM(attributes=attributes, filters=filters,
@@ -659,8 +673,8 @@ setMethod(f="annotateProteinCoord",
                   stop(memo)
               }
               
-              if(length(unique(result$ensembl_transcript_id)) != length(unique(result$ucsc))){
-                  memo <- paste("Retrieved protein coordinates are for the transcript", toString(unique(result$ucsc)),
+              if(length(unique(result$ensembl_transcript_id)) != length(unique(result$ensembl_transcript_id_version))){
+                  memo <- paste("Retrieved protein coordinates are for the transcript", toString(unique(result$ensembl_transcript_id_version)),
                   "However GenVisR uses ensemble transcript id's", "there is not a 1 to 1 mapping between the two,",
                   "annotated coordinates may be inaccurate!")
                   warning(memo)
@@ -668,7 +682,7 @@ setMethod(f="annotateProteinCoord",
               
               # use the biomaRt results to subset to only valid ensembl transcripts
               object$transcriptKey <- paste(object$ensembl_transcript_id, object$txdb.transcript, sep=":")
-              result$transcriptKey <- paste(result$ensembl_transcript_id, result$ucsc, sep=":")
+              result$transcriptKey <- paste(result$ensembl_transcript_id, result$ensembl_transcript_id_version, sep=":")
               object <- object[object$transcriptKey %in% result$transcriptKey,]
               object$transcriptKey <- NULL
               
