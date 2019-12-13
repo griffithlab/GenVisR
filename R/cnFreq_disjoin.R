@@ -12,6 +12,7 @@
 #' @importFrom IRanges extractList
 
 cnFreq_disjoin <- function(x){
+    
     # create the Granges object for the data
     x <- GenomicRanges::GRanges(seqnames=x$chromosome,
                                 ranges=IRanges::IRanges(start=x$start, end=x$end),

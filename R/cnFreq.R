@@ -5,7 +5,7 @@
 #' @name cnFreq
 #' @param x Object of class data frame with rows representing genomic segments.
 #' The data frame must contain columns with the following names "chromosome",
-#' "start", "end", "segmean", and "sample".
+#' "start", "end", "segmean", and "sample". Coordinates should be 1-based space.
 #' @param CN_low_cutoff Numeric value representing the point at or below which
 #' copy number alterations are considered losses. Only used if x represents CN
 #' values.
@@ -72,6 +72,14 @@ cnFreq <- function(x, CN_low_cutoff=1.5, CN_high_cutoff=2.5, plot_title=NULL,
     colnames(x)[which(colnames(x) %in% "segmean")] <- "sampleFrequency"
     x$gainFrequency <- gainFrequency
     x$lossFrequency <- lossFrequency
+    
+    # check for coordinate space, if any widths are 1 it might indicate a problem
+    if(max(x$sampleFrequency) > length(samples)){
+        memo <- paste0("Detected additional sample rows after disjoin operation",
+                       " typically this indicates coordinates are 0-based, please convert",
+                       " coordinates to 1-base for accurate results")
+        warning(memo)
+    }
     
     # Calculate the proportion
     x$gainProportion <- x$gainFrequency/length(samples)
