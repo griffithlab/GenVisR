@@ -3,8 +3,4 @@
 \docType{package}
 \name{GenVisR}
 \alias{GenVisR}
-\alias{GenVisR-package}
 \title{GenVisR}
-\description{
-GenVisR
-}

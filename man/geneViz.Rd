@@ -4,10 +4,19 @@
 \alias{geneViz}
 \title{Construct a gene-features plot}
 \usage{
-geneViz(txdb, gr, genome, reduce = FALSE, gene_colour = NULL,
-  base = c(10, 2, 2), transform = c("Intron", "CDS", "UTR"),
-  isoformSel = NULL, labelTranscript = TRUE, labelTranscriptSize = 4,
-  plotLayer = NULL)
+geneViz(
+  txdb,
+  gr,
+  genome,
+  reduce = FALSE,
+  gene_colour = NULL,
+  base = c(10, 2, 2),
+  transform = c("Intron", "CDS", "UTR"),
+  isoformSel = NULL,
+  labelTranscript = TRUE,
+  labelTranscriptSize = 4,
+  plotLayer = NULL
+)
 }
 \arguments{
 \item{txdb}{Object of class TxDb giving transcription meta data for a genome

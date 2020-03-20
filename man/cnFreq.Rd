@@ -4,16 +4,27 @@
 \alias{cnFreq}
 \title{Construct copy-number frequency plot}
 \usage{
-cnFreq(x, CN_low_cutoff = 1.5, CN_high_cutoff = 2.5,
-  plot_title = NULL, CN_Loss_colour = "#002EB8",
-  CN_Gain_colour = "#A30000", x_title_size = 12, y_title_size = 12,
-  facet_lab_size = 10, plotLayer = NULL, plotType = "proportion",
-  genome = "hg19", plotChr = NULL, out = "plot")
+cnFreq(
+  x,
+  CN_low_cutoff = 1.5,
+  CN_high_cutoff = 2.5,
+  plot_title = NULL,
+  CN_Loss_colour = "#002EB8",
+  CN_Gain_colour = "#A30000",
+  x_title_size = 12,
+  y_title_size = 12,
+  facet_lab_size = 10,
+  plotLayer = NULL,
+  plotType = "proportion",
+  genome = "hg19",
+  plotChr = NULL,
+  out = "plot"
+)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing genomic segments.
 The data frame must contain columns with the following names "chromosome",
-"start", "end", "segmean", and "sample".}
+"start", "end", "segmean", and "sample". Coordinates should be 1-based space.}
 
 \item{CN_low_cutoff}{Numeric value representing the point at or below which
 copy number alterations are considered losses. Only used if x represents CN

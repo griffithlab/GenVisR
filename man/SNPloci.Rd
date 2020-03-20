@@ -4,7 +4,9 @@
 \name{SNPloci}
 \alias{SNPloci}
 \title{Identity snps}
-\format{a data frame with 24 observations and 3 variables}
+\format{
+a data frame with 24 observations and 3 variables
+}
 \usage{
 data(SNPloci)
 }

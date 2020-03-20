@@ -4,9 +4,16 @@
 \alias{covBars}
 \title{Construct an overall coverage cohort plot}
 \usage{
-covBars(x, colour = NULL, plot_title = NULL, x_title_size = 12,
-  y_title_size = 12, facet_lab_size = 10, plotLayer = NULL,
-  out = "plot")
+covBars(
+  x,
+  colour = NULL,
+  plot_title = NULL,
+  x_title_size = 12,
+  y_title_size = 12,
+  facet_lab_size = 10,
+  plotLayer = NULL,
+  out = "plot"
+)
 }
 \arguments{
 \item{x}{Object of class matrix with rows representing the sequencing depth

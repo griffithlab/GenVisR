@@ -4,10 +4,20 @@
 \alias{cnView}
 \title{Construct copy-number single sample plot}
 \usage{
-cnView(x, y = NULL, z = NULL, genome = "hg19", chr = "chr1",
-  CNscale = "absolute", ideogram_txtAngle = 45, ideogram_txtSize = 5,
-  plotLayer = NULL, ideogramLayer = NULL, out = "plot",
-  segmentColor = NULL)
+cnView(
+  x,
+  y = NULL,
+  z = NULL,
+  genome = "hg19",
+  chr = "chr1",
+  CNscale = "absolute",
+  ideogram_txtAngle = 45,
+  ideogram_txtSize = 5,
+  plotLayer = NULL,
+  ideogramLayer = NULL,
+  out = "plot",
+  segmentColor = NULL
+)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing copy number calls

@@ -4,7 +4,9 @@
 \name{LucCNseg}
 \alias{LucCNseg}
 \title{Truncated CN segments}
-\format{a data frame with 3336 observations and 6 variables}
+\format{
+a data frame with 3336 observations and 6 variables
+}
 \usage{
 data(LucCNseg)
 }

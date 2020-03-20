@@ -4,13 +4,28 @@
 \alias{TvTi}
 \title{Construct transition-transversion plot}
 \usage{
-TvTi(x, fileType = NULL, y = NULL, clinData = NULL,
-  type = "Proportion", lab_Xaxis = TRUE, lab_txtAngle = 45,
-  palette = c("#D53E4F", "#FC8D59", "#FEE08B", "#E6F598", "#99D594",
-  "#3288BD"), tvtiLayer = NULL, expecLayer = NULL, sort = "none",
-  clinLegCol = NULL, clinVarCol = NULL, clinVarOrder = NULL,
-  clinLayer = NULL, progress = TRUE, out = "plot",
-  sample_order_input, layers = NULL, return_plot = FALSE)
+TvTi(
+  x,
+  fileType = NULL,
+  y = NULL,
+  clinData = NULL,
+  type = "Proportion",
+  lab_Xaxis = TRUE,
+  lab_txtAngle = 45,
+  palette = c("#D53E4F", "#FC8D59", "#FEE08B", "#E6F598", "#99D594", "#3288BD"),
+  tvtiLayer = NULL,
+  expecLayer = NULL,
+  sort = "none",
+  clinLegCol = NULL,
+  clinVarCol = NULL,
+  clinVarOrder = NULL,
+  clinLayer = NULL,
+  progress = TRUE,
+  out = "plot",
+  sample_order_input,
+  layers = NULL,
+  return_plot = FALSE
+)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing transitions and

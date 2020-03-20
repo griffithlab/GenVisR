@@ -4,7 +4,9 @@
 \name{HCC1395_Germline}
 \alias{HCC1395_Germline}
 \title{Germline Calls}
-\format{a data frame with 9200 observations and 5 variables}
+\format{
+a data frame with 9200 observations and 5 variables
+}
 \usage{
 data(HCC1395_Germline)
 }

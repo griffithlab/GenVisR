@@ -4,18 +4,42 @@
 \alias{waterfall}
 \title{Construct a waterfall plot}
 \usage{
-waterfall(x, mainRecurCutoff = 0, mainGrid = TRUE,
-  mainXlabel = FALSE, main_geneLabSize = 8, mainLabelCol = NULL,
-  mainLabelSize = 4, mainLabelAngle = 0, mainDropMut = FALSE,
-  mainPalette = NULL, mainLayer = NULL, mutBurden = NULL,
-  plotMutBurden = TRUE, coverageSpace = 44100000,
-  mutBurdenLayer = NULL, clinData = NULL, clinLegCol = 1,
-  clinVarOrder = NULL, clinVarCol = NULL, clinLayer = NULL,
-  sampRecurLayer = NULL, plotGenes = NULL, geneOrder = NULL,
-  plotSamples = NULL, sampOrder = NULL, maxGenes = NULL,
-  rmvSilent = FALSE, fileType = "MAF", variant_class_order = NULL,
-  out = "plot", plot_proportions = FALSE, proportions_layer = NULL,
-  proportions_type = "TRV_TYPE", section_heights)
+waterfall(
+  x,
+  mainRecurCutoff = 0,
+  mainGrid = TRUE,
+  mainXlabel = FALSE,
+  main_geneLabSize = 8,
+  mainLabelCol = NULL,
+  mainLabelSize = 4,
+  mainLabelAngle = 0,
+  mainDropMut = FALSE,
+  mainPalette = NULL,
+  mainLayer = NULL,
+  mutBurden = NULL,
+  plotMutBurden = TRUE,
+  coverageSpace = 44100000,
+  mutBurdenLayer = NULL,
+  clinData = NULL,
+  clinLegCol = 1,
+  clinVarOrder = NULL,
+  clinVarCol = NULL,
+  clinLayer = NULL,
+  sampRecurLayer = NULL,
+  plotGenes = NULL,
+  geneOrder = NULL,
+  plotSamples = NULL,
+  sampOrder = NULL,
+  maxGenes = NULL,
+  rmvSilent = FALSE,
+  fileType = "MAF",
+  variant_class_order = NULL,
+  out = "plot",
+  plot_proportions = FALSE,
+  proportions_layer = NULL,
+  proportions_type = "TRV_TYPE",
+  section_heights
+)
 }
 \arguments{
 \item{x}{Object of class data frame representing annotated mutations. The

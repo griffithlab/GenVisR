@@ -4,10 +4,20 @@
 \alias{cnSpec}
 \title{Construct copy-number cohort plot}
 \usage{
-cnSpec(x, y = NULL, genome = "hg19", plot_title = NULL,
-  CN_Loss_colour = "#002EB8", CN_Gain_colour = "#A30000",
-  x_title_size = 12, y_title_size = 12, facet_lab_size = 10,
-  plotLayer = NULL, out = "plot", CNscale = "absolute")
+cnSpec(
+  x,
+  y = NULL,
+  genome = "hg19",
+  plot_title = NULL,
+  CN_Loss_colour = "#002EB8",
+  CN_Gain_colour = "#A30000",
+  x_title_size = 12,
+  y_title_size = 12,
+  facet_lab_size = 10,
+  plotLayer = NULL,
+  out = "plot",
+  CNscale = "absolute"
+)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing copy-number

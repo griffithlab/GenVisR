@@ -2,7 +2,6 @@
 % Please edit documentation in R/AllGenerics.R, R/Clinical-class.R,
 %   R/Lolliplot-class.R, R/MutSpectra-class.R, R/Rainfall-class.R,
 %   R/Waterfall-class.R
-\docType{methods}
 \name{drawPlot}
 \alias{drawPlot}
 \alias{drawPlot,Clinical-method}

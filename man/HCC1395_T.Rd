@@ -4,7 +4,9 @@
 \name{HCC1395_T}
 \alias{HCC1395_T}
 \title{Tumor BAM}
-\format{a data frame with 52 observations and 6 variables}
+\format{
+a data frame with 52 observations and 6 variables
+}
 \usage{
 data(HCC1395_T)
 }

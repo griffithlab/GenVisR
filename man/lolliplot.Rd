@@ -4,16 +4,37 @@
 \alias{lolliplot}
 \title{Construct a lolliplot}
 \usage{
-lolliplot(x, y = NULL, z = NULL, fillCol = NULL, labelCol = NULL,
-  txtAngle = 45, txtSize = 5, pntSize = 4,
-  proteinColour = "#999999", obsA.rep.fact = 5000,
-  obsA.rep.dist.lmt = 500, obsA.attr.fact = 0.1, obsA.adj.max = 0.1,
-  obsA.adj.lmt = 0.5, obsA.iter.max = 50000, obsB.rep.fact = 5000,
-  obsB.rep.dist.lmt = 500, obsB.attr.fact = 0.1, obsB.adj.max = 0.1,
-  obsB.adj.lmt = 0.5, obsB.iter.max = 50000, sideChain = FALSE,
-  species = "hsapiens", maxLolliStack = NULL, plotLayer = NULL,
-  paletteA = NULL, paletteB = NULL, host = "www.ensembl.org",
-  out = "plot")
+lolliplot(
+  x,
+  y = NULL,
+  z = NULL,
+  fillCol = NULL,
+  labelCol = NULL,
+  txtAngle = 45,
+  txtSize = 5,
+  pntSize = 4,
+  proteinColour = "#999999",
+  obsA.rep.fact = 5000,
+  obsA.rep.dist.lmt = 500,
+  obsA.attr.fact = 0.1,
+  obsA.adj.max = 0.1,
+  obsA.adj.lmt = 0.5,
+  obsA.iter.max = 50000,
+  obsB.rep.fact = 5000,
+  obsB.rep.dist.lmt = 500,
+  obsB.attr.fact = 0.1,
+  obsB.adj.max = 0.1,
+  obsB.adj.lmt = 0.5,
+  obsB.iter.max = 50000,
+  sideChain = FALSE,
+  species = "hsapiens",
+  maxLolliStack = NULL,
+  plotLayer = NULL,
+  paletteA = NULL,
+  paletteB = NULL,
+  host = "www.ensembl.org",
+  out = "plot"
+)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing mutations. The

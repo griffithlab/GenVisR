@@ -2,7 +2,6 @@
 % Please edit documentation in R/AllGenerics.R, R/GMS_Virtual-class.R,
 %   R/GMS-class.R, R/MutationAnnotationFormat_Virtual-class.R,
 %   R/MutationAnnotationFormat-class.R, R/VEP_Virtual-class.R, R/VEP-class.R
-\docType{methods}
 \name{writeData}
 \alias{writeData}
 \alias{writeData,GMS_Virtual-method}
@@ -22,8 +21,7 @@ writeData(object, ...)
 
 \S4method{writeData}{GMS}(object, file, ...)
 
-\S4method{writeData}{MutationAnnotationFormat_Virtual}(object, file, sep,
-  ...)
+\S4method{writeData}{MutationAnnotationFormat_Virtual}(object, file, sep, ...)
 
 \S4method{writeData}{MutationAnnotationFormat}(object, file, ...)
 

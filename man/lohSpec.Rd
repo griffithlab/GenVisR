@@ -4,10 +4,21 @@
 \alias{lohSpec}
 \title{Plot LOH data}
 \usage{
-lohSpec(x = NULL, path = NULL, fileExt = NULL, y = NULL,
-  genome = "hg19", gender = NULL, step = 1e+06,
-  window_size = 2500000, normal = 0.5, colourScheme = "inferno",
-  plotLayer = NULL, method = "slide", out = "plot")
+lohSpec(
+  x = NULL,
+  path = NULL,
+  fileExt = NULL,
+  y = NULL,
+  genome = "hg19",
+  gender = NULL,
+  step = 1e+06,
+  window_size = 2500000,
+  normal = 0.5,
+  colourScheme = "inferno",
+  plotLayer = NULL,
+  method = "slide",
+  out = "plot"
+)
 }
 \arguments{
 \item{x}{object of class data frame with rows representing germline calls.

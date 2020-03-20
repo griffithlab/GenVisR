@@ -4,9 +4,17 @@
 \alias{lohView}
 \title{Construct LOH chromosome plot}
 \usage{
-lohView(x, y = NULL, genome = "hg19", chr = "chr1",
-  ideogram_txtAngle = 45, ideogram_txtSize = 5, plotLayer = NULL,
-  ideogramLayer = NULL, out = "plot")
+lohView(
+  x,
+  y = NULL,
+  genome = "hg19",
+  chr = "chr1",
+  ideogram_txtAngle = 45,
+  ideogram_txtSize = 5,
+  plotLayer = NULL,
+  ideogramLayer = NULL,
+  out = "plot"
+)
 }
 \arguments{
 \item{x}{object of class data frame with rows representing Heterozygous

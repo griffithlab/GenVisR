@@ -4,7 +4,9 @@
 \name{PIK3CA}
 \alias{PIK3CA}
 \title{Subset MAF file for PIK3CA gene}
-\format{a data frame with 361 observations and 19 variables}
+\format{
+a data frame with 361 observations and 19 variables
+}
 \usage{
 data(PIK3CA)
 }

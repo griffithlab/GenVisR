@@ -4,8 +4,15 @@
 \alias{compIdent}
 \title{Construct identity snp comparison plot}
 \usage{
-compIdent(x, genome, target = NULL, debug = FALSE, mainLayer = NULL,
-  covLayer = NULL, out = "plot")
+compIdent(
+  x,
+  genome,
+  target = NULL,
+  debug = FALSE,
+  mainLayer = NULL,
+  covLayer = NULL,
+  out = "plot"
+)
 }
 \arguments{
 \item{x}{data frame with rows representing samples and column names 

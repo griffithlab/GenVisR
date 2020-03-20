@@ -5,9 +5,15 @@
 \alias{Clinical}
 \title{Class Clinical}
 \usage{
-Clinical(path, inputData = NULL, inputFormat = c("wide", "long"),
-  legendColumns = 1, palette = NULL, clinicalLayers = NULL,
-  verbose = FALSE)
+Clinical(
+  path,
+  inputData = NULL,
+  inputFormat = c("wide", "long"),
+  legendColumns = 1,
+  palette = NULL,
+  clinicalLayers = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{path}{String specifying the path to clinical data, file must have the

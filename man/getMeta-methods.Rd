@@ -2,7 +2,6 @@
 % Please edit documentation in R/AllGenerics.R, R/GMS_Virtual-class.R,
 %   R/GMS-class.R, R/MutationAnnotationFormat_Virtual-class.R,
 %   R/MutationAnnotationFormat-class.R, R/VEP_Virtual-class.R, R/VEP-class.R
-\docType{methods}
 \name{getMeta}
 \alias{getMeta}
 \alias{getMeta,GMS_Virtual-method}

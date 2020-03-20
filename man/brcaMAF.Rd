@@ -4,7 +4,9 @@
 \name{brcaMAF}
 \alias{brcaMAF}
 \title{Truncated BRCA MAF file}
-\format{a data frame with 2773 observations and 55 variables}
+\format{
+a data frame with 2773 observations and 55 variables
+}
 \usage{
 data(brcaMAF)
 }

@@ -5,10 +5,19 @@
 \alias{MutSpectra}
 \title{Class MutSpectra}
 \usage{
-MutSpectra(object, BSgenome = NULL, sorting = NULL, palette = NULL,
-  clinical = NULL, sectionHeights = NULL, sampleNames = TRUE,
-  verbose = FALSE, plotALayers = NULL, plotBLayers = NULL,
-  plotCLayers = NULL)
+MutSpectra(
+  object,
+  BSgenome = NULL,
+  sorting = NULL,
+  palette = NULL,
+  clinical = NULL,
+  sectionHeights = NULL,
+  sampleNames = TRUE,
+  verbose = FALSE,
+  plotALayers = NULL,
+  plotBLayers = NULL,
+  plotCLayers = NULL
+)
 }
 \arguments{
 \item{object}{Object of class MutationAnnotationFormat, GMS, VEP.}

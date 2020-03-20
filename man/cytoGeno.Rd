@@ -4,7 +4,9 @@
 \name{cytoGeno}
 \alias{cytoGeno}
 \title{Cytogenetic banding dataset}
-\format{a data frame with 3207 observations and 6 variables}
+\format{
+a data frame with 3207 observations and 6 variables
+}
 \usage{
 data(cytoGeno)
 }

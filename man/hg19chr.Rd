@@ -4,7 +4,9 @@
 \name{hg19chr}
 \alias{hg19chr}
 \title{hg19 chromosome boundaries}
-\format{a data frame with 24 observations and 3 variables}
+\format{
+a data frame with 24 observations and 3 variables
+}
 \usage{
 data(hg19chr)
 }

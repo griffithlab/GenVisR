@@ -5,11 +5,22 @@
 \alias{Lolliplot}
 \title{Class Lolliplot}
 \usage{
-Lolliplot(input, transcript = NULL, species = "hsapiens",
-  host = "www.ensembl.org", txdb = NULL, BSgenome = NULL,
-  emphasize = NULL, DomainPalette = NULL, MutationPalette = NULL,
-  labelAA = TRUE, plotALayers = NULL, plotBLayers = NULL,
-  sectionHeights = NULL, verbose = FALSE)
+Lolliplot(
+  input,
+  transcript = NULL,
+  species = "hsapiens",
+  host = "www.ensembl.org",
+  txdb = NULL,
+  BSgenome = NULL,
+  emphasize = NULL,
+  DomainPalette = NULL,
+  MutationPalette = NULL,
+  labelAA = TRUE,
+  plotALayers = NULL,
+  plotBLayers = NULL,
+  sectionHeights = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{input}{Object of class MutationAnnotationFormat, GMS, VEP, or a data.table with appropriate columns}

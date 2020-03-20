@@ -4,8 +4,14 @@
 \alias{ideoView}
 \title{Construct an ideogram}
 \usage{
-ideoView(x, chromosome = "chr1", txtAngle = 45, txtSize = 5,
-  plotLayer = NULL, out = "plot")
+ideoView(
+  x,
+  chromosome = "chr1",
+  txtAngle = 45,
+  txtSize = 5,
+  plotLayer = NULL,
+  out = "plot"
+)
 }
 \arguments{
 \item{x}{Object of class data frame with rows representing cytogenetic bands.
