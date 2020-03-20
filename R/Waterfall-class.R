@@ -481,7 +481,7 @@ setMethod(f="setMutationHierarchy",
               # perform some quality checks on mutationHierarchy
               
               # check that mutationHiearchy is a data table
-              if(!any(class(mutationHierarchy) %in% "data.table")){
+              if(!is(mutationHierarchy, "data.table")){
                   memo <- paste("mutationHiearchy is not an object of class",
                                 "data.table, attempting to coerce.")
                   warning(memo)
@@ -561,7 +561,7 @@ setMethod(f="setMutationHierarchy",
               if(is.data.frame(mutationHierarchy)) mutationHierarchy <- data.table::as.data.table(mutationHierarchy)
               
               # check that hierarchy is the proper class
-              if(!"data.table" %in% class(mutationHierarchy)){
+              if(!is(mutationHierarchy, "data.table")){
                   memo <- paste("mutationHierarchy must be an object of class data.table or data.frame!")
                   stop(memo)
               }
@@ -687,7 +687,7 @@ setMethod(f="sampSubset",
               }
               
               # make sure the samples variable is as expected
-              if(class(samples) != 'character')
+              if(!is(samples, 'character'))
               {
                   memo <- paste0("argument supplied to samples is not a ",
                                  "character vector, attempting to coerce")
@@ -996,7 +996,7 @@ setMethod(f="geneSubset",
               }
               
               # Perform quality checks
-              if(class(genes) != 'character')
+              if(!is(genes, 'character'))
               {
                   memo <- paste("argument supplied to genes is not of class",
                                  "character, attempting to coerce!")

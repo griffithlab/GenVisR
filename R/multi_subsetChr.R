@@ -16,7 +16,7 @@ multi_subsetChr <- function(x, chr)
     }
     
     # if chromosome column is not a factor coerce to one
-    if(class(x$chromosome) != "factor")
+    if(!is(x$chromosome, "factor"))
     {
         memo <- paste0("chromosome column supplied is not a factor, attempting",
                        " to coerce...")

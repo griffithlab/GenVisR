@@ -10,7 +10,7 @@
 compIdent_bamRcnt_qual<-function(genome, targetbed)
 {
     # Check to see if genome is of class BSgenome
-    if(!class(genome)[1]=="BSgenome")
+    if(!is(genome, "BSgenome"))
     {
         stop("Genome must be of class BSgenome")
     }

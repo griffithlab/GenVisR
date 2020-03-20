@@ -313,7 +313,7 @@ setMethod(f="setMutationHierarchy",
               }
               
               # check that mutationHiearchy is a data table
-              if(!any(class(mutationHierarchy) %in% "data.table")){
+              if(!is(mutationHierarchy, "data.table")){
                   memo <- paste("mutationHiearchy is not an object of class",
                                 "data.table, attempting to coerce.")
                   warning(memo)

@@ -1024,7 +1024,7 @@ waterfall_geneAlt <- function(x, genes)
 {
     message("Removing genes not in: ", toString(genes))
     # Perform quality checks
-    if(typeof(genes) != 'character' & class(genes) != 'character')
+    if(!is(genes, 'character'))
     {
         memo <- paste0("argument supplied to plotGenes is not a character ",
                        "vector, attempting to coerce")
@@ -1358,7 +1358,7 @@ waterfall_sampAlt <- function(x, samples)
 {
     message("Retrieving requested samples from supplied data...")
     # Perform quality check
-    if(typeof(samples) != 'character' & class(samples) != 'character')
+    if(!is(samples, 'character'))
     {
         memo <- paste0("argument supplied to main.samples is not a ",
                        "character vector, attempting to coerce")

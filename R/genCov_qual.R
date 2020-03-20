@@ -12,7 +12,7 @@
 genCov_qual <- function(x=x, txdb=txdb, gr=gr, genome=genome)
 {
     # Check input to x
-    if(class(x) != 'list')
+    if(!is.list(x))
     {
         warning("class of x does not appear to be a list, attempting to coerce")
         x <- as.data.frame(x)
@@ -36,21 +36,21 @@ genCov_qual <- function(x=x, txdb=txdb, gr=gr, genome=genome)
     }
 
     # Check the TxDb object
-    if(class(txdb)[1] != 'TxDb')
+    if(!is(txdb, 'TxDb'))
     {
         memo <- paste0("txdb does not appear to be an object of class TxDb")
         stop(memo)
     }
 
     # Check the Genomic ranges object
-    if(class(gr)[1] != 'GRanges')
+    if(!is(gr, 'GRanges'))
     {
         memo <- paste0("gr does not appear to be an object of class GRanges")
         stop(memo)
     }
 
     # Check the biostrings object
-    if(class(genome)[1] != 'BSgenome')
+    if(!is(genome, 'BSgenome'))
     {
         memo <- paste0("genome does not appear to be an object",
                        "of class BSgenome")
