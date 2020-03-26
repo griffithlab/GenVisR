@@ -1408,7 +1408,7 @@ waterfall_sampSort <- function(x, sampOrder=NULL)
         
         # determine if there are any new samples in sampOrder not in the data
         # and remove if true
-        new_samples <- sampOrder[!sampOrder %in% levels(x$sample)]
+        new_samples <- sampOrder[!sampOrder %in% unique(x$sample)]
         if(length(new_samples) != 0)
         {
             memo <- paste0("The following samples were not detected in the ",
@@ -2193,7 +2193,7 @@ TvTi_qual <- function(x, y=NULL, z=NULL, file_type='MAF')
             stop("Did not detect correct sample names in clinDat")
         }
         
-        if(!all(levels(x$sample) %in% levels(z$sample)))
+        if(!all(unique(x$sample) %in% unique(z$sample)))
         {
             memo <- paste0("Found a sample supplied to clinData not found",
                            " in the data frame supplied to x")

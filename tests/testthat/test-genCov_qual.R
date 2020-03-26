@@ -6,6 +6,7 @@ gr <- GRanges(seqnames=c("chr1"), ranges=IRanges(start=c(1), end=c(2)), strand=s
 
 test_that("genCov_qual correctly identifies if input to x is not of proper class", {
     x <- data.frame(end=c(1, 2), cov=c(50, 50))
+    
     expect_warning(genCov_qual(x=x, txdb=txdb, gr=gr, genome=genome), "appear to be a list")
     
     x <- as.matrix(x)

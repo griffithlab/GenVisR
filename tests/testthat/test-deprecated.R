@@ -295,7 +295,7 @@ test_that("waterfall_sampAlt correctly adds in samples not in the original data"
     x <- data.frame(sample='samp1', gene='egfr', trv_type='missense')
     samples <- c('samp1', 'samp2')
     out <- waterfall_sampAlt(x, samples)
-    expec <- data.frame(sample=c('samp2', 'samp1'), gene=c(NA, 'egfr'), trv_type=c(NA, 'missense'))
+    expec <- data.frame(sample=as.factor(c('samp2', 'samp1')), gene=c(NA, 'egfr'), trv_type=c(NA, 'missense'))
     expect_equal(out, expec)
 })
 
@@ -303,7 +303,7 @@ test_that("waterfall_sampAlt correctly removes samples in the original data", {
     x <- data.frame(sample=c('samp1', 'samp2'), gene=c('egfr', 'tp53'), trv_type=c('missense', 'nonsense'))
     samples <- c('samp1')
     out <- waterfall_sampAlt(x, samples)
-    expec <- data.frame(sample='samp1', gene='egfr', trv_type='missense')
+    expec <- data.frame(sample=as.factor('samp1'), gene='egfr', trv_type='missense')
     expect_equal(out, expec)   
 })
 
@@ -328,10 +328,12 @@ test_that("waterfall_sampSort properly sorts samples based on a hierarchy", {
 })
 
 test_that("waterfall_sampSort removes samples in sampOrder not found in primary input", {
+    
     x <- data.frame(sample=c('a', 'a', 'a', 'b', 'b', 'c'), gene=c('x', 'y', 'z', 'x', 'y', 'z'), trv_type=rep('missense', 6))
     sample_order <- c("a", "b", "c", "d")
     out <- suppressWarnings(waterfall_sampSort(x, sampOrder = sample_order))
     expec <- c('a', 'b', 'c')
+    
     expect_equal(out, expec)
 })
 

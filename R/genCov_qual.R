@@ -11,8 +11,9 @@
 
 genCov_qual <- function(x=x, txdb=txdb, gr=gr, genome=genome)
 {
+    
     # Check input to x
-    if(!is.list(x))
+    if(!is.list(x) || inherits(x, "data.frame"))
     {
         warning("class of x does not appear to be a list, attempting to coerce")
         x <- as.data.frame(x)
