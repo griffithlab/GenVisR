@@ -10,7 +10,7 @@ r:
 - bioc-devel
 
 # run the BiocCheck package to ensure best practices are followed
-bioc_check: true
+# bioc_check: true
 
 # use standard infrastructure, this has sense been deprecated
 sudo: required
