@@ -2,18 +2,10 @@ language: r
 r: 
   - bioc-release
   - bioc-devel
+bioc_check: true
 sudo: required
-warnings_are_errors: true
-
-bioc_packages:
-  - BiocInstaller
-  - AnnotationDbi
-  - biomaRt
-  - BiocGenerics
-  - Biostrings
-  - GenomicFeatures
-  - GenomicRanges
-  - Rsamtools
+warnings_are_errors: false
+cache: packages
 
 r_packages:
   - covr
