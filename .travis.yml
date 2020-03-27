@@ -1,16 +1,36 @@
+#####################################################################################
+################ Travis Automated Testing Integration ###############################
+
+# https://docs.travis-ci.com/user/languages/r
+
+# let travis know this is R and to test via bioconductor builds
 language: r
 r:
 - bioc-release
 - bioc-devel
+
+# run the BiocCheck package to ensure best practices are followed
 bioc_check: true
+
+# use standard infrastructure, this has sense been deprecated
 sudo: required
+
+# whether R CMD CHECK warnings are reported as errors or not
 warnings_are_errors: false
+
+# minimize build times by caching packages so they're not re-installed if they haven't changed
 cache: packages
+
+# additional R packages to install not specified in package DESCRIPTION file
 r_packages:
 - covr
 - devtools
+
+# after success report codecov
 after_success:
-- Rscript -e 'library(covr); codecov()'
+- Rscript -e 'covr::codecov()'
+
+# integrate build messages with slack
 notifications:
   slack:
     secure: nrohe71ezDHy28ERczhja/V7AIWvl8bPPOyldUjZ/5orjfbtYF9OcQGdEM2wGTfP8o+mKqEGLc+AE9bex9zGWnaymPHPHzqIIHi5nV0dePD7/KdObVAihpbn41e6++gl/dG6Yjb0KxXJfWJxYsbgWrRjw/esyHs44K+2yIumQuoe4HRjAQfwtCv2eJghHahwQG+FN/AS181l+N6dhBPw6vNIPYsIfaprBMmZ67FUxM1c20m0uVAIbXN/9ZUvvY2OhLROv3jpQJizFAz4pBzXRNZA6UKDGGxRj7VWiACCTasY3Krij3HlzD7fXllVakugWKrVjPakZucFq4hPWb/5rJ70jqYihJSXlFQ5pL4ohnVomZP8/5SAsma8oZ0Cy0TOIQOQfOHP6hYscQgfjW6998ORwRPSjj3qS2AEiTVnoYmWu+TbSz2jXOgiIkxNuwt5+WBGpMajf5lx5XDLgTABN2IlGjI1X0HyrsvcbnE8sWwCrEEjzn6mRgIqat03O5G9CzVYWCtrVy93Z8FP7KTXJeqkR1sSu+DszHp9Hp1DnJ2aG1foRTH0qRxOdMeVZ+mlUsuyU7jUN85nSws0qfNT93oWF6nKzHnZFI849JOQQJAFP8h9H7HeV9Io8ds57ZodHMZXRo92XqDJgMV6agun+87PZHwOA/lPtXvvyuRQ7dA=
