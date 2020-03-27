@@ -1,19 +1,16 @@
 language: r
-r: 
-  - bioc-release
-  - bioc-devel
+r:
+- bioc-release
+- bioc-devel
 bioc_check: true
 sudo: required
 warnings_are_errors: false
 cache: packages
-
 r_packages:
-  - covr
-  - devtools
-
+- covr
+- devtools
 after_success:
-  - Rscript -e 'library(covr); codecov()'
-
-# add slack notifications
+- Rscript -e 'library(covr); codecov()'
 notifications:
-  slack: griffithlab:WQaEsPxjGeJiCcA9PyacHAQK
+  slack:
+    secure: KDcEPPozdAo7c8nNPe1oNYFVgx6uN0H8fh94qhCTx6VqL+snojH91USgr1sfXggs5qNgk4Jbc/3/9TQOYwRWwBcuRzkZALASPV9n/ri+0yCZeqtdQe+ZwnGz2XJT2x/dLscEIkXLoMzDr1HjsvEvF3ss43ZqXFPouxD9+s/VMDNj5D5u7umJzEq+WFIBcfxqx3GiR0deZ/TrXQa0SU6MDzLcPZGh8SnkJB6yJmzXHWO+YTU/5osDDTzSVho9D3OwjHCUTEUZtYoeu51r9bLUIaYhS0VoJESKuT8Rg0sY8f5PmplaRS4w45uWgMq5b4+X6YJTBGAp5CvF3UiYSL49gRqG7RyE/CTZZtKCWDeNk9GzUcauMvpHbumLlvKy9Duu5cGy3GFuUW4mmP7D+d4uo6+5utxiBC1ZbZA4r5xFVreFo0TAjggP+kqZy7dyS7+k5ufO2p7wFgn2OkbNWLmCAWV9/QSb0eKP3uzwP3tfufA7RPsA0N5tkGCPTWiO2jARyk79ssX6kgi9crrBlT4Me6NWkmpUwnLTD3iXfQueLVA1101SSmXfQbq7Vjdrc7fOsD9+AZtjJqnSf31vrbsMSBgTbkvzaKO7taQeQC+CXCue26wZfR7MxghcxLnpn1bw3F0j2CRnXUBuHZuy6FVPOxeBsMBza7K59E4jGRZYnIU=
