@@ -282,6 +282,7 @@ context("MutSpectra Frequency Plot")
 test_that("buildFrequencyPlot constructs a plot based on frequencies", {
     
     skip_on_bioc()
+    skip_on_travis()
     
     buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=NULL, palette=NULL, verbose=FALSE)
     vdiffr::expect_doppelganger("mutspectra frequency plot", grid::grid.draw(buildFrequencyPlot.out))
@@ -291,6 +292,7 @@ test_that("buildFrequencyPlot constructs a plot based on frequencies", {
 test_that("buildFrequencyPlot is able to add layers to the plot", {
     
     skip_on_bioc()
+    skip_on_travis()
     
     test_plotALayers <- list(ggplot2::geom_hline(yintercept=c(30), colour="black", size=2), ggplot2::geom_vline(xintercept=c(2), colour="black", size=2))
     buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=test_plotALayers, palette=NULL, verbose=FALSE)
@@ -301,6 +303,7 @@ test_that("buildFrequencyPlot is able to add layers to the plot", {
 test_that("buildFrequencyPlot is able to add a custom pallete to the plot", {
     
     skip_on_bioc()
+    skip_on_travis()
     
     testPallete <- c("red", "blue", "green", "black", "darkorchid4", "seagreen3")
     buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=NULL, palette=testPallete, verbose=FALSE)
@@ -336,6 +339,7 @@ context("MutSpectra Proportion Plot")
 test_that("buildProportionPlot constructs a plot based on Proportions", {
     
     skip_on_bioc()
+    skip_on_travis()
     
     buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=NULL, palette=NULL, verbose=FALSE)
     vdiffr::expect_doppelganger("mutspectra proportion plot", grid::grid.draw(buildProportionPlot.out))
@@ -345,6 +349,7 @@ test_that("buildProportionPlot constructs a plot based on Proportions", {
 test_that("buildProportionPlot is able to add layers to the plot", {
     
     skip_on_bioc()
+    skip_on_travis()
     
     test_plotBLayers <- list(ggplot2::geom_hline(yintercept=c(.5), colour="black", size=2), ggplot2::geom_vline(xintercept=c(2), colour="black", size=2))
     buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=test_plotBLayers, palette=NULL, verbose=FALSE)
@@ -355,6 +360,7 @@ test_that("buildProportionPlot is able to add layers to the plot", {
 test_that("buildProportionPlot is able to add a custom pallete to the plot", {
     
     skip_on_bioc()
+    skip_on_travis()
     
     testPallete <- c("red", "blue", "green", "black", "darkorchid4", "seagreen3")
     buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=FALSE, plotBLayers=NULL, palette=testPallete, verbose=FALSE)
@@ -408,6 +414,7 @@ context("MutSpectra Final Plot")
 test_that("arrangeMutSpectraPlot plots a base plot", {
     
     skip_on_bioc()
+    skip_on_travis()
     
     arrangeMutSpectraPlot.out <- arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=NULL, verbose=FALSE)
     vdiffr::expect_doppelganger("final MutSpectra base", grid::grid.draw(arrangeMutSpectraPlot.out))
@@ -417,6 +424,7 @@ test_that("arrangeMutSpectraPlot plots a base plot", {
 test_that("arrangeMutSpectraPlots alters section heights", {
     
     skip_on_bioc()
+    skip_on_travis()
     
     arrangeMutSpectraPlot.out <- arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=c(1, 3), verbose=FALSE)
     vdiffr::expect_doppelganger("final MutSpectra alter section heights", grid::grid.draw(arrangeMutSpectraPlot.out))
@@ -446,6 +454,7 @@ test_that("MutSpectra constructor outputs a S4 class object", {
 test_that("drawPlot constructs a MutSpectra plot from grob objects in MutSpectra object", {
     
     skip_on_bioc()
+    skip_on_travis()
     
     vdiffr::expect_doppelganger("drawPlot MutSpectra", drawPlot(MutSpectra.out))
 })
@@ -453,6 +462,7 @@ test_that("drawPlot constructs a MutSpectra plot from grob objects in MutSpectra
 test_that("MutSpectra correctly adds clinical data", {
     
     skip_on_bioc()
+    skip_on_travis()
 
     MutSpectra.out <- MutSpectra(gmsObject, BSgenome=NULL, sorting=NULL, palette=NULL,
                                  clinical=clinObject, sectionHeights=NULL, sampleNames=TRUE,

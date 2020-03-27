@@ -583,6 +583,7 @@ context("LolliplotPlots Constructor")
 test_that("buildDensityPlot constructs the expected plot", {
 
     skip_on_bioc()
+    skip_on_travis()
     skip_if_not(biomart_success, "mart recieved try-error")
 
     buildDensityPlot.out <- buildDensityPlot(LolliplotData.mode1.out, plotALayers=NULL, verbose=FALSE)
@@ -592,6 +593,7 @@ test_that("buildDensityPlot constructs the expected plot", {
 test_that("buildDensityPlot is able to add layers to the plot", {
 
      skip_on_bioc()
+    skip_on_travis()
      skip_if_not(biomart_success, "mart recieved try-error")
 
      test_layer <- list(ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=.025), colour="red", size=10))
@@ -619,6 +621,7 @@ test_that("buildDensityPlot errors if plotALayers is not a list", {
 test_that("buildLolliplot constructs a plot", {
 
     skip_on_bioc()
+    skip_on_travis()
     skip_if_not(biomart_success, "mart recieved try-error")
 
     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
@@ -630,6 +633,7 @@ test_that("buildLolliplot constructs a plot", {
 test_that("buildLolliplot successfullly adds layers", {
 
     skip_on_bioc()
+    skip_on_travis()
     skip_if_not(biomart_success, "mart recieved try-error")
 
     test_layer <- list(ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=1), colour="red", size=10))
@@ -643,6 +647,7 @@ test_that("buildLolliplot successfullly adds layers", {
 test_that("buildLolliplot successfullly adds labels", {
 
     skip_on_bioc()
+    skip_on_travis()
     skip_if_not(biomart_success, "mart recieved try-error")
 
     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=TRUE,
@@ -654,6 +659,7 @@ test_that("buildLolliplot successfullly adds labels", {
 test_that("buildLolliplot successfullly changes colors for domains", {
 
     skip_on_bioc()
+    skip_on_travis()
     skip_if_not(biomart_success, "mart recieved try-error")
 
     domain_palette <- c("blue", "red", "green", "yellow", "orange", "purple",
@@ -669,6 +675,7 @@ test_that("buildLolliplot successfullly changes colors for domains", {
 test_that("buildLolliplot successfullly changes colors for mutations", {
 
     skip_on_bioc()
+    skip_on_travis()
     skip_if_not(biomart_success, "mart recieved try-error")
 
     mutation_palette <- c("blue", "red", "green", "yellow")
@@ -751,6 +758,7 @@ if(biomart_success){
 test_that("arrangeLolliplotPlot constructs a plot", {
 
     skip_on_bioc()
+    skip_on_travis()
     skip_if_not(biomart_success, "mart recieved try-error")
 
     vdiffr::expect_doppelganger("Final Lolliplot Base", grid::grid.draw(arrangeLolliplotPlot.out))
@@ -760,6 +768,7 @@ test_that("arrangeLolliplotPlot constructs a plot", {
 test_that("arrangeLolliplotPlot alters section heights", {
 
     skip_on_bioc()
+    skip_on_travis()
     skip_if_not(biomart_success, "mart recieved try-error")
 
     arrangeLolliplotPlot.out <- arrangeLolliplotPlot(LolliplotPlots.out, sectionHeights=c(.1, .9), verbose=FALSE)
@@ -801,6 +810,7 @@ context("Lolliplot accessors")
 test_that("drawPlot constructs a Lolliplot", {
 
     skip_on_bioc()
+    skip_on_travis()
     skip_if_not(biomart_success, "mart recieved try-error")
     vdiffr::expect_doppelganger("drawPlot Lolliplot", drawPlot(Lolliplot.out))
 })
