@@ -25,6 +25,7 @@ Suggests: BiocStyle, BSgenome.Hsapiens.UCSC.hg19, knitr, RMySQL, roxygen2,
           TxDb.Hsapiens.UCSC.hg38.knownGene, BSgenome.Hsapiens.UCSC.hg38
 VignetteBuilder: knitr
 RoxygenNote: 7.1.0
+Encoding: UTF-8
 NeedsCompilation: no
 Author: Zachary Skidmore [aut, cre], Alex Wagner [aut], Robert Lesurf [aut],
     Katie Campbell [aut], Jason Kunisaki [aut], Obi Griffith [aut], Malachi Griffith

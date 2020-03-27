@@ -4,3 +4,14 @@
 \name{GenVisR}
 \alias{GenVisR}
 \title{GenVisR}
+\description{
+A visualization library designed to make publications quality figures for genomic datasets.
+}
+\references{
+\href{https://academic.oup.com/bioinformatics/article/32/19/3012/2196360}{GenVisR: Genomic Visualizations in R}
+}
+\seealso{
+\href{https://github.com/griffithlab/GenVisR}{GenVisR github page}
+
+\href{https://www.bioconductor.org/packages/release/bioc/html/GenVisR.html}{GenVisR bioconductor page}
+}

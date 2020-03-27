@@ -1,7 +1,11 @@
 #' GenVisR
 #'
 #' @name GenVisR
+#' @description A visualization library designed to make publications quality figures for genomic datasets.
+#' @references \href{https://academic.oup.com/bioinformatics/article/32/19/3012/2196360}{GenVisR: Genomic Visualizations in R}
 #' @docType package
+#' @seealso \href{https://github.com/griffithlab/GenVisR}{GenVisR github page}
+#' @seealso \href{https://www.bioconductor.org/packages/release/bioc/html/GenVisR.html}{GenVisR bioconductor page}
 NULL
 
 #' Subset MAF file for PIK3CA gene
