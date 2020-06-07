@@ -140,7 +140,7 @@ LolliplotData <- function(object, transcript, species, host, txdb, BSgenome, emp
     # annotate data with ensembl transcripts if necessary
     lolliplotData <- annotateTranscript(lolliplotData, ensembl_mart=mart, verbose=verbose)
     
-    # grab the protien coordinates
+    # grab the protein coordinates
     lolliplotData <- annotateProteinCoord(lolliplotData, ensembl_mart=mart, txdb=txdb, BSgenome=BSgenome, verbose=verbose)
     
     # filter data to only one transcript
@@ -590,7 +590,7 @@ setMethod(f="annotateProteinCoord",
                   mismatchSeq <- unique(c(mismatchSeqBSgenome, mismatchSeqtxdb))
                   
                   memo <- paste("The following entires are not in both the txdb and BSgenome objects supplied:",
-                                toString(mismatchSeq), "This may affect protien annotations if mutations are in these regions!")
+                                toString(mismatchSeq), "This may affect protein annotations if mutations are in these regions!")
                   warning(memo)
               }
               
@@ -613,7 +613,7 @@ setMethod(f="annotateProteinCoord",
               }
               
               #!!!!!!!!!!!!!!!!!!!!! additional note !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
-              # the object up until here has been annotated with ensembl biomart, when we add in the protien
+              # the object up until here has been annotated with ensembl biomart, when we add in the protein
               # coordinates from the txdb object it doesn't know the original transcript annotation just the coords
               # consequently cases will arise where the txdb transcript and the biomart annotated transcript does not match
               # we resolve this by getting a mapping of the txdb transcripts to biomart transcripts (biomart query),
