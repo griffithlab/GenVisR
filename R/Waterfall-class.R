@@ -52,7 +52,7 @@ setClass("Waterfall",
 #' @name Waterfall
 #' @rdname Waterfall-class
 #' @param input Object of class \code{\link{MutationAnnotationFormat}}, \code{\link{VEP}},
-#' \code{\link{GMS}}, or alterantively a data frame/data table with column names "sample", "gene", "mutation".
+#' \code{\link{GMS}}, or alternatively a data frame/data table with column names "sample", "gene", "mutation".
 #' @param labelColumn Character vector specifying a column name from which to
 #' extract label names for cells, must be a column within the object passed to input.
 #' @param samples Character vector specifying samples to plot. If not NULL
