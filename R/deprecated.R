@@ -2406,7 +2406,7 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
     x <- input[[1]]
     y <- input[[2]]
     z <- input[[3]]
-    
+   
     # extract transcript id and subset data y on that id if it exists
     transcriptID <- as.character(x$transcript_name[1])
     if(!is.null(y))
@@ -2991,7 +2991,7 @@ lolliplot_fetchDomain <- function(transcriptID,
 {
     # display message
     message("Querying biomaRt for protein domains")
-    
+
     # Load in mart
     ensembl_mart <- biomaRt::useMart("ENSEMBL_MART_ENSEMBL",
                                      host="www.ensembl.org")
@@ -3016,7 +3016,7 @@ lolliplot_fetchDomain <- function(transcriptID,
     
     # Apply various filters using vector of values
     filters <- c("ensembl_transcript_id")
-    values <- as.list(c(transcriptID))
+    values <- as.character(transcriptID)
     
     # Select attributes to retrieve (protein domain, start, stop)
     attributes <- c("interpro_description",
@@ -3335,7 +3335,7 @@ lolliplot_transcriptID2codingSeq <- function(transcriptID,
                    " parameter!")
     message(memo)
     message("Querying biomaRt for transcript sequence")
-    
+
     # Load in mart
     ensembl_mart <- biomaRt::useMart("ENSEMBL_MART_ENSEMBL",
                                      host=host)
