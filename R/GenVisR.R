@@ -11,7 +11,7 @@ NULL
 #' Subset MAF file for PIK3CA gene
 #' 
 #' A data set originating from the open access TCGA data (6c93f518-1956-4435-9806-37185266d248),
-#' the data set is composed of mutations for the PIK3CA gene for breast cancer. this is primarily
+#' the data set is composed of mutations for the PIK3CA gene for breast cancer. This is primarily
 #' intended to test the Lolliplot() function.
 #' 
 #' @docType data

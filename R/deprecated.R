@@ -67,7 +67,7 @@
 #' @param sampOrder Character vector specifying the order of the samples to
 #' plot.
 #' @param maxGenes Integer specifying the maximum number of genes to be plotted.
-#' Genes kept will be choosen based on the reccurence of mutations in samples.
+#' Genes kept will be choosen based on the recurrence of mutations in samples.
 #' @param rmvSilent Boolean specifying if silent mutations should be removed
 #' from the plot.
 #' @param fileType Character string specifying the file format of the data
@@ -2345,7 +2345,7 @@ TvTi_rmMnuc <- function(x)
 #' @param out Character vector specifying the the object to output, one of
 #' "data", "grob", or "plot", defaults to "plot" (see returns).
 #' @details lolliplot is a function designed to display mutation information in
-#' the context of a protien identified by an ensembl transcript id. The
+#' the context of a protein identified by an ensembl transcript id. The
 #' lolliplot function will query ensembl via biomart to retrieve sequence and
 #' domain information in order to construct a representation of a protein and
 #' therefore requires an internet connection. A value must be supplied to the
@@ -2458,7 +2458,7 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
     {
         geneData <- lolliplot_constructGene(gene, z, proteinLength)
     } else {
-        # extract protien domain data
+        # extract protein domain data
         protein_domain <- lolliplot_fetchDomain(transcriptID,
                                                 species=species,
                                                 host=host)
@@ -2508,7 +2508,7 @@ lolliplot <- function(x, y=NULL, z=NULL, fillCol=NULL, labelCol=NULL,
 
 #' Convert AA to side chain classification
 #' 
-#' Given the 1 letter code an amino acid, return the side chian classification
+#' Given the 1 letter code an amino acid, return the side chain classification
 #' @name lolliplot_AA2sidechain
 #' @param x Character of length 1 giving the 1 letter amino acid code
 #' @return Object of class character
@@ -2531,9 +2531,9 @@ lolliplot_AA2sidechain <- function(x)
 #'
 #' Construct Lolliplot given gene and mutation data
 #' @name lolliplot_buildMain
-#' @param gene_data object of class dataframe giving protien domain and gene
+#' @param gene_data object of class dataframe giving protein domain and gene
 #' information
-#' @param length integer specifying the length of the protien in amino acids
+#' @param length integer specifying the length of the protein in amino acids
 #' @param mutation_observed object of class data frame specifying mutations
 #' observed in input file
 #' @param mutation_observed2 optional object of class data frame specifying
@@ -2748,7 +2748,7 @@ lolliplot_Codon2AA <- function(x)
 #' Build gene for input into lolliplot_buildMain
 #' @name lolliplot_constructGene
 #' @param gene character string specifying gene name
-#' @param domain_data object of class data frame specifying protien domain
+#' @param domain_data object of class data frame specifying protein domain
 #' information, obtained from lolliplot_fetchDomain, should contain columns
 #' giving "description", "start", "end"
 #' @param length integer specifying length of transcript in amino acids
@@ -2979,7 +2979,7 @@ lolliplot_dodgeCoordY <- function(x, track='top')
 #' @param transcriptID String specifying ensembl transcript id
 #' @param species character string to use when searching for ensemblMart dataset
 #' @param host Host to connect to.
-#' @return data frame of protien domains and start/stop coordinates
+#' @return data frame of protein domains and start/stop coordinates
 #' @importFrom biomaRt useMart
 #' @importFrom biomaRt listDatasets
 #' @importFrom biomaRt useDataset
