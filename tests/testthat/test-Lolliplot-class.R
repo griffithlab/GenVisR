@@ -518,9 +518,9 @@ if(biomart_success){
 }
 
 test_that("setDomainHeights domains are nested correctly", {
-    
+
     skip_if_not(biomart_success, "mart recieved try-error")
-    expected <- 8
+    expected <- 7
     
     actual <- setDomainHeights.mode1.out[setDomainHeights.mode1.out$interproShortDesc == "PI3/4_kinase_cat_sf",]$nest
     expect_equivalent(expected, actual)
