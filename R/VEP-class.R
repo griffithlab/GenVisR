@@ -149,7 +149,7 @@ VEP <- function(path, data=NULL, version="auto", verbose=FALSE){
     }
     
     # assign the vepData to it's slot
-    if(version >= 88 & version <= 99.0){
+    if(version >= 88 & version <= 105){
         vepObject <- VEP_v88(vepData=vepData, vepHeader=vepHeader)
     } else {
         memo <- paste("Currently only VEP version 88-99.0 are supported, make a",
