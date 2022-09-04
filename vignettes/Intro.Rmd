@@ -122,46 +122,6 @@ waterfall(brcaMAF, clinDat=clinical,
 
 Occasionally there may be samples not represented within the .maf file (due to a lack of mutations). It may still be desirable to plot these samples. To accomplish this simply add the relevant samples into the appropriate column before loading the data and leave the rest of the columns as NA. Alternatively the user can specify a list of samples to plot via the `plotSamples` parameter which will accept samples not in the input data.
 
-### lolliplot (mutation hotspot graphic) 
-
-`lolliplot` provides a method for visualizing mutation hotspots overlayed on a protein framework. The (basic) input consists of a data frame with required columns "transcript_name", "gene" and "amino_acid_change" giving the ensembl transcript id, gene name, and the amino acid change in p. notation respectively. The data frame input to `lolliplot` must contain only one unique transcript name. `lolliplot` uses the R package [biomaRt](https://bioconductor.org/packages/release/bioc/html/biomaRt.html) to obtain sequence and protein domain information and as such needs an active internet connection. `lolliplot` assumes the species from which to build a mart is *hsapiens*, this assumption can be changed via the parameter `species` which which will expect a valid ensembl mart species. Further by default the latest ensembl annotations will be used to build the protein framework. If it is desireable to build the protein framework from an older ensembl annotation the user has the option to change the annotation version by changing the `host` parameter. For example if the user wanted to use the Dec. 2013 ensembl annotation they would specify host="dec2013.archive.ensembl.org", the host parameter in lolliplot will pass it's value to biomaRt::useMart, see biomaRt doc for using older archived annotations via biomaRt.
-
-It should be noted that to ensure the most accurate graphic representation the ensembl annotation version for the "amino_acid_change" column supplied by the user and that which is used for the biomaRt queries should be identical.
-
-```{r, fig.keep='last', fig.width=12, fig.height=4.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
-# Create input data
-data <- brcaMAF[brcaMAF$Hugo_Symbol == 'TP53',c('Hugo_Symbol', 'amino_acid_change_WU')]
-data <- as.data.frame(cbind(data, 'ENST00000269305'))
-colnames(data) <- c('gene', 'amino_acid_change', 'transcript_name')
-
-# Call lolliplot
-lolliplot(data)
-```
-
-In an effort to maintain a high degree of flexibility the user has the option of selecting columns on which to fill and label. The parameters `fillCol` and `labelCol` allow this behavior by taking column names on which to fill and label respectively. Additionally one can plot the amino acid sidechain information in lieu of protein domains.
-
-```{r, fig.keep='last', fig.width=12, fig.height=4.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
-# Add additional columns to the data
-data$gender <- sample(c("Male", "Female"), 15, replace=TRUE)
-data$impact <- sample(c("Low", "Medium", "High"), 15, replace=TRUE)
-
-# Call lolliplot
-lolliplot(data, fillCol='gender', labelCol='impact', sideChain=TRUE)
-```
-
-The user has the option of plotting an additional track in the area underneath the protein track via the parameter `y`. Input for this additional layer consists of a data frame with column names "transcript_name" and "amino_acid_change" in p. notation. If input to parameter `y` is supplied to `lolliplot` and the `fillCol` and/or `labelCol` parameters are specified (see above) lolliplot will look for the columns in both data frames supplied to `x` and `y` and act accordingly. Note that input to parameter `y` must be from the same transcript as specified in the data frame supplied to parameter `x`.
-
-```{r, fig.keep='last', fig.width=12, fig.height=6.5, message=FALSE, warning=FALSE, results='hide', tidy=TRUE, error=TRUE}
-# Create additional data
-data2 <- data.frame("transcript_name"="ENST00000269305",
-                    "amino_acid_change"="p.Q331*")
-
-# Call lolliplot
-lolliplot(data, y=data2, fillCol='impact', labelCol='amino_acid_change')
-```
-
-`lolliplot` uses a force field model from the package [FField](http://cran.r-project.org/web/packages/FField/index.html) to repulse and attract data in an attempt to achieve a reasonable degree of separation between points. Suitable defaults have been set for the majority of use cases. On occasion the user may need to manually adjust the force field parameters especially if the number of points to apply the model to is large. This can be done for both upper and lower tracks individually via `rep.fact`, `rep.dist.lmt`, `attr.fact`, `adj.max`, `adj.lmt`, `iter.max` please see documentation for [FField::FFieldPtRep](http://cran.r-project.org/web/packages/FField/FField.pdf) for a complete description of these parameters.
-
 ### genCov (sequence coverage graphic)
 
 `genCov` provides a methodology for viewing coverage information in relation to a gene track. It takes a named list of data frames with each data frame containing column names "end" and "cov" and rows corresponding to coordinates within the region of interest. Additional required arguments are a GRanges object specifying the region of interest, a BSgenome for gc content calculation, and a TxDb object containing transcription metadata (see the package [Granges](http://www.bioconductor.org/packages/release/bioc/html/GenomicRanges.html) for more information). `genCov` will plot a genomic features track and align coverage data in the list to the plot. It is recommended to use [bedtools multicov](http://bedtools.readthedocs.org/en/latest/content/tools/multicov.html) to obtain coverage information for a region of interest. We demonstrate `genCov` functionality using pseudo-data containing coverage information for the gene PTEN.
