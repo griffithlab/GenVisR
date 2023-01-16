@@ -1,10 +1,6 @@
 Package: GenVisR
 Title: Genomic Visualizations in R
-<<<<<<< HEAD
-Version: 1.31.0
-=======
 Version: 1.31.1
->>>>>>> fc004a9 (attempt to work through failing test coverage)
 Authors@R: c(person(given="Zachary", family="Skidmore", email="zlskidmore@gmail.com",
           role=c("aut", "cre")), person(given="Alex", family="Wagner", role="aut"),
           person(given="Robert", family="Lesurf", role="aut"), person(given="Katie",
