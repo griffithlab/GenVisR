@@ -1,6 +1,6 @@
 Package: GenVisR
 Title: Genomic Visualizations in R
-Version: 1.29.3
+Version: 1.31.1
 Authors@R: c(person(given="Zachary", family="Skidmore", email="zlskidmore@gmail.com",
           role=c("aut", "cre")), person(given="Alex", family="Wagner", role="aut"),
           person(given="Robert", family="Lesurf", role="aut"), person(given="Katie",
@@ -24,7 +24,7 @@ Suggests: BiocStyle, BSgenome.Hsapiens.UCSC.hg19, knitr, RMySQL, roxygen2,
           testthat, TxDb.Hsapiens.UCSC.hg19.knownGene, rmarkdown, vdiffr, formatR,
           TxDb.Hsapiens.UCSC.hg38.knownGene, BSgenome.Hsapiens.UCSC.hg38
 VignetteBuilder: knitr
-RoxygenNote: 7.1.0
+RoxygenNote: 7.2.1
 Encoding: UTF-8
 NeedsCompilation: no
 Author: Zachary Skidmore [aut, cre], Alex Wagner [aut], Robert Lesurf [aut],

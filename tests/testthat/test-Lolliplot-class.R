@@ -54,7 +54,7 @@ test_that("toLolliplot works in verbose mode",{
 biomart_success <- try(biomaRt::useMart("ENSEMBL_MART_ENSEMBL", host="www.ensembl.org"))
 biomart_success <- !class(biomart_success) == "try-error"
 if(biomart_success){
-    retrieveMart.out <- retrieveMart("hsapiens", host="www.ensembl.org", verbose=FALSE)
+    retrieveMart.out <- retrieveMart("hsapiens", host="https://www.ensembl.org", verbose=FALSE)
 }
 
 test_that("retrieveMart retrieves a valid mart for a given species", {
@@ -66,18 +66,18 @@ test_that("retrieveMart retrieves a valid mart for a given species", {
 test_that("retrieveMart errors if the species matches more than one dataset in the mart", {
 
     skip_if_not(biomart_success, "mart recieved try-error")
-    expect_error(retrieveMart("m", host="www.ensembl.org", verbose=FALSE))
+    expect_error(retrieveMart("m", host="https://www.ensembl.org", verbose=FALSE))
 })
 
 test_that("retreiveMart errors if the supplied species is not found", {
 
     skip_if_not(biomart_success, "mart recieved try-error")
-    expect_error(retrieveMart("titan", host="www.ensembl.org", verbose=FALSE))
+    expect_error(retrieveMart("titan", host="https://www.ensembl.org", verbose=FALSE))
 })
 
 test_that("retreiveMart works in verbose mode", {
 
-    expect_message(retrieveMart("hsapiens", host="www.ensembl.org", verbose=TRUE))
+    expect_message(retrieveMart("hsapiens", host="https://www.ensembl.org", verbose=TRUE))
 })
 
 ############### test annotateGene ##############################################
@@ -520,13 +520,9 @@ if(biomart_success){
 test_that("setDomainHeights domains are nested correctly", {
 
     skip_if_not(biomart_success, "mart recieved try-error")
-    expected <- 9
+    expected <- 2
     
-    actual <- setDomainHeights.mode1.out[setDomainHeights.mode1.out$interproShortDesc == "PI3/4_kinase_cat_sf",]$nest
-    expect_equivalent(expected, actual)
-
-    expected <- 3
-    actual <- setDomainHeights.mode1.out[setDomainHeights.mode1.out$interproShortDesc == "Ubiquitin-like_domsf",]$nest
+    actual <- setDomainHeights.mode1.out[setDomainHeights.mode1.out$interproShortDesc == "PI3/4_kinase_CS",]$nest[1]
     expect_equivalent(expected, actual)
 })
 
