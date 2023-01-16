@@ -131,7 +131,7 @@ all other samples not specified within this parameter are removed.}
 plot.}
 
 \item{maxGenes}{Integer specifying the maximum number of genes to be plotted.
-Genes kept will be choosen based on the reccurence of mutations in samples.}
+Genes kept will be choosen based on the recurrence of mutations in samples.}
 
 \item{rmvSilent}{Boolean specifying if silent mutations should be removed
 from the plot.}
