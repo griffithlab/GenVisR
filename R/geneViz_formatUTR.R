@@ -20,6 +20,10 @@ geneViz_formatUTR <- function(txdb=NULL, gr=NULL, genome=NULL, reduce=FALSE)
     if(is.null(UTR)){
         return(NA)
     }
+    if(is.na(UTR)){
+        return(NA)
+    }
+
   # Calculate GC content for retrieved data
     UTR <- sapply(UTR, geneViz_calcGC, genome=genome)
 
