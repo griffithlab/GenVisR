@@ -243,28 +243,25 @@ context("Rainfall Main Plot")
 
 test_that("buildRainfallPlot contructs a plot", {
     
-    skip_on_travis()
-    
     buildRainfallPlot.out <- buildRainfallPlot(RainfallPrimaryData.out, palette=NULL, pointSize=NULL, plotALayers=NULL, verbose=FALSE)
-    skip_on_bioc(vdiffr::expect_doppelganger("Rainfall Main Plot", grid::grid.draw(buildRainfallPlot.out)))
+    skip_on_bioc()
+    vdiffr::expect_doppelganger("Rainfall Main Plot", grid::grid.draw(buildRainfallPlot.out))
 })
 
 test_that("buildRainfallPlot is able to add layers to the plot", {
     
-    skip_on_travis()
-    
     test_plotALayers <- list(ggplot2::geom_hline(yintercept=c(5), colour="black", size=2), ggplot2::geom_vline(xintercept=c(1.5e8), colour="black", size=2))
     buildRainfallPlot.out <- buildRainfallPlot(RainfallPrimaryData.out, palette=NULL, pointSize=NULL, plotALayers=test_plotALayers , verbose=FALSE)
-    skip_on_bioc(vdiffr::expect_doppelganger("Rainfall Plot add layer", grid::grid.draw(buildRainfallPlot.out)))
+    skip_on_bioc()
+    vdiffr::expect_doppelganger("Rainfall Plot add layer", grid::grid.draw(buildRainfallPlot.out))
 })
 
 test_that("buildRainfallPlot aesthetic options work", {
     
-    skip_on_travis()
-   
     colorPalette <- c("red", "blue", "green", "yellow", "orange", "purple", "black")
     buildRainfallPlot.out <- buildRainfallPlot(RainfallPrimaryData.out, palette=colorPalette, pointSize=10, plotALayers=NULL , verbose=FALSE)
-    skip_on_bioc(vdiffr::expect_doppelganger("Rainfall Plot aesthetic options", grid::grid.draw(buildRainfallPlot.out)))
+    skip_on_bioc()
+    vdiffr::expect_doppelganger("Rainfall Plot aesthetic options", grid::grid.draw(buildRainfallPlot.out))
 })
 
 test_that("buildRainfallPlot warns if plotALayers is not passed as a list", {
@@ -296,19 +293,17 @@ context("Rainfall Density Plot")
 
 test_that("buildDensityPlot contructs a plot", {
     
-    skip_on_travis()
-    
     buildDensityPlot.out <- buildDensityPlot(RainfallPrimaryData.out, plotBLayers=NULL, verbose=FALSE)
-    skip_on_bioc(vdiffr::expect_doppelganger("Density Main Plot", grid::grid.draw(buildDensityPlot.out)))
+    skip_on_bioc()
+    vdiffr::expect_doppelganger("Density Main Plot", grid::grid.draw(buildDensityPlot.out))
 })
 
 test_that("buildDensityPlot is able to add layers to the plot", {
     
-    skip_on_travis()
-    
     test_plotBLayers <- list(ggplot2::geom_hline(yintercept=c(2e-9), colour="black", size=2), ggplot2::geom_vline(xintercept=c(1.5e8), colour="black", size=2))
     buildDensityPlot.out <- buildDensityPlot(RainfallPrimaryData.out, plotBLayers=test_plotBLayers , verbose=FALSE)
-    skip_on_bioc(vdiffr::expect_doppelganger("Density Plot add layer", grid::grid.draw(buildDensityPlot.out)))
+    skip_on_bioc()
+    vdiffr::expect_doppelganger("Density Plot add layer", grid::grid.draw(buildDensityPlot.out))
 })
 
 
@@ -349,18 +344,16 @@ context("Rainfall Final Plot")
 
 test_that("arrangeRainfallPlot plots a base plot", {
     
-    skip_on_travis()
-    
     arrangeRainfallPlot.out <- arrangeRainfallPlot(RainfallPlots.out, sectionHeights=NULL, verbose=FALSE)
-    skip_on_bioc(vdiffr::expect_doppelganger("Final Rainfall Base", grid::grid.draw(arrangeRainfallPlot.out)))
+    skip_on_bioc()
+    vdiffr::expect_doppelganger("Final Rainfall Base", grid::grid.draw(arrangeRainfallPlot.out))
 })
 
 test_that("arrangeRainfallPlot can alter section heights", {
     
-    skip_on_travis()
-    
     arrangeRainfallPlot.out <- arrangeRainfallPlot(RainfallPlots.out, sectionHeights=c(1, 1), verbose=FALSE)
-    skip_on_bioc(vdiffr::expect_doppelganger("Final Rainfall alter section hieghts", grid::grid.draw(arrangeRainfallPlot.out)))
+    skip_on_bioc()
+    vdiffr::expect_doppelganger("Final Rainfall alter section hieghts", grid::grid.draw(arrangeRainfallPlot.out))
 })
 
 test_that("arrangeRainfallPlot warns if section heights does not match the number of plot elements", {
@@ -393,9 +386,8 @@ test_that("Rainfall constructor outputs a S4 class object", {
 
 test_that("drawPlot constructs a Rainfall plot from grob objects in the Rainfall object", {
     
-    skip_on_travis()
-    
-    skip_on_bioc(vdiffr::expect_doppelganger("drawPlot Rainfall", drawPlot(Rainfall.out)))
+    skip_on_bioc()
+    vdiffr::expect_doppelganger("drawPlot Rainfall", drawPlot(Rainfall.out))
 })
 
 test_that("getData outputs error if no name or index is given", {
