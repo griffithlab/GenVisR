@@ -38,11 +38,11 @@ compIdent_bamRcnt <- function(bamfile, genome, target=NULL, debug=FALSE)
     # Target locations must conform to the bam files being read in, create
     # two versions one with "chr1" and the other with "1" and use whichever is
     # appropriate
+    target.chr <- target
     if(any(grepl("chr", target$chr)))
     {
         target$chr <- gsub("chr", "", target$chr)
     } else {
-        target.chr <- target
         target.chr$chr <- paste0("chr", target$chr)
     }
     
