@@ -44,6 +44,7 @@
 compIdent <- function(x, genome, target=NULL, debug=FALSE, mainLayer=NULL,
                       covLayer=NULL, out="plot")
 {
+
     # Warn if target is null
     if(is.null(target))
     {

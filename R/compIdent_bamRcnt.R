@@ -99,6 +99,7 @@ compIdent_bamRcnt <- function(bamfile, genome, target=NULL, debug=FALSE)
 
     # Use reshape to create separate columns for nucleotides
     # Result (x2) is: chr, position, A, C, G, T
+    pileup_table <- as.data.table(pileup_table)
     x <- data.table::melt(pileup_table, c('chr','position','nucleotide'), 'count')
     x <- data.table::dcast(x, chr + position ~ nucleotide, fun.aggregate = sum)
 
@@ -111,7 +112,7 @@ compIdent_bamRcnt <- function(bamfile, genome, target=NULL, debug=FALSE)
     # Add back in var and name colummns
     x$key <- paste0(x$chr, ":", x$position)
     target$key <- paste0(target$chr, ":", target$end)
-    x <- merge(x, target, by=c("key", "chr"))
+    x <- merge(as.data.frame(x), target, by=c("key", "chr"))
     x <- x[,c("chr", "position", "A", "C", "G", "T", "total_reads", "getref",
               "var", "name")]
     

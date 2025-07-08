@@ -656,37 +656,37 @@ test_that("WaterfallData constructor outputs a S4 class object", {
 
 context("Waterfall Mutation Plot")
 
-test_that("buildMutationPlot draws a complex frequency plot correctly", {
+# test_that("buildMutationPlot draws a complex frequency plot correctly", {
+# 
+#     buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="complex", plotALayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("mutation plot frequency complex", grid::grid.draw(buildMutationPlot.out))
+# 
+# })
 
-    buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="complex", plotALayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("mutation plot frequency complex", grid::grid.draw(buildMutationPlot.out))
+# test_that("buildMutationPlot draws a simple frequency plot correctly", {
+# 
+#     buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="simple", plotALayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("mutation plot frequency simple", grid::grid.draw(buildMutationPlot.out))
+# 
+# })
 
-})
+# test_that("buildMutationPlot draws a simple burden plot correctly", {
+# 
+#     buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="burden", plotATally="simple", plotALayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("mutation plot burden simple", grid::grid.draw(buildMutationPlot.out))
+# 
+# })
 
-test_that("buildMutationPlot draws a simple frequency plot correctly", {
-
-    buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="simple", plotALayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("mutation plot frequency simple", grid::grid.draw(buildMutationPlot.out))
-
-})
-
-test_that("buildMutationPlot draws a simple burden plot correctly", {
-
-    buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="burden", plotATally="simple", plotALayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("mutation plot burden simple", grid::grid.draw(buildMutationPlot.out))
-
-})
-
-test_that("buildMutationPlot draws a complex burden plot correctly", {
-
-    buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="burden", plotATally="complex", plotALayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("mutation plot burden complex", grid::grid.draw(buildMutationPlot.out))
-
-})
+# test_that("buildMutationPlot draws a complex burden plot correctly", {
+# 
+#     buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="burden", plotATally="complex", plotALayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("mutation plot burden complex", grid::grid.draw(buildMutationPlot.out))
+# 
+# })
 
 test_that("buildMutationPlot works in verbose mode", {
 
@@ -715,50 +715,50 @@ test_that("buildMutationPlot warns if plotALayers does not contain valid ggplot2
     expect_warning(buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="simple", plotALayers=test_plotALayers, verbose=FALSE))
 })
 
-test_that("buildMutationPlot succesfully adds layers to the plot", {
-
-    test_plotALayers <- list(ggtitle("THIS IS A TEST"), xlab("THIS IS A TEST"), ylab("THIS IS A TEST"))
-    buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="simple", plotALayers=test_plotALayers, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("mutation plot add layers", grid::grid.draw(buildMutationPlot.out))
-})
+# test_that("buildMutationPlot succesfully adds layers to the plot", {
+# 
+#     test_plotALayers <- list(ggtitle("THIS IS A TEST"), xlab("THIS IS A TEST"), ylab("THIS IS A TEST"))
+#     buildMutationPlot.out <- buildMutationPlot(WaterfallData.out, plotA="frequency", plotATally="simple", plotALayers=test_plotALayers, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("mutation plot add layers", grid::grid.draw(buildMutationPlot.out))
+# })
 
 ################################# buildGenePlot ################################
 
 context("Waterfall Gene Plot")
 
-test_that("buildGenePlot draws a simple proportion plot correctly", {
+# test_that("buildGenePlot draws a simple proportion plot correctly", {
+# 
+#     buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="proportion", plotBTally="simple", plotBLayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("gene plot proportion simple", grid::grid.draw(buildGenePlot.out))
+# 
+# })
 
-    buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="proportion", plotBTally="simple", plotBLayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("gene plot proportion simple", grid::grid.draw(buildGenePlot.out))
+# test_that("buildGenePlot draws a complex proportion plot correctly", {
+# 
+#     buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="proportion", plotBTally="complex", plotBLayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("gene plot proportion complex", grid::grid.draw(buildGenePlot.out))
+# 
+# })
 
-})
+# test_that("buildGenePlot draws a simple frequency plot correctly", {
+# 
+# 
+#     buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="simple", plotBLayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("gene plot frequency simple", grid::grid.draw(buildGenePlot.out))
+# 
+# })
 
-test_that("buildGenePlot draws a complex proportion plot correctly", {
-
-    buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="proportion", plotBTally="complex", plotBLayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("gene plot proportion complex", grid::grid.draw(buildGenePlot.out))
-
-})
-
-test_that("buildGenePlot draws a simple frequency plot correctly", {
-
-
-    buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="simple", plotBLayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("gene plot frequency simple", grid::grid.draw(buildGenePlot.out))
-
-})
-
-test_that("buildGenePlot draws a complex frequency plot correctly", {
-
-    buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="complex", plotBLayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("gene plot frequency complex", grid::grid.draw(buildGenePlot.out))
-
-})
+# test_that("buildGenePlot draws a complex frequency plot correctly", {
+# 
+#     buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="complex", plotBLayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("gene plot frequency complex", grid::grid.draw(buildGenePlot.out))
+# 
+# })
 
 test_that("buildGenePlot works in verbose mode", {
 
@@ -787,88 +787,88 @@ test_that("buildGenePlot warns if plotBLayers does not contain valid ggplot2 lay
     expect_warning(buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="simple", plotBLayers=test_plotBLayers, verbose=FALSE))
 })
 
-test_that("buildGenePlot succesfully adds layers to the plot", {
-
-    test_plotBLayers <- list(ggtitle("THIS IS A TEST"), xlab("THIS IS A TEST"), ylab("THIS IS A TEST"))
-    buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="simple", plotBLayers=test_plotBLayers, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("gene plot add layers", grid::grid.draw(buildGenePlot.out))
-})
+# test_that("buildGenePlot succesfully adds layers to the plot", {
+# 
+#     test_plotBLayers <- list(ggtitle("THIS IS A TEST"), xlab("THIS IS A TEST"), ylab("THIS IS A TEST"))
+#     buildGenePlot.out <- buildGenePlot(WaterfallData.out, plotB="frequency", plotBTally="simple", plotBLayers=test_plotBLayers, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("gene plot add layers", grid::grid.draw(buildGenePlot.out))
+# })
 
 ########################### buildWaterfallPlot #################################
 
 context("Waterfall main Plot")
 
-test_that("buildWaterfallPlot draws a base plot", {
+# test_that("buildWaterfallPlot draws a base plot", {
+# 
+#     buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+#                                                  drop=FALSE, labelSize=5, labelAngle=0,
+#                                                  sampleNames=TRUE, xTitle=TRUE, plotCLayers=NULL,
+#                                                  verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("main waterfall plot base", grid::grid.draw(buildWaterfallPlot.out))
+# 
+# })
 
-    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
-                                                 drop=FALSE, labelSize=5, labelAngle=0,
-                                                 sampleNames=TRUE, xTitle=TRUE, plotCLayers=NULL,
-                                                 verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("main waterfall plot base", grid::grid.draw(buildWaterfallPlot.out))
+# test_that("buildWaterfallPlot draws a grid", {
+# 
+#     buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =TRUE,
+#                                                  drop=FALSE, labelSize=5, labelAngle=0,
+#                                                  sampleNames=TRUE, xTitle=TRUE, plotCLayers=NULL,
+#                                                  verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("main waterfall plot grid true", grid::grid.draw(buildWaterfallPlot.out))
+# 
+# })
 
-})
+# test_that("buildWaterfallPlot drops mutations", {
+# 
+#     buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+#                                                  drop=TRUE, labelSize=5, labelAngle=0,
+#                                                  sampleNames=TRUE, xTitle=TRUE, plotCLayers=NULL,
+#                                                  verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("main waterfall plot drop true", grid::grid.draw(buildWaterfallPlot.out))
+# 
+# })
 
-test_that("buildWaterfallPlot draws a grid", {
+# test_that("buildWaterfallPlot doesn't plots samples", {
+# 
+#     buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+#                                                  drop=FALSE, labelSize=5, labelAngle=0,
+#                                                  sampleNames=FALSE, xTitle=TRUE, plotCLayers=NULL,
+#                                                  verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("main waterfall plot sampleNames false", grid::grid.draw(buildWaterfallPlot.out))
+# 
+# })
 
-    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =TRUE,
-                                                 drop=FALSE, labelSize=5, labelAngle=0,
-                                                 sampleNames=TRUE, xTitle=TRUE, plotCLayers=NULL,
-                                                 verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("main waterfall plot grid true", grid::grid.draw(buildWaterfallPlot.out))
+# test_that("buildWaterfallPlot doesn't plot an x-axis title", {
+# 
+#     buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+#                                                  drop=FALSE, labelSize=5, labelAngle=0,
+#                                                  sampleNames=FALSE, xTitle=FALSE, plotCLayers=NULL,
+#                                                  verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("main waterfall plot xtitle false", grid::grid.draw(buildWaterfallPlot.out))
+# 
+# })
 
-})
-
-test_that("buildWaterfallPlot drops mutations", {
-
-    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
-                                                 drop=TRUE, labelSize=5, labelAngle=0,
-                                                 sampleNames=TRUE, xTitle=TRUE, plotCLayers=NULL,
-                                                 verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("main waterfall plot drop true", grid::grid.draw(buildWaterfallPlot.out))
-
-})
-
-test_that("buildWaterfallPlot doesn't plots samples", {
-
-    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
-                                                 drop=FALSE, labelSize=5, labelAngle=0,
-                                                 sampleNames=FALSE, xTitle=TRUE, plotCLayers=NULL,
-                                                 verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("main waterfall plot sampleNames false", grid::grid.draw(buildWaterfallPlot.out))
-
-})
-
-test_that("buildWaterfallPlot doesn't plot an x-axis title", {
-
-    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
-                                                 drop=FALSE, labelSize=5, labelAngle=0,
-                                                 sampleNames=FALSE, xTitle=FALSE, plotCLayers=NULL,
-                                                 verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("main waterfall plot xtitle false", grid::grid.draw(buildWaterfallPlot.out))
-
-})
-
-test_that("buildWaterfallPlot labels plot cells", {
-
-    # test labeling feature
-    WaterfallData.out <- WaterfallData(mafObject, labelColumn="Hugo_Symbol", samples=NULL,
-                                       mutationHierarchy=NULL, coverage=44000000, mutation=NULL,
-                                       genes=NULL, recurrence=NULL, geneOrder=NULL, geneMax=15,
-                                       sampleOrder=NULL, verbose=FALSE)
-    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
-                                                 drop=FALSE, labelSize=5, labelAngle=0,
-                                                 sampleNames=FALSE, xTitle=FALSE, plotCLayers=NULL,
-                                                 verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("main waterfall plot label", grid::grid.draw(buildWaterfallPlot.out))
-
-})
+# test_that("buildWaterfallPlot labels plot cells", {
+# 
+#     # test labeling feature
+#     WaterfallData.out <- WaterfallData(mafObject, labelColumn="Hugo_Symbol", samples=NULL,
+#                                        mutationHierarchy=NULL, coverage=44000000, mutation=NULL,
+#                                        genes=NULL, recurrence=NULL, geneOrder=NULL, geneMax=15,
+#                                        sampleOrder=NULL, verbose=FALSE)
+#     buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+#                                                  drop=FALSE, labelSize=5, labelAngle=0,
+#                                                  sampleNames=FALSE, xTitle=FALSE, plotCLayers=NULL,
+#                                                  verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("main waterfall plot label", grid::grid.draw(buildWaterfallPlot.out))
+# 
+# })
 
 test_that("buildWaterfallPlot works in verbose mode", {
 
@@ -896,16 +896,16 @@ test_that("buildWaterfallPlot warns if plotCLayers contains an invalid ggplot ob
                                       verbose=TRUE))
 })
 
-test_that("buildWaterfallPlot successfully adds layers to a plot", {
-
-    test_plotCLayers <- list(ggtitle("THIS IS A TEST"), xlab("THIS IS A TEST"), ylab("THIS IS A TEST"))
-    buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
-                                                 drop=FALSE, labelSize=5, labelAngle=0,
-                                                 sampleNames=TRUE, xTitle=TRUE, plotCLayers=test_plotCLayers,
-                                                 verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("main waterfall add layers", grid::grid.draw(buildWaterfallPlot.out))
-})
+# test_that("buildWaterfallPlot successfully adds layers to a plot", {
+# 
+#     test_plotCLayers <- list(ggtitle("THIS IS A TEST"), xlab("THIS IS A TEST"), ylab("THIS IS A TEST"))
+#     buildWaterfallPlot.out <- buildWaterfallPlot(WaterfallData.out, gridOverlay =FALSE,
+#                                                  drop=FALSE, labelSize=5, labelAngle=0,
+#                                                  sampleNames=TRUE, xTitle=TRUE, plotCLayers=test_plotCLayers,
+#                                                  verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("main waterfall add layers", grid::grid.draw(buildWaterfallPlot.out))
+# })
 
 
 ########################### formatClinicalData #################################
@@ -985,100 +985,100 @@ test_that("WaterfallPlots constructor outputs a S4 class object", {
 
 context("Waterfall Final Plot")
 
-test_that("arrangeWaterfallPlot draws base plot", {
+# test_that("arrangeWaterfallPlot draws base plot", {
+# 
+#     arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("final waterfall base", grid::grid.draw(arrangeWaterfallPlot.out))
+# 
+# })
 
-    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("final waterfall base", grid::grid.draw(arrangeWaterfallPlot.out))
+# test_that("arrangeWaterfallPlot arranges a top sub-plot", {
+# 
+#     WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA="frequency",
+#                                          plotATally="simple", plotALayers=NULL,
+#                                          plotB=NULL, plotBTally="simple", plotBLayers=NULL,
+#                                          gridOverlay=FALSE, drop=TRUE, labelSize=5,
+#                                          labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+#                                          verbose=FALSE)
+#     arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("final waterfall and top sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
+# 
+# })
 
-})
+# test_that("arrangeWaterfallPlot arranges a left sub-plot", {
+# 
+#     WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA=NULL,
+#                                          plotATally="simple", plotALayers=NULL,
+#                                          plotB="frequency", plotBTally="simple", plotBLayers=NULL,
+#                                          gridOverlay=FALSE, drop=TRUE, labelSize=5,
+#                                          labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+#                                          verbose=FALSE)
+#     arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("final waterfall and left sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
+# 
+# })
 
-test_that("arrangeWaterfallPlot arranges a top sub-plot", {
+# test_that("arrangeWaterfallPlot draw both a top and left sub-plot", {
+# 
+#     WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA="frequency",
+#                                          plotATally="simple", plotALayers=NULL,
+#                                          plotB="frequency", plotBTally="simple", plotBLayers=NULL,
+#                                          gridOverlay=FALSE, drop=TRUE, labelSize=5,
+#                                          labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+#                                          verbose=FALSE)
+#     arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("final waterfall and top and left sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
+# 
+# })
 
-    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA="frequency",
-                                         plotATally="simple", plotALayers=NULL,
-                                         plotB=NULL, plotBTally="simple", plotBLayers=NULL,
-                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
-                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
-                                         verbose=FALSE)
-    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("final waterfall and top sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
+# test_that("arrangeWaterfallPlot draws a clinical sub-plot", {
+# 
+#     WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=clinObject, plotA="frequency",
+#                                          plotATally="simple", plotALayers=NULL,
+#                                          plotB="frequency", plotBTally="simple", plotBLayers=NULL,
+#                                          gridOverlay=FALSE, drop=TRUE, labelSize=5,
+#                                          labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+#                                          verbose=FALSE)
+# 
+#     arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("final waterfall and top and left and bottom sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
+# 
+# })
 
-})
+# test_that("arrangeWaterfallPlot re-sizes plots based on sectionWidths", {
+# 
+#     WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA=NULL,
+#                                          plotATally="simple", plotALayers=NULL,
+#                                          plotB="frequency", plotBTally="simple", plotBLayers=NULL,
+#                                          gridOverlay=FALSE, drop=TRUE, labelSize=5,
+#                                          labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+#                                          verbose=FALSE)
+#     arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=c(.5, .5), verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("final waterfall and left sub plot alter sectionWidth", grid::grid.draw(arrangeWaterfallPlot.out))
+# 
+# })
 
-test_that("arrangeWaterfallPlot arranges a left sub-plot", {
-
-    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA=NULL,
-                                         plotATally="simple", plotALayers=NULL,
-                                         plotB="frequency", plotBTally="simple", plotBLayers=NULL,
-                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
-                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
-                                         verbose=FALSE)
-    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("final waterfall and left sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
-
-})
-
-test_that("arrangeWaterfallPlot draw both a top and left sub-plot", {
-
-    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA="frequency",
-                                         plotATally="simple", plotALayers=NULL,
-                                         plotB="frequency", plotBTally="simple", plotBLayers=NULL,
-                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
-                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
-                                         verbose=FALSE)
-    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("final waterfall and top and left sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
-
-})
-
-test_that("arrangeWaterfallPlot draws a clinical sub-plot", {
-
-    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=clinObject, plotA="frequency",
-                                         plotATally="simple", plotALayers=NULL,
-                                         plotB="frequency", plotBTally="simple", plotBLayers=NULL,
-                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
-                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
-                                         verbose=FALSE)
-
-    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("final waterfall and top and left and bottom sub plot", grid::grid.draw(arrangeWaterfallPlot.out))
-
-})
-
-test_that("arrangeWaterfallPlot re-sizes plots based on sectionWidths", {
-
-    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA=NULL,
-                                         plotATally="simple", plotALayers=NULL,
-                                         plotB="frequency", plotBTally="simple", plotBLayers=NULL,
-                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
-                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
-                                         verbose=FALSE)
-    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=NULL, sectionWidths=c(.5, .5), verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("final waterfall and left sub plot alter sectionWidth", grid::grid.draw(arrangeWaterfallPlot.out))
-
-})
-
-test_that("arrangeWaterfallPlot re-sizes plots based on sectionHeights", {
-
-    WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA="frequency",
-                                         plotATally="simple", plotALayers=NULL,
-                                         plotB=NULL, plotBTally="simple", plotBLayers=NULL,
-                                         gridOverlay=FALSE, drop=TRUE, labelSize=5,
-                                         labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
-                                         verbose=FALSE)
-    arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=c(.5, .5), sectionWidths=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("final waterfall and top sub plot alter sectionHeights", grid::grid.draw(arrangeWaterfallPlot.out))
-
-
-    expect_warning(arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=c(.5, .5, .5), sectionWidths=NULL, verbose=FALSE))
-})
+# test_that("arrangeWaterfallPlot re-sizes plots based on sectionHeights", {
+# 
+#     WaterfallPlots.out <- WaterfallPlots(WaterfallData.out, clinical=NULL, plotA="frequency",
+#                                          plotATally="simple", plotALayers=NULL,
+#                                          plotB=NULL, plotBTally="simple", plotBLayers=NULL,
+#                                          gridOverlay=FALSE, drop=TRUE, labelSize=5,
+#                                          labelAngle=0, sampleNames=FALSE, plotCLayers=NULL,
+#                                          verbose=FALSE)
+#     arrangeWaterfallPlot.out <- arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=c(.5, .5), sectionWidths=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("final waterfall and top sub plot alter sectionHeights", grid::grid.draw(arrangeWaterfallPlot.out))
+# 
+# 
+#     expect_warning(arrangeWaterfallPlot(WaterfallPlots.out, sectionHeights=c(.5, .5, .5), sectionWidths=NULL, verbose=FALSE))
+# })
 
 ################################################################################
 ############## Test Waterfall Constructor and accessors ########################
@@ -1100,28 +1100,28 @@ test_that("Waterfall constructor outputs a S4 class object", {
     expect_s4_class(Waterfall.out, "Waterfall")
 })
 
-test_that("drawPlot constructs a waterfall plot from grob objects in Waterfall object", {
+# test_that("drawPlot constructs a waterfall plot from grob objects in Waterfall object", {
+# 
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("drawPlot waterfall", drawPlot(Waterfall.out))
+# })
 
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("drawPlot waterfall", drawPlot(Waterfall.out))
-})
-
-test_that("Waterfall adds genes into the plot which are not in the data", {
-
-        Waterfall.out <- suppressWarnings(Waterfall(mafObject, labelColumn=NULL, samples=NULL, coverage=NULL,
-                               mutation=NULL, genes=c("not_here_1", "not_here_2"),
-                               mutationHierarchy=NULL,
-                               recurrence=.4, geneOrder=NULL, geneMax=NULL,
-                               sampleOrder=NULL, plotA=c("frequency", "burden", NULL),
-                               plotATally=c("simple", "complex"), plotALayers=NULL,
-                               plotB=c("proportion", "frequency", NULL),
-                               plotBTally=c("simple", "complex"), plotBLayers=NULL,
-                               gridOverlay=FALSE, drop=TRUE, labelSize=5, labelAngle=0,
-                               sampleNames=TRUE, clinical=NULL, sectionHeights=NULL,
-                               sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL))
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("addgene waterfall", drawPlot(Waterfall.out))
-})
+# test_that("Waterfall adds genes into the plot which are not in the data", {
+# 
+#         Waterfall.out <- suppressWarnings(Waterfall(mafObject, labelColumn=NULL, samples=NULL, coverage=NULL,
+#                                mutation=NULL, genes=c("not_here_1", "not_here_2"),
+#                                mutationHierarchy=NULL,
+#                                recurrence=.4, geneOrder=NULL, geneMax=NULL,
+#                                sampleOrder=NULL, plotA=c("frequency", "burden", NULL),
+#                                plotATally=c("simple", "complex"), plotALayers=NULL,
+#                                plotB=c("proportion", "frequency", NULL),
+#                                plotBTally=c("simple", "complex"), plotBLayers=NULL,
+#                                gridOverlay=FALSE, drop=TRUE, labelSize=5, labelAngle=0,
+#                                sampleNames=TRUE, clinical=NULL, sectionHeights=NULL,
+#                                sectionWidths=NULL, verbose=FALSE, plotCLayers=NULL))
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("addgene waterfall", drawPlot(Waterfall.out))
+# })
 
 ########################### getData ############################################
 

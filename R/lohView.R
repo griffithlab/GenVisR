@@ -85,6 +85,7 @@ lohView <- function(x, y=NULL, genome='hg19', chr='chr1',
     dummyData <- multi_subsetChr(dummyData, chr)
     
     # Format the main data in x
+    x <- as.data.table(x)
     x <- data.table::melt(x, id.vars=c("chromosome", "position", "sample"))
     colnames(x) <- c("chromosome", "position", "sample", "Tissue", "vaf")
     x$Tissue <- sapply(as.character(x$Tissue),

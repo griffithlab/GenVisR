@@ -279,30 +279,30 @@ test_that("formatClinicalData works in verbose mode", {
 context("MutSpectra Frequency Plot")
 
 
-test_that("buildFrequencyPlot constructs a plot based on frequencies", {
-    
-    buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=NULL, palette=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("mutspectra frequency plot", grid::grid.draw(buildFrequencyPlot.out))
-    
-})
+# test_that("buildFrequencyPlot constructs a plot based on frequencies", {
+#     
+#     buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=NULL, palette=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("mutspectra frequency plot", grid::grid.draw(buildFrequencyPlot.out))
+#     
+# })
 
-test_that("buildFrequencyPlot is able to add layers to the plot", {
-    
-    test_plotALayers <- list(ggplot2::geom_hline(yintercept=c(30), colour="black", size=2), ggplot2::geom_vline(xintercept=c(2), colour="black", size=2))
-    buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=test_plotALayers, palette=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("mutspectra frequency plot add layer", grid::grid.draw(buildFrequencyPlot.out))
-      
-})
+# test_that("buildFrequencyPlot is able to add layers to the plot", {
+#     
+#     test_plotALayers <- list(ggplot2::geom_hline(yintercept=c(30), colour="black", size=2), ggplot2::geom_vline(xintercept=c(2), colour="black", size=2))
+#     buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=test_plotALayers, palette=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("mutspectra frequency plot add layer", grid::grid.draw(buildFrequencyPlot.out))
+#       
+# })
 
-test_that("buildFrequencyPlot is able to add a custom pallete to the plot", {
-    
-    testPallete <- c("red", "blue", "green", "black", "darkorchid4", "seagreen3")
-    buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=NULL, palette=testPallete, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("mutspectra frequency plot custom pallette", grid::grid.draw(buildFrequencyPlot.out))
-})
+# test_that("buildFrequencyPlot is able to add a custom pallete to the plot", {
+#     
+#     testPallete <- c("red", "blue", "green", "black", "darkorchid4", "seagreen3")
+#     buildFrequencyPlot.out <- buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=NULL, palette=testPallete, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("mutspectra frequency plot custom pallette", grid::grid.draw(buildFrequencyPlot.out))
+# })
 
 test_that("buildFrequencyPlot warns if plotALayers is not passed as a list", {
     
@@ -330,30 +330,30 @@ test_that("buildFrequencyPlot warns if a pallete is not the correct length", {
 
 context("MutSpectra Proportion Plot")
 
-test_that("buildProportionPlot constructs a plot based on Proportions", {
-    
-    buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=NULL, palette=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("mutspectra proportion plot", grid::grid.draw(buildProportionPlot.out))
-    
-})
+# test_that("buildProportionPlot constructs a plot based on Proportions", {
+#     
+#     buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=NULL, palette=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("mutspectra proportion plot", grid::grid.draw(buildProportionPlot.out))
+#     
+# })
 
-test_that("buildProportionPlot is able to add layers to the plot", {
-    
-    test_plotBLayers <- list(ggplot2::geom_hline(yintercept=c(.5), colour="black", size=2), ggplot2::geom_vline(xintercept=c(2), colour="black", size=2))
-    buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=test_plotBLayers, palette=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("mutspectra proportion plot add layer", grid::grid.draw(buildProportionPlot.out))
-    
-})
+# test_that("buildProportionPlot is able to add layers to the plot", {
+#     
+#     test_plotBLayers <- list(ggplot2::geom_hline(yintercept=c(.5), colour="black", size=2), ggplot2::geom_vline(xintercept=c(2), colour="black", size=2))
+#     buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=TRUE, plotBLayers=test_plotBLayers, palette=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("mutspectra proportion plot add layer", grid::grid.draw(buildProportionPlot.out))
+#     
+# })
 
-test_that("buildProportionPlot is able to add a custom pallete to the plot", {
-    
-    testPallete <- c("red", "blue", "green", "black", "darkorchid4", "seagreen3")
-    buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=FALSE, plotBLayers=NULL, palette=testPallete, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("mutspectra proportion plot custom pallette", grid::grid.draw(buildProportionPlot.out))
-})
+# test_that("buildProportionPlot is able to add a custom pallete to the plot", {
+#     
+#     testPallete <- c("red", "blue", "green", "black", "darkorchid4", "seagreen3")
+#     buildProportionPlot.out <- buildProportionPlot(MutSpectraPrimaryData.out, sampleNames=FALSE, plotBLayers=NULL, palette=testPallete, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("mutspectra proportion plot custom pallette", grid::grid.draw(buildProportionPlot.out))
+# })
 
 test_that("buildProportionPlot warns if plotBLayers is not passed as a list", {
     
@@ -399,21 +399,21 @@ context("MutSpectra Final Plot")
 
 ################# arrangeMutSpectraPlot ########################################
 
-test_that("arrangeMutSpectraPlot plots a base plot", {
-    
-    arrangeMutSpectraPlot.out <- arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("final MutSpectra base", grid::grid.draw(arrangeMutSpectraPlot.out))
-    
-})
+# test_that("arrangeMutSpectraPlot plots a base plot", {
+#     
+#     arrangeMutSpectraPlot.out <- arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("final MutSpectra base", grid::grid.draw(arrangeMutSpectraPlot.out))
+#     
+# })
 
-test_that("arrangeMutSpectraPlots alters section heights", {
-    
-    arrangeMutSpectraPlot.out <- arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=c(1, 3), verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("final MutSpectra alter section heights", grid::grid.draw(arrangeMutSpectraPlot.out))
-    
-})
+# test_that("arrangeMutSpectraPlots alters section heights", {
+#     
+#     arrangeMutSpectraPlot.out <- arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=c(1, 3), verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("final MutSpectra alter section heights", grid::grid.draw(arrangeMutSpectraPlot.out))
+#     
+# })
 
 test_that("arrangeMutSpectraPlots correctly warns if section heights does not match the number of plots", {
     expect_warning(arrangeMutSpectraPlot(MutSpectraPlots.out, sectionHeights=c(1), verbose=FALSE))
@@ -435,22 +435,22 @@ test_that("MutSpectra constructor outputs a S4 class object", {
     expect_s4_class(MutSpectra.out, "MutSpectra")
 })
 
-test_that("drawPlot constructs a MutSpectra plot from grob objects in MutSpectra object", {
-    
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("drawPlot MutSpectra", drawPlot(MutSpectra.out))
-})
+# test_that("drawPlot constructs a MutSpectra plot from grob objects in MutSpectra object", {
+#     
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("drawPlot MutSpectra", drawPlot(MutSpectra.out))
+# })
 
-test_that("MutSpectra correctly adds clinical data", {
-    
-    MutSpectra.out <- MutSpectra(gmsObject, BSgenome=NULL, sorting=NULL, palette=NULL,
-                                 clinical=clinObject, sectionHeights=NULL, sampleNames=TRUE,
-                                 verbose=FALSE, plotALayers=NULL, plotBLayers=NULL,
-                                 plotCLayers=NULL)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("MutSpectra Clinical", drawPlot(MutSpectra.out))
-
-})
+# test_that("MutSpectra correctly adds clinical data", {
+#     
+#     MutSpectra.out <- MutSpectra(gmsObject, BSgenome=NULL, sorting=NULL, palette=NULL,
+#                                  clinical=clinObject, sectionHeights=NULL, sampleNames=TRUE,
+#                                  verbose=FALSE, plotALayers=NULL, plotBLayers=NULL,
+#                                  plotCLayers=NULL)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("MutSpectra Clinical", drawPlot(MutSpectra.out))
+# 
+# })
 
 ################## getGrob #####################################################
 

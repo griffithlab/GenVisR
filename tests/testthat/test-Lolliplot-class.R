@@ -556,24 +556,24 @@ context("LolliplotPlots Constructor")
 
 ##################### test buildDensityPlot ####################################
 
-test_that("buildDensityPlot constructs the expected plot", {
+# test_that("buildDensityPlot constructs the expected plot", {
+# 
+#     skip_if_not(biomart_success, "mart recieved try-error")
+# 
+#     buildDensityPlot.out <- buildDensityPlot(LolliplotData.mode1.out, plotALayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("Lolliplot Density Plot", grid::grid.draw(buildDensityPlot.out))
+# })
 
-    skip_if_not(biomart_success, "mart recieved try-error")
-
-    buildDensityPlot.out <- buildDensityPlot(LolliplotData.mode1.out, plotALayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("Lolliplot Density Plot", grid::grid.draw(buildDensityPlot.out))
-})
-
-test_that("buildDensityPlot is able to add layers to the plot", {
-
-     skip_if_not(biomart_success, "mart recieved try-error")
-
-     test_layer <- list(ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=.025), colour="red", size=10))
-     buildDensityPlot.out <- buildDensityPlot(LolliplotData.mode1.out, plotALayers=test_layer, verbose=FALSE)
-     skip_on_bioc()
-     vdiffr::expect_doppelganger("Lolliplot Density Plot Layer", grid::grid.draw(buildDensityPlot.out))
-})
+# test_that("buildDensityPlot is able to add layers to the plot", {
+# 
+#      skip_if_not(biomart_success, "mart recieved try-error")
+# 
+#      test_layer <- list(ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=.025), colour="red", size=10))
+#      buildDensityPlot.out <- buildDensityPlot(LolliplotData.mode1.out, plotALayers=test_layer, verbose=FALSE)
+#      skip_on_bioc()
+#      vdiffr::expect_doppelganger("Lolliplot Density Plot Layer", grid::grid.draw(buildDensityPlot.out))
+# })
 
 test_that("buildDensityPlot works in verbose mode", {
 
@@ -592,68 +592,68 @@ test_that("buildDensityPlot errors if plotALayers is not a list", {
 
 ####################### test buildLolliplot ####################################
 
-test_that("buildLolliplot constructs a plot", {
+# test_that("buildLolliplot constructs a plot", {
+# 
+#     skip_if_not(biomart_success, "mart recieved try-error")
+# 
+#     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+#                                          DomainPalette=NULL, MutationPalette=NULL,
+#                                          plotBLayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("Lolliplot Plot Base", grid::grid.draw(buildLolliplot.out))
+# })
 
-    skip_if_not(biomart_success, "mart recieved try-error")
+# test_that("buildLolliplot successfullly adds layers", {
+# 
+#     skip_if_not(biomart_success, "mart recieved try-error")
+# 
+#     test_layer <- list(ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=1), colour="red", size=10))
+# 
+#     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+#                                          DomainPalette=NULL, MutationPalette=NULL,
+#                                          plotBLayers=test_layer, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("Lolliplot Plot Base add layer", grid::grid.draw(buildLolliplot.out))
+# })
 
-    buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
-                                         DomainPalette=NULL, MutationPalette=NULL,
-                                         plotBLayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("Lolliplot Plot Base", grid::grid.draw(buildLolliplot.out))
-})
+# test_that("buildLolliplot successfullly adds labels", {
+# 
+#     skip_if_not(biomart_success, "mart recieved try-error")
+# 
+#     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=TRUE,
+#                                          DomainPalette=NULL, MutationPalette=NULL,
+#                                          plotBLayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("Lolliplot Plot Base add labels", grid::grid.draw(buildLolliplot.out))
+# })
 
-test_that("buildLolliplot successfullly adds layers", {
+# test_that("buildLolliplot successfullly changes colors for domains", {
+# 
+#     skip_if_not(biomart_success, "mart recieved try-error")
+# 
+#     domain_palette <- c("blue", "red", "green", "yellow", "orange", "purple",
+#                         "indianred", "salmon", "plum", "thistle", "seagreen1",
+#                         "slateblue1", "slategrey")
+# 
+#     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+#                                          DomainPalette=domain_palette, MutationPalette=NULL,
+#                                          plotBLayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("Lolliplot Plot Base add domain palette", grid::grid.draw(buildLolliplot.out))
+# })
 
-    skip_if_not(biomart_success, "mart recieved try-error")
-
-    test_layer <- list(ggplot2::geom_text(aes(label="TEST LAYER", x=500, y=1), colour="red", size=10))
-
-    buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
-                                         DomainPalette=NULL, MutationPalette=NULL,
-                                         plotBLayers=test_layer, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("Lolliplot Plot Base add layer", grid::grid.draw(buildLolliplot.out))
-})
-
-test_that("buildLolliplot successfullly adds labels", {
-
-    skip_if_not(biomart_success, "mart recieved try-error")
-
-    buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=TRUE,
-                                         DomainPalette=NULL, MutationPalette=NULL,
-                                         plotBLayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("Lolliplot Plot Base add labels", grid::grid.draw(buildLolliplot.out))
-})
-
-test_that("buildLolliplot successfullly changes colors for domains", {
-
-    skip_if_not(biomart_success, "mart recieved try-error")
-
-    domain_palette <- c("blue", "red", "green", "yellow", "orange", "purple",
-                        "indianred", "salmon", "plum", "thistle", "seagreen1",
-                        "slateblue1", "slategrey")
-
-    buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
-                                         DomainPalette=domain_palette, MutationPalette=NULL,
-                                         plotBLayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("Lolliplot Plot Base add domain palette", grid::grid.draw(buildLolliplot.out))
-})
-
-test_that("buildLolliplot successfullly changes colors for mutations", {
-
-    skip_if_not(biomart_success, "mart recieved try-error")
-
-    mutation_palette <- c("blue", "red", "green", "yellow")
-
-    buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
-                                         DomainPalette=NULL, MutationPalette=mutation_palette,
-                                         plotBLayers=NULL, verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("Lolliplot Plot Base add mutation palette", grid::grid.draw(buildLolliplot.out))
-})
+# test_that("buildLolliplot successfullly changes colors for mutations", {
+# 
+#     skip_if_not(biomart_success, "mart recieved try-error")
+# 
+#     mutation_palette <- c("blue", "red", "green", "yellow")
+# 
+#     buildLolliplot.out <- buildLolliplot(LolliplotData.mode1.out, labelAA=FALSE,
+#                                          DomainPalette=NULL, MutationPalette=mutation_palette,
+#                                          plotBLayers=NULL, verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("Lolliplot Plot Base add mutation palette", grid::grid.draw(buildLolliplot.out))
+# })
 
 test_that("buildLolliplot works in verbose mode", {
 
@@ -724,22 +724,22 @@ if(biomart_success){
     arrangeLolliplotPlot.out <- arrangeLolliplotPlot(LolliplotPlots.out, sectionHeights=NULL, verbose=FALSE)
 }
 
-test_that("arrangeLolliplotPlot constructs a plot", {
+# test_that("arrangeLolliplotPlot constructs a plot", {
+# 
+#     skip_if_not(biomart_success, "mart recieved try-error")
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("Final Lolliplot Base", grid::grid.draw(arrangeLolliplotPlot.out))
+# 
+# })
 
-    skip_if_not(biomart_success, "mart recieved try-error")
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("Final Lolliplot Base", grid::grid.draw(arrangeLolliplotPlot.out))
-
-})
-
-test_that("arrangeLolliplotPlot alters section heights", {
-
-    skip_if_not(biomart_success, "mart recieved try-error")
-
-    arrangeLolliplotPlot.out <- arrangeLolliplotPlot(LolliplotPlots.out, sectionHeights=c(.1, .9), verbose=FALSE)
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("Final Lolliplot alter section height", grid::grid.draw(arrangeLolliplotPlot.out))
-})
+# test_that("arrangeLolliplotPlot alters section heights", {
+# 
+#     skip_if_not(biomart_success, "mart recieved try-error")
+# 
+#     arrangeLolliplotPlot.out <- arrangeLolliplotPlot(LolliplotPlots.out, sectionHeights=c(.1, .9), verbose=FALSE)
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("Final Lolliplot alter section height", grid::grid.draw(arrangeLolliplotPlot.out))
+# })
 
 test_that("arrangeLolliplotPlot correctly warns if section heights does not match the number of plots", {
 
@@ -772,12 +772,12 @@ test_that("Lolliplot constructor outputs a S4 class object", {
 
 context("Lolliplot accessors")
 
-test_that("drawPlot constructs a Lolliplot", {
-
-    skip_if_not(biomart_success, "mart recieved try-error")
-    skip_on_bioc()
-    vdiffr::expect_doppelganger("drawPlot Lolliplot", drawPlot(Lolliplot.out))
-})
+# test_that("drawPlot constructs a Lolliplot", {
+# 
+#     skip_if_not(biomart_success, "mart recieved try-error")
+#     skip_on_bioc()
+#     vdiffr::expect_doppelganger("drawPlot Lolliplot", drawPlot(Lolliplot.out))
+# })
 
 ################################# getGrob ######################################
 

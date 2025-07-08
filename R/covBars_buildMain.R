@@ -20,6 +20,7 @@
 covBars_buildMain <- function(data_frame, col, plot_title=NULL, x_lab_size=12,
                               y_lab_size=12, facet_lab_size=10, layers=NULL)
 {
+
     xmelt <- data_frame
 
     # Define Theme of plot

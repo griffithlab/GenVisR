@@ -56,7 +56,7 @@ cnSpec <- function(x, y=NULL, genome='hg19', plot_title=NULL,
 {
     # Perform quality check on input data
     data <- cnSpec_qual(x, y, genome, CNscale=CNscale)
-    x <- data[[1]]
+    x <- as.data.table(data[[1]])
     y <- data[[2]]
 
     # Get dummy data for genome 
