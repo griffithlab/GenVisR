@@ -490,8 +490,8 @@ setMethod(f="toWaterfall",
 #' @importFrom BSgenome available.genomes
 #' @importFrom BSgenome installed.genomes
 #' @importFrom data.table as.data.table
-#' @importFrom GenomeInfoDb seqlevels
-#' @importFrom GenomeInfoDb seqnames
+#' @importFrom Seqinfo seqlevels
+#' @importFrom Seqinfo seqnames
 #' @noRd
 setMethod(f="toMutSpectra",
           signature="VEP",
@@ -547,8 +547,8 @@ setMethod(f="toMutSpectra",
                       memo <- paste("appending \"chr\" to chromosomes to fix mismatch with the BSgenome")
                       warning(memo)
                       chr <- paste0("chr", chr)
-                      GenomeInfoDb::seqlevels(variantGR) <- unique(chr)
-                      GenomeInfoDb::seqnames(variantGR)[seq_along(variantGR)] <- chr
+                      Seqinfo::seqlevels(variantGR) <- unique(chr)
+                      Seqinfo::seqnames(variantGR)[seq_along(variantGR)] <- chr
                   } else {
                       memo <- paste("removing entries with chromosomes not matching the BSgenome")
                       warning(memo)
@@ -609,8 +609,8 @@ setMethod(f="toMutSpectra",
 #' @importFrom BSgenome available.genomes
 #' @importFrom BSgenome installed.genomes
 #' @importFrom data.table as.data.table
-#' @importFrom GenomeInfoDb seqlevels
-#' @importFrom GenomeInfoDb seqnames
+#' @importFrom Seqinfo seqlevels
+#' @importFrom Seqinfo seqnames
 #' @noRd
 setMethod(f="toRainfall",
           signature="VEP",
@@ -656,8 +656,8 @@ setMethod(f="toRainfall",
                       memo <- paste("appending \"chr\" to chromosomes to fix mismatch with the BSgenome")
                       warning(memo)
                       chr <- paste0("chr", chr)
-                      GenomeInfoDb::seqlevels(variantGR) <- unique(chr)
-                      GenomeInfoDb::seqnames(variantGR)[seq_along(variantGR)] <- chr
+                      Seqinfo::seqlevels(variantGR) <- unique(chr)
+                      Seqinfo::seqnames(variantGR)[seq_along(variantGR)] <- chr
                   } else {
                       memo <- paste("removing entries with chromosomes not matching the BSgenome")
                       warning(memo)
@@ -781,8 +781,8 @@ setMethod(f="toLolliplot",
                       memo <- paste("appending \"chr\" to chromosomes to fix mismatch with the BSgenome")
                       warning(memo)
                       chr <- paste0("chr", chr)
-                      GenomeInfoDb::seqlevels(variantGR) <- unique(chr)
-                      GenomeInfoDb::seqnames(variantGR)[seq_along(variantGR)] <- chr
+                      Seqinfo::seqlevels(variantGR) <- unique(chr)
+                      Seqinfo::seqnames(variantGR)[seq_along(variantGR)] <- chr
                   } else {
                       memo <- paste("removing entries with chromosomes not matching the BSgenome")
                       warning(memo)
@@ -857,8 +857,8 @@ setMethod(f="toLolliplot",
 #' @importFrom BSgenome available.genomes
 #' @importFrom BSgenome installed.genomes
 #' @importFrom data.table as.data.table
-#' @importFrom GenomeInfoDb seqlevels
-#' @importFrom GenomeInfoDb seqnames
+#' @importFrom Seqinfo seqlevels
+#' @importFrom Seqinfo seqnames
 #' @noRd
 setMethod(f="retrieve_BSgenome",
           signature="VEP",

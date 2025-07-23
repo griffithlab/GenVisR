@@ -1,6 +1,6 @@
 Package: GenVisR
 Title: Genomic Visualizations in R
-Version: 1.41.1
+Version: 1.41.2
 Authors@R: c(person(given="Zachary", family="Skidmore", email="zlskidmore@gmail.com",
           role=c("aut", "cre")), person(given="Alex", family="Wagner", role="aut"),
           person(given="Robert", family="Lesurf", role="aut"), person(given="Katie",
@@ -15,7 +15,7 @@ Depends: R (>= 3.3.0), methods
 Imports: AnnotationDbi, biomaRt (>= 2.45.8), BiocGenerics, Biostrings, DBI, GenomicFeatures,
          GenomicRanges (>= 1.25.4), ggplot2 (>= 2.1.0), gridExtra (>= 2.0.0), gtable, gtools,
          IRanges (>= 2.7.5), plyr (>= 1.8.3), reshape2, Rsamtools, scales, viridis,
-         data.table, BSgenome, GenomeInfoDb, VariantAnnotation
+         data.table, BSgenome, Seqinfo, VariantAnnotation
 License: GPL-3 + file LICENSE
 BugReports: https://github.com/griffithlab/GenVisR/issues
 biocViews: Infrastructure, DataRepresentation, Classification, DNASeq

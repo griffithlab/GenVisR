@@ -472,7 +472,7 @@ setMethod(f="chrSubset",
 #' @param BSgenome Object of class BSgenome, used for extracting chromosome boundaries
 #' @param verbose Boolean for status updates
 #' @return data.table object with calculated mutation distances
-#' @importFrom GenomeInfoDb seqlengths
+#' @importFrom Seqinfo seqlengths
 #' @importFrom data.table as.data.table
 #' @importFrom data.table rbindlist
 #' @importFrom gtools mixedsort
