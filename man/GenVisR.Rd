@@ -2,6 +2,7 @@
 % Please edit documentation in R/GenVisR.R
 \docType{package}
 \name{GenVisR}
+\alias{GenVisR-package}
 \alias{GenVisR}
 \title{GenVisR}
 \description{
@@ -14,4 +15,18 @@ A visualization library designed to make publications quality figures for genomi
 \href{https://github.com/griffithlab/GenVisR}{GenVisR github page}
 
 \href{https://www.bioconductor.org/packages/release/bioc/html/GenVisR.html}{GenVisR bioconductor page}
+}
+\author{
+\strong{Maintainer}: Zachary Skidmore \email{zlskidmore@gmail.com}
+
+Authors:
+\itemize{
+  \item Alex Wagner
+  \item Robert Lesurf
+  \item Katie Campbell
+  \item Jason Kunisaki \email{kunisakijh@gmail.com}
+  \item Obi Griffith \email{ogriffit@genome.wustl.edu}
+  \item Malachi Griffith \email{mgriffit@genome.wustl.edu}
+}
+
 }

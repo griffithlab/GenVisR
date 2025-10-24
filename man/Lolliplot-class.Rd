@@ -9,7 +9,7 @@ Lolliplot(
   input,
   transcript = NULL,
   species = "hsapiens",
-  host = "www.ensembl.org",
+  host = "https://www.ensembl.org",
   txdb = NULL,
   BSgenome = NULL,
   emphasize = NULL,
@@ -98,9 +98,10 @@ colnames(dataset.mode2) <- c("chromosome", "start", "stop", "reference", "varian
                              "sample", "gene", "consequence", "transcript", "proteinCoord")
 
 # run Lolliplot
-
 object <- Lolliplot(dataset.mode1, transcript="ENST00000263967",
                     species="hsapiens", txdb=txdb, BSgenome=BSgenome)
 object <- Lolliplot(dataset.mode2, transcript="ENST00000263967",
                     species="hsapiens")
+drawPlot(object)
+
 }

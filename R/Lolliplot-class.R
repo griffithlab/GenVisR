@@ -75,14 +75,15 @@ setClass("Lolliplot",
 #' colnames(dataset.mode2) <- c("chromosome", "start", "stop", "reference", "variant",
 #'                              "sample", "gene", "consequence", "transcript", "proteinCoord")
 #' 
-#' # run Lolliplot
+#' # Not Run: Generate Lolliplot
+#' #object <- Lolliplot(dataset.mode1, transcript="ENST00000263967",
+#' #                    species="hsapiens", txdb=txdb, BSgenome=BSgenome)
+#' #object <- Lolliplot(dataset.mode2, transcript="ENST00000263967",
+#' #                    species="hsapiens")
+#' #drawPlot(object)
 #' 
-#' object <- Lolliplot(dataset.mode1, transcript="ENST00000263967",
-#'                     species="hsapiens", txdb=txdb, BSgenome=BSgenome)
-#' object <- Lolliplot(dataset.mode2, transcript="ENST00000263967",
-#'                     species="hsapiens")
 #' @export
-Lolliplot <- function(input, transcript=NULL, species="hsapiens", host="www.ensembl.org", txdb=NULL, BSgenome=NULL, emphasize=NULL, DomainPalette=NULL, MutationPalette=NULL, labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL, sectionHeights=NULL, verbose=FALSE){
+Lolliplot <- function(input, transcript=NULL, species="hsapiens", host="https://www.ensembl.org", txdb=NULL, BSgenome=NULL, emphasize=NULL, DomainPalette=NULL, MutationPalette=NULL, labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL, sectionHeights=NULL, verbose=FALSE){
     
     message("This function is part of the new S4 feature and is under active development, did you mean to use lolliplot() with a lowercase l?")
     

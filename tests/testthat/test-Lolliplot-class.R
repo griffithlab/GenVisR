@@ -51,7 +51,7 @@ test_that("toLolliplot works in verbose mode",{
 ##################### test retriveMart #########################################
 
 # make sure there's an internet connection, if not skip tests
-biomart_success <- try(biomaRt::useMart("ENSEMBL_MART_ENSEMBL", host="www.ensembl.org"))
+biomart_success <- try(biomaRt::useMart("ENSEMBL_MART_ENSEMBL", host="https://www.ensembl.org"))
 biomart_success <- !class(biomart_success) == "try-error"
 if(biomart_success){
     retrieveMart.out <- retrieveMart("hsapiens", host="https://www.ensembl.org", verbose=FALSE)
@@ -529,11 +529,11 @@ test_that("setDomainHeights works in verbose mode", {
 if(biomart_success){
 
     LolliplotData.mode1.out <- suppressWarnings(LolliplotData(dfObject.mode1, transcript="ENST00000263967",
-                                                              species="hsapiens", host="www.ensembl.org",
+                                                              species="hsapiens", host="https://www.ensembl.org",
                                                               txdb=txdb, BSgenome=BSgenome, emphasize=NULL,
                                                               verbose=FALSE))
     LolliplotData.mode2.out <- suppressWarnings(LolliplotData(dfObject.mode2, transcript="ENST00000263967",
-                                                              species="hsapiens", host="www.ensembl.org",
+                                                              species="hsapiens", host="https://www.ensembl.org",
                                                               txdb=NULL, BSgenome=NULL, emphasize=NULL,
                                                               verbose=FALSE))
 }
@@ -757,7 +757,7 @@ test_that("arrangeLolliplotPlot correctly warns if section heights is not numeri
 
 if(biomart_success){
     Lolliplot.out <- suppressWarnings(Lolliplot(dfObject.mode1, transcript="ENST00000263967",
-                                                species="hsapiens", host="www.ensembl.org",
+                                                species="hsapiens", host="https://www.ensembl.org",
                                                 txdb=txdb, BSgenome=BSgenome, emphasize=NULL,
                                                 DomainPalette=NULL, MutationPalette=NULL,
                                                 labelAA=TRUE, plotALayers=NULL, plotBLayers=NULL,

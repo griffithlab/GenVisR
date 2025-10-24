@@ -306,7 +306,7 @@ context("MutSpectra Frequency Plot")
 
 test_that("buildFrequencyPlot warns if plotALayers is not passed as a list", {
     
-    test_plotALayers <- ggplot2::geom_hline(yintercept=c(30), colour="black", size=2)
+    test_plotALayers <- ggplot2::geom_hline(yintercept=c(30), colour="black", linewidth=2)
     expect_error(buildFrequencyPlot(MutSpectraPrimaryData.out, plotALayers=test_plotALayers, palette=NULL, verbose=FALSE))
     
 })
