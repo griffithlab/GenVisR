@@ -91,6 +91,9 @@ cnFreq <- function(x, CN_low_cutoff=1.5, CN_high_cutoff=2.5, plot_title=NULL,
         message("genome specified is preloaded, retrieving data...")
         UCSC_Chr_pos <- GenVisR::cytoGeno[GenVisR::cytoGeno$genome == genome,]
         UCSC_Chr_pos <- multi_chrBound(UCSC_Chr_pos)
+    } else if(is.data.frame(genome)) {
+        UCSC_Chr_pos <- genome
+        UCSC_Chr_pos <- multi_chrBound(UCSC_Chr_pos)   
     } else {
         # Obtain data for UCSC genome and extract relevant columns
         memo <- paste0("attempting to query UCSC mySQL database for chromosome",
