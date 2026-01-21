@@ -72,6 +72,8 @@ setClass("Waterfall",
 #' @param recurrence Numeric value between 0 and 1 specifying a
 #' mutation recurrence cutoff. Genes which do not have mutations in the
 #' proportion of samples defined are removed.
+#' @param markMutationOverlap Boolean specifying whether multiple mutations in the same
+#' gene/sample should be denoted by an asterisks. False by default.
 #' @param genes Character vector specifying genes to keep, if not "NULL" all genes not specified
 #' are removed. Further genes specified but not present in the data will be added.
 #' @param geneOrder Character vector specifying the order in which to plot
@@ -137,7 +139,7 @@ setClass("Waterfall",
 #' @export
 Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
                       mutation=NULL, genes=NULL, mutationHierarchy=NULL,
-                      recurrence=NULL, geneOrder=NULL, geneMax=NULL,
+                      recurrence=NULL, markMutationOverlap=FALSE, geneOrder=NULL, geneMax=NULL,
                       sampleOrder=NULL, plotA=c("frequency", "burden", NULL),
                       plotATally=c("simple", "complex"), plotALayers=NULL,
                       plotB=c("proportion", "frequency", NULL),
@@ -149,8 +151,9 @@ Waterfall <- function(input, labelColumn=NULL, samples=NULL, coverage=NULL,
     # calculate all data for plots
     data <- WaterfallData(input, labelColumn=labelColumn, mutationHierarchy=mutationHierarchy,
                           samples=samples, coverage=coverage, mutation=mutation, genes=genes,
-                          recurrence=recurrence, geneOrder=geneOrder, geneMax=geneMax,
-                          sampleOrder=sampleOrder, verbose=verbose)
+                          recurrence=recurrence, markMutationOverlap=markMutationOverlap,
+                          geneOrder=geneOrder, geneMax=geneMax, sampleOrder=sampleOrder,
+                          verbose=verbose)
     
     # get the clinical data
     if(is.null(clinical)){
@@ -217,7 +220,7 @@ setClass("WaterfallData",
 #' @param object Object of class MutationAnnotationFormat
 #' @noRd
 WaterfallData <- function(object, labelColumn, samples, mutationHierarchy,
-                          coverage, mutation, genes, recurrence, geneOrder,
+                          coverage, mutation, genes, recurrence, markMutationOverlap, geneOrder,
                           geneMax, sampleOrder, verbose){
     
     # assign the mapping of mutations and colors
@@ -228,7 +231,7 @@ WaterfallData <- function(object, labelColumn, samples, mutationHierarchy,
     
     # subset samples if specified
     primaryData <- sampSubset(primaryData, samples, verbose)
-    
+
     # calculate the frequency and mutation burden
     simpleMutationCounts <- calcSimpleMutationBurden(primaryData, coverage, verbose)
     complexMutationCounts <- calcComplexMutationBurden(primaryData, coverage, verbose)
@@ -238,7 +241,8 @@ WaterfallData <- function(object, labelColumn, samples, mutationHierarchy,
     
     # remove entries for the same gene/sample based on a hierarchy leaving one
     # (must happen before recurrenceSubset)
-    primaryData <- mutHierarchySubset(primaryData, mutationHierarchy, verbose)
+    primaryData <- mutHierarchySubset(primaryData, mutationHierarchy, markMutationOverlap, verbose)
+    
     
     # Get genes which should be kept based on genes param
     keepGenes_a <- geneSubset(primaryData, genes, verbose)
@@ -1019,12 +1023,17 @@ setMethod(f="geneSubset",
 #' @noRd
 setMethod(f="mutHierarchySubset",
           signature="data.table",
-          definition=function(object, mutationHierarchy, verbose, ...){
+          definition=function(object, mutationHierarchy, markMutationOverlap, verbose, ...){
               
               # grab the data
               primaryData <- object
               rowsPrimaryData <- nrow(primaryData)
-              mutationHierarchy
+              if(markMutationOverlap){
+                  counts <- primaryData[,.N,by=.(sample, gene)]
+                  primaryData <- merge(counts, primaryData)
+                  primaryData[,label := N]
+                  primaryData[,N := NULL]
+              }
               
               # refactor the data frame
               primaryData$mutation<- factor(primaryData$mutation, levels=mutationHierarchy$mutation)
